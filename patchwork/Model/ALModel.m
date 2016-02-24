@@ -12,6 +12,7 @@
 #import "StringHelper.h"
 #import "NSArray+BlocksKitExtension.h"
 #import "NSArray+ArrayExtensions.h"
+#import "ALOCRuntime.h"
 
 #import <objc/message.h>
 
@@ -374,61 +375,6 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 
 @end
 
-
-@implementation NSObject (ClassMetasExtension)
-
-+ (Class)commonAncestorWithClass:(Class)other {
-    return [[[[self ancestorClasses] al_zip:[other ancestorClasses], nil] bk_match:^BOOL(NSArray<Class> *obj) {
-        return !(obj.count == 2 && obj.firstObject == obj.lastObject);
-    }] firstObject] ?: NSObject.class;
-}
-
-+ (NSArray<Class> *)ancestorClasses {
-    NSMutableArray<Class> *classes = [NSMutableArray array];
-    Class clazz = self;
-    while (clazz != nil) {
-        [classes insertObject:clazz atIndex:0];
-        clazz = [clazz superclass];
-    }
-    return classes;
-}
-
-
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)allProperties {
-    NSMutableDictionary<NSString *, YYClassPropertyInfo *> *allProperties = [NSMutableDictionary dictionary];
-    NSArray<Class> *ancestors = [self ancestorClasses];
-    for (Class clazz in ancestors) {
-        YYClassInfo *info = [YYClassInfo classInfoWithClass:clazz];
-        [allProperties addEntriesFromDictionary:info.propertyInfos];
-    }
-    return allProperties;
-}
-
-+ (NSDictionary<NSString *, YYClassIvarInfo *> *)allIvars {
-    NSMutableDictionary<NSString *, YYClassIvarInfo *> *allIvars = [NSMutableDictionary dictionary];
-    NSArray<Class> *ancestors = [self ancestorClasses];
-    for (Class clazz in ancestors) {
-        YYClassInfo *info = [YYClassInfo classInfoWithClass:clazz];
-        [allIvars addEntriesFromDictionary:info.ivarInfos];
-    }
-    return allIvars;
-}
-
-+ (NSDictionary<NSString *, YYClassMethodInfo *> *)allMethods {
-    NSMutableDictionary<NSString *, YYClassMethodInfo *> *allMethods = [NSMutableDictionary dictionary];
-    NSArray<Class> *ancestors = [self ancestorClasses];
-    for (Class clazz in ancestors) {
-        YYClassInfo *info = [YYClassInfo classInfoWithClass:clazz];
-        [allMethods addEntriesFromDictionary:info.methodInfos];
-    }
-    return allMethods;
-}
-
-+ (BOOL)hasProperty:(NSString *)propertyName {
-    return [self allProperties][propertyName] != nil;
-}
-
-@end
 
 FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
                                  NSDictionary<NSString *, YYClassPropertyInfo *> *copyingProperties) {

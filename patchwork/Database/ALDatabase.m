@@ -15,26 +15,20 @@
 #import "ALSQLSelectCommand.h"
 #import "ALSQLUpdateCommand.h"
 #import "ALSQLInsertCommand.h"
+#import "ALOCRuntime.h"
+#import "ALDBMigrationProtocol.h"
 
 #import <objc/runtime.h>
 
-//// undefine blockskit's macro define, conflict with property: SELECT
-//#undef SELECT
-
-
 NS_ASSUME_NONNULL_BEGIN
 
-static NSString *const kVersionTable                = @"tbl_versions";
-static NSString *const kVersionTableColumnTableName = @"table_name";
-static NSString *const kVersionTableColumnVersion   = @"version";
+
 
 static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 
 @implementation ALDatabase {
-    //ALFMDatabaseQueue *_database;
     NSSet<Class>      *_tableModels;
-    
-    //__kindof ALSQLCommand  *_sqlCommand;
+    BOOL               _dbFileExisted;
 }
 
 #pragma mark - database manager
@@ -56,7 +50,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     }
     ALDatabase *db = kDatabaseDict[path];
     if (db == nil) {
-        if((db = [[self alloc] initWithPath:path]) != nil && [db open]) {
+        if((db = [[self alloc] initWithPath:path]) != nil) {
             kDatabaseDict[path] = db;
         } else {
             db = nil;
@@ -69,7 +63,14 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 - (nullable instancetype)initWithPath:(nullable NSString *)path {
     self = [super init];
     if (self) {
+        // for compatible.
+        // if the original database existed and did not set the version information,
+        // we need to make a distinction between 'database not exists' and 'database version = 0'
+        _dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path];
         _database = [[ALFMDatabaseQueue alloc] initWithPath:path];
+        if (![self open]) {
+            self = nil;
+        }
     }
     return self;
 }
@@ -98,49 +99,62 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         return YES;
     }
     
+    id<ALDBMigrationProtocol> migrationProcessor =
+        [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBMigrationProtocol)] bk_select:^BOOL(Class cls){
+            return [cls canMigrateDatabaseWithPath:_database.path];
+        }].anyObject;
+    
+    if (migrationProcessor == nil) {
+        ALLogWarn(@"*** Not found any migration processor for database:%@", _database.path);
+        return YES;
+    }
+    
     __block BOOL ret = YES;
     [_database inDatabase:^(FMDatabase * _Nonnull db) {
-        [self setupVersionTable:db];
+        [db closeOpenResultSets];
         
-        NSMutableSet *existedTables = [[self existedTables:db] mutableCopy];
-        NSMutableDictionary *dbVerDict = [[self dbTableVersions:db] mutableCopy];
-        
-        [objTables enumerateObjectsUsingBlock:^(Class  _Nonnull cls, BOOL * _Nonnull stop) {
-            NSString *tblName = [cls tableName];
-            NSNumber *tblVer = dbVerDict[tblName];
-            if (![existedTables containsObject:tblName]) { // table not found
-                if ([cls createTable:db]) {
-                    [self updateTableVersionForModel:cls database:db];
-                }
-            } else if (tblVer == nil) { // lost version info
-                ALLogError(@"lost version information for table: %@", tblName);
-                //TODO: try auto migrations
-                ret = NO;
-            } else {
-                NSUInteger oldVer = tblVer.unsignedIntegerValue;
-                NSUInteger newVer = [cls tableVersion];
-                if (oldVer < newVer) {
-                    if ([cls upgradeTableFromVersion:oldVer toVerion:newVer database:db]) {
-                        [self updateTableVersionForModel:cls database:db];
-                    }
-                } else if (oldVer > newVer) {
-                    ALLogError(@"incorrect version information for table: %@", tblName);
+        // all the database version should begins from 1 (DO NOT begins from 0 !!!)
+        NSInteger newVersion = [migrationProcessor currentVersion];
+        if (!_dbFileExisted) { // create database directly
+            if ([migrationProcessor setupDatabase:db]) {
+                if (![self updateDatabaseVersion:newVersion handler:db]) {
+                    NSAssert(NO, @"update database veriosn failed!!!");
                     ret = NO;
                 }
+            } else {
+                NSAssert(NO, @"Can not setup database: %@", _database.path);
+                ret = NO;
             }
-            
-            [existedTables removeObject:tblName];
-            [dbVerDict removeObjectForKey:tblName];
-        }];
+            return;
+        }
+
+        NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
+        NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@", @(dbVersion),
+                 @(newVersion));
         
-        // remove useless table version informations
-        [dbVerDict bk_each:^(NSString *name, id obj) {
-            [self removeTableVersionForTable:name database:db];
-        }];
-        
-        //TODO: how to process the existed-tables but without any matched model?
+        if (dbVersion < newVersion) {
+            if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
+                if (![self updateDatabaseVersion:newVersion handler:db]) {
+                    NSAssert(NO, @"update database veriosn failed!!!");
+                    ret = NO;
+                }
+            } else {
+                NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
+                         _database.path);
+                ret = NO;
+            }
+        }
     }];
     
+    return ret;
+}
+
+- (BOOL)updateDatabaseVersion:(NSInteger)version handler:(FMDatabase *)db {
+    BOOL ret = [db executeUpdate:@"PRAGMA user_version=?;", @(version)];
+    if (!ret) {
+        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _database.path,
+                  [db lastError]);
+    }
     return ret;
 }
 
@@ -149,81 +163,19 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     [_database close];
 }
 
-#pragma mark version table
-- (BOOL)setupVersionTable:(FMDatabase *)db {
-    NSString *sql = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ("
-                     @"%@ TEXT UNIQUE, "
-                     @"%@ INTEGER)",
-                     kVersionTable, kVersionTableColumnTableName, kVersionTableColumnVersion];
-    return [db executeUpdate:sql];
-}
 
-- (BOOL)updateTableVersionForModel:(Class)clazz database:(FMDatabase *)db {
-    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@, %@) VALUES (?, ?)", kVersionTable,
-                                               kVersionTableColumnTableName, kVersionTableColumnVersion];
-    return [db executeUpdate:sql, [clazz tableName], @([clazz tableVersion])];
-}
-
-- (BOOL)removeTableVersionForTable:(NSString *)tblName database:(FMDatabase *)db {
-    return [db executeUpdate:[NSString stringWithFormat:@"DELETE FROM %@ WHERE %@=?", kVersionTable,
-                                                        kVersionTableColumnTableName],
-                             tblName];
-}
-
-- (nullable NSDictionary<NSString *, NSNumber *> *)dbTableVersions:(FMDatabase *)db {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"SELECT * FROM %@", kVersionTable]];
-    while ([rs next]) {
-        dict[ [rs stringForColumn:kVersionTableColumnTableName] ] = @([rs intForColumn:kVersionTableColumnVersion]);
-    }
-    [rs close];
-    
-    return dict.count > 0 ? dict : nil;
-}
-
-- (nullable NSSet<NSString *> *)existedTables:(FMDatabase *)db {
-    NSMutableSet *set = [NSMutableSet set];
-    FMResultSet *rs =
-        [db executeQuery:@"SELECT tbl_name FROM sqlite_master WHERE type=? AND tbl_name!=? AND name NOT LIKE ?",
-                         @"table", kVersionTable, @"sqlite_%"];
-    while ([rs next]) {
-        [set addObject:[rs stringForColumnIndex:0]];
-    }
-    [rs close];
-    return set.count > 0 ? set : nil;
-}
 
 - (NSSet<Class> *)tableModels {
     if (_tableModels != nil) {
         return _tableModels;
     }
-    
-    NSMutableSet *set = [NSMutableSet set];
-    unsigned int classesCount = 0;
-    Class *classes = objc_copyClassList( &classesCount );
-    for (int i = 0; i < classesCount; ++i) {
-        Class clazz = classes[i];
-        Class superClass = class_getSuperclass(clazz);
 
-        if (nil == superClass) {
-            continue;
-        }
-        if (!class_respondsToSelector(clazz, @selector(doesNotRecognizeSelector:))) {
-            continue;
-        }
-        if (!class_respondsToSelector(clazz, @selector(methodSignatureForSelector:))) {
-            continue;
-        }
+    _tableModels =
+        [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDatabaseModelProtocol)] bk_select:^BOOL(Class cls) {
+            return [cls respondsToSelector:@selector(databasePath)] &&
+                   [[cls databasePath] isEqualToString:_database.path];
+        }];
 
-        if ([clazz conformsToProtocol:@protocol(ALDatabaseModelProtocol)] &&
-            [clazz respondsToSelector:@selector(databasePath)]) {
-            if ([[clazz databasePath] isEqualToString:_database.path]) {
-                [set addObject:clazz];
-            }
-        }
-    }
-    free(classes);
-    _tableModels = set;
     return _tableModels;
 }
 

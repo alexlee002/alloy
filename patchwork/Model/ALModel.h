@@ -77,18 +77,5 @@ typedef id _Nullable (^ModelCustomTransformToJSON)(NSString *_Nonnull propertyNa
 + (BOOL)hasModelProperty:(NSString *)propertyName;
 @end
 
-
-@interface NSObject (ClassMetasExtension)
-
-+ (Class)commonAncestorWithClass:(Class)other;
-+ (NSArray<Class> *)ancestorClasses;
-
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)allProperties;
-+ (NSDictionary<NSString *, YYClassIvarInfo *> *)allIvars;
-+ (NSDictionary<NSString *, YYClassMethodInfo *> *)allMethods;
-
-+ (BOOL)hasProperty:(NSString *)propertyName;
-@end
-
 NS_ASSUME_NONNULL_END
 

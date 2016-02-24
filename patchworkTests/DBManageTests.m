@@ -97,6 +97,9 @@
 - (void)testSQLSelect {
     ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
     XCTAssertNotNil(db);
+    if (!db) {
+        return;
+    }
  
     NSString *sql = [db.SELECT(nil).FROM([TestUser tableName]).WHERE(EQ(@"age", @18)).GROUP_BY(@[@"age"]).ORDER_BY(@[@"age"]) sql];
     XCTAssertEqualObjects(sql, @"SELECT * FROM user WHERE (age = ?) GROUP BY age ORDER BY age");
@@ -105,6 +108,9 @@
 - (void)testSQLUpdate {
     ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
     XCTAssertNotNil(db);
+    if (!db) {
+        return;
+    }
 
     NSString *sql = [db.UPDATE([TestUser tableName])
                          .VALUES(
@@ -125,6 +131,9 @@
 - (void)testSQLInsert {
     ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
     XCTAssertNotNil(db);
+    if (!db) {
+        return;
+    }
 
     NSString *sql = db.INSERT([TestUser tableName]).POLICY(kALDBConflictPolicyReplace)
                         .VALUES(@{
