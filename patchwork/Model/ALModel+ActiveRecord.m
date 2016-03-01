@@ -35,6 +35,42 @@ static FORCE_INLINE void constructModelFromResultSet(FMResultSet *rs, ALModel *m
 static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(FMResultSet *rs, Class modelClass);
 
 
+@implementation ALSQLSelectCommand (ActiveRecord)
+
+static const void * const kModelClassAssociatedKey = &kModelClassAssociatedKey;
+- (void)setModelClass:(Class)cls {
+    objc_setAssociatedObject(self, kModelClassAssociatedKey, cls, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (Class)modelClass {
+    return objc_getAssociatedObject(self, kModelClassAssociatedKey);
+}
+
+- (ALSQLSelectCommand *_Nonnull(^_Nonnull)(Class _Nonnull modelClass))APPLY_MODEL {
+    return ^ALSQLSelectCommand *_Nonnull(Class _Nonnull modelClass) {
+        [self setModelClass:modelClass];
+        return self;
+    };
+}
+
+- (void)fetchWithCompletion:(void (^_Nullable)(FMResultSet *_Nullable rs))completion {
+    FMResultSet *rs = self.EXECUTE_QUERY();
+    if (completion != nil) {
+        completion(rs);
+    }
+}
+
+- (NSArray<__kindof ALModel *> *_Nullable (^)(void))FETCH_MODELS {
+    return ^NSArray<__kindof ALModel *> *_Nullable(void) {
+        self.SELECT(@[kRowIdColumnName, @"*"]);
+        FMResultSet *rs = self.EXECUTE_QUERY();
+        return modelsFromResultSet(rs, [self modelClass]);
+    };
+}
+
+@end
+
+
 @implementation ALModel (ActiveRecord)
 
 @dynamic rowid;
@@ -72,7 +108,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
             return [blacklist containsObject:key];
         }] bk_map:^ALDBColumnInfo *(NSString *key, YYClassPropertyInfo *p) {
             ALDBColumnInfo *colum = [[ALDBColumnInfo alloc] init];
-            colum.propertyName    = key;
+            colum.property        = p;
             colum.name            = [self mappedColumnNameForProperty:key];
             colum.dataType        = suggestedSqliteDataType(p) ?: @"BLOB";
             return colum;
@@ -102,6 +138,10 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     return modelsFromResultSet(rs, self);
 }
 
++ (ALSQLSelectCommand *)fetcher {
+    return self.DB.SELECT(@[kRowIdColumnName, @"*"]).FROM([self tableName]).APPLY_MODEL(self.class);
+}
+
 - (BOOL)saveOrReplce:(BOOL)replaceExisted {
     return self.DB.INSERT([self tableName])
         .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
@@ -111,14 +151,25 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 
 - (nullable NSDictionary<NSString *, id> *)propertiesToSaved {
     NSArray *properties = [[[self.class columns].allValues bk_map:^NSString *(ALDBColumnInfo *colinfo) {
-        return colinfo.propertyName;
+        return colinfo.property.name;
     }] bk_reject:^BOOL(NSString *propertyName) {
-        return [propertyName isEqualToString:keypath(self.rowid)];
+        return unwrapNil(propertyName) == nil || [propertyName isEqualToString:keypath(self.rowid)];
     }];
 
     NSMutableDictionary *updateValues = [NSMutableDictionary dictionaryWithCapacity:properties.count];
     [properties bk_each:^(NSString *propertyName) {
-        updateValues[[self.class mappedColumnNameForProperty:propertyName]] = [self valueForKey:propertyName];
+        NSString *selectorName = [NSString
+            stringWithFormat:@"customColumnValueTransformFrom%@",
+                             [[propertyName substringToIndexSafety:1]
+                                 stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])]];
+        SEL selector = NSSelectorFromString(selectorName);
+        id value = nil;
+        if (selector != nil && [self respondsToSelector:selector]) {
+            value = ((id (*)(id, SEL))(void *) objc_msgSend)((id)self, selector);
+        } else {
+            value = [self valueForKey:propertyName];
+        }
+        updateValues[[self.class mappedColumnNameForProperty:propertyName]] = value;
     }];
     return updateValues;
 }
@@ -307,8 +358,8 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
             return obj == NSNull.null;
         }] al_flatten];
 
-        NSInteger idx1 = [allIndexedKeys indexOfObject:col1.propertyName];
-        NSInteger idx2 = [allIndexedKeys indexOfObject:col2.propertyName];
+        NSInteger idx1 = [allIndexedKeys indexOfObject:col1.property.name];
+        NSInteger idx2 = [allIndexedKeys indexOfObject:col2.property.name];
         if (idx1 != NSNotFound && idx2 != NSNotFound) {
             return [@(idx1) compare:@(idx2)];
         } else if (idx1 != NSNotFound) {
@@ -409,46 +460,46 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
                                                             columnIndex);
         return;
     }
-    
+
     if (property.setter == nil) {
         return;
     }
     SEL setter = property.setter;
     switch (property.type & YYEncodingTypeMask) {
         case YYEncodingTypeBool:  ///< bool
-            ((void (*)(id, SEL, bool))(void *) objc_msgSend)((id)model, setter, [rs boolForColumnIndex:columnIndex]);
+            ((void (*)(id, SEL, bool))(void *) objc_msgSend)((id) model, setter, [rs boolForColumnIndex:columnIndex]);
             break;
-            
+
         case YYEncodingTypeInt8:   ///< char / BOOL
         case YYEncodingTypeInt16:  ///< short
         case YYEncodingTypeInt32:  ///< int
-            ((void (*)(id, SEL, int))(void *) objc_msgSend)((id)model, setter, [rs intForColumnIndex:columnIndex]);
+            ((void (*)(id, SEL, int))(void *) objc_msgSend)((id) model, setter, [rs intForColumnIndex:columnIndex]);
             break;
-            
+
         case YYEncodingTypeUInt8:   ///< unsigned char
         case YYEncodingTypeUInt16:  ///< unsigned short
         case YYEncodingTypeUInt32:  ///< unsigned int
-            ((void (*)(id, SEL, uint))(void *) objc_msgSend)((id)model, setter,
+            ((void (*)(id, SEL, uint))(void *) objc_msgSend)((id) model, setter,
                                                              (uint) [rs intForColumnIndex:columnIndex]);
             break;
-            
+
         case YYEncodingTypeInt64:  ///< long long
-            ((void (*)(id, SEL, long long))(void *) objc_msgSend)((id)model, setter,
+            ((void (*)(id, SEL, long long))(void *) objc_msgSend)((id) model, setter,
                                                                   [rs longLongIntForColumnIndex:columnIndex]);
             break;
-            
+
         case YYEncodingTypeUInt64:  ///< unsigned long long
             ((void (*)(id, SEL, unsigned long long))(void *) objc_msgSend)(
-                                                                           (id) model, setter, [rs unsignedLongLongIntForColumnIndex:columnIndex]);
+                (id) model, setter, [rs unsignedLongLongIntForColumnIndex:columnIndex]);
             break;
-            
+
         case YYEncodingTypeFloat:       ///< float
         case YYEncodingTypeDouble:      ///< double
         case YYEncodingTypeLongDouble:  ///< long double
-            ((void (*)(id, SEL, CGFloat))(void *) objc_msgSend)((id)model, setter,
+            ((void (*)(id, SEL, CGFloat))(void *) objc_msgSend)((id) model, setter,
                                                                 [rs doubleForColumnIndex:columnIndex]);
             break;
-            
+
         default: {
             id value = nil;
             if ([property.cls isSubclassOfClass:[NSString class]]) {
@@ -483,7 +534,7 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
                     }
                     value = [value mutableCopy];
                 }
-                
+
             } else {
                 value = [rs dataForColumnIndex:columnIndex];
                 if (value != nil) {
@@ -495,11 +546,11 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
                     }
                 }
             }
-            
+
             if (value == NSNull.null) {
                 value = nil;
             }
-            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, setter, value);
+            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, setter, value);
         } break;
     }
 }
@@ -535,22 +586,21 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
     }
     
     NSMutableDictionary *columnPropertyMapper = [NSMutableDictionary dictionary];
-    //TODO: need to add "rowid"
-    [[modelClass allModelProperties] bk_each:^(NSString *name, YYClassPropertyInfo *p) {
-        NSString *mappedColName = [modelClass mappedColumnNameForProperty:name];
+    [[modelClass columns] bk_each:^(NSString *propertyName, ALDBColumnInfo *colInfo) {
+        NSString *mappedColName = [modelClass mappedColumnNameForProperty:propertyName];
         if (![columnNames containsObject:mappedColName]) {
             return;
         }
 
-        NSString *firstUpperPropertyName =
-            [[name substringToIndexSafety:1] stringByAppendingString:stringOrEmpty([name substringFromIndexSafety:1])];
+        NSString *firstUpperPropertyName = [[propertyName substringToIndexSafety:1]
+            stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])];
         NSString *customSetterName =
             [NSString stringWithFormat:@"customTransform%@FromRecord:columnIndex:", firstUpperPropertyName];
         SEL customSetter = NSSelectorFromString(customSetterName);
 
         _ColumnPropertyInfo *cpi = [[_ColumnPropertyInfo alloc] init];
-        cpi->_property           = p;
-        if ([modelClass instancesRespondToSelector:customSetter]) {
+        cpi->_property = colInfo.property;
+        if (customSetter != nil && [modelClass instancesRespondToSelector:customSetter]) {
             cpi->_customSetter = customSetter;
         }
 
@@ -568,7 +618,6 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
     while ([rs next]) {
         ALModel *oneModel = [[modelClass alloc] init];
         constructModelFromResultSet(rs, oneModel, columnPropertyMapper);
-        
         [models addObject:oneModel];
     }
     

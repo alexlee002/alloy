@@ -8,6 +8,7 @@
 
 #import "ALDBColumnInfo.h"
 #import "StringHelper.h"
+#import "YYClassInfo.h"
 
 @implementation ALDBColumnInfo
 
@@ -22,7 +23,7 @@
 }
 
 - (NSString *)description {
-    return [@[stringOrEmpty(self.propertyName), stringOrEmpty(self.columnDefine)] componentsJoinedByString:@" => "];
+    return [@[stringOrEmpty(self.property.name), stringOrEmpty(self.columnDefine)] componentsJoinedByString:@" => "];
 }
 
 @end

@@ -14,9 +14,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const kRowIdColumnName;
 
+@interface ALSQLSelectCommand (ActiveRecord)
+
+@property(nonatomic, readonly) NSArray<__kindof ALModel *> *_Nullable (^FETCH_MODELS)(void);
+@property(nonatomic, readonly) ALSQLSelectCommand *_Nonnull           (^APPLY_MODEL) (Class _Nonnull modelClass);
+
+- (void)fetchWithCompletion:(void (^_Nullable)(FMResultSet *_Nullable rs))completion;
+
+@end
+
+
+
 @class ALDBColumnInfo;
 @class YYClassPropertyInfo;
-@class FMResultSet;
 
 #pragma mark - active record
 @interface ALModel (ActiveRecord)
@@ -27,6 +37,7 @@ extern NSString * const kRowIdColumnName;
 + (NSDictionary<NSString *, ALDBColumnInfo *> *)columns;
 + (NSString *)mappedColumnNameForProperty:(NSString *)propertyName;
 + (nullable NSArray<__kindof ALModel *> *)modelsWithCondition:(nullable ALSQLCondition *)condition;
++ (ALSQLSelectCommand *)fetcher;
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted;
 - (BOOL)updateOrReplace:(BOOL)replaceExisted;
@@ -69,7 +80,7 @@ extern NSString * const kRowIdColumnName;
  *
  *  @return value to save to database
  */
-//- (id)customTransform{PropertyName}ValueToRecord;
+//- (id)customColumnValueTransformFrom{PropertyName};
 
 /**
  *  Custom transform property value from resultSet
