@@ -17,7 +17,7 @@ PODS:
   - FMDB (2.6):
     - FMDB/standard (= 2.6)
   - FMDB/standard (2.6)
-  - YYModel (0.9.12)
+  - YYModel (1.0.1)
 
 DEPENDENCIES:
   - BlocksKit
@@ -27,6 +27,6 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
   FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
-  YYModel: 33a27f41a995f4c36ff8178421bac9f221a9c7ea
+  YYModel: 794f0820a9a9703615bc166aa8e336abaf422c2b
 
 COCOAPODS: 0.39.0

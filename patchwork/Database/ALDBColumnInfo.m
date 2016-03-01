@@ -15,10 +15,14 @@
     _dataType = isEmptyString(dataType) ? @"BLOB" : dataType.uppercaseString;
 }
 
-- (NSString *)description {
+- (NSString *)columnDefine {
     return [self.name stringByAppendingFormat:@" %@%@",
             self.dataType,
             (isEmptyString(self.extra) ? @"" : [@" " stringByAppendingString:self.extra])];
+}
+
+- (NSString *)description {
+    return [@[stringOrEmpty(self.propertyName), stringOrEmpty(self.columnDefine)] componentsJoinedByString:@" => "];
 }
 
 @end

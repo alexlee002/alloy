@@ -40,7 +40,7 @@
 }
 
 - (ALSQLSelectConditionBlock)WHERE {
-    return ^ALSQLSelectCommand *_Nonnull(ALSQLCondition *_Nonnull condition) {
+    return ^ALSQLSelectCommand *_Nonnull(ALSQLCondition *_Nullable condition) {
         [condition build];
         self->_where = condition;
         return self;

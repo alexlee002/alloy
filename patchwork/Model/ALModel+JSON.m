@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "ALModel.h"
+#import "ALModel+JSON.h"
 #import "YYModel.h"
 #import "BlocksKit.h"
 #import "StringHelper.h"
@@ -15,6 +15,7 @@
 #import "ALOCRuntime.h"
 
 #import <objc/message.h>
+#import <objc/runtime.h>
 
 //NSString * const kInternalObjectPrefix = @"_al_internal_";
 
@@ -31,29 +32,27 @@ static FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
                                         NSDictionary<NSString *, YYClassPropertyInfo *> *copyingProperties);
 
 #pragma mark -
-/**
- *  private data struct
- */
-@interface _CustomTransformMethodInfo : NSObject {
-    @package
-    YYClassPropertyInfo *_property;
-    SEL                  _selector;
-    Class                _classType;
-}
-@end
-@implementation _CustomTransformMethodInfo
+
+@implementation ALCustomTransformMethodInfo
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface ALModel () <YYModel>
-@property(nonatomic, strong, nullable)
-NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
-@end
+@implementation ALModel(JSON)
 
-@implementation ALModel
+#pragma mark - ivar associations
 
+static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers;
+- (void)setCustomToJSONTransformers:(nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)transformers {
+    objc_setAssociatedObject(self, kCustomToJSONTransformers, transformers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSDictionary<NSString *, ModelCustomTransformToJSON> *)customToJSONTransformers {
+    return objc_getAssociatedObject(self, kCustomToJSONTransformers);
+}
+
+#pragma mark -
 + (nullable instancetype)modelCopyFromModel:(__kindof ALModel *)other {
     ALModel *model = [[self alloc] init];
     [model modelCopyProperties:nil fromModel:other];
@@ -120,10 +119,11 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 }
 
 - (nullable id)modelToJSONObjectWithCustomTransformers:
-(nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)customTransformers {
-    self.customTransformers = customTransformers;
+    (nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)customTransformers {
+    
+    [self setCustomToJSONTransformers:customTransformers];
     id json = [self yy_modelToJSONObject];
-    self.customTransformers = nil;
+    [self setCustomToJSONTransformers:nil];
     return json;
 }
 
@@ -132,10 +132,11 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 }
 
 - (nullable NSData *)modelToJSONDataWithCustomTransformers:
-(nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)customTransformers {
-    self.customTransformers = customTransformers;
+    (nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)customTransformers {
+    
+    [self setCustomToJSONTransformers:customTransformers];
     id json = [self yy_modelToJSONData];
-    self.customTransformers = nil;
+    [self setCustomToJSONTransformers:nil];
     return json;
 }
 
@@ -144,10 +145,11 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 }
 
 - (nullable NSString *)modelToJSONStringWithCustomTransformers:
-(nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)customTransformers {
-    self.customTransformers = customTransformers;
+    (nullable NSDictionary<NSString *, ModelCustomTransformToJSON> *)customTransformers {
+    
+    [self setCustomToJSONTransformers:customTransformers];
     id json = [self yy_modelToJSONString];
-    self.customTransformers = nil;
+    [self setCustomToJSONTransformers:nil];
     return json;
 }
 
@@ -185,15 +187,19 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 
 #pragma mark - YYModel protocol
 
-+ (NSArray *)modelPropertyBlacklist {
-    return @[ keypathForClass(ALModel, customTransformers) ];
++ (nullable NSArray<NSString *> *)modelPropertyBlacklist {
+    return [ALOCRuntime propertiesOfProtocol:@protocol(NSObject)].allKeys;
 }
 
-- (BOOL)modelCustomTransformFromDictionary:(NSDictionary *)dic {
-    static NSDictionary<NSString *, NSArray<_CustomTransformMethodInfo *> *> *customTransformers;
+- (nullable NSDictionary<NSString *, NSArray<ALCustomTransformMethodInfo *> *> *)modelCustomFromJSONTransformers {
+    static NSDictionary<NSString *, NSArray<ALCustomTransformMethodInfo *> *> *customTransformers;
     
     static __weak id methodInfos = nil;
     static dispatch_semaphore_t lock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        lock = dispatch_semaphore_create(1);
+    });
     
     dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
     YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
@@ -202,14 +208,17 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
         customTransformers = [self customModelPropertySetters];
     }
     dispatch_semaphore_signal(lock);
-    
-    [customTransformers bk_each:^(NSString *propertyName, NSArray<_CustomTransformMethodInfo *> *transformers) {
+    return customTransformers;
+}
+
+- (BOOL)modelCustomTransformFromDictionary:(NSDictionary *)dic {
+    [[self modelCustomFromJSONTransformers] bk_each:^(NSString *propertyName, NSArray<ALCustomTransformMethodInfo *> *transformers) {
         NSArray<NSString *> *keys = [self mappedKeysForProperty:propertyName];
         id value = [self valueForKeys:keys OfDictionary:dic];
         if (value == nil) {
             return;
         }
-        [transformers bk_each:^(_CustomTransformMethodInfo *info) {
+        [transformers bk_each:^(ALCustomTransformMethodInfo *info) {
             if ([value isKindOfClass:info->_classType]) {
                 ((void (*)(id, SEL, id))(void *) objc_msgSend)(self, info->_selector, value);
             }
@@ -220,12 +229,12 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 }
 
 - (BOOL)modelCustomTransformToDictionary:(NSMutableDictionary *)dic {
-    [self.customTransformers bk_each:^(NSString *propertyName, ModelCustomTransformToJSON block) {
+    [[self customToJSONTransformers] bk_each:^(NSString *propertyName, ModelCustomTransformToJSON block) {
         YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
         YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
         id value = nil;
-        if (property.getter.length > 0) {
-            value = ((id (*)(id, SEL))(void *) objc_msgSend)(self, NSSelectorFromString(property.getter));
+        if (property.getter != nil) {
+            value = ((id (*)(id, SEL))(void *) objc_msgSend)(self, property.getter);
         }
         if ((id)block != NSNull.null) {
             block(propertyName, value);
@@ -246,7 +255,7 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
     return nil;
 }
 
-- (nullable NSDictionary<NSString *, NSArray<_CustomTransformMethodInfo *> *> *)customModelPropertySetters {
+- (nullable NSDictionary<NSString *, NSArray<ALCustomTransformMethodInfo *> *> *)customModelPropertySetters {
     static NSRegularExpression *regexp = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -256,7 +265,7 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
                                    error:nil];
     });
 
-    NSMutableDictionary<NSString *, NSArray<_CustomTransformMethodInfo *> *> *customTransformers;
+    NSMutableDictionary<NSString *, NSArray<ALCustomTransformMethodInfo *> *> *customTransformers;
     YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
 
     [classInfo.methodInfos bk_each:^(NSString *selector, YYClassMethodInfo *m) {
@@ -267,7 +276,7 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
             Class classType = NSClassFromString(stringOrEmpty([selector substringWithRange:[result rangeAtIndex:2]]));
             YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
             if (property != nil && classType != nil) {
-                _CustomTransformMethodInfo *info = [[_CustomTransformMethodInfo alloc] init];
+                ALCustomTransformMethodInfo *info = [[ALCustomTransformMethodInfo alloc] init];
                 info->_selector  = m.sel;
                 info->_classType = classType;
                 info->_property  = property;
@@ -282,10 +291,10 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
         }
     }];
 
-    return [customTransformers bk_map:^NSArray<_CustomTransformMethodInfo *> *(
-                                   NSString *propertyName, NSArray<_CustomTransformMethodInfo *> *transformers) {
-        return [transformers sortedArrayUsingComparator:^NSComparisonResult(_CustomTransformMethodInfo *_Nonnull obj1,
-                                                                            _CustomTransformMethodInfo *_Nonnull obj2) {
+    return [customTransformers bk_map:^NSArray<ALCustomTransformMethodInfo *> *(
+                                   NSString *propertyName, NSArray<ALCustomTransformMethodInfo *> *transformers) {
+        return [transformers sortedArrayUsingComparator:^NSComparisonResult(ALCustomTransformMethodInfo *_Nonnull obj1,
+                                                                            ALCustomTransformMethodInfo *_Nonnull obj2) {
             return [obj1->_classType isSubclassOfClass:obj2->_classType] ? NSOrderedAscending : NSOrderedDescending;
         }];
     }];
@@ -337,53 +346,14 @@ NSDictionary<NSString *, ModelCustomTransformToJSON> *customTransformers;
 @end
 
 
-@implementation ALModel (ClassMetas)
-
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)allModelProperties {
-    NSMutableDictionary<NSString *, YYClassPropertyInfo *> *allProperties = [NSMutableDictionary dictionary];
-    YYClassInfo *info = [YYClassInfo classInfoWithClass:self];
-    while (info && info.cls != ALModel.class) {
-        [allProperties addEntriesFromDictionary:info.propertyInfos];
-        info = info.superClassInfo;
-    }
-    return allProperties;
-}
-
-+ (NSDictionary<NSString *, YYClassIvarInfo *> *)allModelIvars {
-    NSMutableDictionary<NSString *, YYClassIvarInfo *> *allIvars = [NSMutableDictionary dictionary];
-    YYClassInfo *info = [YYClassInfo classInfoWithClass:self];
-    while (info && info.cls != ALModel.class) {
-        [allIvars addEntriesFromDictionary:info.ivarInfos];
-        info = info.superClassInfo;
-    }
-    return allIvars;
-}
-
-+ (NSDictionary<NSString *, YYClassMethodInfo *> *)allModelMethods {
-    NSMutableDictionary<NSString *, YYClassMethodInfo *> *allMethods = [NSMutableDictionary dictionary];
-    YYClassInfo *info = [YYClassInfo classInfoWithClass:self];
-    while (info && info.cls != ALModel.class) {
-        [allMethods addEntriesFromDictionary:info.methodInfos];
-        info = info.superClassInfo;
-    }
-    return allMethods;
-}
-
-+ (BOOL)hasModelProperty:(NSString *)propertyName {
-    return [self allModelProperties][propertyName] != nil;
-}
-
-@end
-
-
 FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
                                  NSDictionary<NSString *, YYClassPropertyInfo *> *copyingProperties) {
     if (from == nil || to == nil || copyingProperties.count == 0) {
         return;
     }
     [copyingProperties bk_each:^(NSString *name, YYClassPropertyInfo *p) {
-        SEL getter = NSSelectorFromString(p.getter);
-        SEL setter = NSSelectorFromString(p.setter);
+        SEL getter = p.getter;
+        SEL setter = p.setter;
         
         if (getter == nil || setter == nil) {
             return;
@@ -442,7 +412,7 @@ FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
             case YYEncodingTypeStruct:
             case YYEncodingTypeUnion: {
                 @try {
-                    NSValue *value = [from valueForKey:p.getter];
+                    NSValue *value = [from valueForKey:p.name];
                     if (value) {
                         [to setValue:value forKey:p.name];
                     }

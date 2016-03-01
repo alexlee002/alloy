@@ -7,18 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "YYClassInfo.h"
 
 @interface ALOCRuntime : NSObject
 
 + (NSSet<Class> *)classConfirmsToProtocol:(Protocol *)protocol;
 + (NSSet<Class> *)subClassesOf:(Class)clazz;
 
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)propertiesOfProtocol:(Protocol *)protocol;
+
 @end
 
 
-@class YYClassPropertyInfo;
-@class YYClassIvarInfo;
-@class YYClassMethodInfo;
 @interface NSObject (ClassMetasExtension)
 
 + (Class)commonAncestorWithClass:(Class)other;

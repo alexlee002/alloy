@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class  ALSQLSelectCommand;
 typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockStrArray)  (NSArray<NSString *> *_Nullable strs);
 typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockString)    (NSString            *_Nullable str);
-typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectConditionBlock) (ALSQLCondition      *_Nonnull condition);
-typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockNumArray)  (NSArray<NSNumber *> *_Nonnull nums);
+typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectConditionBlock) (ALSQLCondition      *_Nullable condition);
+typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockNumArray)  (NSArray<NSNumber *> *_Nullable nums);
 
 @interface ALSQLSelectCommand : ALSQLCommand
 

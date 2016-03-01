@@ -27,6 +27,10 @@ extern BOOL      isEmptyString(NSString *_Nullable string);
 @interface NSString (StringHelper)
 
 - (NSUInteger)occurrencesCountOfString:(NSString *)substring;
+- (NSString *)stringByConvertingCamelCaseToUnderscore;
+- (nullable NSString *)substringToIndexSafety:(NSUInteger)to;
+- (nullable NSString *)substringFromIndexSafety:(NSUInteger)from;
+- (nullable NSString *)substringWithRangeSafety:(NSRange)range;
 
 @end
 

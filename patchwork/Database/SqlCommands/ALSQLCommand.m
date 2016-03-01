@@ -7,7 +7,7 @@
 //
 
 #import "ALSQLCommand.h"
-#import "FMDatabase.h"
+#import "ALDatabase.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,7 +23,7 @@ NSString * const kALDBConflictPolicyReplace     = @"OR REPLACE";
 @synthesize db = _db;
 
 
-+ (instancetype)commandWithDatabase:(FMDatabase *)db {
++ (instancetype)commandWithDatabase:(ALDatabase *)db {
     ALSQLCommand *command = [[self alloc] init];
     command->_db = db;
     return command;
@@ -39,13 +39,25 @@ NSString * const kALDBConflictPolicyReplace     = @"OR REPLACE";
 
 - (ALSQLExecuteQueryBlock)EXECUTE_QUERY {
     return ^FMResultSet *_Nullable(void) {
-        return [_db executeQuery:[self sql] withArgumentsInArray:_sqlArgs];
+        __block FMResultSet *rs = nil;
+        [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
+            NSString *sql = [self sql];
+            ALLogVerbose(@"sql: %@\nargs: %@", sql, _sqlArgs);
+            rs = [db executeQuery:sql withArgumentsInArray:_sqlArgs];
+        }];
+        return rs;
     };
 }
 
 - (ALSQLExecuteUpdateBlock)EXECUTE_UPDATE {
     return ^BOOL(void) {
-        return [_db executeUpdate:[self sql] withArgumentsInArray:_sqlArgs];
+        __block BOOL rs = YES;
+        [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
+            NSString *sql = [self sql];
+            ALLogVerbose(@"sql: %@\nargs: %@", sql, _sqlArgs);
+            rs = [db executeUpdate:sql withArgumentsInArray:_sqlArgs];
+        }];
+        return rs;
     };
 }
 

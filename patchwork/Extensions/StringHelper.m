@@ -70,6 +70,52 @@ FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
     return count;
 }
 
+- (NSString *)stringByConvertingCamelCaseToUnderscore {
+    NSScanner *scanner = [NSScanner scannerWithString:self];
+    scanner.caseSensitive = YES;
+    
+    NSCharacterSet *uppercase = [NSCharacterSet uppercaseLetterCharacterSet];
+    NSCharacterSet *lowercase = [NSCharacterSet lowercaseLetterCharacterSet];
+    
+    NSString *buffer = nil;
+    NSMutableString *output = [NSMutableString string];
+    
+    while (scanner.isAtEnd == NO) {
+        
+        if ([scanner scanCharactersFromSet:uppercase intoString:&buffer]) {
+            [output appendString:[buffer lowercaseString]];
+        }
+        
+        if ([scanner scanCharactersFromSet:lowercase intoString:&buffer]) {
+            [output appendString:buffer];
+            if (!scanner.isAtEnd)
+                [output appendString:@"_"];
+        }
+    }
+    
+    return [output copy];
+}
+
+- (nullable NSString *)substringToIndexSafety:(NSUInteger)to {
+    return to < self.length ? [self substringToIndex:to] : nil;
+}
+
+- (nullable NSString *)substringFromIndexSafety:(NSUInteger)from {
+    return from < self.length ? [self substringFromIndex:from] : nil;
+}
+
+- (nullable NSString *)substringWithRangeSafety:(NSRange)range {
+    if (range.location < self.length) {
+        if (range.location + range.length < self.length) {
+            return [self substringWithRange:range];
+        } else {
+            return [self substringFromIndex:range.location];
+        }
+    } else {
+        return nil;
+    }
+}
+
 @end
 
 

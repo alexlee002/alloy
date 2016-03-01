@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ALSQLCondition.h"
-#import "FMResultSet.h"
+#import "FMDB.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +27,7 @@ extern NSString * const kALDBConflictPolicyReplace;
 #pragma mark - functions
 
 
-@class FMDatabase;
+@class ALDatabase;
 @interface ALSQLCommand : NSObject {
     @protected
     ALSQLCondition *_where;
@@ -35,21 +35,15 @@ extern NSString * const kALDBConflictPolicyReplace;
     NSArray        *_sqlArgs;
 }
 
-@property(nonatomic, readonly, weak) FMDatabase *db;
+@property(nonatomic, readonly, weak) ALDatabase *db;
 
 @property(nonatomic, readonly) ALSQLExecuteQueryBlock  EXECUTE_QUERY;
 @property(nonatomic, readonly) ALSQLExecuteUpdateBlock EXECUTE_UPDATE;
 
-+ (instancetype)commandWithDatabase:(FMDatabase *)db;
++ (instancetype)commandWithDatabase:(ALDatabase *)db;
 
 - (nullable NSString *)sql;
 - (nullable NSArray  *)sqlArgs;
-
-#pragma mark - execute raw sql
-- (nullable FMResultSet *)executeQuery:(NSString *)sql, ...;
-- (nullable FMResultSet *)executeQuery:(NSString *)sql arguments:(nullable NSArray *)args;
-- (BOOL)executeUpdate:(NSString *)sql, ...;
-- (BOOL)executeUpdate:(NSString *)sql arguments:(nullable NSArray *)args;
 
 @end
 

@@ -11,9 +11,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ALDBColumnInfo: NSObject
+@property(nonatomic, copy)              NSString *propertyName;
 @property(nonatomic, copy)              NSString *name;
 @property(nonatomic, copy)              NSString *dataType;
 @property(nonatomic, copy, nullable)    NSString *extra;
+
+- (NSString *)columnDefine;
+
 @end
 
 NS_ASSUME_NONNULL_END

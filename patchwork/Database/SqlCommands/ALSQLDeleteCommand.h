@@ -8,6 +8,19 @@
 
 #import "ALSQLCommand.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class  ALSQLDeleteCommand;
+@class  ALSQLCondition;
+typedef ALSQLDeleteCommand *_Nonnull (^ALSQLDeleteBlockString)    (NSString            *_Nullable str);
+typedef ALSQLDeleteCommand *_Nonnull (^ALSQLDeleteConditionBlock) (ALSQLCondition      *_Nullable condition);
+
 @interface ALSQLDeleteCommand : ALSQLCommand
 
+@property(nonatomic, readonly) ALSQLDeleteBlockString       DELETE_FROM;
+//@property(nonatomic, readonly) ALSQLDeleteBlockString       TRUNCATE;
+@property(nonatomic, readonly) ALSQLDeleteConditionBlock    WHERE;
+
 @end
+
+NS_ASSUME_NONNULL_END

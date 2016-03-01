@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import <objc/runtime.h>
 
 @interface GCDSyncTest : NSObject
 
@@ -40,17 +41,37 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 }
 
 - (void)syncTest:(dispatch_block_t)block callerThread:(NSThread *)th{
-    //[self safelyRun:block];
-    //    GCDSyncTest *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueSpecificKey);
-    //    NSAssert(currentSyncQueue != self, @"maybe deadlock!");
-    
-    NSLog(@">>> caller: %@", th);
-    dispatch_sync(_queue, ^{
-        block();
-    });
+    [self safelyRun:block];
+//    //    GCDSyncTest *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueSpecificKey);
+//    //    NSAssert(currentSyncQueue != self, @"maybe deadlock!");
+//    
+//    NSLog(@">>> caller: %@", th);
+//    dispatch_sync(_queue, ^{
+//        block();
+//    });
     
 }
 
+@end
+
+@interface TestCase1 : NSObject
+
+- (void)instanceMethod;
++ (void)classMethod;
+
+@end
+
+@implementation TestCase1
+
+- (void)instanceMethod {}
++ (void)classMethod {}
+
+@end
+
+@interface TestCase1_1 : TestCase1
+@end
+
+@implementation TestCase1_1
 @end
 
 @interface AppDelegate ()
@@ -67,6 +88,160 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[UIViewController alloc] init];
     
+
+    //[self syncTest];
+    
+    if ([TestCase1 respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"class responds to instanceMethod");
+    }
+    
+    if ([TestCase1 respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"class responds to classMethod");
+    }
+    
+    if ([TestCase1 instancesRespondToSelector:@selector(instanceMethod)]) {
+        NSLog(@"class instancesRespond to instanceMethod");
+    }
+    
+    if ([TestCase1 instancesRespondToSelector:@selector(classMethod)]) {
+        NSLog(@"class instancesRespond to classMethod");
+    }
+    
+    Class cls = [TestCase1 class];
+    NSLog(@"cls is metaclass: %@", @(class_isMetaClass(cls)));
+    if ([cls respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"cls responds to instanceMethod");
+    }
+    
+    if ([cls respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"cls responds to classMethod");
+    }
+    
+    if ([cls instancesRespondToSelector:@selector(instanceMethod)]) {
+        NSLog(@"cls instancesRespond to instanceMethod");
+    }
+    
+    if ([cls instancesRespondToSelector:@selector(classMethod)]) {
+        NSLog(@"cls instancesRespond to classMethod");
+    }
+    
+    if (class_respondsToSelector(cls, @selector(instanceMethod))) {
+        NSLog(@"cls class_respondsToSelector instanceMethod");
+    }
+    if (class_respondsToSelector(cls, @selector(classMethod))) {
+        NSLog(@"cls class_respondsToSelector classMethod");
+    }
+    
+    TestCase1 *t = [[TestCase1 alloc] init];
+    if ([t respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"instance responds to instanceMethod");
+    }
+    
+    if ([t respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"instance responds to classMethod");
+    }
+    
+    if ([t.class instancesRespondToSelector:@selector(instanceMethod)]) {
+        NSLog(@"instance.class instancesRespond to instanceMethod");
+    }
+    
+    if ([t.class instancesRespondToSelector:@selector(classMethod)]) {
+        NSLog(@"instance.class instancesRespond to classMethod");
+    }
+    
+    if ([t.class respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"instance.class responds to instanceMethod");
+    }
+    
+    if ([t.class respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"instance.class responds to classMethod");
+    }
+    
+    if (class_respondsToSelector(t.class, @selector(instanceMethod))) {
+        NSLog(@"instance.class class_respondsToSelector instanceMethod");
+    }
+    if (class_respondsToSelector(t.class, @selector(classMethod))) {
+        NSLog(@"instance.class class_respondsToSelector classMethod");
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    
+    if ([TestCase1_1 respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"subclass responds to instanceMethod");
+    }
+    
+    if ([TestCase1_1 respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"subclass responds to classMethod");
+    }
+    
+    if ([TestCase1_1 instancesRespondToSelector:@selector(instanceMethod)]) {
+        NSLog(@"subclass instancesRespond to instanceMethod");
+    }
+    
+    if ([TestCase1_1 instancesRespondToSelector:@selector(classMethod)]) {
+        NSLog(@"subclass instancesRespond to classMethod");
+    }
+    
+    cls = [TestCase1_1 class];
+    if ([cls respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"subcls responds to instanceMethod");
+    }
+    
+    if ([cls respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"subcls responds to classMethod");
+    }
+    
+    if ([cls instancesRespondToSelector:@selector(instanceMethod)]) {
+        NSLog(@"subcls instancesRespond to instanceMethod");
+    }
+    
+    if ([cls instancesRespondToSelector:@selector(classMethod)]) {
+        NSLog(@"subcls instancesRespond to classMethod");
+    }
+    
+    if (class_respondsToSelector(cls, @selector(instanceMethod))) {
+        NSLog(@"subcls class_respondsToSelector instanceMethod");
+    }
+    if (class_respondsToSelector(cls, @selector(classMethod))) {
+        NSLog(@"subcls class_respondsToSelector classMethod");
+    }
+    
+    t = [[TestCase1_1 alloc] init];
+    if ([t respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"sub instance responds to instanceMethod");
+    }
+    
+    if ([t respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"sub instance responds to classMethod");
+    }
+    
+    if ([t.class instancesRespondToSelector:@selector(instanceMethod)]) {
+        NSLog(@"sub instance.class instancesRespond to instanceMethod");
+    }
+    
+    if ([t.class instancesRespondToSelector:@selector(classMethod)]) {
+        NSLog(@"sub instance.class instancesRespond to classMethod");
+    }
+    
+    if ([t.class respondsToSelector:@selector(instanceMethod)]) {
+        NSLog(@"sub instance.class responds to instanceMethod");
+    }
+    
+    if ([t.class respondsToSelector:@selector(classMethod)]) {
+        NSLog(@"sub instance.class responds to classMethod");
+    }
+    
+    if (class_respondsToSelector(t.class, @selector(instanceMethod))) {
+        NSLog(@"sub instance.class class_respondsToSelector instanceMethod");
+    }
+    if (class_respondsToSelector(t.class, @selector(classMethod))) {
+        NSLog(@"sub instance.class class_respondsToSelector classMethod");
+    }
+    
+    return YES;
+}
+
+- (void)syncTest {
     GCDSyncTest *t = [[GCDSyncTest alloc] init];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSLog(@"==== main thread 1 ====");
@@ -75,6 +250,12 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
                 [NSThread sleepForTimeInterval:1.f];
                 NSLog(@"==== main thread 1: %zd", i);
             }
+            [t syncTest:^{
+                for (int i = 0; i < 5; ++i) {
+                    [NSThread sleepForTimeInterval:1.f];
+                    NSLog(@"---- main thread 1 nested: %zd", i);
+                }
+            } callerThread:nil];
         } callerThread:nil];
     });
     
@@ -95,6 +276,12 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
                 [NSThread sleepForTimeInterval:1.f];
                 NSLog(@"==== main thread 3: %zd", i);
             }
+            [t syncTest:^{
+                for (int i = 0; i < 5; ++i) {
+                    [NSThread sleepForTimeInterval:1.f];
+                    NSLog(@"---- main thread 3 nested: %zd", i);
+                }
+            } callerThread:nil];
         } callerThread:nil];
     });
     
@@ -103,11 +290,15 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
         for (NSInteger i = 0; i < 10; ++i) {
             [NSThread sleepForTimeInterval:1.f];
             NSLog(@"---- main thread: %zd", i);
+            
+            [t syncTest:^{
+                for (int i = 0; i < 2; ++i) {
+                    [NSThread sleepForTimeInterval:1.f];
+                    NSLog(@"---- main thread nested: %zd", i);
+                }
+            } callerThread:nil];
         }
     } callerThread:nil];
-
-    
-    return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

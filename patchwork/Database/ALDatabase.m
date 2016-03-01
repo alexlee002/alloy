@@ -9,9 +9,9 @@
 #import "ALDatabase.h"
 #import "StringHelper.h"
 #import "FMDB.h"
-#import "ALDatabaseModelProtocol.h"
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
+#import "ALModel.h"
 #import "ALSQLSelectCommand.h"
 #import "ALSQLUpdateCommand.h"
 #import "ALSQLInsertCommand.h"
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 
 @implementation ALDatabase {
-    NSSet<Class>      *_tableModels;
+    NSSet<Class>      *_modelClasses;
     BOOL               _dbFileExisted;
 }
 
@@ -67,7 +67,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         // if the original database existed and did not set the version information,
         // we need to make a distinction between 'database not exists' and 'database version = 0'
         _dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path];
-        _database = [[ALFMDatabaseQueue alloc] initWithPath:path];
+        _queue = [[ALFMDatabaseQueue alloc] initWithPath:path];
         if (![self open]) {
             self = nil;
         }
@@ -89,29 +89,38 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 }
 
 - (BOOL)open {
-    if (_database == nil) {
+    if (_queue == nil) {
         return NO;
-    }
-    
-    NSSet *objTables = [self tableModels];
-    if (objTables.count == 0) {
-        ALLogWarn(@"*** Not found any object store in database:%@", _database.path);
-        return YES;
     }
     
     id<ALDBMigrationProtocol> migrationProcessor =
         [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBMigrationProtocol)] bk_select:^BOOL(Class cls){
-            return [cls canMigrateDatabaseWithPath:_database.path];
+            return [cls canMigrateDatabaseWithPath:_queue.path];
         }].anyObject;
     
-    if (migrationProcessor == nil) {
-        ALLogWarn(@"*** Not found any migration processor for database:%@", _database.path);
-        return YES;
-    }
-    
     __block BOOL ret = YES;
-    [_database inDatabase:^(FMDatabase * _Nonnull db) {
+    [_queue inDatabase:^(FMDatabase * _Nonnull db) {
         [db closeOpenResultSets];
+        
+        if (migrationProcessor == nil) {
+            ALLogWarn(@"*** Not found any migration processor for database:%@", _queue.path);
+            
+            NSSet *objTables = [self modelClasses];
+            if (objTables.count == 0) {
+                ALLogWarn(@"*** Not found any object store in database:%@", _queue.path);
+                ret = YES;
+                return;
+            }
+            
+            [objTables bk_each:^(Class cls) {
+                [db executeUpdate:[cls tableSchema]];
+                [[cls indexStatements] bk_each:^(NSString *sql) {
+                    [db executeUpdate:sql];
+                }];
+            }];
+            ret = YES;
+            return;
+        }
         
         // all the database version should begins from 1 (DO NOT begins from 0 !!!)
         NSInteger newVersion = [migrationProcessor currentVersion];
@@ -122,7 +131,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
                     ret = NO;
                 }
             } else {
-                NSAssert(NO, @"Can not setup database: %@", _database.path);
+                NSAssert(NO, @"Can not setup database: %@", _queue.path);
                 ret = NO;
             }
             return;
@@ -140,7 +149,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
                 }
             } else {
                 NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
-                         _database.path);
+                         _queue.path);
                 ret = NO;
             }
         }
@@ -152,56 +161,54 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 - (BOOL)updateDatabaseVersion:(NSInteger)version handler:(FMDatabase *)db {
     BOOL ret = [db executeUpdate:@"PRAGMA user_version=?;", @(version)];
     if (!ret) {
-        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _database.path,
+        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
                   [db lastError]);
     }
     return ret;
 }
 
 - (void)close {
-    [kDatabaseDict removeObjectForKey:_database.path];
-    [_database close];
+    [kDatabaseDict removeObjectForKey:_queue.path];
+    [_queue close];
 }
 
 
 
-- (NSSet<Class> *)tableModels {
-    if (_tableModels != nil) {
-        return _tableModels;
+- (NSSet<Class> *)modelClasses {
+    if (_modelClasses != nil) {
+        return _modelClasses;
     }
 
-    _tableModels =
-        [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDatabaseModelProtocol)] bk_select:^BOOL(Class cls) {
-            return [cls respondsToSelector:@selector(databasePath)] &&
-                   [[cls databasePath] isEqualToString:_database.path];
-        }];
+    _modelClasses = [[ALOCRuntime subClassesOf:[ALModel class]] bk_select:^BOOL(Class cls) {
+        return [[cls databaseIdentifier] isEqualToString:_queue.path];
+    }];
 
-    return _tableModels;
+    return _modelClasses;
 }
 
 #pragma mark - database operations
 
 - (ALSQLSelectBlock)SELECT {
     return ^ ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
-        ALSQLSelectCommand *command = [ALSQLSelectCommand commandWithDatabase:nil];
-        command.SELECT(columns);
-        return command;
+        return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
     };
 }
 
 - (ALSQLUpdateBlock)UPDATE {
     return ^ALSQLUpdateCommand *_Nonnull(NSString *_Nonnull table) {
-        ALSQLUpdateCommand *command = [ALSQLUpdateCommand commandWithDatabase:nil];
-        command.UPDATE(table);
-        return command;
+        return [ALSQLUpdateCommand commandWithDatabase:self].UPDATE(table);
     };
 }
 
 - (ALSQLInsertBlock)INSERT {
     return ^ALSQLInsertCommand *_Nonnull(NSString *_Nonnull table) {
-        ALSQLInsertCommand *command = [ALSQLInsertCommand commandWithDatabase:nil];
-        command.INSERT(table);
-        return command;
+        return [ALSQLInsertCommand commandWithDatabase:self].INSERT(table);
+    };
+}
+
+- (ALSQLDeleteBlock)DELETE_FROM {
+    return ^ALSQLDeleteCommand *_Nonnull(NSString *_Nonnull table) {
+        return [ALSQLDeleteCommand commandWithDatabase:self].DELETE_FROM(table);
     };
 }
 

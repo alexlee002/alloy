@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "ALModel+DBManage.h"
+#import "ALModel.h"
 #import "UtilitiesHeader.h"
 #import "ALDatabase.h"
 #import "FMDB.h"
@@ -20,7 +20,6 @@
 
 
 @interface TestUser : ALModel
-@property(nonatomic)        NSInteger Id;
 @property(nonatomic, copy)  NSString *name;
 @property(nonatomic)        NSInteger age;
 @property(nonatomic, copy)  NSString *addr;
@@ -36,14 +35,13 @@
 @implementation TestUser(DBManage)
 
 + (NSString *)tableName { return @"user"; }
-+ (NSUInteger)tableVersion { return 2; }
-+ (NSString *)databasePath {
++ (NSString *)databaseIdentifier {
     NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"test_1.db"];
     return path;
 }
 
 + (nullable NSArray<NSString *> *)primaryKeys {
-    return @[ keypathForClass(TestUser, Id) ];
+    return nil;
 }
 
 + (nullable NSArray<NSArray<NSString *> *> *)uniqueKeys {
@@ -52,27 +50,6 @@
 
 + (nullable NSArray<NSArray<NSString *> *> *)indexKeys {
     return nil;
-}
-
-+ (BOOL)upgradeTableFromVersion:(NSInteger)fromVersion toVerion:(NSInteger)toVersion database:(FMDatabase *)db {
-    NSMutableSet *existsCols = [NSMutableSet set];
-    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"PRAGMA table_info(%@)", [self tableName]]];
-    while ([rs next]) {
-        [existsCols addObject:[rs stringForColumn:@"name"]];
-    }
-    [rs close];
-    
-    [[[self columnDefines] bk_reject:^BOOL(ALDBColumnInfo *col) {
-        return [existsCols containsObject:col.name];
-    }] bk_each:^(ALDBColumnInfo *col) {
-        NSString *sql = [NSString stringWithFormat:@"ALTER TABLE %@ ADD %@", [self tableName], col.description];
-        if (![db executeUpdate:sql]) {
-            ALLogError(@"sql: %@\nerror: %@", sql, [db lastError]);
-        }
-    }];
-    
-    [self createIndexes:db];
-    return YES;
 }
 
 @end
@@ -85,17 +62,16 @@
 
 - (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+    //[[NSFileManager defaultManager] removeItemAtPath:[TestUser databaseIdentifier] error:nil];
 }
 
 - (void)testSetupDB {
-    //[[NSFileManager defaultManager] removeItemAtPath:[TestUser databasePath] error:nil];
-    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
+    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];
     XCTAssertNotNil(db);
 }
 
 - (void)testSQLSelect {
-    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
+    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];
     XCTAssertNotNil(db);
     if (!db) {
         return;
@@ -106,7 +82,7 @@
 }
 
 - (void)testSQLUpdate {
-    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
+    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];
     XCTAssertNotNil(db);
     if (!db) {
         return;
@@ -129,7 +105,7 @@
 }
 
 - (void)testSQLInsert {
-    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databasePath]];
+    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];
     XCTAssertNotNil(db);
     if (!db) {
         return;
@@ -158,6 +134,40 @@
               .sql;
     ALLogInfo("%@", sql);
     XCTAssertEqualObjects(sql, @"INSERT OR REPLACE INTO user(name, age, addr) SELECT name, age, addr FROM user WHERE (addr IS NULL) LIMIT 2");
+}
+
+#pragma mark - active record
+
+- (void)testActiveRecord {
+    [[NSFileManager defaultManager] removeItemAtPath:[TestUser databaseIdentifier] error:nil];
+    
+    TestUser *user = [[TestUser alloc] init];
+    user.name = @"Alex Lee";
+    user.age = 35;
+    user.addr = @"Beijing";
+    [user saveOrReplce:YES];
+    
+    TestUser *user1 = [TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @35)].firstObject;
+    XCTAssertEqualObjects(user1.name, user.name);
+    XCTAssertEqualObjects(user1.addr, user.addr);
+    
+    user1.age = 40;
+    [user1 updateOrReplace:YES];
+    XCTAssertTrue([TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @35)].count == 0);
+    XCTAssertTrue([TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @40)].count == 1);
+    
+    [user1 deleteRecord];
+    XCTAssertTrue([TestUser modelsWithCondition:nil].count == 0);
+    
+    NSInteger count = 10;
+    for (NSInteger i = 0; i < count; ++i) {
+        TestUser *user0 = [[TestUser alloc] init];
+        user0.age = 30 + i;
+        user0.name = [NSString stringWithFormat:@"alex %zd", i];
+        user0.addr = [NSString stringWithFormat:@"BJ %zd", i];
+        [user0 saveOrReplce:YES];
+    }
+    XCTAssertTrue([TestUser modelsWithCondition:nil].count == count);
 }
 
 

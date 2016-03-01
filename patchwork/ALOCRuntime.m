@@ -36,21 +36,43 @@ FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls
     }
     free(classes);
     
-    return [set copy];
+    return set;
 }
 
 @implementation ALOCRuntime
 
 + (NSSet<Class> *)classConfirmsToProtocol:(Protocol *)protocol {
+    if (protocol == nil) {
+        return nil;
+    }
     return filterClassesWithBlock(^BOOL(__unsafe_unretained Class cls) {
         return [cls conformsToProtocol:protocol];
     });
 }
 
 + (NSSet<Class> *)subClassesOf:(Class)clazz {
+    if (clazz == nil) {
+        return nil;
+    }
     return filterClassesWithBlock(^BOOL(__unsafe_unretained Class cls) {
         return [cls isSubclassOfClass:clazz];
     });
+}
+
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)propertiesOfProtocol:(Protocol *)protocol {
+    if (protocol == nil) {
+        return nil;
+    }
+    unsigned int count = 0;
+    objc_property_t *properties =protocol_copyPropertyList(protocol, &count);
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:count];
+    for (int i = 0; i < count; ++i) {
+        objc_property_t p = properties[i];
+        YYClassPropertyInfo *propertyInfo = [[YYClassPropertyInfo alloc]initWithProperty:p];
+        dict[propertyInfo.name] = propertyInfo;
+    }
+    free(properties);
+    return dict;
 }
 
 @end

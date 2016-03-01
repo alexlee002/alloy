@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-
+#import "StringHelper.h"
 
 
 @interface patchworkTests : XCTestCase
@@ -20,30 +20,12 @@
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
-//
-//- (void)loopTest:(NSInteger)count {
-//    GCDSyncTest *t = [[GCDSyncTest alloc] init];
-//    [t syncTest:^{
-//        NSLog(@"00000000");
-//        [t syncTest:^{
-//            NSLog(@"1111111");
-//        }];
-//        NSLog(@"22222222");
-//    }];
-//}
 
-//- (void)testGCDSync {
-
-//    __block NSInteger val = 0;
-//    GCDSyncTest *t = [[GCDSyncTest alloc] init];
-//    [t syncTest:^{
-//        val = 1;
-//        [t syncTest:^{
-//            val = 2;
-//        }  callerThread:[NSThread currentThread]];
-//    } callerThread:[NSThread currentThread]];
-//    XCTAssertEqual(val, 2);
-//}
+- (void)testStringHelper {
+    XCTAssertEqualObjects(@"xctassert_equal_objects", [@"XCTAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);
+    
+    XCTAssertEqualObjects(@"xct_assert_eqs_objects", [@"XctAssertEQsObjects" stringByConvertingCamelCaseToUnderscore]);
+}
 
 
 @end
