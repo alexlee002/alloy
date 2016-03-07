@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 
 
 @interface patchworkTests : XCTestCase

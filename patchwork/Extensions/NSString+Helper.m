@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

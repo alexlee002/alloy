@@ -7,7 +7,7 @@
 //
 
 #import "ALSQLDeleteCommand.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 
 @implementation ALSQLDeleteCommand {
     NSString *_table;

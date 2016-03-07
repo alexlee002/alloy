@@ -8,7 +8,7 @@
 
 #import "ALSQLCondition.h"
 #import <BlocksKit.h>
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
