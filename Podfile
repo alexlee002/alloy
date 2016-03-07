@@ -20,8 +20,8 @@ link_with 'patchwork', 'patchworkTests'
 
 pod 'YYModel'
 pod 'FMDB'
-pod 'BlocksKit'
-
+pod 'BlocksKit/Core'
+pod 'Reachability'
 
 #
 # Other settings

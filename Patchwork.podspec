@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
 
 
   #s.source       = { :git => "https://github.com/alexlee002/patchwork.git", :tag => s.version.to_s }
-  s.source       = { :git => "https://github.com/alexlee002/patchwork.git" :branch => "master"}
+  s.source       = { :git => "https://github.com/alexlee002/patchwork.git", :branch => "master"}
   s.source_files  = "patchwork", "patchwork/**/*.{h,m}"
   #s.exclude_files = "Classes/Exclude"
 

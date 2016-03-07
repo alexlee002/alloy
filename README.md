@@ -1,6 +1,15 @@
 # patchwork
 An easy, simple base kit for iOS app.
 
+##Important!
+The `BlocksKit` defines a macro named `SELECT`, which is conflict with the property name in `ALDatabase`,  so **BE SURE** add this code in your `Podfile`:
+
+```Ruby
+pre_install do
+    system("sed -i '' '/BKMacros/d' Pods/BlocksKit/BlocksKit/BlocksKit.h")
+end
+```
+
 ## What patchwork supplies:
 * Base Business Model:
   * json <-> model mappings: via YYModel
@@ -11,3 +20,5 @@ An easy, simple base kit for iOS app.
 * Network Manager:
   * Base request
   * HttpRequestAdaptor (ASI, AFN, ...)
+
+
