@@ -9,7 +9,7 @@
 #import "ALModel+ActiveRecord.h"
 #import "UtilitiesHeader.h"
 #import "YYModel.h"
-#import "NSArray+BlocksKitExtension.h"
+#import "BlocksKitExtension.h"
 #import "NSString+Helper.h"
 #import "BlocksKit.h"
 #import "ALDBColumnInfo.h"

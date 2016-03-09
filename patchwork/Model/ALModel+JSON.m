@@ -10,7 +10,7 @@
 #import "YYModel.h"
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
-#import "NSArray+BlocksKitExtension.h"
+#import "BlocksKitExtension.h"
 #import "NSArray+ArrayExtensions.h"
 #import "ALOCRuntime.h"
 

@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "NSArray+BlocksKitExtension.h"
+#import "BlocksKitExtension.h"
 #import "BLocksKit.h"
 
 NS_ASSUME_NONNULL_BEGIN

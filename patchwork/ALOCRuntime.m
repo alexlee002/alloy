@@ -8,7 +8,7 @@
 
 #import "ALOCRuntime.h"
 #import "YYClassInfo.h"
-#import "NSArray+BlocksKitExtension.h"
+#import "BlocksKitExtension.h"
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
 
