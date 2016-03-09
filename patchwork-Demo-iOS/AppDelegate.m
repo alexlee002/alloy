@@ -9,9 +9,6 @@
 #import "AppDelegate.h"
 #import <objc/runtime.h>
 
-#import "ALURLRequestManager.h"
-#import "ASIHTTPRequestAdaptor.h"
-#import "ALHTTPRequest.h"
 
 @interface GCDSyncTest : NSObject
 
@@ -196,7 +193,7 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 @end
 
 @implementation AppDelegate {
-    ALURLRequestManager *_manager;
+
 }
 
 - (Class)adaptorClassForRequest:(ALHTTPRequest *)request {
@@ -215,10 +212,6 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 //    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
 //    [dt start];
     
-    ALHTTPRequest *request = [[ALHTTPRequest alloc] init];
-    request.url = @"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg";
-    _manager = [ALURLRequestManager managerWithDelegate:self];
-    [_manager sendRequest:request];
     
     return YES;
 }

@@ -22,14 +22,6 @@
 		436296A91C7C693D00EBA718 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 436296A71C7C693D00EBA718 /* LaunchScreen.storyboard */; };
 		436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */; };
 		436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */; };
-		438F63751C894089003EA9B6 /* NSURLSessionAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 438F63731C894089003EA9B6 /* NSURLSessionAdaptor.h */; };
-		438F63761C894089003EA9B6 /* NSURLSessionAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 438F63741C894089003EA9B6 /* NSURLSessionAdaptor.m */; };
-		438F63791C8940B8003EA9B6 /* ALURLRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 438F63771C8940B8003EA9B6 /* ALURLRequestManager.h */; };
-		438F637A1C8940B8003EA9B6 /* ALURLRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 438F63781C8940B8003EA9B6 /* ALURLRequestManager.m */; };
-		438F637D1C8C9D2B003EA9B6 /* ALHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 438F637B1C8C9D2B003EA9B6 /* ALHTTPResponse.h */; };
-		438F637E1C8C9D2B003EA9B6 /* ALHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 438F637C1C8C9D2B003EA9B6 /* ALHTTPResponse.m */; };
-		438F63CC1C8FF7F4003EA9B6 /* ALNetwork_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 438F63CB1C8FF7F4003EA9B6 /* ALNetwork_config.h */; };
-		438F63CE1C90159B003EA9B6 /* ALHTTPReuestAdaptorProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 438F63CD1C90159B003EA9B6 /* ALHTTPReuestAdaptorProtocol.h */; };
 		438F63D11C9019E4003EA9B6 /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
 		43B518641C7590320060C3AA /* patchwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518631C7590320060C3AA /* patchwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43B5186B1C7590320060C3AA /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
@@ -63,10 +55,6 @@
 		43D0FE851C7EB3710096F232 /* ALModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE841C7EB3710096F232 /* ALModel.h */; };
 		43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE861C7EB3F40096F232 /* ALModel+ActiveRecord.h */; };
 		43D0FE891C7EB3F40096F232 /* ALModel+ActiveRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */; };
-		43FEDB501C87EB8D0053E3D4 /* ALHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 43FEDB4E1C87EB8D0053E3D4 /* ALHTTPRequest.h */; };
-		43FEDB511C87EB8D0053E3D4 /* ALHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FEDB4F1C87EB8D0053E3D4 /* ALHTTPRequest.m */; };
-		43FEDB641C88456C0053E3D4 /* ASIHTTPRequestAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 43FEDB621C88456C0053E3D4 /* ASIHTTPRequestAdaptor.h */; };
-		43FEDB651C88456C0053E3D4 /* ASIHTTPRequestAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FEDB631C88456C0053E3D4 /* ASIHTTPRequestAdaptor.m */; };
 		570A2BE27503E4EAF61DAC99 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81FDE66C67E6452F8F285B2B /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -105,14 +93,6 @@
 		436296AA1C7C693D00EBA718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLDeleteCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLDeleteCommand.m; sourceTree = "<group>"; };
-		438F63731C894089003EA9B6 /* NSURLSessionAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionAdaptor.h; sourceTree = "<group>"; };
-		438F63741C894089003EA9B6 /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
-		438F63771C8940B8003EA9B6 /* ALURLRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALURLRequestManager.h; sourceTree = "<group>"; };
-		438F63781C8940B8003EA9B6 /* ALURLRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALURLRequestManager.m; sourceTree = "<group>"; };
-		438F637B1C8C9D2B003EA9B6 /* ALHTTPResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPResponse.h; sourceTree = "<group>"; };
-		438F637C1C8C9D2B003EA9B6 /* ALHTTPResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALHTTPResponse.m; sourceTree = "<group>"; };
-		438F63CB1C8FF7F4003EA9B6 /* ALNetwork_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALNetwork_config.h; sourceTree = "<group>"; };
-		438F63CD1C90159B003EA9B6 /* ALHTTPReuestAdaptorProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPReuestAdaptorProtocol.h; sourceTree = "<group>"; };
 		43B518601C7590320060C3AA /* patchwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = patchwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B518631C7590320060C3AA /* patchwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchwork.h; sourceTree = "<group>"; };
 		43B518651C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,10 +128,6 @@
 		43D0FE841C7EB3710096F232 /* ALModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel.h; sourceTree = "<group>"; };
 		43D0FE861C7EB3F40096F232 /* ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "ALModel+ActiveRecord.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
-		43FEDB4E1C87EB8D0053E3D4 /* ALHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALHTTPRequest.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		43FEDB4F1C87EB8D0053E3D4 /* ALHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALHTTPRequest.m; sourceTree = "<group>"; };
-		43FEDB621C88456C0053E3D4 /* ASIHTTPRequestAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIHTTPRequestAdaptor.h; sourceTree = "<group>"; };
-		43FEDB631C88456C0053E3D4 /* ASIHTTPRequestAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIHTTPRequestAdaptor.m; sourceTree = "<group>"; };
 		81FDE66C67E6452F8F285B2B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8474FA6E59E1BFD599902903 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		FC757CC08A5BF253ACC5AA2B /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -249,7 +225,6 @@
 		43B518621C7590320060C3AA /* patchwork */ = {
 			isa = PBXGroup;
 			children = (
-				43FEDB4B1C859D9B0053E3D4 /* Network */,
 				43B5187A1C7595590060C3AA /* Database */,
 				43B5187B1C7595590060C3AA /* Extensions */,
 				43B5187C1C7595590060C3AA /* Model */,
@@ -319,25 +294,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		43FEDB4B1C859D9B0053E3D4 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				43FEDB4E1C87EB8D0053E3D4 /* ALHTTPRequest.h */,
-				43FEDB4F1C87EB8D0053E3D4 /* ALHTTPRequest.m */,
-				438F637B1C8C9D2B003EA9B6 /* ALHTTPResponse.h */,
-				438F637C1C8C9D2B003EA9B6 /* ALHTTPResponse.m */,
-				43FEDB621C88456C0053E3D4 /* ASIHTTPRequestAdaptor.h */,
-				43FEDB631C88456C0053E3D4 /* ASIHTTPRequestAdaptor.m */,
-				438F63731C894089003EA9B6 /* NSURLSessionAdaptor.h */,
-				438F63741C894089003EA9B6 /* NSURLSessionAdaptor.m */,
-				438F63771C8940B8003EA9B6 /* ALURLRequestManager.h */,
-				438F63781C8940B8003EA9B6 /* ALURLRequestManager.m */,
-				438F63CB1C8FF7F4003EA9B6 /* ALNetwork_config.h */,
-				438F63CD1C90159B003EA9B6 /* ALHTTPReuestAdaptorProtocol.h */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
 		BB90779D334D1C9697882EAD /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,7 +321,6 @@
 				43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */,
 				4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */,
 				436296831C7B6D3C00EBA718 /* ALSQLUpdateCommand.h in Headers */,
-				438F63751C894089003EA9B6 /* NSURLSessionAdaptor.h in Headers */,
 				43D0FE7C1C7D80B70096F232 /* ALOCRuntime.h in Headers */,
 				43D0FE821C7EAC7D0096F232 /* ALModel_Define.h in Headers */,
 				43B518AE1C76CBD80060C3AA /* ALDBColumnInfo.h in Headers */,
@@ -375,18 +330,14 @@
 				43D0FE791C7D802F0096F232 /* ALDBMigrationProtocol.h in Headers */,
 				43B518A81C75EF810060C3AA /* ALFMDatabaseQueue.h in Headers */,
 				436296871C7B6D5400EBA718 /* ALSQLInsertCommand.h in Headers */,
-				43FEDB641C88456C0053E3D4 /* ASIHTTPRequestAdaptor.h in Headers */,
 				43B518911C759EE50060C3AA /* ALSQLCondition.h in Headers */,
 				43B518A21C75B11F0060C3AA /* ALDatabaseManager.h in Headers */,
 				43B5188D1C759AAF0060C3AA /* NSArray+BlocksKitExtension.h in Headers */,
 				43B518A51C75B18D0060C3AA /* Singleton_Template.h in Headers */,
 				43B5188B1C759AAF0060C3AA /* NSArray+ArrayExtensions.h in Headers */,
 				436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */,
-				43FEDB501C87EB8D0053E3D4 /* ALHTTPRequest.h in Headers */,
-				438F637D1C8C9D2B003EA9B6 /* ALHTTPResponse.h in Headers */,
 				43B518821C7597440060C3AA /* UtilitiesHeader.h in Headers */,
 				43D0FE851C7EB3710096F232 /* ALModel.h in Headers */,
-				438F63CC1C8FF7F4003EA9B6 /* ALNetwork_config.h in Headers */,
 				43B5189E1C75AC3F0060C3AA /* ALDatabase.h in Headers */,
 				43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */,
 			);
@@ -615,11 +566,7 @@
 			files = (
 				436296841C7B6D3C00EBA718 /* ALSQLUpdateCommand.m in Sources */,
 				436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */,
-				43FEDB651C88456C0053E3D4 /* ASIHTTPRequestAdaptor.m in Sources */,
-				438F637A1C8940B8003EA9B6 /* ALURLRequestManager.m in Sources */,
-				438F63761C894089003EA9B6 /* NSURLSessionAdaptor.m in Sources */,
 				43B5189F1C75AC3F0060C3AA /* ALDatabase.m in Sources */,
-				438F637E1C8C9D2B003EA9B6 /* ALHTTPResponse.m in Sources */,
 				43B518921C759EE50060C3AA /* ALSQLCondition.m in Sources */,
 				43B518861C759A3F0060C3AA /* NSString+Helper.m in Sources */,
 				43B518A91C75EF810060C3AA /* ALFMDatabaseQueue.m in Sources */,
@@ -627,7 +574,6 @@
 				43B518A31C75B11F0060C3AA /* ALDatabaseManager.m in Sources */,
 				43B5188E1C759AAF0060C3AA /* NSArray+BlocksKitExtension.m in Sources */,
 				436296801C7B6D3C00EBA718 /* ALSQLCommand.m in Sources */,
-				43FEDB511C87EB8D0053E3D4 /* ALHTTPRequest.m in Sources */,
 				43B518AF1C76CBD80060C3AA /* ALDBColumnInfo.m in Sources */,
 				43D0FE7D1C7D80B70096F232 /* ALOCRuntime.m in Sources */,
 				43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */,
