@@ -23,7 +23,7 @@
 #import "ASIFormDataRequest.h"
 #import "ASIBandwidthHttpRequest.h"
 #import "BlocksKit.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 #import "UtilitiesHeader.h"
 #import "ALHTTPResponse.h"
 
