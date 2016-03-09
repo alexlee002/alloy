@@ -20,9 +20,9 @@
 
 
 @interface TestUser : ALModel
-@property(nonatomic, copy)  NSString *name;
-@property(nonatomic)        NSInteger age;
-@property(nonatomic, copy)  NSString *addr;
+@property(PROP_ATOMIC_DEF, copy)  NSString *name;
+@property(PROP_ATOMIC_DEF)        NSInteger age;
+@property(PROP_ATOMIC_DEF, copy)  NSString *addr;
 @end
 
 @implementation TestUser

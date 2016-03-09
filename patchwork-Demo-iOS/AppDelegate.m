@@ -9,6 +9,10 @@
 #import "AppDelegate.h"
 #import <objc/runtime.h>
 
+#import "ALURLRequestManager.h"
+#import "ASIHTTPRequestAdaptor.h"
+#import "ALHTTPRequest.h"
+
 @interface GCDSyncTest : NSObject
 
 - (void)syncTest:(dispatch_block_t)block callerThread:(NSThread *)th;
@@ -74,11 +78,130 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 @implementation TestCase1_1
 @end
 
-@interface AppDelegate ()
+//////////////////////////////////////////////////////////////////////////
+
+@interface ALNSURLProtocol : NSURLProtocol
 
 @end
 
-@implementation AppDelegate
+@implementation ALNSURLProtocol
+
++ (BOOL)canInitWithRequest:(NSURLRequest *)request {
+    NSLog(@"ALNSURLProtocol [-canInitWithRequest:]\nurl: %@\nheaders:%@", request.URL, request.allHTTPHeaderFields);
+    return NO;
+}
+
++ (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
+    return request;
+}
+
+
+- (void)startLoading {
+}
+
+- (void)stopLoading {
+}
+
+
+@end
+
+@interface NSURLDownloadTest : NSObject <NSURLSessionTaskDelegate>
+@end
+
+@implementation NSURLDownloadTest {
+    NSTimeInterval _lastRecvTime;
+    double         _previousSpeed;
+    BOOL           _suspending;
+}
+
+- (void)start {
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration]; //backgroundSessionConfigurationWithIdentifier:@"test"];
+    config.protocolClasses = @[ [ALNSURLProtocol class]];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    //session.configuration.protocolClasses = @[ [ALNSURLProtocol class]];
+    
+    NSURL *url = [NSURL URLWithString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"];
+    NSURLSessionDownloadTask *task = [session downloadTaskWithURL:url];
+    //[task setValue:@(20 * 1024) forKey:@"_bytesPerSecondLimit"];
+    
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+//    [request setValue:@"bytes=0-102400" forHTTPHeaderField:@"Range"];
+//    NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request];
+    [task resume];
+}
+
+- (void)URLSession:(NSURLSession *)session
+                 downloadTask:(NSURLSessionDownloadTask *)downloadTask
+    didFinishDownloadingToURL:(NSURL *)location {
+    NSLog(@"finished: %@", location);
+}
+
+- (void)URLSession:(NSURLSession *)session
+                 downloadTask:(NSURLSessionDownloadTask *)downloadTask
+                 didWriteData:(int64_t)bytesWritten
+            totalBytesWritten:(int64_t)totalBytesWritten
+    totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
+    NSLog(@"written:%lld, total written: %lld, expected: %lld; suspending: %@", bytesWritten, totalBytesWritten, totalBytesExpectedToWrite, @(_suspending));
+//    NSTimeInterval curTime = CFAbsoluteTimeGetCurrent();
+//    if (_lastRecvTime > 0) {
+//        NSTimeInterval delta = curTime - _lastRecvTime;
+//        double speed = bytesWritten / delta;
+//        _previousSpeed = 0.9 * _previousSpeed + 0.1 * speed;
+//        if (_previousSpeed > 20 * 1024) {
+//            NSLog(@"%@; speed: %.2f, suspending...", @(downloadTask.taskIdentifier), _previousSpeed);
+//            [downloadTask suspend];
+//            _suspending = YES;
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [downloadTask resume];
+//                _suspending = NO;
+//            });
+//        }
+//    }
+//    _lastRecvTime = curTime;
+    
+//    if (totalBytesWritten * 100 / totalBytesExpectedToWrite > 30) {
+//        [downloadTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
+//            NSLog(@"%@", [[NSString alloc] initWithData:resumeData encoding:NSUTF8StringEncoding]);
+//            NSString *tmpfile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"resume.dat"];
+//            [resumeData writeToFile:tmpfile atomically:YES];
+//            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:tmpfile];
+//            NSURLRequest *cur = [NSKeyedUnarchiver unarchiveObjectWithData:dict[@"NSURLSessionResumeCurrentRequest"]];
+//            NSLog(@"\ncurrent:  %@", cur);
+//            NSURLRequest *ori = [NSKeyedUnarchiver unarchiveObjectWithData:dict[@"NSURLSessionResumeOriginalRequest"]];
+//            NSLog(@"\noriginal: %@", ori);
+//            
+//            if (resumeData == nil) {
+//                return;
+//            }
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [[session downloadTaskWithResumeData:resumeData] resume];
+//            });
+//        }];
+//    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+      downloadTask:(NSURLSessionDownloadTask *)downloadTask
+ didResumeAtOffset:(int64_t)fileOffset
+expectedTotalBytes:(int64_t)expectedTotalBytes {
+    NSLog(@"resume at: %lld, expected: %lld", fileOffset, expectedTotalBytes);
+}
+
+@end
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+@interface AppDelegate () <ALURLRequestManagerDelegate>
+
+@end
+
+@implementation AppDelegate {
+    ALURLRequestManager *_manager;
+}
+
+- (Class)adaptorClassForRequest:(ALHTTPRequest *)request {
+    return ASIHTTPRequestAdaptor.class;
+}
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -88,9 +211,19 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[UIViewController alloc] init];
     
-
-    //[self syncTest];
     
+//    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
+//    [dt start];
+    
+    ALHTTPRequest *request = [[ALHTTPRequest alloc] init];
+    request.url = @"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg";
+    _manager = [ALURLRequestManager managerWithDelegate:self];
+    [_manager sendRequest:request];
+    
+    return YES;
+}
+
+- (void)testRespondTo {
     if ([TestCase1 respondsToSelector:@selector(instanceMethod)]) {
         NSLog(@"class responds to instanceMethod");
     }
@@ -237,8 +370,6 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
     if (class_respondsToSelector(t.class, @selector(classMethod))) {
         NSLog(@"sub instance.class class_respondsToSelector classMethod");
     }
-    
-    return YES;
 }
 
 - (void)syncTest {

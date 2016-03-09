@@ -24,12 +24,12 @@ typedef ALSQLDeleteCommand *_Nonnull (^ALSQLDeleteBlock)(NSString *_Nonnull tabl
 
 @interface ALDatabase : NSObject
 
-@property(nonatomic, readonly) ALFMDatabaseQueue *queue;
+@property(readonly) ALFMDatabaseQueue *queue;
 
-@property(nonatomic, readonly) ALSQLSelectBlock     SELECT;
-@property(nonatomic, readonly) ALSQLUpdateBlock     UPDATE;
-@property(nonatomic, readonly) ALSQLInsertBlock     INSERT;
-@property(nonatomic, readonly) ALSQLDeleteBlock     DELETE_FROM;
+@property(readonly) ALSQLSelectBlock     SELECT;
+@property(readonly) ALSQLUpdateBlock     UPDATE;
+@property(readonly) ALSQLInsertBlock     INSERT;
+@property(readonly) ALSQLDeleteBlock     DELETE_FROM;
 
 + (nullable instancetype)databaseWithPath:(NSString *)path;
 

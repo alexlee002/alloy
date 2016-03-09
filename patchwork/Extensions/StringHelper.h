@@ -34,4 +34,14 @@ extern BOOL      isEmptyString(NSString *_Nullable string);
 
 @end
 
+
+@interface NSString (NSURL_Utils)
+
+@property(nonatomic, readonly) NSString * (^SET_QUERY_PARAM)(NSString *key, id value);
+
+- (NSString *)stringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items;
+- (NSString *)stringByURLEncoding;
+- (NSString *)stringByURLDecoding;
+@end
+
 NS_ASSUME_NONNULL_END

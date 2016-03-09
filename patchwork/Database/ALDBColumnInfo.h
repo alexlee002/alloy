@@ -7,15 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "UtilitiesHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class YYClassPropertyInfo;
 @interface ALDBColumnInfo: NSObject
-@property(nonatomic, strong)            YYClassPropertyInfo *property;
-@property(nonatomic, copy)              NSString            *name;
-@property(nonatomic, copy)              NSString            *dataType;
-@property(nonatomic, copy, nullable)    NSString            *extra;
+@property(PROP_ATOMIC_DEF, strong)            YYClassPropertyInfo *property;
+@property(PROP_ATOMIC_DEF, copy)              NSString            *name;
+@property(PROP_ATOMIC_DEF, copy)              NSString            *dataType;
+@property(PROP_ATOMIC_DEF, copy, nullable)    NSString            *extra;
 
 - (NSString *)columnDefine;
 

@@ -55,8 +55,8 @@ typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(ALSQLCondition *cond);
 
 @interface ALSQLCondition : NSObject
 
-@property(nonatomic, readonly) NSString *sqlCondition;
-@property(nonatomic, readonly) NSArray  *conditionArgs;
+@property(readonly) NSString *sqlCondition;
+@property(readonly) NSArray  *conditionArgs;
 
 + (instancetype)conditionWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION;
 - (instancetype)initWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION;

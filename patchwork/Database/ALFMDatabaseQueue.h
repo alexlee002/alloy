@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class FMDatabase;
 @interface ALFMDatabaseQueue : NSObject
-@property(nonatomic, readonly, nullable) NSString *path;
+@property(readonly, nullable) NSString *path;
 
 - (instancetype)initWithPath:(nullable NSString*)aPath;
 

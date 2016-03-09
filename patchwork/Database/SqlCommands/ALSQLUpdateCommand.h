@@ -19,11 +19,11 @@ typedef ALSQLUpdateCommand *_Nonnull (^ALSQLUpdateBlockStrId)     (NSString *_Nu
 
 @interface ALSQLUpdateCommand : ALSQLCommand
 
-@property(nonatomic, readonly) ALSQLUpdateBlockString    UPDATE;
-@property(nonatomic, readonly) ALSQLUpdateBlockString    POLICY;
-@property(nonatomic, readonly) ALSQLUpdateBlockDict      VALUES;  //set multi values
-@property(nonatomic, readonly) ALSQLUpdateBlockStrId     SET;     //set one value
-@property(nonatomic, readonly) ALSQLUpdateConditionBlock WHERE;
+@property(readonly) ALSQLUpdateBlockString    UPDATE;
+@property(readonly) ALSQLUpdateBlockString    POLICY;
+@property(readonly) ALSQLUpdateBlockDict      VALUES;  //set multi values
+@property(readonly) ALSQLUpdateBlockStrId     SET;     //set one value
+@property(readonly) ALSQLUpdateConditionBlock WHERE;
 
 @end
 

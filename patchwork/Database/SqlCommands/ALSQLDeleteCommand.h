@@ -17,9 +17,9 @@ typedef ALSQLDeleteCommand *_Nonnull (^ALSQLDeleteConditionBlock) (ALSQLConditio
 
 @interface ALSQLDeleteCommand : ALSQLCommand
 
-@property(nonatomic, readonly) ALSQLDeleteBlockString       DELETE_FROM;
-//@property(nonatomic, readonly) ALSQLDeleteBlockString       TRUNCATE;
-@property(nonatomic, readonly) ALSQLDeleteConditionBlock    WHERE;
+@property(readonly) ALSQLDeleteBlockString       DELETE_FROM;
+//@property(readonly) ALSQLDeleteBlockString       TRUNCATE;
+@property(readonly) ALSQLDeleteConditionBlock    WHERE;
 
 @end
 

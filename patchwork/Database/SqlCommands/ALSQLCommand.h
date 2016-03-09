@@ -35,10 +35,10 @@ extern NSString * const kALDBConflictPolicyReplace;
     NSArray        *_sqlArgs;
 }
 
-@property(nonatomic, readonly, weak) ALDatabase *db;
+@property(readonly, weak) ALDatabase *db;
 
-@property(nonatomic, readonly) ALSQLExecuteQueryBlock  EXECUTE_QUERY;
-@property(nonatomic, readonly) ALSQLExecuteUpdateBlock EXECUTE_UPDATE;
+@property(readonly) ALSQLExecuteQueryBlock  EXECUTE_QUERY;
+@property(readonly) ALSQLExecuteUpdateBlock EXECUTE_UPDATE;
 
 + (instancetype)commandWithDatabase:(ALDatabase *)db;
 

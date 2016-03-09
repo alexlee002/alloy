@@ -1,32 +1,31 @@
 PODS:
-  - BlocksKit (2.2.5):
-    - BlocksKit/All (= 2.2.5)
-  - BlocksKit/All (2.2.5):
-    - BlocksKit/Core
-    - BlocksKit/DynamicDelegate
-    - BlocksKit/MessageUI
-    - BlocksKit/UIKit
+  - ASIHTTPRequest (1.8.2):
+    - ASIHTTPRequest/Core (= 1.8.2)
+  - ASIHTTPRequest/Core (1.8.2):
+    - Reachability
   - BlocksKit/Core (2.2.5)
-  - BlocksKit/DynamicDelegate (2.2.5)
-  - BlocksKit/MessageUI (2.2.5):
-    - BlocksKit/Core
-    - BlocksKit/DynamicDelegate
-  - BlocksKit/UIKit (2.2.5):
-    - BlocksKit/Core
-    - BlocksKit/DynamicDelegate
   - FMDB (2.6):
     - FMDB/standard (= 2.6)
   - FMDB/standard (2.6)
+  - Reachability (3.2)
   - YYModel (1.0.1)
 
 DEPENDENCIES:
-  - BlocksKit
+  - ASIHTTPRequest (from `./LocalPods/ASIHttPRequest`)
+  - BlocksKit/Core
   - FMDB
+  - Reachability
   - YYModel
 
+EXTERNAL SOURCES:
+  ASIHTTPRequest:
+    :path: ./LocalPods/ASIHttPRequest
+
 SPEC CHECKSUMS:
+  ASIHTTPRequest: 6a1d6b023d28a9034cab4ffb2ebb3c3b48b8771d
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
   FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   YYModel: 794f0820a9a9703615bc166aa8e336abaf422c2b
 
 COCOAPODS: 0.39.0

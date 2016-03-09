@@ -13,14 +13,16 @@ link_with 'patchwork', 'patchworkTests'
 #
 # Internal Pods
 #
-
+pod 'ASIHTTPRequest',             :path => './LocalPods/ASIHttPRequest'
 #
 # vendors' Pods
 #
 
 pod 'YYModel'
 pod 'FMDB'
-pod 'BlocksKit'
+pod 'BlocksKit/Core'
+#pod 'ASIHTTPRequest/Core'
+pod 'Reachability'
 
 
 #

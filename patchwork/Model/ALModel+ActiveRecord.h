@@ -16,8 +16,8 @@ extern NSString * const kRowIdColumnName;
 
 @interface ALSQLSelectCommand (ActiveRecord)
 
-@property(nonatomic, readonly) NSArray<__kindof ALModel *> *_Nullable (^FETCH_MODELS)(void);
-@property(nonatomic, readonly) ALSQLSelectCommand *_Nonnull           (^APPLY_MODEL) (Class _Nonnull modelClass);
+@property(readonly) NSArray<__kindof ALModel *> *_Nullable (^FETCH_MODELS)(void);
+@property(readonly) ALSQLSelectCommand *_Nonnull           (^APPLY_MODEL) (Class _Nonnull modelClass);
 
 - (void)fetchWithCompletion:(void (^_Nullable)(FMResultSet *_Nullable rs))completion;
 
@@ -31,7 +31,7 @@ extern NSString * const kRowIdColumnName;
 #pragma mark - active record
 @interface ALModel (ActiveRecord)
 
-@property(nonatomic) NSInteger rowid; // the rowid in database, if the table is "without rowid", return 0;
+@property(PROP_ATOMIC_DEF) NSInteger rowid; // the rowid in database, if the table is "without rowid", return 0;
 
 //+ (nullable ALDatabase *)DB;
 + (NSDictionary<NSString *, ALDBColumnInfo *> *)columns;

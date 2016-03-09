@@ -11,20 +11,31 @@
 
 #define FORCE_INLINE __inline__ __attribute__((always_inline))
 
+#if TARGET_OS_IPHONE
+#   define PROP_ATOMIC_DEF nonatomic
+#else
+#   define PROP_ATOMIC_DEF
+#endif
+
+
+
+
 //日志相关
 // 如果安装了 Xcode 的 MCLog插件， 支持彩色日志输出和日志分级， 如果没有安装此插件， 则把下边的宏定义注释即可
-#define EnableColorLog
+#ifndef EnableColorLog
+#define EnableColorLog 1
+#endif
 
 // clang-format off
-#define PRETTY_FILE_NAME (__FILE__ ? [[NSString stringWithUTF8String:__FILE__] lastPathComponent] : @"")
+#define __PRETTY_FILE_NAME (__FILE__ ? [[NSString stringWithUTF8String:__FILE__] lastPathComponent] : @"")
 #if DEBUG
-#   ifdef EnableColorLog
+#   if EnableColorLog
 #       define __ALLog(LEVEL, fmt, ...)  \
-            NSLog((@"-" LEVEL @"\033[2;3;4m %s (%@:%d)\033[22;23;24m " fmt @"\033[0m"), __PRETTY_FUNCTION__, PRETTY_FILE_NAME, \
+            NSLog((@"-" LEVEL @"\033[2;3;4m %s (%@:%d)\033[22;23;24m " fmt @"\033[0m"), __PRETTY_FUNCTION__, __PRETTY_FILE_NAME, \
                     __LINE__, ##__VA_ARGS__)
 #   else
 #       define __ALLog(LEVEL, fmt, ...) \
-            NSLog((@"-" LEVEL @" %s (%@:%d) " fmt), __PRETTY_FUNCTION__, PRETTY_FILE_NAME, __LINE__, ##__VA_ARGS__)
+            NSLog((@"-" LEVEL @" %s (%@:%d) " fmt), __PRETTY_FUNCTION__, __PRETTY_FILE_NAME, __LINE__, ##__VA_ARGS__)
 #   endif
 #else
 #   define __ALLog(LEVEL, fmt, ...) do {} while (0)

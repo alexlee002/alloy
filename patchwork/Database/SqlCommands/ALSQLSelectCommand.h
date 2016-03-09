@@ -18,14 +18,14 @@ typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockNumArray)  (NSArray<NSNum
 
 @interface ALSQLSelectCommand : ALSQLCommand
 
-@property(nonatomic, readonly, nullable) NSArray<NSString *> *columns;
+@property(readonly, nullable) NSArray<NSString *> *columns;
 
-@property(nonatomic, readonly) ALSQLSelectBlockString    FROM;
-@property(nonatomic, readonly) ALSQLSelectBlockStrArray  SELECT;
-@property(nonatomic, readonly) ALSQLSelectConditionBlock WHERE;
-@property(nonatomic, readonly) ALSQLSelectBlockStrArray  ORDER_BY;
-@property(nonatomic, readonly) ALSQLSelectBlockStrArray  GROUP_BY;
-@property(nonatomic, readonly) ALSQLSelectBlockNumArray  LIMIT;
+@property(readonly) ALSQLSelectBlockString    FROM;
+@property(readonly) ALSQLSelectBlockStrArray  SELECT;
+@property(readonly) ALSQLSelectConditionBlock WHERE;
+@property(readonly) ALSQLSelectBlockStrArray  ORDER_BY;
+@property(readonly) ALSQLSelectBlockStrArray  GROUP_BY;
+@property(readonly) ALSQLSelectBlockNumArray  LIMIT;
 
 @end
 

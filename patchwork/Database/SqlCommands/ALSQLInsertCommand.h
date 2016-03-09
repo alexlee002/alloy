@@ -21,11 +21,11 @@ typedef ALSQLInsertCommand *_Nonnull (^ALSQLInsertBlockSubSelect) (ALSQLSelectCo
 
 @interface ALSQLInsertCommand : ALSQLCommand
 
-@property(nonatomic, readonly) ALSQLInsertBlockString    INSERT;
-@property(nonatomic, readonly) ALSQLInsertBlockString    POLICY;
-@property(nonatomic, readonly) ALSQLInsertBlockDict      VALUES;
+@property(readonly) ALSQLInsertBlockString    INSERT;
+@property(readonly) ALSQLInsertBlockString    POLICY;
+@property(readonly) ALSQLInsertBlockDict      VALUES;
 
-@property(nonatomic, readonly) ALSQLInsertBlockSubSelect SELECT;
+@property(readonly) ALSQLInsertBlockSubSelect SELECT;
 
 @end
 

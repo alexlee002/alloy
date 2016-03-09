@@ -36,6 +36,21 @@ FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
     return YES;
 }
 
+FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
+    NSString *canonicalString = nil;
+    if ([value isKindOfClass:[NSString class]]) {
+        canonicalString = (NSString *)value;
+    } else if ([NSJSONSerialization isValidJSONObject:value]) {
+        NSData *data = [NSJSONSerialization dataWithJSONObject:value options:0 error:nil];
+        canonicalString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
+    
+    if (canonicalString != nil) {
+        return [canonicalString stringByURLEncoding];
+    }
+    return @"";
+}
+
 @implementation NSObject (StringHelper)
 
 - (nullable NSString *)stringify {
@@ -119,6 +134,56 @@ FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
 @end
 
 
+@implementation NSString (NSURL_Utils)
+
+- (NSString * (^)(NSString *key, id value))SET_QUERY_PARAM {
+    return ^NSString *(NSString *key, id value) {
+        return
+            [self stringByAppendingFormat:@"%@%@=%@", ([self rangeOfString:@"?"].location == NSNotFound ? @"?" : @"&"),
+                                          canonicalQueryStringValue(key), canonicalQueryStringValue(value)];
+    };
+}
+
+- (NSString *)stringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items {
+    __block NSString *string = self;
+    [items enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        string = string.SET_QUERY_PARAM(key, obj);
+    }];
+    return string;
+}
+
+- (NSString *)stringByURLEncoding {
+    NSString *resultStr = self;
+
+    CFStringRef originalString = (__bridge CFStringRef) self;
+    CFStringRef leaveUnescaped = CFSTR(" ");
+    CFStringRef forceEscaped   = CFSTR("!*'();:@&=+$,/?%#[]");
+
+    CFStringRef escapedStr;
+    escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, originalString, leaveUnescaped,
+                                                         forceEscaped, kCFStringEncodingUTF8);
+
+    if (escapedStr) {
+        NSMutableString *mutableStr = [NSMutableString stringWithString:(__bridge NSString *) escapedStr];
+        CFRelease(escapedStr);
+
+        // replace spaces with plusses
+        [mutableStr replaceOccurrencesOfString:@" "
+                                    withString:@"%20"
+                                       options:0
+                                         range:NSMakeRange(0, [mutableStr length])];
+        resultStr = mutableStr;
+    }
+    return resultStr;
+}
+
+- (NSString *)stringByURLDecoding {
+    NSString *result = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+    result           = [result stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return result;
+}
+
+@end
 
 
 NS_ASSUME_NONNULL_END
