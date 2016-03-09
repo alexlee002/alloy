@@ -14,7 +14,7 @@
 #if TARGET_OS_IPHONE
 #   define PROP_ATOMIC_DEF nonatomic
 #else
-#   define PROP_ATOMIC_DEF
+#   define PROP_ATOMIC_DEF atomic
 #endif
 
 
