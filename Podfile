@@ -24,7 +24,6 @@ pod 'BlocksKit/Core'
 #pod 'ASIHTTPRequest/Core'
 pod 'Reachability'
 
-
 #
 # Other settings
 #

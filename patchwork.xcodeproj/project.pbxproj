@@ -37,8 +37,8 @@
 		43B5187F1C7595870060C3AA /* ALModel+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5187D1C7595870060C3AA /* ALModel+JSON.h */; };
 		43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5187E1C7595870060C3AA /* ALModel+JSON.m */; };
 		43B518821C7597440060C3AA /* UtilitiesHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518811C7597440060C3AA /* UtilitiesHeader.h */; };
-		43B518851C759A3F0060C3AA /* StringHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518831C759A3F0060C3AA /* StringHelper.h */; };
-		43B518861C759A3F0060C3AA /* StringHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518841C759A3F0060C3AA /* StringHelper.m */; };
+		43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518831C759A3F0060C3AA /* NSString+Helper.h */; };
+		43B518861C759A3F0060C3AA /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518841C759A3F0060C3AA /* NSString+Helper.m */; };
 		43B5188B1C759AAF0060C3AA /* NSArray+ArrayExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518871C759AAF0060C3AA /* NSArray+ArrayExtensions.h */; };
 		43B5188C1C759AAF0060C3AA /* NSArray+ArrayExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518881C759AAF0060C3AA /* NSArray+ArrayExtensions.m */; };
 		43B5188D1C759AAF0060C3AA /* NSArray+BlocksKitExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518891C759AAF0060C3AA /* NSArray+BlocksKitExtension.h */; };
@@ -117,13 +117,13 @@
 		43B518631C7590320060C3AA /* patchwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchwork.h; sourceTree = "<group>"; };
 		43B518651C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43B5186A1C7590320060C3AA /* patchworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = patchworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		43B5186F1C7590320060C3AA /* patchworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = patchworkTests.m; sourceTree = "<group>"; };
+		43B5186F1C7590320060C3AA /* patchworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = patchworkTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43B518711C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43B5187D1C7595870060C3AA /* ALModel+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+JSON.h"; sourceTree = "<group>"; };
-		43B5187E1C7595870060C3AA /* ALModel+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+JSON.m"; sourceTree = "<group>"; };
+		43B5187E1C7595870060C3AA /* ALModel+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "ALModel+JSON.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43B518811C7597440060C3AA /* UtilitiesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesHeader.h; sourceTree = "<group>"; };
-		43B518831C759A3F0060C3AA /* StringHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHelper.h; sourceTree = "<group>"; };
-		43B518841C759A3F0060C3AA /* StringHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringHelper.m; sourceTree = "<group>"; };
+		43B518831C759A3F0060C3AA /* NSString+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSString+Helper.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		43B518841C759A3F0060C3AA /* NSString+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Helper.m"; sourceTree = "<group>"; };
 		43B518871C759AAF0060C3AA /* NSArray+ArrayExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ArrayExtensions.h"; sourceTree = "<group>"; };
 		43B518881C759AAF0060C3AA /* NSArray+ArrayExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ArrayExtensions.m"; sourceTree = "<group>"; };
 		43B518891C759AAF0060C3AA /* NSArray+BlocksKitExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+BlocksKitExtension.h"; sourceTree = "<group>"; };
@@ -133,7 +133,7 @@
 		43B5189C1C75AC3F0060C3AA /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDatabase.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B5189D1C75AC3F0060C3AA /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43B518A01C75B11F0060C3AA /* ALDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatabaseManager.h; sourceTree = "<group>"; };
-		43B518A11C75B11F0060C3AA /* ALDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatabaseManager.m; sourceTree = "<group>"; };
+		43B518A11C75B11F0060C3AA /* ALDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabaseManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43B518A41C75B18D0060C3AA /* Singleton_Template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton_Template.h; sourceTree = "<group>"; };
 		43B518A61C75EF810060C3AA /* ALFMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALFMDatabaseQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B518A71C75EF810060C3AA /* ALFMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALFMDatabaseQueue.m; sourceTree = "<group>"; };
@@ -299,8 +299,8 @@
 				43B518881C759AAF0060C3AA /* NSArray+ArrayExtensions.m */,
 				43B518891C759AAF0060C3AA /* NSArray+BlocksKitExtension.h */,
 				43B5188A1C759AAF0060C3AA /* NSArray+BlocksKitExtension.m */,
-				43B518831C759A3F0060C3AA /* StringHelper.h */,
-				43B518841C759A3F0060C3AA /* StringHelper.m */,
+				43B518831C759A3F0060C3AA /* NSString+Helper.h */,
+				43B518841C759A3F0060C3AA /* NSString+Helper.m */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -388,9 +388,7 @@
 				43D0FE851C7EB3710096F232 /* ALModel.h in Headers */,
 				438F63CC1C8FF7F4003EA9B6 /* ALNetwork_config.h in Headers */,
 				43B5189E1C75AC3F0060C3AA /* ALDatabase.h in Headers */,
-				43B518851C759A3F0060C3AA /* StringHelper.h in Headers */,
-				438F63CE1C90159B003EA9B6 /* ALHTTPReuestAdaptorProtocol.h in Headers */,
-				438F63791C8940B8003EA9B6 /* ALURLRequestManager.h in Headers */,
+				43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,7 +621,7 @@
 				43B5189F1C75AC3F0060C3AA /* ALDatabase.m in Sources */,
 				438F637E1C8C9D2B003EA9B6 /* ALHTTPResponse.m in Sources */,
 				43B518921C759EE50060C3AA /* ALSQLCondition.m in Sources */,
-				43B518861C759A3F0060C3AA /* StringHelper.m in Sources */,
+				43B518861C759A3F0060C3AA /* NSString+Helper.m in Sources */,
 				43B518A91C75EF810060C3AA /* ALFMDatabaseQueue.m in Sources */,
 				43D0FE891C7EB3F40096F232 /* ALModel+ActiveRecord.m in Sources */,
 				43B518A31C75B11F0060C3AA /* ALDatabaseManager.m in Sources */,

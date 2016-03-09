@@ -1,5 +1,5 @@
 //
-//  StringHelper.h
+//  NSString+Helper.h
 //  patchwork
 //
 //  Created by Alex Lee on 2/18/16.

@@ -9,7 +9,7 @@
 #import "ALSQLInsertCommand.h"
 #import "ALSQLSelectCommand.h"
 #import "BlocksKit.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 
 
 @implementation ALSQLInsertCommand {

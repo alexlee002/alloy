@@ -7,7 +7,7 @@
 //
 
 #import "ALDBColumnInfo.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 #import "YYClassInfo.h"
 
 @implementation ALDBColumnInfo

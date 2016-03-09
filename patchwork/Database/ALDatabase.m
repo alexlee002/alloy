@@ -7,7 +7,7 @@
 //
 
 #import "ALDatabase.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 #import "FMDB.h"
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
@@ -187,9 +187,8 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 }
 
 #pragma mark - database operations
-
 - (ALSQLSelectBlock)SELECT {
-    return ^ ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
+    return ^ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
         return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
     };
 }

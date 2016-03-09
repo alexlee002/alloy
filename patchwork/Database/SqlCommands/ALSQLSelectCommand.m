@@ -7,7 +7,7 @@
 //
 
 #import "ALSQLSelectCommand.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 #import "UtilitiesHeader.h"
 #import "ALSQLCondition.h"
 #import "NSArray+ArrayExtensions.h"

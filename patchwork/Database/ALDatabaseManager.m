@@ -8,7 +8,7 @@
 
 #import "ALDatabaseManager.h"
 #import "ALDatabase.h"
-#import "StringHelper.h"
+#import "NSString+Helper.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
