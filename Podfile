@@ -23,7 +23,16 @@ pod 'FMDB'
 pod 'BlocksKit/Core'
 #pod 'ASIHTTPRequest/Core'
 pod 'Reachability'
+pod 'ObjcAssociatedObjectHelpers/Core'
 
+# promisekit components
+pod 'PromiseKit/When',                  '~> 1.6'
+pod 'PromiseKit/Until',                 '~> 1.6'
+pod 'PromiseKit/Pause',                 '~> 1.6'
+pod 'PromiseKit/Join',                  '~> 1.6'
+pod 'PromiseKit/Hang',                  '~> 1.6'
+pod 'PromiseKit/NSFileManager',         '~> 1.6'
+pod 'PromiseKit/NSNotificationCenter',  '~> 1.6'
 #
 # Other settings
 #
@@ -39,9 +48,9 @@ pod 'Reachability'
 #end
 
 pre_install do
-    system("sed -i '' '/UITextField/d' Pods/BlocksKit/BlocksKit/BlocksKit+UIKit.h")
-    system('rm -f Pods/BlocksKit/BlocksKit/UIKit/UITextField+BlocksKit.h')
-    system('rm -f Pods/BlocksKit/BlocksKit/UIKit/UITextField+BlocksKit.m')
+    #system("sed -i '' '/UITextField/d' Pods/BlocksKit/BlocksKit/BlocksKit+UIKit.h")
+    #system('rm -f Pods/BlocksKit/BlocksKit/UIKit/UITextField+BlocksKit.h')
+    #system('rm -f Pods/BlocksKit/BlocksKit/UIKit/UITextField+BlocksKit.m')
     
     system("sed -i '' '/BKMacros/d' Pods/BlocksKit/BlocksKit/BlocksKit.h")
 

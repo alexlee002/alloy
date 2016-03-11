@@ -17,8 +17,19 @@
 #   define PROP_ATOMIC_DEF atomic
 #endif
 
-
-
+// CheckMemoryLeak
+#if DEBUG
+#define CheckMemoryLeak(willReleaseObject)  \
+    do {                                    \
+        __weak typeof(willReleaseObject) _weak_##willReleaseObject = willReleaseObject;    \
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),    \
+               dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{        \
+                    NSAssert(_weak_##willReleaseObject == nil, @"*** MEMORY LEAK: %@", _weak_##willReleaseObject); \
+               });                          \
+    } while(0)
+#else
+#define CheckMemoryLeak(willReleaseObject) do{}while(0)
+#endif
 
 //日志相关
 // 如果安装了 Xcode 的 MCLog插件， 支持彩色日志输出和日志分级， 如果没有安装此插件， 则把下边的宏定义注释即可
@@ -47,13 +58,12 @@
 #define ALLogError(fmt, ...)    __ALLog(@"[ERROR]",     fmt, ##__VA_ARGS__)
 // clang-format on
 
-#define IgnorePerformSelectorLeakWarningInARC(statments) \
-do { \
+//-Warc-performSelector-leaks
+#define IgnoreClangDiagnostic(ignoreStatement, wrappedStatements) \
     _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") \
-    statments \
-    _Pragma("clang diagnostic pop") \
-} while (0)
+    _Pragma("clang diagnostic ignored \"##ignoreStatement\"") \
+    wrappedStatements \
+    _Pragma("clang diagnostic pop")
 
 
 //#undef metamacro_concat

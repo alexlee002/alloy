@@ -36,6 +36,16 @@ FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
     return YES;
 }
 
+FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName) {
+    CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) encodingName);
+    if (cfEncoding != kCFStringEncodingInvalidId) {
+        return CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+    }
+    ALLogWarn(@"Can not convert charset name '%@' to encoding. using default encoding as NSUTF8StringEncoding",
+              encodingName);
+    return NSUTF8StringEncoding;
+}
+
 FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
     NSString *canonicalString = nil;
     if ([value isKindOfClass:[NSString class]]) {

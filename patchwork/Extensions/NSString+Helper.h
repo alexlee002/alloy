@@ -14,8 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 extern id           wrapNil  (id _Nullable obj);
 extern id _Nullable unwrapNil(id _Nullable obj);
 
-extern NSString *stringOrEmpty(NSString *_Nullable string);
-extern BOOL      isEmptyString(NSString *_Nullable string);
+extern NSString         *stringOrEmpty     (NSString *_Nullable string);
+extern BOOL             isEmptyString      (NSString *_Nullable string);
+extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName);
 
 @interface NSObject (StringHelper)
 
