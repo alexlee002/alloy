@@ -9,7 +9,6 @@
 #import "ASIHTTPRequestQueueAdaptor.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
-#import "ASIBandwidthHttpRequest.h"
 #import "UtilitiesHeader.h"
 #import "ALHTTPResponse.h"
 #import "ALHTTPRequest.h"
@@ -103,8 +102,6 @@
     asiRequest.delegate                      = self;
     asiRequest.useCookiePersistence          = NO;
     asiRequest.timeOutSeconds                = request.maximumnConnectionTimeout;
-    asiRequest.needHiddenIndicator           = request.hideNetworkIndicator;
-    asiRequest.needParseResponseAsynchronous = YES;
     asiRequest.tag                           = [self uniqueRequestId];
     [request setValue:@(asiRequest.tag)              forKey:keypath(request.identifier)];
     [request setValue:@(ALHTTPRequestStateSuspended) forKey:keypath(request.state)];
@@ -129,8 +126,7 @@
 
 - (void)buildDownloadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) stringbyAppendingQueryItems:request.params]];
-    *asiRequest = [ASIBandwidthHttpRequest requestWithURL:url];
-    ((ASIBandwidthHttpRequest *) (*asiRequest)).maxBandwidthPerSecond = (unsigned long) request.bytesPerSecond;
+    *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;
     (*asiRequest).allowResumeForFileDownloads = YES;
     [(*asiRequest) setDownloadDestinationPath:[request downlFilePath]];

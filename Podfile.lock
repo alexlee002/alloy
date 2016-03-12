@@ -1,6 +1,4 @@
 PODS:
-  - ASIHTTPRequest (1.8.2):
-    - ASIHTTPRequest/Core (= 1.8.2)
   - ASIHTTPRequest/Core (1.8.2):
     - Reachability
   - BlocksKit/Core (2.2.5)
@@ -29,7 +27,7 @@ PODS:
   - YYModel (1.0.1)
 
 DEPENDENCIES:
-  - ASIHTTPRequest (from `./LocalPods/ASIHttPRequest`)
+  - ASIHTTPRequest/Core
   - BlocksKit/Core
   - FMDB
   - ObjcAssociatedObjectHelpers/Core
@@ -43,12 +41,8 @@ DEPENDENCIES:
   - Reachability
   - YYModel
 
-EXTERNAL SOURCES:
-  ASIHTTPRequest:
-    :path: ./LocalPods/ASIHttPRequest
-
 SPEC CHECKSUMS:
-  ASIHTTPRequest: 6a1d6b023d28a9034cab4ffb2ebb3c3b48b8771d
+  ASIHTTPRequest: ec013992946676b7978dcbde6396d57312d21db4
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
   FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
   ObjcAssociatedObjectHelpers: 686c291f292c26a49b9b1fa7d58130a8d35d59d2
