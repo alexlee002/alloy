@@ -6,9 +6,9 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "ALURLRequestQueueProtocol.h"
+#import "ALURLRequestQueueAdaptorProtocol.h"
 
-@interface NSURLSessionAdaptor : NSObject <ALURLRequestQueueProtocol>
+@interface NSURLSessionAdaptor : NSObject <ALURLRequestQueueAdaptorProtocol>
 
 + (instancetype)adaptorWithSessionConfiguration:(NSURLSessionConfiguration *)config;
 

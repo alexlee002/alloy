@@ -6,8 +6,8 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "ALURLRequestQueueProtocol.h"
+#import "ALURLRequestQueueAdaptorProtocol.h"
 
-@interface ASIHTTPRequestQueueAdaptor : NSObject <ALURLRequestQueueProtocol>
+@interface ASIHTTPRequestQueueAdaptor : NSObject <ALURLRequestQueueAdaptorProtocol>
 
 @end

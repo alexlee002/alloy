@@ -8,7 +8,8 @@
 
 #import "AppDelegate.h"
 #import <objc/runtime.h>
-
+#import "ASIHTTPRequestQueueAdaptor.h"
+#import "ALHTTPRequest.h"
 
 @interface GCDSyncTest : NSObject
 
@@ -188,18 +189,18 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface AppDelegate () <ALURLRequestManagerDelegate>
-
+@interface AppDelegate () <ALURLRequestQueueAdaptorDelegate>
+@property(strong) ASIHTTPRequestQueueAdaptor *queue;
 @end
 
 @implementation AppDelegate {
-
 }
 
-- (Class)adaptorClassForRequest:(ALHTTPRequest *)request {
-    return ASIHTTPRequestAdaptor.class;
+- (void)queueAdaptorDidBecomeInvalid:(id<ALURLRequestQueueAdaptorProtocol>)adaptor {
+    if (adaptor == self.queue) {
+        self.queue = nil;
+    }
 }
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -212,8 +213,47 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 //    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
 //    [dt start];
     
+    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
+    _queue.delegate = self;
+    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+    [_queue sendRequest:request];
+    [_queue finishRequestsAndInvalidate];
+
+    
+//    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
+//    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+//    
+//    // There seems to cycle-retain here, buy it actually release correctly, why?
+//    
+//    weakify(self);
+//    self.queue.requestQueueDidBecomeInvalidBlock = ^{
+//        //_queue = nil;
+//        strongify(self);
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            self.queue = nil;
+//        });
+//    };
+//   
+//    [_queue sendRequest:request];
+//    [_queue finishRequestsAndInvalidate];
+    
+//    __block ASIHTTPRequestQueueAdaptor *q1 = [[ASIHTTPRequestQueueAdaptor alloc] init];
+//    
+//    q1.requestQueueDidBecomeInvalidBlock = ^{
+//        q1 = nil;
+//    };
+//    
+//  ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [q1 sendRequest:request];
+//        [q1 finishRequestsAndInvalidate];
+//    });
     
     return YES;
+}
+
+- (void)destroyQueue {
+    _queue = nil;
 }
 
 - (void)testRespondTo {

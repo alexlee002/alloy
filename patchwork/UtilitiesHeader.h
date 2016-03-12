@@ -18,13 +18,19 @@
 #endif
 
 // CheckMemoryLeak
+/*NSAssert(_weak_##willReleaseObject == nil, @"*** MEMORY LEAK: %@", _weak_##willReleaseObject);*/
 #if DEBUG
 #define CheckMemoryLeak(willReleaseObject)  \
     do {                                    \
-        __weak typeof(willReleaseObject) _weak_##willReleaseObject = willReleaseObject;    \
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),    \
-               dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{        \
-                    NSAssert(_weak_##willReleaseObject == nil, @"*** MEMORY LEAK: %@", _weak_##willReleaseObject); \
+        __weak typeof(willReleaseObject) _weak_##willReleaseObject = willReleaseObject;      \
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),      \
+               dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{          \
+                    if (_weak_##willReleaseObject != nil) {                                  \
+                        ALLogWarn(@"\n************************************************"      \
+                                  @"\n* Memory leaks may have occurred: %@ is not dealloced." \
+                                  @"\n************************************************",     \
+                                  _weak_##willReleaseObject);                                \
+                    }                       \
                });                          \
     } while(0)
 #else

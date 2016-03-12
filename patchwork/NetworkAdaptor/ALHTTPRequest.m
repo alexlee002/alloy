@@ -24,6 +24,13 @@
 @synthesize countOfBytesExpectedToSend      = _countOfBytesExpectedToSend;
 @synthesize countOfBytesExpectedToReceive   = _countOfBytesExpectedToReceive;
 
+
++ (instancetype)requestWithURLString:(NSString *)url {
+    ALHTTPRequest *request = [[ALHTTPRequest alloc] init];
+    request.url = url;
+    return request;
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {

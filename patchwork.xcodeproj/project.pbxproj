@@ -23,6 +23,16 @@
 		436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */; };
 		436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */; };
 		438F63D11C9019E4003EA9B6 /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
+		439B6A241C9308C700900FEB /* ALHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1A1C9308C700900FEB /* ALHTTPRequest.h */; };
+		439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A1B1C9308C700900FEB /* ALHTTPRequest.m */; };
+		439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1C1C9308C700900FEB /* ALHTTPResponse.h */; };
+		439B6A271C9308C700900FEB /* ALHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A1D1C9308C700900FEB /* ALHTTPResponse.m */; };
+		439B6A281C9308C700900FEB /* ALNetwork_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1E1C9308C700900FEB /* ALNetwork_config.h */; };
+		439B6A291C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1F1C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h */; };
+		439B6A2A1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A201C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.h */; };
+		439B6A2B1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */; };
+		439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */; };
+		439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */; };
 		43B518641C7590320060C3AA /* patchwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518631C7590320060C3AA /* patchwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43B5186B1C7590320060C3AA /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
 		43B518701C7590320060C3AA /* patchworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5186F1C7590320060C3AA /* patchworkTests.m */; };
@@ -91,6 +101,16 @@
 		436296AA1C7C693D00EBA718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLDeleteCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLDeleteCommand.m; sourceTree = "<group>"; };
+		439B6A1A1C9308C700900FEB /* ALHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPRequest.h; sourceTree = "<group>"; };
+		439B6A1B1C9308C700900FEB /* ALHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALHTTPRequest.m; sourceTree = "<group>"; };
+		439B6A1C1C9308C700900FEB /* ALHTTPResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPResponse.h; sourceTree = "<group>"; };
+		439B6A1D1C9308C700900FEB /* ALHTTPResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALHTTPResponse.m; sourceTree = "<group>"; };
+		439B6A1E1C9308C700900FEB /* ALNetwork_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALNetwork_config.h; sourceTree = "<group>"; };
+		439B6A1F1C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALURLRequestQueueAdaptorProtocol.h; sourceTree = "<group>"; };
+		439B6A201C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIHTTPRequestQueueAdaptor.h; sourceTree = "<group>"; };
+		439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIHTTPRequestQueueAdaptor.m; sourceTree = "<group>"; };
+		439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionAdaptor.h; sourceTree = "<group>"; };
+		439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
 		43B518601C7590320060C3AA /* patchwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = patchwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B518631C7590320060C3AA /* patchwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchwork.h; sourceTree = "<group>"; };
 		43B518651C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -196,6 +216,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		439B6A191C9308C700900FEB /* NetworkAdaptor */ = {
+			isa = PBXGroup;
+			children = (
+				439B6A1A1C9308C700900FEB /* ALHTTPRequest.h */,
+				439B6A1B1C9308C700900FEB /* ALHTTPRequest.m */,
+				439B6A1C1C9308C700900FEB /* ALHTTPResponse.h */,
+				439B6A1D1C9308C700900FEB /* ALHTTPResponse.m */,
+				439B6A1E1C9308C700900FEB /* ALNetwork_config.h */,
+				439B6A1F1C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h */,
+				439B6A201C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.h */,
+				439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */,
+				439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */,
+				439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */,
+			);
+			path = NetworkAdaptor;
+			sourceTree = "<group>";
+		};
 		43B518561C7590320060C3AA = {
 			isa = PBXGroup;
 			children = (
@@ -221,6 +258,7 @@
 		43B518621C7590320060C3AA /* patchwork */ = {
 			isa = PBXGroup;
 			children = (
+				439B6A191C9308C700900FEB /* NetworkAdaptor */,
 				43B5187A1C7595590060C3AA /* Database */,
 				43B5187B1C7595590060C3AA /* Extensions */,
 				43B5187C1C7595590060C3AA /* Model */,
@@ -315,21 +353,27 @@
 				43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */,
 				4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */,
 				436296831C7B6D3C00EBA718 /* ALSQLUpdateCommand.h in Headers */,
+				439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */,
+				439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */,
 				43D0FE7C1C7D80B70096F232 /* ALOCRuntime.h in Headers */,
 				43D0FE821C7EAC7D0096F232 /* ALModel_Define.h in Headers */,
 				43B518AE1C76CBD80060C3AA /* ALDBColumnInfo.h in Headers */,
 				43B518641C7590320060C3AA /* patchwork.h in Headers */,
 				43B5187F1C7595870060C3AA /* ALModel+JSON.h in Headers */,
 				436296811C7B6D3C00EBA718 /* ALSQLSelectCommand.h in Headers */,
+				439B6A2A1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.h in Headers */,
 				43D0FE791C7D802F0096F232 /* ALDBMigrationProtocol.h in Headers */,
 				43B518A81C75EF810060C3AA /* ALFMDatabaseQueue.h in Headers */,
 				436296871C7B6D5400EBA718 /* ALSQLInsertCommand.h in Headers */,
 				43B518911C759EE50060C3AA /* ALSQLCondition.h in Headers */,
+				439B6A241C9308C700900FEB /* ALHTTPRequest.h in Headers */,
 				43B5188D1C759AAF0060C3AA /* BlocksKitExtension.h in Headers */,
 				43B518A51C75B18D0060C3AA /* Singleton_Template.h in Headers */,
 				43B5188B1C759AAF0060C3AA /* NSArray+ArrayExtensions.h in Headers */,
+				439B6A291C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h in Headers */,
 				436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */,
 				43B518821C7597440060C3AA /* UtilitiesHeader.h in Headers */,
+				439B6A281C9308C700900FEB /* ALNetwork_config.h in Headers */,
 				43D0FE851C7EB3710096F232 /* ALModel.h in Headers */,
 				43B5189E1C75AC3F0060C3AA /* ALDatabase.h in Headers */,
 				43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */,
@@ -558,6 +602,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				436296841C7B6D3C00EBA718 /* ALSQLUpdateCommand.m in Sources */,
+				439B6A271C9308C700900FEB /* ALHTTPResponse.m in Sources */,
 				436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */,
 				43B5189F1C75AC3F0060C3AA /* ALDatabase.m in Sources */,
 				43B518921C759EE50060C3AA /* ALSQLCondition.m in Sources */,
@@ -567,12 +612,15 @@
 				43B5188E1C759AAF0060C3AA /* BlocksKitExtension.m in Sources */,
 				436296801C7B6D3C00EBA718 /* ALSQLCommand.m in Sources */,
 				43B518AF1C76CBD80060C3AA /* ALDBColumnInfo.m in Sources */,
+				439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */,
 				43D0FE7D1C7D80B70096F232 /* ALOCRuntime.m in Sources */,
 				43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */,
 				43D0FE831C7EAC7D0096F232 /* ALModel_Define.m in Sources */,
+				439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */,
 				43B5188C1C759AAF0060C3AA /* NSArray+ArrayExtensions.m in Sources */,
 				436296881C7B6D5400EBA718 /* ALSQLInsertCommand.m in Sources */,
 				436296821C7B6D3C00EBA718 /* ALSQLSelectCommand.m in Sources */,
+				439B6A2B1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

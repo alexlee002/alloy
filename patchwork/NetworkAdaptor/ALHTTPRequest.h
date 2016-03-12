@@ -77,6 +77,8 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockDict)(NSDictionary<
 @property(PROP_ATOMIC_DEF, copy) void (^completionBlock)     (ALHTTPResponse *response, NSError *_Nullable error);
 
 
++ (instancetype)requestWithURLString:(NSString *)url;
+
 - (NSString *)methodName;
 
 // obj = nil then reamove the value for specified key.

@@ -1,5 +1,5 @@
 //
-//  ALURLRequestQueueProtocol.h
+//  ALURLRequestQueueAdaptorProtocol.h
 //  patchwork
 //
 //  Created by Alex Lee on 3/10/16.
@@ -10,11 +10,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ALHTTPRequest;
-@protocol ALURLRequestQueueProtocol <NSObject>
+@protocol ALURLRequestQueueAdaptorProtocol;
+@protocol ALURLRequestQueueAdaptorDelegate <NSObject>
 
+- (void)queueAdaptorDidBecomeInvalid:(id<ALURLRequestQueueAdaptorProtocol>)adaptor;
+
+@end
+
+@class ALHTTPRequest;
+@protocol ALURLRequestQueueAdaptorProtocol <NSObject>
+
+@property(weak) id<ALURLRequestQueueAdaptorDelegate> delegate;
 // currently not supports NSURLSession
-@property NSInteger maxConcurrentRequestCount;
+@property                 NSInteger maxConcurrentRequestCount;
 
 - (void)fetchRequestsWithCompletion:(void (^)(NSArray<__kindof ALHTTPRequest *> *requests))completion;
 - (BOOL)sendRequest:(ALHTTPRequest *)request;

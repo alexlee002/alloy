@@ -15,6 +15,7 @@
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
+#import "NSArray+ArrayExtensions.h"
 
 @interface ASIHTTPRequestQueueAdaptor() <ASIHTTPRequestDelegate, ASIProgressDelegate>
 
@@ -33,6 +34,7 @@
 }
 
 @dynamic maxConcurrentRequestCount;
+@synthesize delegate;
 
 - (instancetype)init {
     self = [super init];
@@ -45,8 +47,13 @@
 }
 
 - (void)dealloc {
-    [_requestDict bk_each:^(id key, ASIHTTPRequest *obj) {
-        [obj clearDelegatesAndCancel];
+    ALLogVerbose(@"~~~ DEALLOC: %@ ~~~", self);
+    
+    [_requestDict.allValues bk_each:^(NSArray *pairs) {
+        ASIHTTPRequest *request = [pairs objectAtIndexSafely:1];
+        if ([request isKindOfClass:[ASIHTTPRequest class]]) {
+            [request clearDelegatesAndCancel];
+        }
     }];
 }
 
@@ -145,7 +152,7 @@
     });
     
     static NSUInteger kIdentifier;
-    NSUInteger nextId = kIdentifier;
+    NSUInteger nextId;
     dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
     nextId = ++kIdentifier;
     dispatch_semaphore_signal(lock);
@@ -174,7 +181,7 @@
 
 - (void)cancelRequestWithIdentifyer:(NSUInteger)identifier {
     ALHTTPRequest  *srcReq = [_requestDict[@(identifier)] firstObject];
-    ASIHTTPRequest *asiReq = [_requestDict[@(identifier)] lastObject];
+    ASIHTTPRequest *asiReq = [_requestDict[@(identifier)] objectAtIndexSafely:1];
     
     [srcReq setValue:@(ALHTTPRequestStateCancelled) forKey:keypath(srcReq.state)];
     [asiReq cancel];
@@ -227,8 +234,13 @@
     if (srcReq.completionBlock != nil) {
         srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request], nil);
     }
-    [_requestDict removeObjectForKey:@(request.tag)];
+    
     CheckMemoryLeak(request);
+    [_requestDict removeObjectForKey:@(request.tag)];
+    if (_invalidated && _requestDict.count == 0 && [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
+        [self.delegate queueAdaptorDidBecomeInvalid:self];
+    }
+    
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)request {
@@ -240,7 +252,9 @@
         srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request], request.error);
     }
     [_requestDict removeObjectForKey:@(request.tag)];
-
+    if (_invalidated && _requestDict.count == 0 && [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
+        [self.delegate queueAdaptorDidBecomeInvalid:self];
+    }
     CheckMemoryLeak(request);
 }
 
