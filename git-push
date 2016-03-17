@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# update some resources befor push
+# USAGE: git-push [trunk|other] [branch[:remote branch]]
+
+if [[ $# -lt 1 ]]; then
+	echo "USAGE: $0 trunk|other-repo-name [branch[:remote branch]]"
+	exit
+fi
+
+REPO=$1
+if [[ $# -gt 1 ]]; then
+	BRANCH=$2
+	DIM=":"
+	if [[ $BRANCH == $DIM* ]]; then
+		LOCAL_REF=""
+		REMOTE_REF=${BRANCH:1}
+	else
+		arr=$(echo $BRANCH | tr ":" "\n")
+		for o in $arr; do
+			if [[ -z $LOCAL_REF ]]; then
+				LOCAL_REF=$o
+			elif [[ -z $REMOTE_REF ]]; then
+				REMOTE_REF=$o
+			fi
+		done
+		if [[ -z $REMOTE_REF ]]; then
+			REMOTE_REF=$LOCAL_REF
+		fi
+	fi
+else
+	REMOTE_REF=`git symbolic-ref --short HEAD`
+	LOCAL_REF=$REMOTE_REF
+fi
+
+if [[ $REPO == "trunk" ]]; then
+	cat patchwork.podspec | sed -e 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' > patchwork.podspec
+	git add .
+	git commit -am "update podspec source"
+else
+	cat patchwork.podspec | sed -e 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' > patchwork.podspec
+	git add .
+	git commit -am "update podspec source"
+fi
+
+echo "executing... 'git push $REPO $LOCAL_REF:$REMOTE_REF'"
+git push $REPO $LOCAL_REF:$REMOTE_REF
+
+
+
+
+
