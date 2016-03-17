@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "Patchwork"
+  s.name         = "patchwork"
   s.version      = "0.0.1"
   s.summary      = "An easy, simple base foundation for iOS app."
   s.description  = <<-DESC
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
 
 
   #s.source       = { :git => "https://github.com/alexlee002/patchwork.git", :tag => s.version.to_s }
-  s.source        = { :git => "https://github.com/alexlee002/patchwork.git", :branch => "master"}
+  s.source        = { :git => "https://github.com/BaiduYun-iOS/patchwork.git", :branch => "master"}
   s.source_files  = "patchwork", "patchwork/**/*.{h,m}"
   #s.exclude_files = "Classes/Exclude"
 
