@@ -7,7 +7,7 @@
 //
 
 #import "ALSQLCondition.h"
-#import <BlocksKit.h>
+#import "BlocksKit.h"
 #import "NSString+Helper.h"
 
 
