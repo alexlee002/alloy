@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "patchwork"
+  s.name         = "patchwork-demo"
   s.version      = "0.0.1"
   s.summary      = "An easy, simple base foundation for iOS app."
   s.description  = <<-DESC
