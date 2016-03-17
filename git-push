@@ -34,14 +34,13 @@ else
 fi
 
 if [[ $REPO == "trunk" ]]; then
-	cat patchwork.podspec | sed -e 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' > patchwork.podspec
-	git add .
-	git commit -am "update podspec source"
+	sed -ie 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' patchwork.podspec
 else
-	cat patchwork.podspec | sed -e 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' > patchwork.podspec
-	git add .
-	git commit -am "update podspec source"
+	sed -ie 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' patchwork.podspec
 fi
+
+git add .
+git commit -am "update podspec source"
 
 echo "executing... 'git push $REPO $LOCAL_REF:$REMOTE_REF'"
 git push $REPO $LOCAL_REF:$REMOTE_REF
