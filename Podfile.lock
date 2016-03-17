@@ -6,23 +6,10 @@ PODS:
     - FMDB/standard (= 2.6)
   - FMDB/standard (2.6)
   - ObjcAssociatedObjectHelpers/Core (2.0.1)
-  - PromiseKit/Hang (1.6.0):
-    - PromiseKit/Promise
-  - PromiseKit/Join (1.6.0):
-    - PromiseKit/Promise
-    - PromiseKit/Until
-  - PromiseKit/NSFileManager (1.6.0):
-    - PromiseKit/Promise
-  - PromiseKit/NSNotificationCenter (1.6.0):
-    - PromiseKit/Promise
-  - PromiseKit/Pause (1.6.0):
-    - PromiseKit/Promise
-  - PromiseKit/Promise (1.6.0)
-  - PromiseKit/Until (1.6.0):
-    - PromiseKit/Promise
-    - PromiseKit/When
-  - PromiseKit/When (1.6.0):
-    - PromiseKit/Promise
+  - patchwork-demo (0.0.1):
+    - BlocksKit/Core (~> 2.2.5)
+    - FMDB (~> 2.6)
+    - YYModel (~> 1.0.1)
   - Reachability (3.2)
   - YYModel (1.0.1)
 
@@ -31,22 +18,20 @@ DEPENDENCIES:
   - BlocksKit/Core
   - FMDB
   - ObjcAssociatedObjectHelpers/Core
-  - PromiseKit/Hang (~> 1.6)
-  - PromiseKit/Join (~> 1.6)
-  - PromiseKit/NSFileManager (~> 1.6)
-  - PromiseKit/NSNotificationCenter (~> 1.6)
-  - PromiseKit/Pause (~> 1.6)
-  - PromiseKit/Until (~> 1.6)
-  - PromiseKit/When (~> 1.6)
+  - patchwork-demo (from `.`)
   - Reachability
   - YYModel
+
+EXTERNAL SOURCES:
+  patchwork-demo:
+    :path: .
 
 SPEC CHECKSUMS:
   ASIHTTPRequest: ec013992946676b7978dcbde6396d57312d21db4
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
   FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
   ObjcAssociatedObjectHelpers: 686c291f292c26a49b9b1fa7d58130a8d35d59d2
-  PromiseKit: 6be651503d4af22830b5313be993c5a0ef77bf77
+  patchwork-demo: 075a6d4fc885bdd5c8cdcc3f5c78a021e18b3647
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   YYModel: 794f0820a9a9703615bc166aa8e336abaf422c2b
 

@@ -141,6 +141,13 @@ FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
     }
 }
 
++ (NSString *)UUIDString {
+    CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    CFRelease(uuid);
+    return uuidString;
+}
+
 @end
 
 
@@ -154,7 +161,7 @@ FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
     };
 }
 
-- (NSString *)stringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items {
+- (NSString *)urlStringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items {
     __block NSString *string = self;
     [items enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         string = string.SET_QUERY_PARAM(key, obj);

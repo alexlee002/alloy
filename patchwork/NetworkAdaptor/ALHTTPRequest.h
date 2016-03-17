@@ -32,8 +32,6 @@ typedef NS_ENUM(NSInteger, ALHTTPRequestState) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-
 @class ALHTTPRequest;
 @class ALHTTPResponse;
 
@@ -70,12 +68,12 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockDict)(NSDictionary<
 /* number of byte bytes we expect to receive, usually derived from the Content-Length header of an HTTP response. */
 @property(readonly) int64_t countOfBytesExpectedToReceive;
 
-
-@property(PROP_ATOMIC_DEF, copy) void (^startBlock)          (void);
-@property(PROP_ATOMIC_DEF, copy) void (^headersRespondsBlock)(NSDictionary<NSString *, id> *headers);
-@property(PROP_ATOMIC_DEF, copy) void (^progressBlock)       (uint64_t bytesRead, uint64_t totalBytesRead, uint64_t totalExpectedToRead);
-@property(PROP_ATOMIC_DEF, copy) void (^completionBlock)     (ALHTTPResponse *response, NSError *_Nullable error);
-
+@property(PROP_ATOMIC_DEF, copy, nullable) void (^startBlock)(void);
+@property(PROP_ATOMIC_DEF, copy, nullable) void (^headersRespondsBlock)
+    (NSDictionary<NSString *, id> *headers, NSInteger statusCode);
+@property(PROP_ATOMIC_DEF, copy, nullable) void (^progressBlock)
+    (uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected);
+@property(PROP_ATOMIC_DEF, copy, nullable) void (^completionBlock)(ALHTTPResponse *response, NSError *_Nullable error);
 
 + (instancetype)requestWithURLString:(NSString *)url;
 

@@ -32,7 +32,7 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
 - (nullable NSString *)substringToIndexSafety:(NSUInteger)to;
 - (nullable NSString *)substringFromIndexSafety:(NSUInteger)from;
 - (nullable NSString *)substringWithRangeSafety:(NSRange)range;
-
++ (NSString *)UUIDString;
 @end
 
 
@@ -40,7 +40,7 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
 
 @property(nonatomic, readonly) NSString * (^SET_QUERY_PARAM)(NSString *key, id value);
 
-- (NSString *)stringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items;
+- (NSString *)urlStringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items;
 - (NSString *)stringByURLEncoding;
 - (NSString *)stringByURLDecoding;
 @end

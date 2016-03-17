@@ -26,7 +26,7 @@
 
 
 + (instancetype)requestWithURLString:(NSString *)url {
-    ALHTTPRequest *request = [[ALHTTPRequest alloc] init];
+    ALHTTPRequest *request = [[self alloc] init];
     request.url = url;
     return request;
 }

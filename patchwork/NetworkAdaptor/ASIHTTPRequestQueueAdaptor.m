@@ -85,7 +85,7 @@
         if (request.type == ALRequestTypeDownload) {
             [self buildDownloadRequest:&asiRequest with:request];
         } else {
-            NSURL *url = [NSURL URLWithString:[stringOrEmpty(request.url) stringbyAppendingQueryItems:request.params]];
+            NSURL *url = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
             asiRequest = [ASIHTTPRequest requestWithURL:url];
         }
     }
@@ -125,7 +125,7 @@
 }
 
 - (void)buildDownloadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
-    NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) stringbyAppendingQueryItems:request.params]];
+    NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
     *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;
     (*asiRequest).allowResumeForFileDownloads = YES;
@@ -218,40 +218,72 @@
 - (void)request:(ASIHTTPRequest *)request didReceiveResponseHeaders:(NSDictionary *)responseHeaders {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     if (srcReq.headersRespondsBlock != nil) {
-        srcReq.headersRespondsBlock(responseHeaders);
+        srcReq.headersRespondsBlock(responseHeaders, request.responseStatusCode);
     }
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     ALLogVerbose(@"\nrequest: %@\nresponse: %@", requestDesc(srcReq), request.responseString);
-    
+
     [srcReq setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(srcReq.state)];
     if (srcReq.completionBlock != nil) {
         srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request], nil);
     }
-    
+
     CheckMemoryLeak(request);
     [_requestDict removeObjectForKey:@(request.tag)];
-    if (_invalidated && _requestDict.count == 0 && [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
+    if (_invalidated && _requestDict.count == 0 &&
+        [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
         [self.delegate queueAdaptorDidBecomeInvalid:self];
     }
-    
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)request {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     ALLogVerbose(@"\nrequest: %@\nerror: %@", requestDesc(srcReq), request.responseString);
-    
+
     [srcReq setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(srcReq.state)];
+
     if (srcReq.completionBlock != nil) {
-        srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request], request.error);
+        srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request],
+                               [self NSURLErrorTransformingFromASIError:request.error]);
     }
     [_requestDict removeObjectForKey:@(request.tag)];
-    if (_invalidated && _requestDict.count == 0 && [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
+    if (_invalidated && _requestDict.count == 0 &&
+        [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
         [self.delegate queueAdaptorDidBecomeInvalid:self];
     }
     CheckMemoryLeak(request);
+}
+
+- (NSError *)NSURLErrorTransformingFromASIError:(NSError *)error {
+    switch (error.code) {
+        case ASIConnectionFailureErrorType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotConnectToHost userInfo:nil];
+        case ASIRequestTimedOutErrorType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
+        case ASIAuthenticationErrorType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired userInfo:nil];
+        case ASIRequestCancelledErrorType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
+        case ASIUnableToCreateRequestErrorType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:nil];
+        case ASIInternalErrorWhileBuildingRequestType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+        case ASIInternalErrorWhileApplyingCredentialsType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired userInfo:nil];
+        case ASIFileManagementError:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+        case ASITooMuchRedirectionErrorType:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorHTTPTooManyRedirects userInfo:nil];
+        case ASIUnhandledExceptionError:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+        case ASICompressionError:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+        default:
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+    }
 }
 
 #pragma mark - ASIProgressDelegate

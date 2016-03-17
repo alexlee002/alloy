@@ -8,6 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		1702CC668F9BE6CF66C37A75 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81FDE66C67E6452F8F285B2B /* libPods.a */; };
+		430F6F651C9A5F3D003E8F6C /* NSCache+ALExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F611C9A5F3D003E8F6C /* NSCache+ALExtensions.h */; };
+		430F6F661C9A5F3D003E8F6C /* NSCache+ALExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F621C9A5F3D003E8F6C /* NSCache+ALExtensions.m */; };
+		430F6F671C9A5F3D003E8F6C /* NSDate+ALExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F631C9A5F3D003E8F6C /* NSDate+ALExtensions.h */; };
+		430F6F681C9A5F3D003E8F6C /* NSDate+ALExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F641C9A5F3D003E8F6C /* NSDate+ALExtensions.m */; };
+		430F6F761C9A5F7C003E8F6C /* ALDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F6A1C9A5F7C003E8F6C /* ALDevice.h */; };
+		430F6F771C9A5F7C003E8F6C /* ALDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F6B1C9A5F7C003E8F6C /* ALDevice.m */; };
+		430F6F781C9A5F7C003E8F6C /* ALOCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F6C1C9A5F7C003E8F6C /* ALOCRuntime.h */; };
+		430F6F791C9A5F7C003E8F6C /* ALOCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F6D1C9A5F7C003E8F6C /* ALOCRuntime.m */; };
+		430F6F7A1C9A5F7C003E8F6C /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F6E1C9A5F7C003E8F6C /* Base64.h */; };
+		430F6F7B1C9A5F7C003E8F6C /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F6F1C9A5F7C003E8F6C /* Base64.m */; };
+		430F6F7C1C9A5F7C003E8F6C /* MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F701C9A5F7C003E8F6C /* MD5.h */; };
+		430F6F7D1C9A5F7C003E8F6C /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F711C9A5F7C003E8F6C /* MD5.m */; };
+		430F6F7E1C9A5F7C003E8F6C /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F721C9A5F7C003E8F6C /* SHA1.h */; };
+		430F6F7F1C9A5F7C003E8F6C /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F731C9A5F7C003E8F6C /* SHA1.m */; };
+		430F6F801C9A5F7C003E8F6C /* Singleton_Template.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */; };
+		430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */; };
 		4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 436296791C7B6D3C00EBA718 /* ALSQLCommand.h */; };
 		436296801C7B6D3C00EBA718 /* ALSQLCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 4362967A1C7B6D3C00EBA718 /* ALSQLCommand.m */; };
 		436296811C7B6D3C00EBA718 /* ALSQLSelectCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 4362967B1C7B6D3C00EBA718 /* ALSQLSelectCommand.h */; };
@@ -38,7 +54,6 @@
 		43B518701C7590320060C3AA /* patchworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5186F1C7590320060C3AA /* patchworkTests.m */; };
 		43B5187F1C7595870060C3AA /* ALModel+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5187D1C7595870060C3AA /* ALModel+JSON.h */; };
 		43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5187E1C7595870060C3AA /* ALModel+JSON.m */; };
-		43B518821C7597440060C3AA /* UtilitiesHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518811C7597440060C3AA /* UtilitiesHeader.h */; };
 		43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518831C759A3F0060C3AA /* NSString+Helper.h */; };
 		43B518861C759A3F0060C3AA /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518841C759A3F0060C3AA /* NSString+Helper.m */; };
 		43B5188B1C759AAF0060C3AA /* NSArray+ArrayExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518871C759AAF0060C3AA /* NSArray+ArrayExtensions.h */; };
@@ -49,21 +64,21 @@
 		43B518921C759EE50060C3AA /* ALSQLCondition.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518901C759EE50060C3AA /* ALSQLCondition.m */; };
 		43B5189E1C75AC3F0060C3AA /* ALDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B5189C1C75AC3F0060C3AA /* ALDatabase.h */; };
 		43B5189F1C75AC3F0060C3AA /* ALDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5189D1C75AC3F0060C3AA /* ALDatabase.m */; };
-		43B518A51C75B18D0060C3AA /* Singleton_Template.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518A41C75B18D0060C3AA /* Singleton_Template.h */; };
 		43B518A81C75EF810060C3AA /* ALFMDatabaseQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518A61C75EF810060C3AA /* ALFMDatabaseQueue.h */; };
 		43B518A91C75EF810060C3AA /* ALFMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518A71C75EF810060C3AA /* ALFMDatabaseQueue.m */; };
 		43B518AE1C76CBD80060C3AA /* ALDBColumnInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518AC1C76CBD80060C3AA /* ALDBColumnInfo.h */; };
 		43B518AF1C76CBD80060C3AA /* ALDBColumnInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518AD1C76CBD80060C3AA /* ALDBColumnInfo.m */; };
 		43B518BD1C7735270060C3AA /* DBManageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B518BC1C7735270060C3AA /* DBManageTests.m */; };
 		43D0FE791C7D802F0096F232 /* ALDBMigrationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE781C7D802F0096F232 /* ALDBMigrationProtocol.h */; };
-		43D0FE7C1C7D80B70096F232 /* ALOCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE7A1C7D80B70096F232 /* ALOCRuntime.h */; };
-		43D0FE7D1C7D80B70096F232 /* ALOCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D0FE7B1C7D80B70096F232 /* ALOCRuntime.m */; };
 		43D0FE821C7EAC7D0096F232 /* ALModel_Define.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE801C7EAC7D0096F232 /* ALModel_Define.h */; };
 		43D0FE831C7EAC7D0096F232 /* ALModel_Define.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D0FE811C7EAC7D0096F232 /* ALModel_Define.m */; };
 		43D0FE851C7EB3710096F232 /* ALModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE841C7EB3710096F232 /* ALModel.h */; };
 		43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE861C7EB3F40096F232 /* ALModel+ActiveRecord.h */; };
 		43D0FE891C7EB3F40096F232 /* ALModel+ActiveRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */; };
+		47448365FD903DF7F83A5339 /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102D4C7D7F5960683C080401 /* libPods-patchwork.a */; };
 		570A2BE27503E4EAF61DAC99 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81FDE66C67E6452F8F285B2B /* libPods.a */; };
+		9CBB7D23FCDA16353AB061C2 /* libPods-patchworkTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6CC35E7E3222FAF183EEC85 /* libPods-patchworkTests.a */; };
+		ED83656BFFF92A6C9898F9D0 /* libPods-patchwork-Demo-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +99,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		102D4C7D7F5960683C080401 /* libPods-patchwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CC6CC43C4CB648A1F7EF879 /* Pods-patchwork-Demo-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork-Demo-iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork-Demo-iOS/Pods-patchwork-Demo-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		33DF461A8106AF5033E86B0D /* Pods-patchworkTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.release.xcconfig"; sourceTree = "<group>"; };
+		430F6F611C9A5F3D003E8F6C /* NSCache+ALExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCache+ALExtensions.h"; sourceTree = "<group>"; };
+		430F6F621C9A5F3D003E8F6C /* NSCache+ALExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCache+ALExtensions.m"; sourceTree = "<group>"; };
+		430F6F631C9A5F3D003E8F6C /* NSDate+ALExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ALExtensions.h"; sourceTree = "<group>"; };
+		430F6F641C9A5F3D003E8F6C /* NSDate+ALExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ALExtensions.m"; sourceTree = "<group>"; };
+		430F6F6A1C9A5F7C003E8F6C /* ALDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDevice.h; sourceTree = "<group>"; };
+		430F6F6B1C9A5F7C003E8F6C /* ALDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDevice.m; sourceTree = "<group>"; };
+		430F6F6C1C9A5F7C003E8F6C /* ALOCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOCRuntime.h; sourceTree = "<group>"; };
+		430F6F6D1C9A5F7C003E8F6C /* ALOCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOCRuntime.m; sourceTree = "<group>"; };
+		430F6F6E1C9A5F7C003E8F6C /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		430F6F6F1C9A5F7C003E8F6C /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		430F6F701C9A5F7C003E8F6C /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
+		430F6F711C9A5F7C003E8F6C /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		430F6F721C9A5F7C003E8F6C /* SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
+		430F6F731C9A5F7C003E8F6C /* SHA1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHA1.m; sourceTree = "<group>"; };
+		430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton_Template.h; sourceTree = "<group>"; };
+		430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesHeader.h; sourceTree = "<group>"; };
 		436296791C7B6D3C00EBA718 /* ALSQLCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		4362967A1C7B6D3C00EBA718 /* ALSQLCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLCommand.m; sourceTree = "<group>"; };
 		4362967B1C7B6D3C00EBA718 /* ALSQLSelectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLSelectCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -119,7 +153,6 @@
 		43B518711C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43B5187D1C7595870060C3AA /* ALModel+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+JSON.h"; sourceTree = "<group>"; };
 		43B5187E1C7595870060C3AA /* ALModel+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "ALModel+JSON.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		43B518811C7597440060C3AA /* UtilitiesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesHeader.h; sourceTree = "<group>"; };
 		43B518831C759A3F0060C3AA /* NSString+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSString+Helper.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B518841C759A3F0060C3AA /* NSString+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Helper.m"; sourceTree = "<group>"; };
 		43B518871C759AAF0060C3AA /* NSArray+ArrayExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ArrayExtensions.h"; sourceTree = "<group>"; };
@@ -130,23 +163,24 @@
 		43B518901C759EE50060C3AA /* ALSQLCondition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLCondition.m; sourceTree = "<group>"; };
 		43B5189C1C75AC3F0060C3AA /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDatabase.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B5189D1C75AC3F0060C3AA /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		43B518A41C75B18D0060C3AA /* Singleton_Template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton_Template.h; sourceTree = "<group>"; };
 		43B518A61C75EF810060C3AA /* ALFMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALFMDatabaseQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B518A71C75EF810060C3AA /* ALFMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALFMDatabaseQueue.m; sourceTree = "<group>"; };
 		43B518AC1C76CBD80060C3AA /* ALDBColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDBColumnInfo.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B518AD1C76CBD80060C3AA /* ALDBColumnInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDBColumnInfo.m; sourceTree = "<group>"; };
 		43B518BC1C7735270060C3AA /* DBManageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBManageTests.m; sourceTree = "<group>"; };
 		43D0FE781C7D802F0096F232 /* ALDBMigrationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBMigrationProtocol.h; sourceTree = "<group>"; };
-		43D0FE7A1C7D80B70096F232 /* ALOCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOCRuntime.h; sourceTree = "<group>"; };
-		43D0FE7B1C7D80B70096F232 /* ALOCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOCRuntime.m; sourceTree = "<group>"; };
 		43D0FE801C7EAC7D0096F232 /* ALModel_Define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel_Define.h; sourceTree = "<group>"; };
 		43D0FE811C7EAC7D0096F232 /* ALModel_Define.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALModel_Define.m; sourceTree = "<group>"; };
 		43D0FE841C7EB3710096F232 /* ALModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel.h; sourceTree = "<group>"; };
 		43D0FE861C7EB3F40096F232 /* ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "ALModel+ActiveRecord.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
 		81FDE66C67E6452F8F285B2B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		8474FA6E59E1BFD599902903 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		FC757CC08A5BF253ACC5AA2B /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork-Demo-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B72DABE29A24A93A7134361 /* Pods-patchwork.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.debug.xcconfig"; sourceTree = "<group>"; };
+		A2F7E30A6DB4A2921D021EAC /* Pods-patchworkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.debug.xcconfig"; sourceTree = "<group>"; };
+		A6CC35E7E3222FAF183EEC85 /* libPods-patchworkTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchworkTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC328D3A9D0453068ACA9F3C /* Pods-patchwork.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.release.xcconfig"; sourceTree = "<group>"; };
+		CE2E6E93A2ACB80172E8C20E /* Pods-patchwork-Demo-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork-Demo-iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork-Demo-iOS/Pods-patchwork-Demo-iOS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +189,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				438F63D11C9019E4003EA9B6 /* patchwork.framework in Frameworks */,
+				ED83656BFFF92A6C9898F9D0 /* libPods-patchwork-Demo-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +198,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				570A2BE27503E4EAF61DAC99 /* libPods.a in Frameworks */,
+				47448365FD903DF7F83A5339 /* libPods-patchwork.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,12 +208,32 @@
 			files = (
 				43B5186B1C7590320060C3AA /* patchwork.framework in Frameworks */,
 				1702CC668F9BE6CF66C37A75 /* libPods.a in Frameworks */,
+				9CBB7D23FCDA16353AB061C2 /* libPods-patchworkTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		430F6F691C9A5F7C003E8F6C /* Foundations */ = {
+			isa = PBXGroup;
+			children = (
+				430F6F6A1C9A5F7C003E8F6C /* ALDevice.h */,
+				430F6F6B1C9A5F7C003E8F6C /* ALDevice.m */,
+				430F6F6C1C9A5F7C003E8F6C /* ALOCRuntime.h */,
+				430F6F6D1C9A5F7C003E8F6C /* ALOCRuntime.m */,
+				430F6F6E1C9A5F7C003E8F6C /* Base64.h */,
+				430F6F6F1C9A5F7C003E8F6C /* Base64.m */,
+				430F6F701C9A5F7C003E8F6C /* MD5.h */,
+				430F6F711C9A5F7C003E8F6C /* MD5.m */,
+				430F6F721C9A5F7C003E8F6C /* SHA1.h */,
+				430F6F731C9A5F7C003E8F6C /* SHA1.m */,
+				430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */,
+				430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */,
+			);
+			path = Foundations;
+			sourceTree = "<group>";
+		};
 		436296781C7B6D3C00EBA718 /* SqlCommands */ = {
 			isa = PBXGroup;
 			children = (
@@ -258,16 +314,13 @@
 		43B518621C7590320060C3AA /* patchwork */ = {
 			isa = PBXGroup;
 			children = (
+				430F6F691C9A5F7C003E8F6C /* Foundations */,
 				439B6A191C9308C700900FEB /* NetworkAdaptor */,
 				43B5187A1C7595590060C3AA /* Database */,
 				43B5187B1C7595590060C3AA /* Extensions */,
 				43B5187C1C7595590060C3AA /* Model */,
 				43B518651C7590320060C3AA /* Info.plist */,
 				43B518631C7590320060C3AA /* patchwork.h */,
-				43B518A41C75B18D0060C3AA /* Singleton_Template.h */,
-				43B518811C7597440060C3AA /* UtilitiesHeader.h */,
-				43D0FE7A1C7D80B70096F232 /* ALOCRuntime.h */,
-				43D0FE7B1C7D80B70096F232 /* ALOCRuntime.m */,
 			);
 			path = patchwork;
 			sourceTree = "<group>";
@@ -302,6 +355,10 @@
 		43B5187B1C7595590060C3AA /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				430F6F611C9A5F3D003E8F6C /* NSCache+ALExtensions.h */,
+				430F6F621C9A5F3D003E8F6C /* NSCache+ALExtensions.m */,
+				430F6F631C9A5F3D003E8F6C /* NSDate+ALExtensions.h */,
+				430F6F641C9A5F3D003E8F6C /* NSDate+ALExtensions.m */,
 				43B518871C759AAF0060C3AA /* NSArray+ArrayExtensions.h */,
 				43B518881C759AAF0060C3AA /* NSArray+ArrayExtensions.m */,
 				43B518891C759AAF0060C3AA /* BlocksKitExtension.h */,
@@ -329,8 +386,12 @@
 		BB90779D334D1C9697882EAD /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8474FA6E59E1BFD599902903 /* Pods.debug.xcconfig */,
-				FC757CC08A5BF253ACC5AA2B /* Pods.release.xcconfig */,
+				1CC6CC43C4CB648A1F7EF879 /* Pods-patchwork-Demo-iOS.debug.xcconfig */,
+				CE2E6E93A2ACB80172E8C20E /* Pods-patchwork-Demo-iOS.release.xcconfig */,
+				9B72DABE29A24A93A7134361 /* Pods-patchwork.debug.xcconfig */,
+				AC328D3A9D0453068ACA9F3C /* Pods-patchwork.release.xcconfig */,
+				A2F7E30A6DB4A2921D021EAC /* Pods-patchworkTests.debug.xcconfig */,
+				33DF461A8106AF5033E86B0D /* Pods-patchworkTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -339,6 +400,9 @@
 			isa = PBXGroup;
 			children = (
 				81FDE66C67E6452F8F285B2B /* libPods.a */,
+				102D4C7D7F5960683C080401 /* libPods-patchwork.a */,
+				8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */,
+				A6CC35E7E3222FAF183EEC85 /* libPods-patchworkTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -352,30 +416,36 @@
 			files = (
 				43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */,
 				4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */,
+				430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */,
+				430F6F7A1C9A5F7C003E8F6C /* Base64.h in Headers */,
 				436296831C7B6D3C00EBA718 /* ALSQLUpdateCommand.h in Headers */,
 				439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */,
 				439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */,
-				43D0FE7C1C7D80B70096F232 /* ALOCRuntime.h in Headers */,
 				43D0FE821C7EAC7D0096F232 /* ALModel_Define.h in Headers */,
 				43B518AE1C76CBD80060C3AA /* ALDBColumnInfo.h in Headers */,
 				43B518641C7590320060C3AA /* patchwork.h in Headers */,
 				43B5187F1C7595870060C3AA /* ALModel+JSON.h in Headers */,
 				436296811C7B6D3C00EBA718 /* ALSQLSelectCommand.h in Headers */,
+				430F6F781C9A5F7C003E8F6C /* ALOCRuntime.h in Headers */,
 				439B6A2A1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.h in Headers */,
 				43D0FE791C7D802F0096F232 /* ALDBMigrationProtocol.h in Headers */,
 				43B518A81C75EF810060C3AA /* ALFMDatabaseQueue.h in Headers */,
 				436296871C7B6D5400EBA718 /* ALSQLInsertCommand.h in Headers */,
 				43B518911C759EE50060C3AA /* ALSQLCondition.h in Headers */,
+				430F6F7E1C9A5F7C003E8F6C /* SHA1.h in Headers */,
 				439B6A241C9308C700900FEB /* ALHTTPRequest.h in Headers */,
 				43B5188D1C759AAF0060C3AA /* BlocksKitExtension.h in Headers */,
-				43B518A51C75B18D0060C3AA /* Singleton_Template.h in Headers */,
+				430F6F761C9A5F7C003E8F6C /* ALDevice.h in Headers */,
 				43B5188B1C759AAF0060C3AA /* NSArray+ArrayExtensions.h in Headers */,
 				439B6A291C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h in Headers */,
 				436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */,
-				43B518821C7597440060C3AA /* UtilitiesHeader.h in Headers */,
+				430F6F801C9A5F7C003E8F6C /* Singleton_Template.h in Headers */,
 				439B6A281C9308C700900FEB /* ALNetwork_config.h in Headers */,
 				43D0FE851C7EB3710096F232 /* ALModel.h in Headers */,
+				430F6F651C9A5F3D003E8F6C /* NSCache+ALExtensions.h in Headers */,
 				43B5189E1C75AC3F0060C3AA /* ALDatabase.h in Headers */,
+				430F6F7C1C9A5F7C003E8F6C /* MD5.h in Headers */,
+				430F6F671C9A5F3D003E8F6C /* NSDate+ALExtensions.h in Headers */,
 				43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -387,9 +457,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 436296AB1C7C693D00EBA718 /* Build configuration list for PBXNativeTarget "patchwork-Demo-iOS" */;
 			buildPhases = (
+				C2E978FD716D5A29FD97EDC9 /* Check Pods Manifest.lock */,
 				436296991C7C693D00EBA718 /* Sources */,
 				4362969A1C7C693D00EBA718 /* Frameworks */,
 				4362969B1C7C693D00EBA718 /* Resources */,
+				A452F1986CEDEE360DDFF8C7 /* Embed Pods Frameworks */,
+				7A5B116EBD482CB4EB287612 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -522,7 +595,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5954900B084E3B63158C37AD /* Copy Pods Resources */ = {
@@ -537,10 +610,55 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7A5B116EBD482CB4EB287612 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-patchwork-Demo-iOS/Pods-patchwork-Demo-iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A452F1986CEDEE360DDFF8C7 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-patchwork-Demo-iOS/Pods-patchwork-Demo-iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A50DB8CA40F8E516A3D511BB /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		C2E978FD716D5A29FD97EDC9 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -582,7 +700,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-patchwork/Pods-patchwork-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -601,25 +719,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				430F6F7F1C9A5F7C003E8F6C /* SHA1.m in Sources */,
 				436296841C7B6D3C00EBA718 /* ALSQLUpdateCommand.m in Sources */,
 				439B6A271C9308C700900FEB /* ALHTTPResponse.m in Sources */,
+				430F6F661C9A5F3D003E8F6C /* NSCache+ALExtensions.m in Sources */,
 				436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */,
 				43B5189F1C75AC3F0060C3AA /* ALDatabase.m in Sources */,
 				43B518921C759EE50060C3AA /* ALSQLCondition.m in Sources */,
 				43B518861C759A3F0060C3AA /* NSString+Helper.m in Sources */,
+				430F6F7D1C9A5F7C003E8F6C /* MD5.m in Sources */,
 				43B518A91C75EF810060C3AA /* ALFMDatabaseQueue.m in Sources */,
 				43D0FE891C7EB3F40096F232 /* ALModel+ActiveRecord.m in Sources */,
 				43B5188E1C759AAF0060C3AA /* BlocksKitExtension.m in Sources */,
 				436296801C7B6D3C00EBA718 /* ALSQLCommand.m in Sources */,
 				43B518AF1C76CBD80060C3AA /* ALDBColumnInfo.m in Sources */,
 				439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */,
-				43D0FE7D1C7D80B70096F232 /* ALOCRuntime.m in Sources */,
 				43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */,
 				43D0FE831C7EAC7D0096F232 /* ALModel_Define.m in Sources */,
 				439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */,
+				430F6F7B1C9A5F7C003E8F6C /* Base64.m in Sources */,
 				43B5188C1C759AAF0060C3AA /* NSArray+ArrayExtensions.m in Sources */,
+				430F6F681C9A5F3D003E8F6C /* NSDate+ALExtensions.m in Sources */,
 				436296881C7B6D5400EBA718 /* ALSQLInsertCommand.m in Sources */,
 				436296821C7B6D3C00EBA718 /* ALSQLSelectCommand.m in Sources */,
+				430F6F791C9A5F7C003E8F6C /* ALOCRuntime.m in Sources */,
+				430F6F771C9A5F7C003E8F6C /* ALDevice.m in Sources */,
 				439B6A2B1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -662,6 +786,7 @@
 /* Begin XCBuildConfiguration section */
 		436296AC1C7C693D00EBA718 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC6CC43C4CB648A1F7EF879 /* Pods-patchwork-Demo-iOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -674,6 +799,7 @@
 		};
 		436296AD1C7C693D00EBA718 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CE2E6E93A2ACB80172E8C20E /* Pods-patchwork-Demo-iOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -774,7 +900,7 @@
 		};
 		43B518751C7590320060C3AA /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8474FA6E59E1BFD599902903 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 9B72DABE29A24A93A7134361 /* Pods-patchwork.debug.xcconfig */;
 			buildSettings = {
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -792,7 +918,7 @@
 		};
 		43B518761C7590320060C3AA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FC757CC08A5BF253ACC5AA2B /* Pods.release.xcconfig */;
+			baseConfigurationReference = AC328D3A9D0453068ACA9F3C /* Pods-patchwork.release.xcconfig */;
 			buildSettings = {
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -810,7 +936,7 @@
 		};
 		43B518781C7590320060C3AA /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8474FA6E59E1BFD599902903 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = A2F7E30A6DB4A2921D021EAC /* Pods-patchworkTests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = patchworkTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -821,7 +947,7 @@
 		};
 		43B518791C7590320060C3AA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FC757CC08A5BF253ACC5AA2B /* Pods.release.xcconfig */;
+			baseConfigurationReference = 33DF461A8106AF5033E86B0D /* Pods-patchworkTests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = patchworkTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

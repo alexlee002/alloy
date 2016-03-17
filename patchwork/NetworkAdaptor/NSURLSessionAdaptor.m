@@ -64,7 +64,7 @@ SYNTHESIZE_ASC_OBJ(srcRequest, setSrcRequest)
             [urlRequest setValue:value forHTTPHeaderField:key];
         }];
     } else {
-        NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) stringbyAppendingQueryItems:request.params]];
+        NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
         urlRequest = [NSMutableURLRequest requestWithURL:url];
     }
     urlRequest.HTTPMethod = [request methodName];

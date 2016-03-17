@@ -1,51 +1,98 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, "7.0"
-#use_frameworks!
-#inhibit_all_warnings!
+workspace 'patchwork'
+xcodeproj 'patchwork.xcodeproj'
+xcodeproj 'patchwork-Demo-OSX/patchwork-Demo-OSX.xcodeproj'
 
-# === for cocoapods befre 1.0 ===
-link_with 'patchwork', 'patchworkTests'
+def shared_pods
+	pod 'YYModel'
+	pod 'FMDB'
+	pod 'BlocksKit/Core'
+	pod 'ASIHTTPRequest/Core'
+	pod 'Reachability'
+	pod 'ObjcAssociatedObjectHelpers/Core'
+end
 
-# === for cocoapods later than v1.0 ===
-#def shared_pods
+target 'patchwork' do
+	platform :ios, "7.0"
+	shared_pods
+	xcodeproj 'patchwork.xcodeproj'
+end
 
-#
-# Internal Pods
-#
-#pod 'ASIHTTPRequest',             :path => './LocalPods/ASIHttPRequest'
-#
-# vendors' Pods
-#
+target 'patchworkTests' do
+	platform :ios, "7.0"
+	shared_pods
+	xcodeproj 'patchwork.xcodeproj'
+end
 
-pod 'YYModel'
-pod 'FMDB'
-pod 'BlocksKit/Core'
-pod 'ASIHTTPRequest/Core'
-pod 'Reachability'
-pod 'ObjcAssociatedObjectHelpers/Core'
+target 'patchwork-Demo-iOS' do
+	platform :ios, "7.0"
+	shared_pods
+	xcodeproj 'patchwork.xcodeproj'
+end
 
-# promisekit components
-pod 'PromiseKit/When',                  '~> 1.6'
-pod 'PromiseKit/Until',                 '~> 1.6'
-pod 'PromiseKit/Pause',                 '~> 1.6'
-pod 'PromiseKit/Join',                  '~> 1.6'
-pod 'PromiseKit/Hang',                  '~> 1.6'
-pod 'PromiseKit/NSFileManager',         '~> 1.6'
-pod 'PromiseKit/NSNotificationCenter',  '~> 1.6'
-#
-# Other settings
-#
+target 'patchwork-Demo-OSX' do
+	platform :osx, "10.9"
+	shared_pods
+	pod 'patchwork-demo', :path => '.'
+	xcodeproj 'patchwork-Demo-OSX/patchwork-Demo-OSX.xcodeproj'
+end
+
+target 'patchwork-Demo-OSXTests' do
+	platform :osx, "10.9"
+	shared_pods
+	pod 'patchwork-demo', :path => '.'
+	xcodeproj 'patchwork-Demo-OSX/patchwork-Demo-OSX.xcodeproj'
+end
 
 
-#end
-#target 'patchwork' do
-#   shared_pods
-#end
-#
-#target 'patchworkTests' do
-#    shared_pods
-#end
+
+# platform :ios, "7.0"
+# #use_frameworks!
+# #inhibit_all_warnings!
+
+# # === for cocoapods befre 1.0 ===
+# link_with 'patchwork', 'patchworkTests'
+
+# # === for cocoapods later than v1.0 ===
+# #def shared_pods
+
+# #
+# # Internal Pods
+# #
+# #pod 'ASIHTTPRequest',             :path => './LocalPods/ASIHttPRequest'
+# #
+# # vendors' Pods
+# #
+
+# pod 'YYModel'
+# pod 'FMDB'
+# pod 'BlocksKit/Core'
+# pod 'ASIHTTPRequest/Core'
+# pod 'Reachability'
+# pod 'ObjcAssociatedObjectHelpers/Core'
+
+# # promisekit components
+# pod 'PromiseKit/When',                  '~> 1.6'
+# pod 'PromiseKit/Until',                 '~> 1.6'
+# pod 'PromiseKit/Pause',                 '~> 1.6'
+# pod 'PromiseKit/Join',                  '~> 1.6'
+# pod 'PromiseKit/Hang',                  '~> 1.6'
+# pod 'PromiseKit/NSFileManager',         '~> 1.6'
+# pod 'PromiseKit/NSNotificationCenter',  '~> 1.6'
+# #
+# # Other settings
+# #
+
+
+# #end
+# #target 'patchwork' do
+# #   shared_pods
+# #end
+# #
+# #target 'patchworkTests' do
+# #    shared_pods
+# #end
 
 pre_install do
     #system("sed -i '' '/UITextField/d' Pods/BlocksKit/BlocksKit/BlocksKit+UIKit.h")
