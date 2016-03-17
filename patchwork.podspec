@@ -25,7 +25,6 @@ Pod::Spec.new do |s|
   s.source        = { :git => "https://github.com/BaiduYun-iOS/patchwork.git", :branch => "master"}
   s.source_files  = "patchwork", "patchwork/**/*.{h,m}"
   #s.exclude_files = "Classes/Exclude"
-
   s.public_header_files = "patchwork/**/*.h"
 
   s.requires_arc = true
@@ -33,5 +32,5 @@ Pod::Spec.new do |s|
   s.dependency  "FMDB",             "~> 2.6"
   s.dependency  "YYModel",          "~> 1.0.1"
   s.dependency  "BlocksKit/Core",   "~> 2.2.5"
-
+  s.dependency  "ASIHTTPRequest/Core", "~> 1.8.2"
 end
