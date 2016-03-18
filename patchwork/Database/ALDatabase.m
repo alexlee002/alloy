@@ -22,7 +22,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
+static FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name);
 
 static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 
@@ -37,14 +37,14 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     if (path == nil) {
         return nil;
     }
-
+    
     static dispatch_semaphore_t lock;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         lock = dispatch_semaphore_create(1);
     });
     dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
-
+    
     if (kDatabaseDict == nil) {
         kDatabaseDict = [NSMutableDictionary dictionary];
     }
@@ -94,9 +94,9 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     }
     
     id<ALDBMigrationProtocol> migrationProcessor =
-        [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBMigrationProtocol)] bk_select:^BOOL(Class cls){
-            return [cls canMigrateDatabaseWithPath:_queue.path];
-        }].anyObject;
+    [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBMigrationProtocol)] bk_select:^BOOL(Class cls){
+        return [cls canMigrateDatabaseWithPath:_queue.path];
+    }].anyObject;
     
     __block BOOL ret = YES;
     [_queue inDatabase:^(FMDatabase * _Nonnull db) {
@@ -136,7 +136,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
             }
             return;
         }
-
+        
         NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
         NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@", @(dbVersion),
                  @(newVersion));
@@ -178,11 +178,13 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     if (_modelClasses != nil) {
         return _modelClasses;
     }
-
+    
     _modelClasses = [[ALOCRuntime subClassesOf:[ALModel class]] bk_select:^BOOL(Class cls) {
-        return [[cls databaseIdentifier] isEqualToString:_queue.path];
+        Class metacls = objc_getMetaClass(object_getClassName(cls));
+        NSString *name = NSStringFromSelector(@selector(databaseIdentifier));
+        return hasClassMethod(metacls, name) && [[cls databaseIdentifier] isEqualToString:_queue.path];
     }];
-
+    
     return _modelClasses;
 }
 
@@ -212,5 +214,24 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 }
 
 @end
+
+
+FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
+    BOOL found = NO;
+    unsigned int methodCount = 0;
+    Method *methods = class_copyMethodList(cls, &methodCount);
+    if (methods) {
+        for (unsigned int i = 0; i < methodCount; i++) {
+            SEL sel = method_getName(methods[i]);
+            NSString *methodName = [NSString stringWithUTF8String:sel_getName(sel)];
+            if ([methodName isEqualToString:name]) {
+                found =  YES;
+                break;
+            }
+        }
+        free(methods);
+    }
+    return found;
+}
 
 NS_ASSUME_NONNULL_END

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1702CC668F9BE6CF66C37A75 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81FDE66C67E6452F8F285B2B /* libPods.a */; };
+		1A066F2EAFB39EE833965314 /* libPods-patchworkTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6CC35E7E3222FAF183EEC85 /* libPods-patchworkTests.a */; };
 		430F6F651C9A5F3D003E8F6C /* NSCache+ALExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F611C9A5F3D003E8F6C /* NSCache+ALExtensions.h */; };
 		430F6F661C9A5F3D003E8F6C /* NSCache+ALExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F621C9A5F3D003E8F6C /* NSCache+ALExtensions.m */; };
 		430F6F671C9A5F3D003E8F6C /* NSDate+ALExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F631C9A5F3D003E8F6C /* NSDate+ALExtensions.h */; };
@@ -75,9 +75,8 @@
 		43D0FE851C7EB3710096F232 /* ALModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE841C7EB3710096F232 /* ALModel.h */; };
 		43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D0FE861C7EB3F40096F232 /* ALModel+ActiveRecord.h */; };
 		43D0FE891C7EB3F40096F232 /* ALModel+ActiveRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */; };
-		47448365FD903DF7F83A5339 /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102D4C7D7F5960683C080401 /* libPods-patchwork.a */; };
-		570A2BE27503E4EAF61DAC99 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81FDE66C67E6452F8F285B2B /* libPods.a */; };
-		9CBB7D23FCDA16353AB061C2 /* libPods-patchworkTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6CC35E7E3222FAF183EEC85 /* libPods-patchworkTests.a */; };
+		43FB7AE51C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FB7AE41C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a */; };
+		566CC29F211F0E71B8E2DB76 /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102D4C7D7F5960683C080401 /* libPods-patchwork.a */; };
 		ED83656BFFF92A6C9898F9D0 /* libPods-patchwork-Demo-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */; };
 /* End PBXBuildFile section */
 
@@ -162,7 +161,7 @@
 		43B5188F1C759EE50060C3AA /* ALSQLCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLCondition.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B518901C759EE50060C3AA /* ALSQLCondition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLCondition.m; sourceTree = "<group>"; };
 		43B5189C1C75AC3F0060C3AA /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDatabase.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		43B5189D1C75AC3F0060C3AA /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		43B5189D1C75AC3F0060C3AA /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabase.m; sourceTree = "<group>"; };
 		43B518A61C75EF810060C3AA /* ALFMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALFMDatabaseQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B518A71C75EF810060C3AA /* ALFMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALFMDatabaseQueue.m; sourceTree = "<group>"; };
 		43B518AC1C76CBD80060C3AA /* ALDBColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDBColumnInfo.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -174,6 +173,7 @@
 		43D0FE841C7EB3710096F232 /* ALModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel.h; sourceTree = "<group>"; };
 		43D0FE861C7EB3F40096F232 /* ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "ALModel+ActiveRecord.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
+		43FB7AE41C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-patchworkTests-ASIHTTPRequest.a"; path = "Pods/../build/Debug-iphoneos/libPods-patchworkTests-ASIHTTPRequest.a"; sourceTree = "<group>"; };
 		81FDE66C67E6452F8F285B2B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork-Demo-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B72DABE29A24A93A7134361 /* Pods-patchwork.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.debug.xcconfig"; sourceTree = "<group>"; };
@@ -197,8 +197,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				570A2BE27503E4EAF61DAC99 /* libPods.a in Frameworks */,
-				47448365FD903DF7F83A5339 /* libPods-patchwork.a in Frameworks */,
+				566CC29F211F0E71B8E2DB76 /* libPods-patchwork.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,9 +205,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43FB7AE51C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a in Frameworks */,
 				43B5186B1C7590320060C3AA /* patchwork.framework in Frameworks */,
-				1702CC668F9BE6CF66C37A75 /* libPods.a in Frameworks */,
-				9CBB7D23FCDA16353AB061C2 /* libPods-patchworkTests.a in Frameworks */,
+				1A066F2EAFB39EE833965314 /* libPods-patchworkTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,6 +398,7 @@
 		E64F4436CCF9CF33AB80C8FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				43FB7AE41C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a */,
 				81FDE66C67E6452F8F285B2B /* libPods.a */,
 				102D4C7D7F5960683C080401 /* libPods-patchwork.a */,
 				8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */,
@@ -940,6 +940,10 @@
 			buildSettings = {
 				INFOPLIST_FILE = patchworkTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.alexlee002.patchworkTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -951,6 +955,10 @@
 			buildSettings = {
 				INFOPLIST_FILE = patchworkTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.alexlee002.patchworkTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

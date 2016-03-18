@@ -7,11 +7,12 @@ PODS:
   - FMDB/standard (2.6)
   - ObjcAssociatedObjectHelpers/Core (2.0.1)
   - patchwork-demo (0.0.1):
+    - ASIHTTPRequest/Core (~> 1.8.2)
     - BlocksKit/Core (~> 2.2.5)
     - FMDB (~> 2.6)
     - YYModel (~> 1.0.1)
   - Reachability (3.2)
-  - YYModel (1.0.1)
+  - YYModel (1.0.2)
 
 DEPENDENCIES:
   - ASIHTTPRequest/Core
@@ -31,8 +32,8 @@ SPEC CHECKSUMS:
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
   FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
   ObjcAssociatedObjectHelpers: 686c291f292c26a49b9b1fa7d58130a8d35d59d2
-  patchwork-demo: 075a6d4fc885bdd5c8cdcc3f5c78a021e18b3647
+  patchwork-demo: 470da16fd3746c17410425201e0c4fb998d52fd1
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  YYModel: 794f0820a9a9703615bc166aa8e336abaf422c2b
+  YYModel: 7a467eff45ae3641c33efb136c262d33b6f48c1a
 
 COCOAPODS: 0.39.0

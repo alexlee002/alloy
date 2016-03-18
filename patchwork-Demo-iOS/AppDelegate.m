@@ -210,14 +210,16 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     self.window.rootViewController = [[UIViewController alloc] init];
     
     
+    [self testRespondTo];
+    
 //    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
 //    [dt start];
     
-    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
-    _queue.delegate = self;
-    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
-    [_queue sendRequest:request];
-    [_queue finishRequestsAndInvalidate];
+//    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
+//    _queue.delegate = self;
+//    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+//    [_queue sendRequest:request];
+//    [_queue finishRequestsAndInvalidate];
 
     
 //    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
