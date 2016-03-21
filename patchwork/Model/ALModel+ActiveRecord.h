@@ -12,6 +12,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define AS_COL(class_type, property) [class_type mappedColumnNameForProperty:keypathForClass(class_type, property)]
+#define AS_COL_O(obj, property)      ((void)(NO && ((void)obj.property, NO)),\
+                                         [[obj class] mappedColumnNameForProperty:@#property])
+
+
 extern NSString * const kRowIdColumnName;
 
 @interface ALSQLSelectCommand (ActiveRecord)

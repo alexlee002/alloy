@@ -40,6 +40,10 @@
     return path;
 }
 
++ (nullable NSDictionary<NSString *, NSString *>  *)modelCustomColumnNameMapper {
+    return @{keypathForClass(TestUser, name): @"user_name", keypathForClass(TestUser, addr): @"address"};
+}
+
 + (nullable NSArray<NSString *> *)primaryKeys {
     return nil;
 }
@@ -146,6 +150,17 @@
     user.age = 35;
     user.addr = @"Beijing";
     [user saveOrReplce:YES];
+    
+
+    XCTAssertEqualObjects(@"user_name", AS_COL_O(user, name));
+    XCTAssertEqualObjects(@"user_name", AS_COL(TestUser, name));
+    
+    const char *keypath = "user.name";
+    NSString *str = [NSString stringWithUTF8String:strchr(keypath, '.') + 1];
+    NSLog(@"%@", str);
+    
+    
+    //XCTAssertEqualObjects(PropertyEQ(user.name, @""), @"(user_name = ?)");
     
     TestUser *user1 = [TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @35)].firstObject;
     XCTAssertEqualObjects(user1.name, user.name);

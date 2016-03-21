@@ -98,23 +98,25 @@ FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
 - (NSString *)stringByConvertingCamelCaseToUnderscore {
     NSScanner *scanner = [NSScanner scannerWithString:self];
     scanner.caseSensitive = YES;
+    scanner.charactersToBeSkipped = nil;
     
     NSCharacterSet *uppercase = [NSCharacterSet uppercaseLetterCharacterSet];
     NSCharacterSet *lowercase = [NSCharacterSet lowercaseLetterCharacterSet];
+    NSCharacterSet *letters   = [NSCharacterSet letterCharacterSet];
     
     NSString *buffer = nil;
     NSMutableString *output = [NSMutableString string];
     
     while (scanner.isAtEnd == NO) {
         
-        if ([scanner scanCharactersFromSet:uppercase intoString:&buffer]) {
+        if ([scanner scanUpToCharactersFromSet:uppercase intoString:&buffer]) {
             [output appendString:[buffer lowercaseString]];
-        }
-        
-        if ([scanner scanCharactersFromSet:lowercase intoString:&buffer]) {
-            [output appendString:buffer];
-            if (!scanner.isAtEnd)
+            if (!scanner.isAtEnd && [letters characterIsMember:[buffer characterAtIndex:buffer.length - 1]] ) {
                 [output appendString:@"_"];
+            }
+        }
+        if ([scanner scanUpToCharactersFromSet:lowercase intoString:&buffer]) {
+            [output appendString:[buffer lowercaseString]];
         }
     }
     
