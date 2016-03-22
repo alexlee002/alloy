@@ -24,13 +24,6 @@ extern ALSQLCondition *GT   (id expression, id value);
 extern ALSQLCondition *NLT  (id expression, id value);
 extern ALSQLCondition *NGT  (id expression, id value);
 extern ALSQLCondition *NEQ  (id expression, id value);
-
-extern ALSQLExpression *OP_EXP  (id exp1, NSString *operator, id exp2);
-extern ALSQLExpression *BIT_AND (id expression, id value);
-extern ALSQLExpression *BIT_OR  (id expression, id value);
-extern ALSQLExpression *BIT_XOR (id expression, id value);
-extern ALSQLExpression *BIT_NOT (id expression, id value);
-
 extern ALSQLCondition *IS_NULL    (id expression);
 extern ALSQLCondition *IS_NOT_NULL(id expression);
 extern ALSQLCondition *NOT        (id expression);
@@ -43,9 +36,9 @@ extern ALSQLCondition *IN(id expression, NSArray *values);
 extern const NSUInteger matchsAny;
 extern ALSQLCondition *LIKE(id expression, NSString *likeExpression);
 // eg: LIKE '%abc'
-extern ALSQLCondition *LEFT_LIKE(id expression, id arg, NSUInteger matchs);
+extern ALSQLCondition *MATCHS_SUBFIX(id expression, id arg, NSUInteger matchs);
 // eg: LIKE 'abc%'
-extern ALSQLCondition *RIGHT_LIKE(id expression, id arg, NSUInteger matchs);
+extern ALSQLCondition *MATCHS_PREFIX(id expression, id arg, NSUInteger matchs);
 
 // condition should be Array of ALSQLCondition or ALSQLExpression
 extern ALSQLCondition *AND(NSArray *conditions);
@@ -63,18 +56,19 @@ typedef NS_ENUM(NSInteger, DBValueType) {
  *
  *  @return ALSQLCondition
  */
-typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(id cond);
+typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(id condition);
+typedef ALSQLCondition *_Nullable (^ALSQLConditionLikeBlock)(id condition, NSUInteger matches);
 
 @interface ALSQLCondition : NSObject
 
 @property(readonly) NSString *sqlClause;
 @property(readonly) NSArray  *sqlArguments;
 
+@property(readonly) ALSQLConditionBlock AND;
+@property(readonly) ALSQLConditionBlock OR;
+
 + (instancetype)conditionWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION;
 - (instancetype)initWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION;
-
-- (ALSQLConditionBlock)AND;
-- (ALSQLConditionBlock)OR;
 
 - (instancetype)build;
 
@@ -87,5 +81,22 @@ typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(id cond);
 @interface ALSQLExpression (ALSQLCondition)
 - (ALSQLCondition *)SQLCondition;
 @end
+
+
+@interface NSObject (ALSQLCondition)
+
+@property(readonly) ALSQLConditionBlock EQ;
+@property(readonly) ALSQLConditionBlock LT;
+@property(readonly) ALSQLConditionBlock GT;
+@property(readonly) ALSQLConditionBlock NLT;
+@property(readonly) ALSQLConditionBlock NGT;
+@property(readonly) ALSQLConditionBlock NEQ;
+@property(readonly) ALSQLConditionBlock IN;
+@property(readonly) ALSQLConditionBlock LIKE;
+@property(readonly) ALSQLConditionLikeBlock MATCHS_SUBFIX;
+@property(readonly) ALSQLConditionLikeBlock MATCHS_PREFIX;
+
+@end
+
 
 NS_ASSUME_NONNULL_END

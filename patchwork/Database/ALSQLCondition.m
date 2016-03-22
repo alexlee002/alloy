@@ -14,18 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@implementation NSString (ALSQLCondition)
-- (ALSQLCondition *)SQLCondition {
-    return [ALSQLCondition conditionWithString:self args:nil];
-}
-@end
-
-@implementation ALSQLExpression (ALSQLCondition)
-- (ALSQLCondition *)SQLCondition {
-    return [ALSQLCondition conditionWithString:self.stringify args:nil];
-}
-@end
-
 #define addConditionArgs()  \
 do {                    \
 va_list args;       \
@@ -81,6 +69,10 @@ va_end(args);       \
     }
 }
 
+- (nullable NSString *)stringify {
+    return self.sqlClause;
+}
+
 - (void)joinObject:(id)obj withOperator:(NSString *)op {
     if ([obj isKindOfClass:[ALSQLCondition class]]) {
         ALSQLCondition *cond = (ALSQLCondition *)obj;
@@ -114,6 +106,7 @@ va_end(args);       \
     };
 }
 
+
 - (instancetype)build {
 #if DEBUG
     NSUInteger argCount = [_conditionClause occurrencesCountOfString:@"?"];
@@ -141,19 +134,87 @@ va_end(args);       \
 
 @end
 
+
+@implementation NSString (ALSQLCondition)
+- (ALSQLCondition *)SQLCondition {
+    return [ALSQLCondition conditionWithString:self args:nil];
+}
+@end
+
+@implementation ALSQLExpression (ALSQLCondition)
+- (ALSQLCondition *)SQLCondition {
+    return [ALSQLCondition conditionWithString:self.stringify args:nil];
+}
+@end
+
+@implementation NSObject (ALSQLCondition)
+
+- (ALSQLConditionBlock)EQ {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return EQ(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)LT {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return LT(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)GT {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return GT(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)NLT {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return NLT(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)NGT {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return NGT(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)NEQ {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return NEQ(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)IN {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return IN(self, condition);
+    };
+}
+
+- (ALSQLConditionBlock)LIKE {
+    return ^ALSQLCondition *_Nullable (id condition) {
+        return LIKE(self, condition);
+    };
+}
+
+- (ALSQLConditionLikeBlock)MATCHS_SUBFIX {
+    return ^ALSQLCondition *_Nullable (id condition, NSUInteger matches) {
+        return MATCHS_SUBFIX(self, condition, matches);
+    };
+}
+
+- (ALSQLConditionLikeBlock)MATCHS_PREFIX {
+    return ^ALSQLCondition *_Nullable (id condition, NSUInteger matches) {
+        return MATCHS_PREFIX(self, condition, matches);
+    };
+}
+
+@end
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define verifyExpression(exp) \
-    if ([(exp) isKindOfClass:[ALSQLExpression class]]) { \
-        (exp) = ((ALSQLExpression *)(exp)).stringify;    \
-    }                                                    \
-    if (![(exp) isKindOfClass:[NSString class]]) {       \
-        ALLogWarn(@"*** argument:'%s' should not be nil", #exp);\
-        return nil;                                      \
-    }
-
 static FORCE_INLINE ALSQLCondition *expression(id name, NSString *op, id _Nullable value) {
-    verifyExpression(name);
+    __stringifyExpressionOrReturnNil(name);
     if ([value isKindOfClass:[ALSQLExpression class]]) {
         return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ %@ %@",
                                                     name,
@@ -228,52 +289,23 @@ FORCE_INLINE ALSQLCondition *NEQ  (id exp, id value) {
     return expression(exp, @"!=", value);
 }
 
-FORCE_INLINE ALSQLExpression *OP_EXP  (id exp1, NSString *op, id exp2) {
-    verifyExpression(exp1);
-    if (![exp2 isKindOfClass:[ALSQLExpression class]]) {
-        exp2 = [ALSQLExpression expressionWithValue:exp2];
-    }
-    if (exp2 == nil) {
-        return nil;
-    }
-    return [[exp1 stringByAppendingFormat:@" %@ %@", op, exp2] SQLExpression];
-}
-
-FORCE_INLINE ALSQLExpression *BIT_AND (id column, id value) {
-    return OP_EXP(column, @"&", value);
-}
-
-FORCE_INLINE ALSQLExpression *BIT_OR  (id column, id value) {
-    return OP_EXP(column, @"|", value);
-}
-
-FORCE_INLINE ALSQLExpression *BIT_XOR (id column, id value) {
-    return OP_EXP(column, @"^", value);
-}
-
-FORCE_INLINE ALSQLExpression *BIT_NOT (id column, id value) {
-    return OP_EXP(column, @"~", value);
-}
-
-
-
 FORCE_INLINE ALSQLCondition *IS_NULL(id column) {
-    verifyExpression(column);
+    __stringifyExpressionOrReturnNil(column);
     return [ALSQLCondition conditionWithString:[column stringByAppendingString:@" IS NULL"] args:nil];
 }
 
 FORCE_INLINE ALSQLCondition *IS_NOT_NULL(id column) {
-    verifyExpression(column);
+    __stringifyExpressionOrReturnNil(column);
     return [ALSQLCondition conditionWithString:[column stringByAppendingString:@" IS NOT NULL"] args:nil];
 }
 
 FORCE_INLINE ALSQLCondition *NOT (id expression) {
-    verifyExpression(expression);
+    __stringifyExpressionOrReturnNil(expression);
     return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"! %@", expression] args:nil];
 }
 
 FORCE_INLINE ALSQLCondition *IN(id expression, NSArray *values){
-    verifyExpression(expression);
+    __stringifyExpressionOrReturnNil(expression);
     if (values != nil && [expression isKindOfClass:[NSString class]]) {
         NSString *inStr = [[values bk_map:^NSString *(id obj) {
             return @"?";
@@ -285,7 +317,7 @@ FORCE_INLINE ALSQLCondition *IN(id expression, NSArray *values){
 }
 
 FORCE_INLINE ALSQLCondition *LIKE(id column, NSString *likeExpression) {
-    verifyExpression(column);
+    __stringifyExpressionOrReturnNil(column);
     
     if ([column isKindOfClass:[NSString class]] && [likeExpression isKindOfClass:[NSString class]]) {
         return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ LIKE ?", column] args:likeExpression, nil];
@@ -309,8 +341,8 @@ static FORCE_INLINE NSString *CHAR_LIKE(NSUInteger matchNum) {
 
 //eg: LIKE '%aaaaa'
 //or: LIKE '_aaaaa'
-FORCE_INLINE ALSQLCondition *LEFT_LIKE(id column, id arg, NSUInteger matchs) {
-    verifyExpression(column);
+FORCE_INLINE ALSQLCondition *MATCHS_SUBFIX(id column, id arg, NSUInteger matchs) {
+    __stringifyExpressionOrReturnNil(column);
     
     NSString *exp = [arg stringify];
     if (exp == nil) {
@@ -326,8 +358,8 @@ FORCE_INLINE ALSQLCondition *LEFT_LIKE(id column, id arg, NSUInteger matchs) {
 
 //eg: LIKE 'aaaaa%'
 //or: LIKE 'aaaaa_'
-FORCE_INLINE ALSQLCondition *RIGHT_LIKE(id column, id arg, NSUInteger matchs) {
-    verifyExpression(column);
+FORCE_INLINE ALSQLCondition *MATCHS_PREFIX(id column, id arg, NSUInteger matchs) {
+    __stringifyExpressionOrReturnNil(column);
     
     NSString *exp = [arg stringify];
     if (exp == nil) {

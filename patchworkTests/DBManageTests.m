@@ -75,7 +75,7 @@
 
     NSString *sql = [db.SELECT(nil)
                         .FROM([TestUser tableName])
-                        .ORDER_BY(@[ [NSString stringWithFormat:@"%@ & 1 DESC", AS_COL(TestUser, name)] ]) sql];
+                        .ORDER_BYS(@[ [NSString stringWithFormat:@"%@ & 1 DESC", AS_COL(TestUser, name)] ]) sql];
     XCTAssertEqualObjects(sql, @"SELECT * FROM user ORDER BY user_name & 1 DESC");
 }
 
@@ -86,7 +86,7 @@
         return;
     }
  
-    NSString *sql = [db.SELECT(nil).FROM([TestUser tableName]).WHERE(EQ(@"age", @18)).GROUP_BY(@[@"age"]).ORDER_BY(@[@"age"]) sql];
+    NSString *sql = [db.SELECT(nil).FROM([TestUser tableName]).WHERE(EQ(@"age", @18)).GROUP_BY(@"age").ORDER_BY(@"age") sql];
     XCTAssertEqualObjects(sql, @"SELECT * FROM user WHERE (age = ?) GROUP BY age ORDER BY age");
 }
 
@@ -139,7 +139,7 @@
                         ])
                           .FROM([TestUser tableName])
                           .WHERE(IS_NULL(keypathForClass(TestUser, addr)))
-                          .LIMIT(@[ @2 ]))
+                          .LIMIT(2))
               .sql;
     ALLogInfo("%@", sql);
     XCTAssertEqualObjects(sql, @"INSERT OR REPLACE INTO user(name, age, addr) SELECT name, age, addr FROM user WHERE (addr IS NULL) LIMIT 2");
@@ -204,8 +204,18 @@
     XCTAssertEqualObjects(sql, @"SELECT COUNT(*) FROM user WHERE age > ? OR addr LIKE ? GROUP BY name LIMIT 100");
     
     
-    sql = [TestUser fetcher].WHERE(EQ(BIT_AND(AS_COL(TestUser, age), @2), @0)).sql;
+    sql = [TestUser fetcher].WHERE(AS_COL(TestUser, age).BIT_AND(@2).EQ(@0)).sql;
     XCTAssertEqualObjects(sql, @"SELECT rowid, * FROM user WHERE (age & 2 = ?)");
+
+    sql = [TestUser fetcher]
+              .SELECT   (@[ AS_COL(TestUser, name) ])
+              .WHERE    (AS_COL(TestUser, addr).EQ(@"Beijing"))
+              .ORDER_BY (DESC_ORDER(AS_COL(TestUser, name)))
+              .ORDER_BY (AS_COL(TestUser, age))
+              .OFFSET   (5)
+              .LIMIT    (10)
+              .sql;
+    XCTAssertEqualObjects(sql, @"SELECT user_name FROM user WHERE (address = ?) ORDER BY user_name DESC, age LIMIT 5, 10");
 }
 
 

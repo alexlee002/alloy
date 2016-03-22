@@ -67,7 +67,7 @@
     NSString *str = BIT_AND(@"col1", @1).stringify;
     XCTAssertEqualObjects(str, @"col1 & 1");
     
-    str = OP_EXP(@"col1", @"||", @"abc").stringify;
+    str = EXP_OP(@"col1", @"||", @"abc").stringify;
     XCTAssertEqualObjects(str, @"col1 || abc");
     
     str = EQ(BIT_OR(@"col1", @2).stringify, @2).sqlClause;
@@ -101,23 +101,23 @@
 
 
 - (void)testLikeExp1 {
-    ALSQLCondition *condition = LEFT_LIKE(@"col", @22, matchsAny);
+    ALSQLCondition *condition = MATCHS_SUBFIX(@"col", @22, matchsAny);
     NSLog(@"condition: %@", condition);
     XCTAssertEqualObjects(condition.sqlClause, @"(col LIKE ?)");
     XCTAssertEqualObjects(condition.sqlArguments, @[@"%22"]);
     
-    condition = LEFT_LIKE(@"col", @22, 3);
+    condition = MATCHS_SUBFIX(@"col", @22, 3);
     NSLog(@"condition: %@", condition);
     XCTAssertEqualObjects(condition.sqlClause, @"(col LIKE ?)");
     XCTAssertEqualObjects(condition.sqlArguments, @[@"___22"]);
     
     
-    condition = RIGHT_LIKE(@"col", @22, matchsAny);
+    condition = MATCHS_PREFIX(@"col", @22, matchsAny);
     NSLog(@"condition: %@", condition);
     XCTAssertEqualObjects(condition.sqlClause, @"(col LIKE ?)");
     XCTAssertEqualObjects(condition.sqlArguments, @[@"22%"]);
     
-    condition = RIGHT_LIKE(@"col", @22, 2);
+    condition = MATCHS_PREFIX(@"col", @22, 2);
     NSLog(@"condition: %@", condition);
     XCTAssertEqualObjects(condition.sqlClause, @"(col LIKE ?)");
     XCTAssertEqualObjects(condition.sqlArguments, @[@"22__"]);

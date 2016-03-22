@@ -27,9 +27,14 @@
     return [_columns copy];
 }
 
-- (ALSQLSelectBlockStrArray)SELECT {
-    return ^ALSQLSelectCommand *_Nonnull(NSArray<NSString *> *_Nullable strs) {
-        _columns = [strs copy];
+- (ALSQLSelectBlockArray)SELECT {
+    return ^ALSQLSelectCommand *_Nonnull(NSArray *_Nullable strs) {
+        _columns = [[[strs bk_map:^NSString *(id obj) {
+            __stringifyExpressionOrReturnNil(obj);
+            return obj;
+        }] bk_reject:^BOOL(id obj) {
+            return obj == NSNull.null;
+        }] mutableCopy];
         return self;
     };
 }
@@ -49,31 +54,80 @@
     };
 }
 
-- (ALSQLSelectBlockStrArray)ORDER_BY {
-    return ^ALSQLSelectCommand *_Nonnull(NSArray<NSString *> *_Nullable strs) {
-        _orderBy = [strs copy];
-        return self;
-    };
-}
-
-- (ALSQLSelectBlockStrArray)GROUP_BY {
-    return ^ALSQLSelectCommand *_Nonnull(NSArray<NSString *> *_Nullable strs) {
-        _groupBy = [strs copy];
-        return self;
-    };
-}
-
-- (ALSQLSelectBlockNumArray)LIMIT {
-    return ^ALSQLSelectCommand *_Nonnull(NSArray<NSNumber *> *_Nullable nums) {
-        nums = [[nums subarrayToIndex:3] bk_select:^BOOL(NSNumber *num) {
-            return [num isKindOfClass:[NSNumber class]];
+- (ALSQLSelectBlockArray)ORDER_BYS {
+    return ^ALSQLSelectCommand *_Nonnull(NSArray *_Nullable strs) {
+        strs = [[strs bk_map:^NSString *(id obj) {
+            __stringifyExpressionOrReturnNil(obj);
+            return obj;
+        }] bk_reject:^BOOL(id obj) {
+            return obj == NSNull.null;
         }];
-        if (nums.count == 0) {
-            NSAssert(NO, @"SELECT: illegal 'LIMIT' clause.");
-            _limit = nil;
+        
+        if (_orderBy == nil) {
+            _orderBy = [strs mutableCopy];
         } else {
-            _limit = [nums componentsJoinedByString:@", "];
+            [_orderBy addObjectsFromArray:strs];
         }
+        return self;
+    };
+}
+
+- (ALSQLSelectBlockArray)GROUP_BYS {
+    return ^ALSQLSelectCommand *_Nonnull(NSArray *_Nullable strs) {
+        strs = [[strs bk_map:^NSString *(id obj) {
+            __stringifyExpressionOrReturnNil(obj);
+            return obj;
+        }] bk_reject:^BOOL(id obj) {
+            return obj == NSNull.null;
+        }];
+        
+        if (_groupBy == nil) {
+            _groupBy = [strs mutableCopy];
+        } else {
+            [_groupBy addObjectsFromArray:strs];
+        }
+        return self;
+    };
+}
+
+- (ALSQLSelectBlockId)ORDER_BY {
+    return ^ALSQLSelectCommand *_Nonnull (id _Nullable value) {
+        value = [value isKindOfClass:[ALSQLExpression class]] ? ((ALSQLExpression *)value).stringify : [value stringify];
+        if (!isEmptyString(value)) {
+            if (_orderBy == nil) {
+                _orderBy = [@[value] mutableCopy];
+            } else {
+                [_orderBy addObject:value];
+            }
+        }
+        return self;
+    };
+}
+
+- (ALSQLSelectBlockId)GROUP_BY {
+    return ^ALSQLSelectCommand *_Nonnull (id _Nullable value) {
+        value = [value isKindOfClass:[ALSQLExpression class]] ? ((ALSQLExpression *)value).stringify : [value stringify];
+        if (!isEmptyString(value)) {
+            if (_groupBy == nil) {
+                _groupBy = [@[value] mutableCopy];
+            } else {
+                [_groupBy addObject:value];
+            }
+        }
+        return self;
+    };
+}
+
+- (ALSQLSelectBlockInt)LIMIT {
+    return ^ALSQLSelectCommand *_Nonnull(NSInteger num) {
+        _limit = @(num);
+        return self;
+    };
+}
+
+- (ALSQLSelectBlockInt)OFFSET {
+    return ^ALSQLSelectCommand *_Nonnull(NSInteger num) {
+        _offset = @(num);
         return self;
     };
 }
@@ -129,9 +183,13 @@
     }
     
     // LIMIT
-    if (!isEmptyString(_limit)) {
+    if (_limit != nil) {
         [sql appendString:@" LIMIT "];
-        [sql appendString:_limit];
+        if (_offset != nil) {
+            [sql appendFormat:@"%d, %d", _offset.intValue, _limit.intValue];
+        } else {
+            [sql appendFormat:@"%d", _limit.intValue];
+        }
     }
     
     _sqlArgs = _where.sqlArguments;

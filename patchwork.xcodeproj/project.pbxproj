@@ -162,7 +162,7 @@
 		43B518891C759AAF0060C3AA /* BlocksKitExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlocksKitExtension.h; sourceTree = "<group>"; };
 		43B5188A1C759AAF0060C3AA /* BlocksKitExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlocksKitExtension.m; sourceTree = "<group>"; };
 		43B5188F1C759EE50060C3AA /* ALSQLCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLCondition.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		43B518901C759EE50060C3AA /* ALSQLCondition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLCondition.m; sourceTree = "<group>"; };
+		43B518901C759EE50060C3AA /* ALSQLCondition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALSQLCondition.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43B5189C1C75AC3F0060C3AA /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDatabase.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		43B5189D1C75AC3F0060C3AA /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabase.m; sourceTree = "<group>"; };
 		43B518A61C75EF810060C3AA /* ALFMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALFMDatabaseQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -178,7 +178,7 @@
 		43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
 		43FB7AE41C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-patchworkTests-ASIHTTPRequest.a"; path = "Pods/../build/Debug-iphoneos/libPods-patchworkTests-ASIHTTPRequest.a"; sourceTree = "<group>"; };
 		43FB7AE61C9FE6DF007B62C7 /* ALSQLExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLExpression.h; sourceTree = "<group>"; };
-		43FB7AE71C9FE6DF007B62C7 /* ALSQLExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLExpression.m; sourceTree = "<group>"; };
+		43FB7AE71C9FE6DF007B62C7 /* ALSQLExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALSQLExpression.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43FB7AEA1CA00A4D007B62C7 /* DBConditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBConditionsTests.m; sourceTree = "<group>"; };
 		81FDE66C67E6452F8F285B2B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork-Demo-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };

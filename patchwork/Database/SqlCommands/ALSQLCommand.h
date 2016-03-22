@@ -31,7 +31,8 @@ extern NSString * const kALDBConflictPolicyReplace;
 @interface ALSQLCommand : NSObject {
     @protected
     ALSQLCondition *_where;
-    NSString       *_limit;
+    NSNumber       *_limit;
+    NSNumber       *_offset;
     NSArray        *_sqlArgs;
 }
 
