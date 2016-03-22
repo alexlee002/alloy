@@ -39,7 +39,7 @@
     return [[self dataUsingEncoding:NSUTF8StringEncoding] sha1Encrypting];
 }
 
-- (NSData *)dataByHmacSHA1EncryptingWithKey:(NSString *)key {
+- (NSData *)dataByHmacSHA1EncryptingWithKey:(NSData *)key {
     return [[self dataUsingEncoding:NSUTF8StringEncoding] dataByHmacSHA1EncryptingWithKey:key];
 }
 

@@ -24,6 +24,10 @@
 		430F6F7F1C9A5F7C003E8F6C /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F731C9A5F7C003E8F6C /* SHA1.m */; };
 		430F6F801C9A5F7C003E8F6C /* Singleton_Template.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */; };
 		430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */; };
+		434B75ED1CA1386F00242245 /* RC4.h in Headers */ = {isa = PBXBuildFile; fileRef = 434B75EB1CA1386F00242245 /* RC4.h */; };
+		434B75EE1CA1386F00242245 /* RC4.m in Sources */ = {isa = PBXBuildFile; fileRef = 434B75EC1CA1386F00242245 /* RC4.m */; };
+		434B75F11CA13E1400242245 /* DES.h in Headers */ = {isa = PBXBuildFile; fileRef = 434B75EF1CA13E1400242245 /* DES.h */; };
+		434B75F21CA13E1400242245 /* DES.m in Sources */ = {isa = PBXBuildFile; fileRef = 434B75F01CA13E1400242245 /* DES.m */; };
 		4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 436296791C7B6D3C00EBA718 /* ALSQLCommand.h */; };
 		436296801C7B6D3C00EBA718 /* ALSQLCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 4362967A1C7B6D3C00EBA718 /* ALSQLCommand.m */; };
 		436296811C7B6D3C00EBA718 /* ALSQLSelectCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 4362967B1C7B6D3C00EBA718 /* ALSQLSelectCommand.h */; };
@@ -120,6 +124,10 @@
 		430F6F731C9A5F7C003E8F6C /* SHA1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHA1.m; sourceTree = "<group>"; };
 		430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton_Template.h; sourceTree = "<group>"; };
 		430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesHeader.h; sourceTree = "<group>"; };
+		434B75EB1CA1386F00242245 /* RC4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RC4.h; sourceTree = "<group>"; };
+		434B75EC1CA1386F00242245 /* RC4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RC4.m; sourceTree = "<group>"; };
+		434B75EF1CA13E1400242245 /* DES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DES.h; sourceTree = "<group>"; };
+		434B75F01CA13E1400242245 /* DES.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DES.m; sourceTree = "<group>"; };
 		436296791C7B6D3C00EBA718 /* ALSQLCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		4362967A1C7B6D3C00EBA718 /* ALSQLCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLCommand.m; sourceTree = "<group>"; };
 		4362967B1C7B6D3C00EBA718 /* ALSQLSelectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLSelectCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -223,6 +231,8 @@
 		430F6F691C9A5F7C003E8F6C /* Foundations */ = {
 			isa = PBXGroup;
 			children = (
+				434B75EB1CA1386F00242245 /* RC4.h */,
+				434B75EC1CA1386F00242245 /* RC4.m */,
 				430F6F6A1C9A5F7C003E8F6C /* ALDevice.h */,
 				430F6F6B1C9A5F7C003E8F6C /* ALDevice.m */,
 				430F6F6C1C9A5F7C003E8F6C /* ALOCRuntime.h */,
@@ -235,6 +245,8 @@
 				430F6F731C9A5F7C003E8F6C /* SHA1.m */,
 				430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */,
 				430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */,
+				434B75EF1CA13E1400242245 /* DES.h */,
+				434B75F01CA13E1400242245 /* DES.m */,
 			);
 			path = Foundations;
 			sourceTree = "<group>";
@@ -426,6 +438,7 @@
 				43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */,
 				4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */,
 				430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */,
+				434B75F11CA13E1400242245 /* DES.h in Headers */,
 				430F6F7A1C9A5F7C003E8F6C /* Base64.h in Headers */,
 				436296831C7B6D3C00EBA718 /* ALSQLUpdateCommand.h in Headers */,
 				439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */,
@@ -449,6 +462,7 @@
 				439B6A291C9308C700900FEB /* ALURLRequestQueueAdaptorProtocol.h in Headers */,
 				436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */,
 				430F6F801C9A5F7C003E8F6C /* Singleton_Template.h in Headers */,
+				434B75ED1CA1386F00242245 /* RC4.h in Headers */,
 				439B6A281C9308C700900FEB /* ALNetwork_config.h in Headers */,
 				43D0FE851C7EB3710096F232 /* ALModel.h in Headers */,
 				430F6F651C9A5F3D003E8F6C /* NSCache+ALExtensions.h in Headers */,
@@ -738,6 +752,7 @@
 				43B518921C759EE50060C3AA /* ALSQLCondition.m in Sources */,
 				43B518861C759A3F0060C3AA /* NSString+Helper.m in Sources */,
 				430F6F7D1C9A5F7C003E8F6C /* MD5.m in Sources */,
+				434B75EE1CA1386F00242245 /* RC4.m in Sources */,
 				43B518A91C75EF810060C3AA /* ALFMDatabaseQueue.m in Sources */,
 				43FB7AE91C9FE6DF007B62C7 /* ALSQLExpression.m in Sources */,
 				43D0FE891C7EB3F40096F232 /* ALModel+ActiveRecord.m in Sources */,
@@ -750,6 +765,7 @@
 				439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */,
 				430F6F7B1C9A5F7C003E8F6C /* Base64.m in Sources */,
 				43B5188C1C759AAF0060C3AA /* NSArray+ArrayExtensions.m in Sources */,
+				434B75F21CA13E1400242245 /* DES.m in Sources */,
 				430F6F681C9A5F3D003E8F6C /* NSDate+ALExtensions.m in Sources */,
 				436296881C7B6D5400EBA718 /* ALSQLInsertCommand.m in Sources */,
 				436296821C7B6D3C00EBA718 /* ALSQLSelectCommand.m in Sources */,

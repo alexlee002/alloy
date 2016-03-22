@@ -51,18 +51,21 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "ALDBColumnInfo.h"
 #import "ALSQLCondition.h"
 #import "ALSQLExpression.h"
+
 // extension
 #import "NSArray+ArrayExtensions.h"
 #import "BlocksKitExtension.h"
 #import "NSString+Helper.h"
 #import "NSCache+ALExtensions.h"
 #import "NSDate+ALExtensions.h"
+
 // network adaptor
 #import "ALHTTPRequest.h"
 #import "ALHTTPResponse.h"
 #import "ALURLRequestQueueAdaptorProtocol.h"
 #import "ASIHTTPRequestQueueAdaptor.h"
 #import "NSURLSessionAdaptor.h"
+
 // model
 #import "ALModel.h"
 // foundation
@@ -73,6 +76,8 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "MD5.h"
 #import "Base64.h"
 #import "SHA1.h"
+#import "RC4.h"
+#import "DES.h"
 //#endif
 
 

@@ -17,6 +17,9 @@
 #   define PROP_ATOMIC_DEF atomic
 #endif
 
+// cast "obj" to "type", or return nil if failed
+#define castToTypeOrNil(obj, type) ([(obj) isKindOfClass:[type class]] ? (type *)(obj) : nil)
+
 // CheckMemoryLeak
 /*NSAssert(_weak_##willReleaseObject == nil, @"*** MEMORY LEAK: %@", _weak_##willReleaseObject);*/
 #if DEBUG

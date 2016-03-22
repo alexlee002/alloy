@@ -30,10 +30,16 @@ extern NSString         *URLParamStringify (id _Nullable value);
 
 - (NSUInteger)occurrencesCountOfString:(NSString *)substring;
 - (NSString *)stringByConvertingCamelCaseToUnderscore;
+
 - (nullable NSString *)substringToIndexSafety:(NSUInteger)to;
 - (nullable NSString *)substringFromIndexSafety:(NSUInteger)from;
 - (nullable NSString *)substringWithRangeSafety:(NSRange)range;
+
 + (NSString *)UUIDString;
+
+- (BOOL)containsEmojiCharacters;
+- (NSComparisonResult)compareUsingPinyinTo:(NSString *)other;
+- (NSComparisonResult)compareUsingGB2312To:(NSString *)other;
 @end
 
 
