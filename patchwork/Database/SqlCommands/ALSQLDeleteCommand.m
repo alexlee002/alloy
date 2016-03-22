@@ -38,12 +38,12 @@
     [sql appendString:_table];
     
     // WHERE
-    if (!isEmptyString(_where.sqlCondition)) {
+    if (!isEmptyString(_where.sqlClause)) {
         [sql appendString: @" WHERE "];
-        [sql appendString:_where.sqlCondition];
+        [sql appendString:_where.sqlClause];
     }
     
-    _sqlArgs = _where.conditionArgs;
+    _sqlArgs = _where.sqlArguments;
     return [sql copy];
 }
 

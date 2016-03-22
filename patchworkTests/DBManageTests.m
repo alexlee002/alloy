@@ -72,6 +72,11 @@
 - (void)testSetupDB {
     ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];
     XCTAssertNotNil(db);
+
+    NSString *sql = [db.SELECT(nil)
+                        .FROM([TestUser tableName])
+                        .ORDER_BY(@[ [NSString stringWithFormat:@"%@ & 1 DESC", AS_COL(TestUser, name)] ]) sql];
+    XCTAssertEqualObjects(sql, @"SELECT * FROM user ORDER BY user_name & 1 DESC");
 }
 
 - (void)testSQLSelect {
@@ -160,16 +165,14 @@
     NSLog(@"%@", str);
     
     
-    //XCTAssertEqualObjects(PropertyEQ(user.name, @""), @"(user_name = ?)");
-    
-    TestUser *user1 = [TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @35)].firstObject;
+    TestUser *user1 = [TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].firstObject;
     XCTAssertEqualObjects(user1.name, user.name);
     XCTAssertEqualObjects(user1.addr, user.addr);
     
     user1.age = 40;
     [user1 updateOrReplace:YES];
-    XCTAssertTrue([TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @35)].count == 0);
-    XCTAssertTrue([TestUser modelsWithCondition:EQ(keypathForClass(TestUser, age), @40)].count == 1);
+    XCTAssertTrue([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].count == 0);
+    XCTAssertTrue([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @40)].count == 1);
     
     [user1 deleteRecord];
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == 0);
@@ -192,6 +195,17 @@
     NSArray *models = [TestUser fetcher].FETCH_MODELS();
     NSLog(@"%@", models);
     XCTAssertTrue(models.count == count);
+    
+    // test Raw Where
+    NSString *sql = [TestUser fetcher]
+                        .SELECT(@[ @"COUNT(*)" ])
+                        .RAW_WHERE(@"age > ? OR addr LIKE ? GROUP BY name LIMIT 100", @[ @10, @"Beijing%" ])
+                        .sql;
+    XCTAssertEqualObjects(sql, @"SELECT COUNT(*) FROM user WHERE age > ? OR addr LIKE ? GROUP BY name LIMIT 100");
+    
+    
+    sql = [TestUser fetcher].WHERE(EQ(BIT_AND(AS_COL(TestUser, age), @2), @0)).sql;
+    XCTAssertEqualObjects(sql, @"SELECT rowid, * FROM user WHERE (age & 2 = ?)");
 }
 
 

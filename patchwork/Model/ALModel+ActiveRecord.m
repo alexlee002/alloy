@@ -186,7 +186,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
             return [EQ([self.class mappedColumnNameForProperty:propertyName], [self valueForKey:propertyName]) build];
         }] bk_reduce:nil
             withBlock:^ALSQLCondition *(ALSQLCondition *result, ALSQLCondition *obj) {
-                return result == nil ? obj : result.AND(obj);
+                return result == nil ? [obj build] : result.AND(obj);
             }];
     }
 }

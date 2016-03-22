@@ -75,7 +75,7 @@
     if (request.method == ALHTTPMethodPost) {
         asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:request.url]];
         [request.params bk_each:^(NSString *key, id value) {
-            [(ASIFormDataRequest *) asiRequest setPostValue:value forKey:key];
+            [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
         }];
 
         if (request.type == ALRequestTypeUpload) {

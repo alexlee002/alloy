@@ -11,7 +11,20 @@
 #import "NSString+Helper.h"
 
 
+
 NS_ASSUME_NONNULL_BEGIN
+
+@implementation NSString (ALSQLCondition)
+- (ALSQLCondition *)SQLCondition {
+    return [ALSQLCondition conditionWithString:self args:nil];
+}
+@end
+
+@implementation ALSQLExpression (ALSQLCondition)
+- (ALSQLCondition *)SQLCondition {
+    return [ALSQLCondition conditionWithString:self.stringify args:nil];
+}
+@end
 
 #define addConditionArgs()  \
 do {                    \
@@ -21,23 +34,10 @@ va_start(args, arg);\
 va_end(args);       \
 } while(NO)
 
-
-//FORCE_INLINE NSArray *BIT_AND(NSString *column, id value) {
-//    if ([value isKindOfClass:[NSString class]]) {
-//        NSString *tmp = (NSString *)value;
-//        if ([value hasPrefix:@"$"] && [value hasSuffix:@"$"]) {
-//            column = [tmp substringWithRange:NSMakeRange(1, tmp.length - 2)];
-//            return @[ [column stringByAppendingFormat:@" & (%@)", value] ];
-//        }
-//    }
-//    return @[ [column stringByAppendingString:@" & ?"],  wrapNil(value) ];
-//}
-
-
 @implementation ALSQLCondition {
     @package
-    NSMutableString *_sqlWhere;
-    NSMutableArray  *_whereArgs;
+    NSMutableString  *_conditionClause;
+    NSMutableArray   *_conditionArgs;
     
     BOOL             _isNested;
     BOOL             _hasLowerPriorityOperator; // eg: OR
@@ -47,7 +47,7 @@ va_end(args);       \
 + (instancetype)conditionWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION {
     ALSQLCondition *condition = [[self alloc] initWithString:string args:nil];
     if ([arg isKindOfClass:[NSArray class]]) {
-        [condition->_whereArgs addObjectsFromArray:(NSArray *)arg];
+        [condition->_conditionArgs addObjectsFromArray:(NSArray *)arg];
     } else {
         va_list args;
         va_start(args, arg);
@@ -62,10 +62,10 @@ va_end(args);       \
     NSParameterAssert(string.length > 0);
     self = [super init];
     if (self) {
-        _sqlWhere  = [NSMutableString stringWithFormat:@"(%@)", string];
-        _whereArgs = [NSMutableArray array];
+        _conditionClause  = [NSMutableString stringWithFormat:@"(%@)", string];
+        _conditionArgs    = [NSMutableArray array];
         if ([arg isKindOfClass:[NSArray class]]) {
-            [_whereArgs addObjectsFromArray:(NSArray *)arg];
+            [_conditionArgs addObjectsFromArray:(NSArray *)arg];
         } else {
             addConditionArgs();
         }
@@ -76,32 +76,38 @@ va_end(args);       \
 - (void)addConditionArgsWithFirst:(id)arg vaList:(va_list)args {
     id a = arg;
     while (a != nil) {
-        [_whereArgs addObject:a];
+        [_conditionArgs addObject:a];
         a = va_arg(args, id);
     }
 }
 
+- (void)joinObject:(id)obj withOperator:(NSString *)op {
+    if ([obj isKindOfClass:[ALSQLCondition class]]) {
+        ALSQLCondition *cond = (ALSQLCondition *)obj;
+        [cond build];
+        [_conditionClause appendFormat:@" %@ %@", [op uppercaseString], cond.sqlClause];
+        [_conditionArgs   addObjectsFromArray:cond.sqlArguments];
+    } else {
+        ALSQLExpression *exp = obj;
+        if (![obj isKindOfClass:[ALSQLExpression class]]) {
+            exp = [ALSQLExpression expressionWithValue:obj];
+        }
+        [_conditionClause appendFormat:@" %@ %@", [op uppercaseString], exp.stringify];
+    }
+    _isNested = YES;
+}
 
 - (ALSQLConditionBlock)AND {
-    return ^(ALSQLCondition *cond) {
-        [cond build];
-        [_sqlWhere appendFormat:@" AND %@", cond.sqlCondition];
-        [_whereArgs addObjectsFromArray:cond.conditionArgs];
-        
-        _isNested = YES;
+    return ^(id cond) {
+        [self joinObject:cond withOperator:@"AND"];
         //_needWrappedByParentheses = YES;
         return self;
     };
 }
 
 - (ALSQLConditionBlock)OR {
-    return ^(ALSQLCondition *cond) {
-        [cond build];
-        [_sqlWhere appendString:@" OR "];
-        [_sqlWhere appendString:cond.sqlCondition];
-        [_whereArgs addObjectsFromArray:cond.conditionArgs];
-        
-        _isNested = YES;
+    return ^(id cond) {
+        [self joinObject:cond withOperator:@"OR"];
         _hasLowerPriorityOperator = YES;
         _needWrappedByParentheses = YES;
         return self;
@@ -110,172 +116,177 @@ va_end(args);       \
 
 - (instancetype)build {
 #if DEBUG
-    NSUInteger argCount = [_sqlWhere occurrencesCountOfString:@"?"];
-    NSAssert(argCount == _whereArgs.count, @"Incorrect of sql arguments count");
+    NSUInteger argCount = [_conditionClause occurrencesCountOfString:@"?"];
+    NSAssert(argCount == _conditionArgs.count, @"Incorrect of sql arguments count");
 #endif
     if (_needWrappedByParentheses ) {
-        [_sqlWhere insertString:@"(" atIndex:0];
-        [_sqlWhere appendString:@")"];
+        [_conditionClause insertString:@"(" atIndex:0];
+        [_conditionClause appendString:@")"];
         _needWrappedByParentheses = NO;
     }
     return self;
 }
 
-- (NSString *)sqlCondition {
-    return [_sqlWhere copy];
+- (NSString *)sqlClause {
+    return [_conditionClause copy];
 }
 
-- (NSArray *)conditionArgs {
-    return [_whereArgs copy];
+- (NSArray *)sqlArguments {
+    return [_conditionArgs copy];
 }
 
 - (NSString *)description {
-    return [[super description] stringByAppendingFormat:@"\nsql:%@\nargs:%@", self.sqlCondition, self.conditionArgs];
+    return [[super description] stringByAppendingFormat:@"\nsql:%@\nargs:%@", self.sqlClause, self.sqlClause];
 }
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static FORCE_INLINE NSString *_Nullable extractDBExp(NSString *exp) {
-    exp = [exp stringify];
-    if (exp == nil) {
+#define verifyExpression(exp) \
+    if ([(exp) isKindOfClass:[ALSQLExpression class]]) { \
+        (exp) = ((ALSQLExpression *)(exp)).stringify;    \
+    }                                                    \
+    if (![(exp) isKindOfClass:[NSString class]]) {       \
+        ALLogWarn(@"*** argument:'%s' should not be nil", #exp);\
+        return nil;                                      \
+    }
+
+static FORCE_INLINE ALSQLCondition *expression(id name, NSString *op, id _Nullable value) {
+    verifyExpression(name);
+    if ([value isKindOfClass:[ALSQLExpression class]]) {
+        return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ %@ %@",
+                                                    name,
+                                                    op,
+                                                    ((ALSQLExpression *) value).stringify]
+                                              args:nil];
+    }
+    return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ %@ ?", name, op]
+                                          args:wrapNil(value), nil];
+}
+
+
+FORCE_INLINE ALSQLExpression *AS_EXP(id exp) {
+    return [ALSQLExpression expressionWithValue:exp];
+}
+
+FORCE_INLINE static ALSQLCondition *_Nullable conditionWithObject(id obj) {
+    if ([obj isKindOfClass:[ALSQLCondition class]]) {
+        return obj;
+    }
+    if (![obj isKindOfClass:[ALSQLExpression class]]) {
+        obj = [ALSQLExpression expressionWithValue:obj];
+    }
+    return [obj SQLCondition];
+}
+
+FORCE_INLINE ALSQLCondition *AND(NSArray *conditions) {
+    if (![conditions isKindOfClass:[NSArray class]]) {
+        ALLogWarn(@"*** argument:'conditions' should be kind of NSArray");
         return nil;
     }
-    if ([exp hasPrefix:@"$"] && [exp hasSuffix:@"$"]) {
-        NSString *extract = [exp substringWithRange:NSMakeRange(1, exp.length - 2)];
-        if (extract.length == 0) {
-            return nil;
-        }
-        return extract;
-    }
-    return exp;
+
+    return [[(NSArray *) conditions bk_reduce:nil
+                                    withBlock:^ALSQLCondition *(ALSQLCondition *result, id obj) {
+                                        return result == nil ? [conditionWithObject(obj) build] : result.AND(obj);
+                                    }] build];
 }
 
-static FORCE_INLINE ALSQLCondition *expression(NSString *name, NSString *op, id _Nullable value) {
-    if (![name isKindOfClass:[NSString class]]) {
-        return nil;
-    }
-    if ([value isKindOfClass:[NSString class]]) {
-        NSString *exp = extractDBExp(value);
-        if (exp != nil && exp.length < ((NSString *)value).length) { // is DB expression
-            return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ %@ %@", name, op, exp] args: nil];
-        }
-    }
-    return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ %@ ?", name, op] args:wrapNil(value), nil];
-}
-
-
-FORCE_INLINE NSString *AS_EXP(NSString *exp) {
-    return [NSString stringWithFormat:@"$%@$", exp];
-}
-
-FORCE_INLINE NS_REQUIRES_NIL_TERMINATION ALSQLCondition *AND(ALSQLCondition *cond, ...) {
-    if (cond == nil) {
-        return nil;
-    }
-    [cond build];
-    ALSQLCondition *result = cond;
-    va_list args;
-    va_start(args, cond);
-    while ((cond = va_arg(args, ALSQLCondition *)) != nil) {
-        if (![cond isKindOfClass:[ALSQLCondition class]]) {
-            NSCAssert(NO, @"arg in va_list is not a ALSQLCondition class!!!");
-            continue;
-        }
-        result.AND(cond);
-    }
-    va_end(args);
-    
-    return [result build];
-}
-
-FORCE_INLINE NS_REQUIRES_NIL_TERMINATION ALSQLCondition *OR(ALSQLCondition *cond, ...) {
-    if (cond == nil) {
+FORCE_INLINE ALSQLCondition *OR(NSArray *conditions) {
+    if (![conditions isKindOfClass:[NSArray class]]) {
+        ALLogWarn(@"*** argument:'conditions' should be kind of NSArray");
         return nil;
     }
     
-    [cond build];
-    ALSQLCondition *result = cond;
-    va_list args;
-    va_start(args, cond);
-    while ((cond = va_arg(args, ALSQLCondition *)) != nil) {
-        if (![cond isKindOfClass:[ALSQLCondition class]]) {
-            NSCAssert(NO, @"arg in va_list is not a ALSQLCondition class!!!");
-            continue;
-        }
-        result.OR(cond);
-    }
-    va_end(args);
-    
-    return [result build];
+    return [[(NSArray *) conditions bk_reduce:nil
+                                    withBlock:^ALSQLCondition *(ALSQLCondition *result, id obj) {
+                                        return result == nil ? [conditionWithObject(obj) build] : result.OR(obj);
+                                    }] build];
 }
 
-FORCE_INLINE ALSQLCondition *EQ(NSString *column, id value) {
+FORCE_INLINE ALSQLCondition *EQ(id column, id value) {
     return expression(column, @"=", value);
 }
 
-FORCE_INLINE ALSQLCondition *LT(NSString *column, id value) {
+FORCE_INLINE ALSQLCondition *LT(id column, id value) {
     return expression(column, @"<", value);
 }
 
-FORCE_INLINE ALSQLCondition *GT(NSString *column, id value) {
+FORCE_INLINE ALSQLCondition *GT(id column, id value) {
     return expression(column, @">", value);
 }
 
-FORCE_INLINE ALSQLCondition *NLT(NSString *column, id value) {
+FORCE_INLINE ALSQLCondition *NLT(id column, id value) {
     return expression(column, @">=", value);
 }
 
-FORCE_INLINE ALSQLCondition *NGT(NSString *column, id value) {
+FORCE_INLINE ALSQLCondition *NGT(id column, id value) {
     return expression(column, @"<=", value);
 }
 
-//FORCE_INLINE ALSQLCondition *BIT_AND (NSString *column, id value) {
-//    return expression(column, @"&", value);
-//}
-//
-//FORCE_INLINE ALSQLCondition *BIT_OR  (NSString *column, id value) {
-//    return expression(column, @"|", value);
-//}
-//
-//FORCE_INLINE ALSQLCondition *BIT_XOR (NSString *column, id value) {
-//    return expression(column, @"^", value);
-//}
-//
-//FORCE_INLINE ALSQLCondition *BIT_NOT (NSString *column, id value) {
-//    return expression(column, @"~", value);
-//}
+FORCE_INLINE ALSQLCondition *NEQ  (id exp, id value) {
+    return expression(exp, @"!=", value);
+}
 
-FORCE_INLINE ALSQLCondition *IS_NULL(NSString *column) {
+FORCE_INLINE ALSQLExpression *OP_EXP  (id exp1, NSString *op, id exp2) {
+    verifyExpression(exp1);
+    if (![exp2 isKindOfClass:[ALSQLExpression class]]) {
+        exp2 = [ALSQLExpression expressionWithValue:exp2];
+    }
+    if (exp2 == nil) {
+        return nil;
+    }
+    return [[exp1 stringByAppendingFormat:@" %@ %@", op, exp2] SQLExpression];
+}
+
+FORCE_INLINE ALSQLExpression *BIT_AND (id column, id value) {
+    return OP_EXP(column, @"&", value);
+}
+
+FORCE_INLINE ALSQLExpression *BIT_OR  (id column, id value) {
+    return OP_EXP(column, @"|", value);
+}
+
+FORCE_INLINE ALSQLExpression *BIT_XOR (id column, id value) {
+    return OP_EXP(column, @"^", value);
+}
+
+FORCE_INLINE ALSQLExpression *BIT_NOT (id column, id value) {
+    return OP_EXP(column, @"~", value);
+}
+
+
+
+FORCE_INLINE ALSQLCondition *IS_NULL(id column) {
+    verifyExpression(column);
     return [ALSQLCondition conditionWithString:[column stringByAppendingString:@" IS NULL"] args:nil];
 }
 
-FORCE_INLINE ALSQLCondition *IS_NOT_NULL(NSString *column) {
+FORCE_INLINE ALSQLCondition *IS_NOT_NULL(id column) {
+    verifyExpression(column);
     return [ALSQLCondition conditionWithString:[column stringByAppendingString:@" IS NOT NULL"] args:nil];
 }
 
-FORCE_INLINE NS_REQUIRES_NIL_TERMINATION ALSQLCondition *IN(NSString *column, id value, ...) {
-    if (value != nil && [column isKindOfClass:[NSString class]]) {
-        NSMutableArray  *inArgs = [NSMutableArray array];
-        va_list args;
-        va_start(args, value);
-        while (value != nil) {
-            [inArgs addObject:value];
-            value = va_arg(args, id);
-        }
-        va_end(args);
-        
-        NSString *inStr = [[inArgs bk_map:^NSString *(id obj) {
+FORCE_INLINE ALSQLCondition *NOT (id expression) {
+    verifyExpression(expression);
+    return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"! %@", expression] args:nil];
+}
+
+FORCE_INLINE ALSQLCondition *IN(id expression, NSArray *values){
+    verifyExpression(expression);
+    if (values != nil && [expression isKindOfClass:[NSString class]]) {
+        NSString *inStr = [[values bk_map:^NSString *(id obj) {
             return @"?";
         }] componentsJoinedByString:@", "];
-        inStr = [NSString stringWithFormat:@"%@ IN [%@]", column, inStr];
-        return [ALSQLCondition conditionWithString:inStr args:inArgs, nil];
+        inStr = [NSString stringWithFormat:@"%@ IN [%@]", expression, inStr];
+        return [ALSQLCondition conditionWithString:inStr args:values, nil];
     }
     return nil;
 }
 
-FORCE_INLINE ALSQLCondition *LIKE(NSString *column, NSString *likeExpression) {
+FORCE_INLINE ALSQLCondition *LIKE(id column, NSString *likeExpression) {
+    verifyExpression(column);
+    
     if ([column isKindOfClass:[NSString class]] && [likeExpression isKindOfClass:[NSString class]]) {
         return [ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ LIKE ?", column] args:likeExpression, nil];
     }
@@ -298,7 +309,9 @@ static FORCE_INLINE NSString *CHAR_LIKE(NSUInteger matchNum) {
 
 //eg: LIKE '%aaaaa'
 //or: LIKE '_aaaaa'
-FORCE_INLINE ALSQLCondition *LEFT_LIKE(NSString *column, id arg, NSUInteger matchs) {
+FORCE_INLINE ALSQLCondition *LEFT_LIKE(id column, id arg, NSUInteger matchs) {
+    verifyExpression(column);
+    
     NSString *exp = [arg stringify];
     if (exp == nil) {
         return nil;
@@ -313,7 +326,9 @@ FORCE_INLINE ALSQLCondition *LEFT_LIKE(NSString *column, id arg, NSUInteger matc
 
 //eg: LIKE 'aaaaa%'
 //or: LIKE 'aaaaa_'
-FORCE_INLINE ALSQLCondition *RIGHT_LIKE(NSString *column, id arg, NSUInteger matchs) {
+FORCE_INLINE ALSQLCondition *RIGHT_LIKE(id column, id arg, NSUInteger matchs) {
+    verifyExpression(column);
+    
     NSString *exp = [arg stringify];
     if (exp == nil) {
         return nil;

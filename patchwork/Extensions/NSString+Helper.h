@@ -17,6 +17,7 @@ extern id _Nullable unwrapNil(id _Nullable obj);
 extern NSString         *stringOrEmpty     (NSString *_Nullable string);
 extern BOOL             isEmptyString      (NSString *_Nullable string);
 extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName);
+extern NSString         *URLParamStringify (id _Nullable value);
 
 @interface NSObject (StringHelper)
 

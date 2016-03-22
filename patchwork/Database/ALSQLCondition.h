@@ -8,55 +8,67 @@
 
 #import <Foundation/Foundation.h>
 #import "UtilitiesHeader.h"
+#import "ALSQLExpression.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class ALSQLCondition;
 
 // mark 'exp' is an expression, not value
-extern NSString *AS_EXP(NSString *exp);
+extern ALSQLExpression *AS_EXP(id exp);
 
-extern ALSQLCondition *EQ   (NSString *column, id value);
-extern ALSQLCondition *LT   (NSString *column, id value);
-extern ALSQLCondition *GT   (NSString *column, id value);
-extern ALSQLCondition *NLT  (NSString *column, id value);
-extern ALSQLCondition *NGT  (NSString *column, id value);
+// expression should by NSString or ALSQLExpression
+extern ALSQLCondition *EQ   (id expression, id value);
+extern ALSQLCondition *LT   (id expression, id value);
+extern ALSQLCondition *GT   (id expression, id value);
+extern ALSQLCondition *NLT  (id expression, id value);
+extern ALSQLCondition *NGT  (id expression, id value);
+extern ALSQLCondition *NEQ  (id expression, id value);
 
-//extern ALSQLCondition *BIT_AND (NSString *column, id value);
-//extern ALSQLCondition *BIT_OR  (NSString *column, id value);
-//extern ALSQLCondition *BIT_XOR (NSString *column, id value);
-//extern ALSQLCondition *BIT_NOT (NSString *column, id value);
+extern ALSQLExpression *OP_EXP  (id exp1, NSString *operator, id exp2);
+extern ALSQLExpression *BIT_AND (id expression, id value);
+extern ALSQLExpression *BIT_OR  (id expression, id value);
+extern ALSQLExpression *BIT_XOR (id expression, id value);
+extern ALSQLExpression *BIT_NOT (id expression, id value);
 
-extern ALSQLCondition *IS_NULL(NSString *column);
-extern ALSQLCondition *IS_NOT_NULL(NSString *column);
+extern ALSQLCondition *IS_NULL    (id expression);
+extern ALSQLCondition *IS_NOT_NULL(id expression);
+extern ALSQLCondition *NOT        (id expression);
 
-extern NS_REQUIRES_NIL_TERMINATION ALSQLCondition *IN(NSString *column, id value, ...);
+extern ALSQLCondition *IN(id expression, NSArray *values);
 
 // 'LIKE' pattern,
 // matchsAny:           using "%"
 // natural number(>0):  using "_"
 extern const NSUInteger matchsAny;
-extern ALSQLCondition *LIKE(NSString *column, NSString *likeExpression);
+extern ALSQLCondition *LIKE(id expression, NSString *likeExpression);
 // eg: LIKE '%abc'
-extern ALSQLCondition *LEFT_LIKE(NSString *column, id arg, NSUInteger matchs);
+extern ALSQLCondition *LEFT_LIKE(id expression, id arg, NSUInteger matchs);
 // eg: LIKE 'abc%'
-extern ALSQLCondition *RIGHT_LIKE(NSString *column, id arg, NSUInteger matchs);
+extern ALSQLCondition *RIGHT_LIKE(id expression, id arg, NSUInteger matchs);
 
-extern NS_REQUIRES_NIL_TERMINATION ALSQLCondition *AND(ALSQLCondition *cond, ...);
-extern NS_REQUIRES_NIL_TERMINATION ALSQLCondition *OR(ALSQLCondition *cond, ...);
+// condition should be Array of ALSQLCondition or ALSQLExpression
+extern ALSQLCondition *AND(NSArray *conditions);
+extern ALSQLCondition *OR(NSArray *conditions);
 
 typedef NS_ENUM(NSInteger, DBValueType) {
     DBValueTypeNormal       = 0,
     DBValueTypeColumnName   = 1
 };
 
-
-typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(ALSQLCondition *cond);
+/**
+ *  condition block
+ *
+ *  @param cond should be kind of ALSQLCondition or ALSQLExpression
+ *
+ *  @return ALSQLCondition
+ */
+typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(id cond);
 
 @interface ALSQLCondition : NSObject
 
-@property(readonly) NSString *sqlCondition;
-@property(readonly) NSArray  *conditionArgs;
+@property(readonly) NSString *sqlClause;
+@property(readonly) NSArray  *sqlArguments;
 
 + (instancetype)conditionWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION;
 - (instancetype)initWithString:(NSString *)string args:(nullable id)arg, ... NS_REQUIRES_NIL_TERMINATION;
@@ -66,7 +78,14 @@ typedef ALSQLCondition *_Nullable (^ALSQLConditionBlock)(ALSQLCondition *cond);
 
 - (instancetype)build;
 
+@end
 
+@interface NSString (ALSQLCondition)
+- (ALSQLCondition *)SQLCondition;
+@end
+
+@interface ALSQLExpression (ALSQLCondition)
+- (ALSQLCondition *)SQLCondition;
 @end
 
 NS_ASSUME_NONNULL_END

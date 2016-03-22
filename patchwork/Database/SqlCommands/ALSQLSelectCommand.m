@@ -19,6 +19,8 @@
     NSMutableArray<NSString *> *_orderBy;
     NSMutableArray<NSString *> *_groupBy;
     NSMutableArray<NSString *> *_havings;
+    
+    NSString                   *_rawWhere;
 }
 
 - (nullable NSArray<NSString *> *)columns {
@@ -76,6 +78,14 @@
     };
 }
 
+- (ALSQLSelectRawWhereBLock)RAW_WHERE {
+    return ^ALSQLSelectCommand *_Nonnull(NSString *_Nullable str, NSArray *_Nullable args) {
+        _rawWhere = [str copy];
+        _sqlArgs  = [args copy];
+        return self;
+    };
+}
+
 
 - (nullable NSString *)sql {
     NSMutableString *sql = [NSMutableString stringWithString:@"SELECT "];
@@ -93,10 +103,17 @@
     [sql appendString: @" FROM "];
     [sql appendString:_from];
     
-    // WHERE
-    if (!isEmptyString(_where.sqlCondition)) {
+    if (!isEmptyString(_rawWhere)) {
         [sql appendString: @" WHERE "];
-        [sql appendString:_where.sqlCondition];
+        [sql appendString:_rawWhere];
+        
+        return [sql copy];
+    }
+    
+    // WHERE
+    if (!isEmptyString(_where.sqlClause)) {
+        [sql appendString: @" WHERE "];
+        [sql appendString:_where.sqlClause];
     }
     
     // GROUP BY
@@ -117,7 +134,7 @@
         [sql appendString:_limit];
     }
     
-    _sqlArgs = _where.conditionArgs;
+    _sqlArgs = _where.sqlArguments;
     return [sql copy];
 }
 @end

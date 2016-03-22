@@ -50,6 +50,7 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "ALFMDatabaseQueue.h"
 #import "ALDBColumnInfo.h"
 #import "ALSQLCondition.h"
+#import "ALSQLExpression.h"
 // extension
 #import "NSArray+ArrayExtensions.h"
 #import "BlocksKitExtension.h"

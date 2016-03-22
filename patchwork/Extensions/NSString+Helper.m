@@ -46,19 +46,18 @@ FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encod
     return NSUTF8StringEncoding;
 }
 
-FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
+FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
     NSString *canonicalString = nil;
     if ([value isKindOfClass:[NSString class]]) {
         canonicalString = (NSString *)value;
     } else if ([NSJSONSerialization isValidJSONObject:value]) {
         NSData *data = [NSJSONSerialization dataWithJSONObject:value options:0 error:nil];
         canonicalString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    } else {
+        canonicalString = [value stringify];
     }
     
-    if (canonicalString != nil) {
-        return [canonicalString stringByURLEncoding];
-    }
-    return @"";
+    return stringOrEmpty(canonicalString);
 }
 
 @implementation NSObject (StringHelper)
@@ -157,9 +156,10 @@ FORCE_INLINE NSString *canonicalQueryStringValue(id _Nullable value) {
 
 - (NSString * (^)(NSString *key, id value))SET_QUERY_PARAM {
     return ^NSString *(NSString *key, id value) {
-        return
-            [self stringByAppendingFormat:@"%@%@=%@", ([self rangeOfString:@"?"].location == NSNotFound ? @"?" : @"&"),
-                                          canonicalQueryStringValue(key), canonicalQueryStringValue(value)];
+        return [self stringByAppendingFormat:@"%@%@=%@",
+                ([self rangeOfString:@"?"].location == NSNotFound ? @"?" : @"&"),
+                [URLParamStringify(key)   stringByURLEncoding],
+                [URLParamStringify(value) stringByURLEncoding]];
     };
 }
 

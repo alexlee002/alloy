@@ -89,12 +89,12 @@ NS_ASSUME_NONNULL_BEGIN
     [sql appendString:[updateClauses componentsJoinedByString:@", "]];
     
     // WHERE
-    if (!isEmptyString(_where.sqlCondition)) {
+    if (!isEmptyString(_where.sqlClause)) {
         [sql appendString: @" WHERE "];
-        [sql appendString:_where.sqlCondition];
+        [sql appendString:_where.sqlClause];
     }
     
-    [(NSMutableArray *)_sqlArgs addObjectsFromArray:_where.conditionArgs];
+    [(NSMutableArray *)_sqlArgs addObjectsFromArray:_where.sqlArguments];
     return [sql copy];
 }
 

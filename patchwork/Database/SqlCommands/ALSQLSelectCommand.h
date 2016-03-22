@@ -16,6 +16,9 @@ typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockString)    (NSString     
 typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectConditionBlock) (ALSQLCondition      *_Nullable condition);
 typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockNumArray)  (NSArray<NSNumber *> *_Nullable nums);
 
+// you can execute raw sql here, but not recommanded;
+typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectRawWhereBLock)  (NSString *_Nullable str, NSArray *_Nullable args);
+
 @interface ALSQLSelectCommand : ALSQLCommand
 
 @property(readonly, nullable) NSArray<NSString *> *columns;
@@ -26,6 +29,8 @@ typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlockNumArray)  (NSArray<NSNum
 @property(readonly) ALSQLSelectBlockStrArray  ORDER_BY;
 @property(readonly) ALSQLSelectBlockStrArray  GROUP_BY;
 @property(readonly) ALSQLSelectBlockNumArray  LIMIT;
+
+@property(readonly) ALSQLSelectRawWhereBLock  RAW_WHERE;
 
 @end
 
