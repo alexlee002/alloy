@@ -27,11 +27,28 @@
 
 // JSON => object
 - (nullable id)objectFromJSONString:(NSString *)string {
-    return [self objectFromJSONData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+    return [string JSONObject];
 }
 
 - (nullable id)objectFromJSONData:(NSData *)data {
-    return [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    return [data JSONObject];
+}
+
+@end
+
+
+@implementation NSData (JSONTransform)
+
+- (nullable id)JSONObject {
+    return [NSJSONSerialization JSONObjectWithData:self options:0 error:nil];
+}
+
+@end
+
+@implementation NSString (JSONTransform)
+
+- (nullable id)JSONObject {
+    return [[self dataUsingEncoding:NSUTF8StringEncoding] JSONObject];
 }
 
 @end

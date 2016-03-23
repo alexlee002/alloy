@@ -20,4 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface NSData (JSONTransform)
+
+- (nullable id)JSONObject;
+
+@end
+
+@interface NSString (JSONTransform)
+
+- (nullable id)JSONObject;
+
+@end
+
 NS_ASSUME_NONNULL_END
