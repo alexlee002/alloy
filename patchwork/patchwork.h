@@ -78,6 +78,8 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "SHA1.h"
 #import "RC4.h"
 #import "DES.h"
+#import "HHTimer.h"
+#import "NSObject+JSONTransform.h"
 //#endif
 
 

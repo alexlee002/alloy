@@ -18,6 +18,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
+    
+    [HHTimer scheduledTimerWithTimeInterval:3 dispatchQueue:dispatch_get_main_queue() block:^{
+        NSLog(@"====== HHTimer test ======");
+    } userInfo:nil repeats:NO];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {

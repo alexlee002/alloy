@@ -11,6 +11,7 @@
 #import "ASIHTTPRequestQueueAdaptor.h"
 #import "ALHTTPRequest.h"
 #import "NSURLSessionAdaptor.h"
+#import "HHTimer.h"
 
 @interface GCDSyncTest : NSObject
 
@@ -211,18 +212,58 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[UIViewController alloc] init];
     
-    _adaptor = [NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"];
-    request.type = ALRequestTypeDownload;
-    weakify(request);
-    request.progressBlock = ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected) {
-        strongify(request);
-        NSLog(@"received: %lld, progress: %.02f%%", bytesDone, totalBytesDone * 100.f / totalBytesExpected);
-        if (totalBytesDone * 1.f / totalBytesExpected > 0.4) {
-            [_adaptor cancelRequestWithIdentifyer:request.identifier];
-        }
-    };
-    [_adaptor sendRequest:request];
+//    [HHTimer scheduledTimerWithTimeInterval:3 dispatchQueue:dispatch_get_main_queue() block:^{
+//        NSLog(@"====== HHTimer test ======");
+//    } userInfo:nil repeats:NO];
+    
+    
+//    int count = 1;
+//    CFTimeInterval t1 = 0.f;
+//    CFTimeInterval t2 = 0.f;
+//    CFTimeInterval t3 = 0.f;
+//    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];
+//    for (int i = 0; i < count; ++i) {
+//        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
+//        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+//        t1 += CFAbsoluteTimeGetCurrent() - t;
+//        
+//        t = CFAbsoluteTimeGetCurrent();
+//        df.dateFormat = @"yyyy-MM-dd";
+//        t2 += CFAbsoluteTimeGetCurrent() - t;
+//        
+//        t = CFAbsoluteTimeGetCurrent();
+//        df.locale = locale;
+//        t3 += CFAbsoluteTimeGetCurrent() - t;
+//
+//    }
+//    NSLog(@">>> init date formatter: %f", t1 / count);
+//    NSLog(@">>> set format: %f", t2 / count);
+//    NSLog(@">>> set locale: %f", t3 / count);
+//    
+//    CFTimeInterval t4 = 0.f;
+//    for (int i = 0; i < count; ++i) {
+//        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
+//        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];
+//        t4 += CFAbsoluteTimeGetCurrent() - t;
+//    }
+//    NSLog(@">>> init locale: %f", t4 / count);
+    
+    
+    
+    
+//    _adaptor = [NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+//    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"];
+//    request.type = ALRequestTypeDownload;
+//    weakify(request);
+//    request.progressBlock = ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected) {
+//        strongify(request);
+//        NSLog(@"received: %lld, progress: %.02f%%", bytesDone, totalBytesDone * 100.f / totalBytesExpected);
+//        if (totalBytesDone * 1.f / totalBytesExpected > 0.4) {
+//            [_adaptor cancelRequestWithIdentifyer:request.identifier];
+//        }
+//    };
+//    [_adaptor sendRequest:request];
+    
     
 //    [self testRespondTo];
     

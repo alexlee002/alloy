@@ -42,7 +42,6 @@
 		436296A91C7C693D00EBA718 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 436296A71C7C693D00EBA718 /* LaunchScreen.storyboard */; };
 		436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */; };
 		436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */; };
-		438F63D11C9019E4003EA9B6 /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
 		439B6A241C9308C700900FEB /* ALHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1A1C9308C700900FEB /* ALHTTPRequest.h */; };
 		439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A1B1C9308C700900FEB /* ALHTTPRequest.m */; };
 		439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1C1C9308C700900FEB /* ALHTTPResponse.h */; };
@@ -53,6 +52,10 @@
 		439B6A2B1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */; };
 		439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */; };
 		439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */; };
+		43B3D57D1CA308CF0076C1AA /* HHTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B3D57B1CA308CF0076C1AA /* HHTimer.m */; };
+		43B3D57E1CA30B3F0076C1AA /* HHTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B3D57A1CA308CF0076C1AA /* HHTimer.h */; };
+		43B3D5811CA30DEF0076C1AA /* NSObject+JSONTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */; };
+		43B3D5821CA30DEF0076C1AA /* NSObject+JSONTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B3D5801CA30DEF0076C1AA /* NSObject+JSONTransform.m */; };
 		43B518641C7590320060C3AA /* patchwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518631C7590320060C3AA /* patchwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43B5186B1C7590320060C3AA /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
 		43B518701C7590320060C3AA /* patchworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5186F1C7590320060C3AA /* patchworkTests.m */; };
@@ -155,6 +158,10 @@
 		439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIHTTPRequestQueueAdaptor.m; sourceTree = "<group>"; };
 		439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionAdaptor.h; sourceTree = "<group>"; };
 		439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
+		43B3D57A1CA308CF0076C1AA /* HHTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HHTimer.h; sourceTree = "<group>"; };
+		43B3D57B1CA308CF0076C1AA /* HHTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHTimer.m; sourceTree = "<group>"; };
+		43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+JSONTransform.h"; sourceTree = "<group>"; };
+		43B3D5801CA30DEF0076C1AA /* NSObject+JSONTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+JSONTransform.m"; sourceTree = "<group>"; };
 		43B518601C7590320060C3AA /* patchwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = patchwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B518631C7590320060C3AA /* patchwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchwork.h; sourceTree = "<group>"; };
 		43B518651C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -202,7 +209,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				438F63D11C9019E4003EA9B6 /* patchwork.framework in Frameworks */,
 				ED83656BFFF92A6C9898F9D0 /* libPods-patchwork-Demo-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,6 +237,8 @@
 		430F6F691C9A5F7C003E8F6C /* Foundations */ = {
 			isa = PBXGroup;
 			children = (
+				43B3D57A1CA308CF0076C1AA /* HHTimer.h */,
+				43B3D57B1CA308CF0076C1AA /* HHTimer.m */,
 				434B75EB1CA1386F00242245 /* RC4.h */,
 				434B75EC1CA1386F00242245 /* RC4.m */,
 				430F6F6A1C9A5F7C003E8F6C /* ALDevice.h */,
@@ -247,6 +255,8 @@
 				430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */,
 				434B75EF1CA13E1400242245 /* DES.h */,
 				434B75F01CA13E1400242245 /* DES.m */,
+				43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */,
+				43B3D5801CA30DEF0076C1AA /* NSObject+JSONTransform.m */,
 			);
 			path = Foundations;
 			sourceTree = "<group>";
@@ -436,6 +446,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */,
+				43B3D57E1CA30B3F0076C1AA /* HHTimer.h in Headers */,
 				4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */,
 				430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */,
 				434B75F11CA13E1400242245 /* DES.h in Headers */,
@@ -443,6 +454,7 @@
 				436296831C7B6D3C00EBA718 /* ALSQLUpdateCommand.h in Headers */,
 				439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */,
 				439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */,
+				43B3D5811CA30DEF0076C1AA /* NSObject+JSONTransform.h in Headers */,
 				43D0FE821C7EAC7D0096F232 /* ALModel_Define.h in Headers */,
 				43B518AE1C76CBD80060C3AA /* ALDBColumnInfo.h in Headers */,
 				43B518641C7590320060C3AA /* patchwork.h in Headers */,
@@ -763,6 +775,7 @@
 				43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */,
 				43D0FE831C7EAC7D0096F232 /* ALModel_Define.m in Sources */,
 				439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */,
+				43B3D5821CA30DEF0076C1AA /* NSObject+JSONTransform.m in Sources */,
 				430F6F7B1C9A5F7C003E8F6C /* Base64.m in Sources */,
 				43B5188C1C759AAF0060C3AA /* NSArray+ArrayExtensions.m in Sources */,
 				434B75F21CA13E1400242245 /* DES.m in Sources */,
@@ -770,6 +783,7 @@
 				436296881C7B6D5400EBA718 /* ALSQLInsertCommand.m in Sources */,
 				436296821C7B6D3C00EBA718 /* ALSQLSelectCommand.m in Sources */,
 				430F6F791C9A5F7C003E8F6C /* ALOCRuntime.m in Sources */,
+				43B3D57D1CA308CF0076C1AA /* HHTimer.m in Sources */,
 				430F6F771C9A5F7C003E8F6C /* ALDevice.m in Sources */,
 				439B6A2B1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m in Sources */,
 			);
@@ -819,6 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "patchwork-Demo-iOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-Demo-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -832,6 +847,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "patchwork-Demo-iOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-Demo-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
