@@ -39,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockKV)  (NSString *_Nonnull key, id _Nullable value);
 typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockDict)(NSDictionary<NSString *, id> *_Nullable dict);
 
+typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition, NSString *_Nonnull key,
+                                                                  id _Nullable value);
+
 @interface ALHTTPRequest : NSObject
 
 @property(readonly)                        NSUInteger       identifier;
@@ -52,12 +55,13 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockDict)(NSDictionary<
 @property(PROP_ATOMIC_DEF)                 float            priority;
 
 
-@property(PROP_ATOMIC_DEF, copy, nullable)    NSString        *downlFilePath;
+@property(PROP_ATOMIC_DEF, copy, nullable)    NSString        *downloadFilePath;
 // readonly if using NSURLSession
 @property(PROP_ATOMIC_DEF, copy, nullable)    NSString        *temporaryDownloadFilePath;
 
 @property(nullable, readonly, copy) NSURL               *currentURL;
 @property(readonly)                 ALHTTPRequestState   state;
+@property(nullable, readonly)       ALHTTPResponse      *response;
 
 /* number of body bytes already received */
 @property(readonly) int64_t countOfBytesReceived;
@@ -78,6 +82,7 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockDict)(NSDictionary<
 + (instancetype)requestWithURLString:(NSString *)url;
 
 - (NSString *)methodName;
+- (NSString *)descriptionDetailed:(BOOL)detailed;
 
 // obj = nil then reamove the value for specified key.
 - (void)setParam:(nullable id)obj forKey:(NSString *)key;
@@ -99,6 +104,10 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockDict)(NSDictionary<
 
 @property(readonly) ALHTTPRequestBlockKV     SET_UPLOAD_PARAM;
 @property(readonly) ALHTTPRequestBlockKV     SET_HEADER;
+
+@property(readonly) ALHTTPRequestBlockBKV    SET_PARAM_IF;
+@property(readonly) ALHTTPRequestBlockBKV    SET_UPLOAD_PARAM_IF;
+@property(readonly) ALHTTPRequestBlockBKV    SET_HEADER_IF;
 @end
 
 NS_ASSUME_NONNULL_END

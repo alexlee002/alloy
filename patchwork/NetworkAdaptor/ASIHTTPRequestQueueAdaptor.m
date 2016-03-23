@@ -16,11 +16,29 @@
 #import "NSString+Helper.h"
 #import "NSArray+ArrayExtensions.h"
 
+
+@interface ALHTTPResponse (ASIHTTPRequestAdaptor)
++ (instancetype)responseWithASIHttpRequest:(ASIHTTPRequest *)request;
+@end
+
+@implementation ALHTTPResponse (ASIHTTPRequestAdaptor)
+
++ (instancetype)responseWithASIHttpRequest:(ASIHTTPRequest *)request {
+    NSHTTPURLResponse *nsResponse = [[NSHTTPURLResponse alloc]
+         initWithURL:request.url
+          statusCode:request.responseStatusCode
+         HTTPVersion:((__bridge NSString *) (request.useHTTPVersionOne ? kCFHTTPVersion1_0 : kCFHTTPVersion1_1))
+        headerFields:request.responseHeaders];
+    return [self responseWithNSURLResponse:nsResponse responseData:request.responseData];
+}
+
+@end
+
+
 @interface ASIHTTPRequestQueueAdaptor() <ASIHTTPRequestDelegate, ASIProgressDelegate>
 
 @end
 
-#define requestDesc(srcReq)      [NSString stringWithFormat:@"%@ (id:%@)", (srcReq).class, @((srcReq).identifier)]
 #define sourceRequestOf(asi)     [_requestDict[@((asi).tag)] firstObject]
 
 
@@ -102,8 +120,7 @@
     asiRequest.delegate                      = self;
     asiRequest.useCookiePersistence          = NO;
     asiRequest.timeOutSeconds                = request.maximumnConnectionTimeout;
-    asiRequest.tag                           = [self uniqueRequestId];
-    [request setValue:@(asiRequest.tag)              forKey:keypath(request.identifier)];
+    asiRequest.tag                           = request.identifier;
     [request setValue:@(ALHTTPRequestStateSuspended) forKey:keypath(request.state)];
     
     return asiRequest;
@@ -129,30 +146,13 @@
     *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;
     (*asiRequest).allowResumeForFileDownloads = YES;
-    [(*asiRequest) setDownloadDestinationPath:[request downlFilePath]];
+    [(*asiRequest) setDownloadDestinationPath:[request downloadFilePath]];
     [(*asiRequest) setTemporaryFileDownloadPath:request.temporaryDownloadFilePath];
     (*asiRequest).downloadProgressDelegate = self;
     (*asiRequest).showAccurateProgress     = YES;
     if ([(*asiRequest) shouldResetDownloadProgress]) {
         [(*asiRequest) setShouldResetDownloadProgress:NO];
     }
-}
-
-
-
-- (NSUInteger)uniqueRequestId {
-    static dispatch_semaphore_t lock;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        lock = dispatch_semaphore_create(1);
-    });
-    
-    static NSUInteger kIdentifier;
-    NSUInteger nextId;
-    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
-    nextId = ++kIdentifier;
-    dispatch_semaphore_signal(lock);
-    return nextId;
 }
 
 #pragma mark -
@@ -176,6 +176,10 @@
 }
 
 - (void)cancelRequestWithIdentifyer:(NSUInteger)identifier {
+    [self cancelRequestWithIdentifyer:identifier contextHandler:nil];
+}
+
+- (void)cancelRequestWithIdentifyer:(NSUInteger)identifier contextHandler:(void (^_Nullable)(id _Nullable))handler {
     ALHTTPRequest  *srcReq = [_requestDict[@(identifier)] firstObject];
     ASIHTTPRequest *asiReq = [_requestDict[@(identifier)] objectAtIndexSafely:1];
     
@@ -209,7 +213,7 @@
 #pragma mark - ASIHTTPRequest delegates
 - (void)requestStarted:(ASIHTTPRequest *)request {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
-    ALLogVerbose(@"\nsending request: %@", srcReq);
+    ALLogVerbose(@"\nsending request: %@", [srcReq descriptionDetailed:YES]);
     if (srcReq.startBlock != nil) {
         srcReq.startBlock();
     }
@@ -224,7 +228,7 @@
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
-    ALLogVerbose(@"\nrequest: %@\nresponse: %@", requestDesc(srcReq), request.responseString);
+    ALLogVerbose(@"\nrequest: %@\nresponse: %@", srcReq, request.responseString);
 
     [srcReq setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(srcReq.state)];
     if (srcReq.completionBlock != nil) {
@@ -241,7 +245,7 @@
 
 - (void)requestFailed:(ASIHTTPRequest *)request {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
-    ALLogVerbose(@"\nrequest: %@\nerror: %@", requestDesc(srcReq), request.responseString);
+    ALLogVerbose(@"\nrequest: %@\nerror: %@", srcReq, request.responseString);
 
     [srcReq setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(srcReq.state)];
 
@@ -314,7 +318,7 @@
 //----
 - (void)request:(ASIHTTPRequest *)request willRedirectToURL:(NSURL *)newURL {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
-    ALLogVerbose(@"\nrequest: %@ will redirect to: %@", requestDesc(srcReq), newURL);
+    ALLogVerbose(@"\nrequest: %@ will redirect to: %@", srcReq, newURL);
     [request redirectToURL:newURL];
     [srcReq setValue:newURL forKey:keypath(srcReq.currentURL)];
 }

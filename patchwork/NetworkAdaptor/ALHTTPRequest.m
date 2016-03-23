@@ -19,6 +19,8 @@
 
 @synthesize identifier                      = _identifier;
 @synthesize currentURL                      = _currentURL;
+@synthesize state                           = _state;
+@synthesize response                        = _response;
 @synthesize countOfBytesReceived            = _countOfBytesReceived;
 @synthesize countOfBytesSent                = _countOfBytesSent;
 @synthesize countOfBytesExpectedToSend      = _countOfBytesExpectedToSend;
@@ -34,7 +36,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.maximumnConnectionTimeout = 30.f;
+        _identifier = [self uniqueRequestId];
+        _maximumnConnectionTimeout = 30.f;
     }
     ALLogVerbose(@"--- INIT: <%@:%@> ---", self.class, @(self.hash));
     return self;
@@ -45,9 +48,17 @@
 }
 
 - (NSString *)description {
-    NSMutableArray *components = [NSMutableArray array];
-    [components addObject:[NSString stringWithFormat:@"%@ (id:%@); %@", self.class, @(self.identifier),
-                                                     [self methodName]]];
+    return [NSString stringWithFormat:@"%@ (id:%@); %@; %@; %@", self.class, @(self.identifier), [self methodName],
+                                      [self requestTypeString], [self stateString]];
+}
+
+- (NSString *)descriptionDetailed:(BOOL)detailed {
+    NSString *desc = self.description;
+    if (!detailed) {
+        return desc;
+    }
+    
+    NSMutableArray *components = [NSMutableArray arrayWithObject:desc];
     [components addObject:[@"url: " stringByAppendingString:self.url]];
     
     if (self.params.count > 0) {
@@ -61,6 +72,22 @@
     }
     
     return [components componentsJoinedByString:@"\n"];
+}
+
+
+- (NSUInteger)uniqueRequestId {
+    static dispatch_semaphore_t lock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        lock = dispatch_semaphore_create(1);
+    });
+    
+    static NSUInteger kIdentifier = 0;
+    NSUInteger nextId;
+    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+    nextId = ++kIdentifier;
+    dispatch_semaphore_signal(lock);
+    return nextId;
 }
 
 #pragma mark -
@@ -93,15 +120,46 @@
     };
 }
 
+- (ALHTTPRequestBlockBKV)SET_PARAM_IF {
+    return ^__kindof ALHTTPRequest *_Nonnull(BOOL condition, NSString *_Nonnull key, id _Nullable value) {
+        if (condition) {
+            [self setParam:value forKey:key];
+        }
+        return self;
+    };
+}
+
+- (ALHTTPRequestBlockBKV)SET_UPLOAD_PARAM_IF {
+    return ^__kindof ALHTTPRequest *_Nonnull(BOOL condition, NSString *_Nonnull key, id _Nullable value) {
+        if (condition) {
+            [self setUploadParam:value forKey:key];
+        }
+        return self;
+    };
+}
+
+- (ALHTTPRequestBlockBKV)SET_HEADER_IF {
+    return ^__kindof ALHTTPRequest *_Nonnull(BOOL condition, NSString *_Nonnull key, id _Nullable value) {
+        if (condition) {
+            [self setHeader:value forKey:key];
+        }
+        return self;
+    };
+}
+
 #pragma - ALRequestProtocol
 
 @dynamic userAgent;
-
+@synthesize temporaryDownloadFilePath = _temporaryDownloadFilePath;
 - (nullable NSString *)temporaryDownloadFilePath {
-    if (_temporaryDownloadFilePath == nil && _downlFilePath != nil) {
-        _temporaryDownloadFilePath = [_downlFilePath stringByAppendingPathExtension:@"tmp"];
+    if (_temporaryDownloadFilePath == nil && _downloadFilePath != nil) {
+        _temporaryDownloadFilePath = [_downloadFilePath stringByAppendingPathExtension:@"tmp"];
     }
     return _temporaryDownloadFilePath;
+}
+
+- (void)setTemporaryDownloadFilePath:(NSString *)temporaryDownloadFilePath {
+    _temporaryDownloadFilePath = [temporaryDownloadFilePath copy];
 }
 
 - (void)setParam:(id)param forKey:(NSString *)key {
@@ -163,6 +221,25 @@
         case ALHTTPMethodPut:    return @"PUT";
         case ALHTTPMethodDelete: return @"DELETE";
         default:                 return @"GET";
+    }
+}
+
+- (NSString *)stateString {
+    switch (self.state) {
+        case ALHTTPRequestStateRunning:         return @"Running";
+        case ALHTTPRequestStateCancelled:       return @"Cancelled";
+        case ALHTTPRequestStateCompleted:       return @"Completed";
+        case ALHTTPRequestStateSuspended:       return @"Suspended";
+        default:                                return @"Unknown";
+    }
+}
+
+- (NSString *)requestTypeString {
+    switch (self.type) {
+        case ALRequestTypeDownload: return @"Download request";
+        case ALRequestTypeUpload:   return @"Upload request";
+        case ALRequestTypeNormal:   return @"Normal request";
+        default: return @"Normal request";
     }
 }
 

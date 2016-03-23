@@ -12,27 +12,110 @@
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
 #import "UtilitiesHeader.h"
+#import "BlocksKitExtension.h"
+#import <objc/runtime.h>
 #import "ObjcAssociatedObjectHelpers.h"
+#import "NSArray+ArrayExtensions.h"
+
+
+@interface NSURLSessionDataTaskALHTTPResponse : ALHTTPResponse {
+    @package
+    NSMutableData *_receivingData;
+    long long      _totalRead;
+}
+- (void)appendResponseData:(NSData *)data;
+@end
+
+@implementation NSURLSessionDataTaskALHTTPResponse {
+    NSLock *_lock;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _receivingData = [NSMutableData data];
+        _lock = [[NSLock alloc] init];
+    }
+    return self;
+}
+
+- (void)appendResponseData:(NSData *)data {
+    [_lock lock];
+    _totalRead += data.length;
+    [data enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange byteRange, BOOL * _Nonnull stop) {
+        [_receivingData appendBytes:bytes length:byteRange.length];
+    }];
+    [_lock unlock];
+}
+@end
+
+
+
 
 @interface NSURLSessionAdaptor() <NSURLSessionDelegate>
 @end
 
+static const void * const kSrcRequestAssociatedKey          = &kSrcRequestAssociatedKey;
+static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOTokenAssociatedKey;
+
 @implementation NSURLSessionAdaptor {
     NSURLSession     *_session; // IMPORTANT: session retains its delegate. so there is cycle-retain here.
+    
+    //key: ALHTTPRequest.identifier; NSArray: @[ALHTTPRequest, NSURLSessionTask]
+    NSMutableDictionary<NSNumber *, NSArray *> *_requestDict;
 }
 
-SYNTHESIZE_ASC_OBJ(srcRequest, setSrcRequest)
-
+@synthesize delegate;
 
 + (instancetype)adaptorWithSessionConfiguration:(NSURLSessionConfiguration *)config {
     NSURLSessionAdaptor *adaptor = [[self alloc] init];
     NSOperationQueue *queue      = [[NSOperationQueue alloc] init];
     adaptor->_session            = [NSURLSession sessionWithConfiguration:config delegate:adaptor delegateQueue:queue];
+    adaptor->_requestDict        = [NSMutableDictionary dictionary];
     return adaptor;
 }
 
 - (void)dealloc {
     ALLogVerbose(@"~~~ DEALLOC: %@ ~~~", self);
+}
+
+- (void)bindRequest:(ALHTTPRequest *)request toTask:(NSURLSessionTask *)task {
+    objc_setAssociatedObject(task, kSrcRequestAssociatedKey, request, OBJC_ASSOCIATION_RETAIN);
+    weakify(request)
+    NSString *token = [task bk_addObserverForKeyPath:keypath(task.state) task:^(id target) {
+        strongify(request)
+        NSURLSessionTask *object = castToTypeOrNil(target, NSURLSessionTask);
+        switch (object.state) {
+            case NSURLSessionTaskStateRunning:
+                [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
+                break;
+            case NSURLSessionTaskStateCanceling:
+                [request setValue:@(ALHTTPRequestStateCancelled) forKey:keypath(request.state)];
+                break;
+            case NSURLSessionTaskStateCompleted:
+                [request setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(request.state)];
+                break;
+            case NSURLSessionTaskStateSuspended:
+                [request setValue:@(ALHTTPRequestStateSuspended) forKey:keypath(request.state)];
+                break;
+            default:
+                [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
+                break;
+        }
+    }];
+    objc_setAssociatedObject(task, kTaskStateKVOTokenAssociatedKey, token, OBJC_ASSOCIATION_RETAIN);
+}
+
+- (ALHTTPRequest *)requestWithTask:(NSURLSessionTask *)task {
+    return castToTypeOrNil(objc_getAssociatedObject(task, kSrcRequestAssociatedKey), ALHTTPRequest);
+}
+
+- (void)destoryRequest:(ALHTTPRequest *)request {
+    NSURLSessionTask *task = [castToTypeOrNil(_requestDict[@(request.identifier)], NSArray)objectAtIndexSafely:1];
+    NSString *token = castToTypeOrNil(objc_getAssociatedObject(task, kTaskStateKVOTokenAssociatedKey), NSString);
+    [castToTypeOrNil(task, NSURLSessionTask) bk_removeObserversWithIdentifier:token];
+    
+    [_requestDict removeObjectForKey:@(request.identifier)];
 }
 
 #pragma mark -
@@ -49,10 +132,14 @@ SYNTHESIZE_ASC_OBJ(srcRequest, setSrcRequest)
         task = [_session dataTaskWithRequest:urlRequest];
     }
     
-    [request setValue:@(task.taskIdentifier) forKey:@"identifier"];
-    [self setSrcRequest:request];
+    _requestDict[@(request.identifier)] = @[request, task];
+    [self bindRequest:request toTask:task];
     
     [task resume];
+    if (request.startBlock) {
+        request.startBlock();
+    }
+    ALLogVerbose(@"\nsending request: %@", [request descriptionDetailed:YES]);
     return YES;
 }
 
@@ -88,48 +175,149 @@ SYNTHESIZE_ASC_OBJ(srcRequest, setSrcRequest)
 }
 
 - (void)fetchRequestsWithCompletion:(void (^)(NSArray<__kindof ALHTTPRequest *> *requests))completion {
-    
+    if (completion == nil) {
+        return;
+    }
+    [_session getTasksWithCompletionHandler:^(NSArray<NSURLSessionDataTask *> *_Nonnull dataTasks,
+                                              NSArray<NSURLSessionUploadTask *> *_Nonnull uploadTasks,
+                                              NSArray<NSURLSessionDownloadTask *> *_Nonnull downloadTasks){
+        completion([[[@[dataTasks, uploadTasks, downloadTasks] al_flatten] bk_map:^ALHTTPRequest *(NSURLSessionTask *task) {
+            return [self requestWithTask:task];
+        }] bk_reject:^BOOL(id obj) {
+            return obj == NSNull.null;
+        }]);
+    }];
 }
 
 - (void)suspend {
-
+    [_session getTasksWithCompletionHandler:^(NSArray<NSURLSessionDataTask *> *_Nonnull dataTasks,
+                                              NSArray<NSURLSessionUploadTask *> *_Nonnull uploadTasks,
+                                              NSArray<NSURLSessionDownloadTask *> *_Nonnull downloadTasks){
+        [[@[dataTasks, uploadTasks, downloadTasks] al_flatten] bk_each:^(NSURLSessionTask *task) {
+            [task suspend];
+        }];
+    }];
 }
 
 - (void)resume {
-
+    [_session getTasksWithCompletionHandler:^(NSArray<NSURLSessionDataTask *> *_Nonnull dataTasks,
+                                              NSArray<NSURLSessionUploadTask *> *_Nonnull uploadTasks,
+                                              NSArray<NSURLSessionDownloadTask *> *_Nonnull downloadTasks){
+        [[@[dataTasks, uploadTasks, downloadTasks] al_flatten] bk_each:^(NSURLSessionTask *task) {
+            [task resume];
+        }];
+    }];
 }
 
 // cancel specified request
 - (void)cancelRequestWithIdentifyer:(NSUInteger)identifier {
+    [self cancelRequestWithIdentifyer:identifier contextHandler:nil];
+}
 
+- (void)cancelRequestWithIdentifyer:(NSUInteger)identifier
+                     contextHandler:(void (^_Nullable)(id _Nullable context))handler {
+    NSURLSessionTask *task = [castToTypeOrNil(_requestDict[@(identifier)], NSArray)objectAtIndexSafely:1];
+    if ([task isKindOfClass:[NSURLSessionDownloadTask class]]) {
+        [((NSURLSessionDownloadTask *)task) cancelByProducingResumeData:handler];
+    } else {
+        [castToTypeOrNil(task, NSURLSessionTask) cancel];
+    }
 }
 
 // cancel all request, but the queue is still alive, and able to accept new requests.
 - (void)cancellAllRequest {
-
+    [_session getTasksWithCompletionHandler:^(NSArray<NSURLSessionDataTask *> *_Nonnull dataTasks,
+                                              NSArray<NSURLSessionUploadTask *> *_Nonnull uploadTasks,
+                                              NSArray<NSURLSessionDownloadTask *> *_Nonnull downloadTasks){
+        [[@[dataTasks, uploadTasks, downloadTasks] al_flatten] bk_each:^(NSURLSessionTask *task) {
+            [castToTypeOrNil(task, NSURLSessionTask) cancel];
+        }];
+    }];
 }
 
 // waiting all requests finished and then release the queue, and can not accept new request again.
 - (void)finishRequestsAndInvalidate {
-
+    [_session finishTasksAndInvalidate];
 }
 
 // send 'cancel' message to all request and release the queue.
 - (void)invalidateAndCancel {
-
+    [_session invalidateAndCancel];
 }
 
 
 #pragma mark - NSURLSession delegates
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error {
+
+- (void)URLSession:(NSURLSession *)session
+                 downloadTask:(NSURLSessionDownloadTask *)downloadTask
+    didFinishDownloadingToURL:(NSURL *)location {
+    
+    ALHTTPRequest *request = [self requestWithTask:downloadTask];
+    ALHTTPResponse *wrappedResponse = [ALHTTPResponse responseWithNSURLResponse:downloadTask.response responseData:nil];
+    ALLogVerbose(@"\nrequet: %@\nresponse: %@", request, wrappedResponse.responseString);
+    
+    if (request.downloadFilePath != nil) {
+        NSError *error = nil;
+        if (![[NSFileManager defaultManager] moveItemAtURL:location
+                                                     toURL:[NSURL fileURLWithPath:request.downloadFilePath]
+                                                     error:&error]) {
+            ALLogError(@"ERROR: %@", error);
+            request.temporaryDownloadFilePath = location.path;
+        }
+    } else {
+        request.temporaryDownloadFilePath = location.path;
+    }
+    if (request.completionBlock) {
+        request.completionBlock(wrappedResponse, nil);
+    }
+    
+    CheckMemoryLeak(request);
+    CheckMemoryLeak(downloadTask);
+    [self destoryRequest:request];
+}
+
+//@optional
+- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error {
     ALLogInfo(@"session: %@ become invalid. Error: %@", _session, error);
+    CheckMemoryLeak(_session);
     _session = nil;
 }
 
-// multipart upload
+- (void)URLSession:(NSURLSession *)session
+    didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+      completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition,
+                                  NSURLCredential *__nullable credential))completionHandler {
+    ALLogVerbose(@"%@", session);
+}
+
+- (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session {
+    ALLogVerbose(@"%@", session);
+}
+
+- (void)URLSession:(NSURLSession *)session
+                          task:(NSURLSessionTask *)task
+    willPerformHTTPRedirection:(NSHTTPURLResponse *)response
+                    newRequest:(NSURLRequest *)request
+             completionHandler:(void (^)(NSURLRequest *__nullable))completionHandler {
+    
+    ALLogVerbose(@"%@", task);
+    ALHTTPRequest *srcReq = [self requestWithTask:task];
+    [srcReq setValue:request.URL forKey:keypath(srcReq.currentURL)];
+    completionHandler(request);
+}
+
+- (void)URLSession:(NSURLSession *)session
+                   task:(NSURLSessionTask *)task
+    didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+      completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition,
+                                  NSURLCredential *__nullable credential))completionHandler {
+    ALLogVerbose(@"%@", task);
+}
+
 - (void)URLSession:(NSURLSession *)session
               task:(NSURLSessionTask *)task
  needNewBodyStream:(void (^)(NSInputStream *__nullable bodyStream))completionHandler {
+    ALLogVerbose(@"%@", task);
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -137,7 +325,109 @@ SYNTHESIZE_ASC_OBJ(srcRequest, setSrcRequest)
              didSendBodyData:(int64_t)bytesSent
               totalBytesSent:(int64_t)totalBytesSent
     totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
+    ALLogVerbose(@"%@", task);
     
+    ALHTTPRequest *request = [self requestWithTask:task];
+    if (request.progressBlock) {
+        request.progressBlock(bytesSent, totalBytesSent, totalBytesExpectedToSend);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+                    task:(NSURLSessionTask *)task
+    didCompleteWithError:(nullable NSError *)error {
+
+    ALHTTPRequest *request = [self requestWithTask:task];
+    ALHTTPResponse *wrappedResponse = request.response;
+    if (wrappedResponse != nil) {
+        NSData *responseData = [castToTypeOrNil(wrappedResponse, NSURLSessionDataTaskALHTTPResponse)->_receivingData copy];
+        [wrappedResponse setValue:responseData forKey:keypath(wrappedResponse.responseData)];
+    } else {
+        wrappedResponse = [ALHTTPResponse responseWithNSURLResponse:task.response responseData:nil];
+    }
+
+    ALLogVerbose(@"\nrequet: %@\nresponse: %@", request, wrappedResponse.responseString);
+    
+    if (request.completionBlock) {
+        request.completionBlock(wrappedResponse, error);
+    }
+    CheckMemoryLeak(request);
+    CheckMemoryLeak(task);
+    [self destoryRequest:request];
+}
+
+- (void)URLSession:(NSURLSession *)session
+          dataTask:(NSURLSessionDataTask *)dataTask
+didReceiveResponse:(NSURLResponse *)response
+ completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
+    
+    ALLogVerbose(@"%@", dataTask);
+    ALHTTPRequest *request = [self requestWithTask:dataTask];
+    ALHTTPResponse *alResponse = [NSURLSessionDataTaskALHTTPResponse responseWithNSURLResponse:response responseData:nil];
+    [request setValue:alResponse forKey:keypath(request.response)];
+    
+    completionHandler(NSURLSessionResponseAllow);
+    
+    if (request.headersRespondsBlock) {
+        NSHTTPURLResponse *httpResp = castToTypeOrNil(response, NSHTTPURLResponse);
+        request.headersRespondsBlock(httpResp.allHeaderFields, httpResp.statusCode);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+                 dataTask:(NSURLSessionDataTask *)dataTask
+    didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask {
+    
+    ALLogVerbose(@"%@", dataTask);
+}
+
+- (void)URLSession:(NSURLSession *)session
+               dataTask:(NSURLSessionDataTask *)dataTask
+    didBecomeStreamTask:(NSURLSessionStreamTask *)streamTask {
+    ALLogVerbose(@"%@", dataTask);
+}
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
+    ALLogVerbose(@"%@", dataTask);
+    ALHTTPRequest *request     = [self requestWithTask:dataTask];
+    NSURLSessionDataTaskALHTTPResponse *alResponse = castToTypeOrNil(request.response, NSURLSessionDataTaskALHTTPResponse);
+    [alResponse appendResponseData:data];
+    if (request.progressBlock) {
+        request.progressBlock(data.length, alResponse->_totalRead, alResponse.expectedContentLength);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+          dataTask:(NSURLSessionDataTask *)dataTask
+ willCacheResponse:(NSCachedURLResponse *)proposedResponse
+ completionHandler:(void (^)(NSCachedURLResponse *__nullable cachedResponse))completionHandler {
+    
+    ALLogVerbose(@"%@", dataTask);
+    completionHandler(proposedResponse);
+}
+
+- (void)URLSession:(NSURLSession *)session
+                 downloadTask:(NSURLSessionDownloadTask *)downloadTask
+                 didWriteData:(int64_t)bytesWritten
+            totalBytesWritten:(int64_t)totalBytesWritten
+    totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
+    
+    ALHTTPRequest *request = [self requestWithTask:downloadTask];
+    if (request.progressBlock) {
+        request.progressBlock(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+      downloadTask:(NSURLSessionDownloadTask *)downloadTask
+ didResumeAtOffset:(int64_t)fileOffset
+expectedTotalBytes:(int64_t)expectedTotalBytes {
+    
+    ALLogVerbose(@"%@", downloadTask);
+    ALHTTPRequest *request = [self requestWithTask:downloadTask];
+    if (request.progressBlock) {
+        request.progressBlock(0, fileOffset, expectedTotalBytes);
+    }
 }
 
 @end

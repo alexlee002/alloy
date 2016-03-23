@@ -11,16 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if AL_ENABLE_ASIHTTPREQUEST
-@class ASIHTTPRequest;
-#endif
 @interface ALHTTPResponse : NSObject
 
-#if AL_ENABLE_ASIHTTPREQUEST
-+ (instancetype)responseWithASIHttpRequest:(ASIHTTPRequest *)request;
-#endif
-
-+ (instancetype)responseWithNSURLResponse:(NSHTTPURLResponse *)response responseData:(nullable NSData *)responseData;
++ (instancetype)responseWithNSURLResponse:(NSURLResponse *)response responseData:(nullable NSData *)responseData;
 
 
 @property(readonly)                 NSInteger                        statusCode;

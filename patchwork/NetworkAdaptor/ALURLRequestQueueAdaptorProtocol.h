@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // cancel specified request
 - (void)cancelRequestWithIdentifyer:(NSUInteger)identifier;
+- (void)cancelRequestWithIdentifyer:(NSUInteger)identifier
+                     contextHandler:(void (^_Nullable)(id _Nullable context))handler;
 // cancel all request, but the queue is still alive, and able to accept new requests.
 - (void)cancellAllRequest;
 // waiting all requests finished and then release the queue, and can not accept new request again.

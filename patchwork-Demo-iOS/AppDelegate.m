@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import "ASIHTTPRequestQueueAdaptor.h"
 #import "ALHTTPRequest.h"
+#import "NSURLSessionAdaptor.h"
 
 @interface GCDSyncTest : NSObject
 
@@ -190,17 +191,18 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface AppDelegate () <ALURLRequestQueueAdaptorDelegate>
-@property(strong) ASIHTTPRequestQueueAdaptor *queue;
+//@property(strong) ASIHTTPRequestQueueAdaptor *queue;
+@property(strong) NSURLSessionAdaptor *adaptor;
 @end
 
 @implementation AppDelegate {
 }
 
-- (void)queueAdaptorDidBecomeInvalid:(id<ALURLRequestQueueAdaptorProtocol>)adaptor {
-    if (adaptor == self.queue) {
-        self.queue = nil;
-    }
-}
+//- (void)queueAdaptorDidBecomeInvalid:(id<ALURLRequestQueueAdaptorProtocol>)adaptor {
+//    if (adaptor == self.queue) {
+//        self.queue = nil;
+//    }
+//}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -209,8 +211,20 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[UIViewController alloc] init];
     
+    _adaptor = [NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"];
+    request.type = ALRequestTypeDownload;
+    weakify(request);
+    request.progressBlock = ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected) {
+        strongify(request);
+        NSLog(@"received: %lld, progress: %.02f%%", bytesDone, totalBytesDone * 100.f / totalBytesExpected);
+        if (totalBytesDone * 1.f / totalBytesExpected > 0.4) {
+            [_adaptor cancelRequestWithIdentifyer:request.identifier];
+        }
+    };
+    [_adaptor sendRequest:request];
     
-    [self testRespondTo];
+//    [self testRespondTo];
     
 //    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
 //    [dt start];
@@ -254,9 +268,9 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     return YES;
 }
 
-- (void)destroyQueue {
-    _queue = nil;
-}
+//- (void)destroyQueue {
+//    _queue = nil;
+//}
 
 - (void)testRespondTo {
     if ([TestCase1 respondsToSelector:@selector(instanceMethod)]) {
