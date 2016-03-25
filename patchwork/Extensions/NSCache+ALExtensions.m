@@ -31,7 +31,7 @@
     NSString *key = [@"NSDateFormatter_$_" stringByAppendingString:format];
     NSDateFormatter *df = [self objectForKey:key];
     if (df == nil) {
-        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+        df = [[NSDateFormatter alloc] init];
         df.dateFormat = format;
         [self setObject:df forKey:key];
     }
