@@ -77,8 +77,8 @@ extern NSString * const kRowIdColumnName;
 //typedef NSComparisonResult (^NSComparator)(ALDBColumnInfo *_Nonnull col1, ALDBColumnInfo *_Nonnull col2)
 + (NSComparator)columnOrderComparator;
 
-// return nil: using auto-gen defines
-+ (nullable ALDBColumnInfo *)customColumnDefineForProperty:(in YYClassPropertyInfo *)property;
++ (void)customColumnDefine:(inout ALDBColumnInfo *_Nonnull *_Nonnull)cloumn
+               forProperty:(in YYClassPropertyInfo *)property;
 
 /**
  *  Custom transform property value to save to database

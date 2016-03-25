@@ -56,6 +56,7 @@
 		43B3D57E1CA30B3F0076C1AA /* HHTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B3D57A1CA308CF0076C1AA /* HHTimer.h */; };
 		43B3D5811CA30DEF0076C1AA /* NSObject+JSONTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */; };
 		43B3D5821CA30DEF0076C1AA /* NSObject+JSONTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B3D5801CA30DEF0076C1AA /* NSObject+JSONTransform.m */; };
+		43B3D5E51CA45BC50076C1AA /* JSONMappingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B3D5E41CA45BC50076C1AA /* JSONMappingTests.m */; };
 		43B518641C7590320060C3AA /* patchwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B518631C7590320060C3AA /* patchwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43B5186B1C7590320060C3AA /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
 		43B518701C7590320060C3AA /* patchworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B5186F1C7590320060C3AA /* patchworkTests.m */; };
@@ -162,6 +163,7 @@
 		43B3D57B1CA308CF0076C1AA /* HHTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHTimer.m; sourceTree = "<group>"; };
 		43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+JSONTransform.h"; sourceTree = "<group>"; };
 		43B3D5801CA30DEF0076C1AA /* NSObject+JSONTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+JSONTransform.m"; sourceTree = "<group>"; };
+		43B3D5E41CA45BC50076C1AA /* JSONMappingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONMappingTests.m; sourceTree = "<group>"; };
 		43B518601C7590320060C3AA /* patchwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = patchwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B518631C7590320060C3AA /* patchwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchwork.h; sourceTree = "<group>"; };
 		43B518651C7590320060C3AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 				43B518711C7590320060C3AA /* Info.plist */,
 				43B518BC1C7735270060C3AA /* DBManageTests.m */,
 				43FB7AEA1CA00A4D007B62C7 /* DBConditionsTests.m */,
+				43B3D5E41CA45BC50076C1AA /* JSONMappingTests.m */,
 			);
 			path = patchworkTests;
 			sourceTree = "<group>";
@@ -795,6 +798,7 @@
 			files = (
 				43B518BD1C7735270060C3AA /* DBManageTests.m in Sources */,
 				43FB7AEB1CA00A4D007B62C7 /* DBConditionsTests.m in Sources */,
+				43B3D5E51CA45BC50076C1AA /* JSONMappingTests.m in Sources */,
 				43B518701C7590320060C3AA /* patchworkTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

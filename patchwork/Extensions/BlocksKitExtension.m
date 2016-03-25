@@ -48,6 +48,21 @@ NS_ASSUME_NONNULL_BEGIN
     return [flattenArray copy];
 }
 
+- (NSArray *)al_flatMap:(id(^)(id obj))block {
+    NSParameterAssert(block != nil);
+    
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:self.count];
+    
+    [self enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        id value = block(obj);
+        if (value != nil) {
+            [result addObject:value];
+        }
+    }];
+    
+    return result;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

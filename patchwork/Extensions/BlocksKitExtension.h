@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray *)al_flatten;
 
+- (NSArray *)al_flatMap:(id(^)(id obj))block;
+
 @end
 
 
