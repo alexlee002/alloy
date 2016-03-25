@@ -111,7 +111,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
             colum.property        = p;
             colum.name            = [self mappedColumnNameForProperty:key];
             colum.dataType        = suggestedSqliteDataType(p) ?: @"BLOB";
-            [self customColumnDefine:&colum forProperty:p];
+            [self customColumnDefine:colum forProperty:p];
             return colum;
         }];
     });
@@ -373,8 +373,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     };
 }
 
-+ (void)customColumnDefine:(inout ALDBColumnInfo *__autoreleasing _Nonnull *)cloumn
-               forProperty:(in YYClassPropertyInfo *)property {
++ (void)customColumnDefine:(ALDBColumnInfo *)cloumn forProperty:(in YYClassPropertyInfo *)property {
 }
 
 + (nullable NSArray<NSString *> *)primaryKeys {
