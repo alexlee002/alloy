@@ -9,7 +9,7 @@
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
 
-#define ConfirmInited(dict) do { (dict) = [NSMutableDictionary dictionary]; } while(NO)
+#define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
 
 @implementation ALHTTPRequest {
     NSMutableDictionary<NSString *, id>         *_params;
