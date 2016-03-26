@@ -65,6 +65,7 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "ALURLRequestQueueAdaptorProtocol.h"
 #import "ASIHTTPRequestQueueAdaptor.h"
 #import "NSURLSessionAdaptor.h"
+#import "ALHTTPRequest+Helper.h"
 
 // model
 #import "ALModel.h"

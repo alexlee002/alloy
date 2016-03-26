@@ -15,6 +15,8 @@
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
 #import "NSArray+ArrayExtensions.h"
+#import "NSObject+JSONTransform.h"
+#import "NSObject+YYModel.h"
 
 
 @interface ALHTTPResponse (ASIHTTPRequestAdaptor)
@@ -90,6 +92,13 @@
 
 - (ASIHTTPRequest *)transformFromALRequest:(__kindof ALHTTPRequest *)request {
     ASIHTTPRequest *asiRequest = nil;
+    
+    if (request.type == ALRequestTypeNotInitialized) {
+        request.type = [request autoDetectRequestType];
+    }
+    if (request.uploadParams.count > 0) {
+        request.method = ALHTTPMethodPost;
+    }
     if (request.method == ALHTTPMethodPost) {
         asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:request.url]];
         [request.params bk_each:^(NSString *key, id value) {
@@ -215,14 +224,14 @@
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     ALLogVerbose(@"\nsending request: %@", [srcReq descriptionDetailed:YES]);
     if (srcReq.startBlock != nil) {
-        srcReq.startBlock();
+        srcReq.startBlock(srcReq.identifier);
     }
 }
 
 - (void)request:(ASIHTTPRequest *)request didReceiveResponseHeaders:(NSDictionary *)responseHeaders {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
-    if (srcReq.headersRespondsBlock != nil) {
-        srcReq.headersRespondsBlock(responseHeaders, request.responseStatusCode);
+    if (srcReq.responseHeaderBlock != nil) {
+        srcReq.responseHeaderBlock(responseHeaders, request.responseStatusCode, srcReq.identifier);
     }
 }
 
@@ -231,8 +240,31 @@
     ALLogVerbose(@"\nrequest: %@\nresponse: %@", srcReq, request.responseString);
 
     [srcReq setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(srcReq.state)];
+    
+    if (srcReq.responseModelBlock != nil && srcReq.responseModelClass != nil) {
+        id responseObject = nil;
+        id json = [request.responseData JSONObject];
+        if (json != nil) {
+            if ([json isKindOfClass:[NSArray class]]) {
+                responseObject = [NSArray yy_modelArrayWithClass:srcReq.responseModelClass json:json];
+            } else {
+                responseObject = [srcReq.responseModelClass yy_modelWithJSON:json];
+            }
+            srcReq.responseModelBlock(
+                responseObject,
+                responseObject == nil
+                    ? [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotParseResponse userInfo:nil]
+                    : nil,
+                srcReq.identifier);
+        } else {
+            srcReq.responseModelBlock(
+                nil, [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotParseResponse userInfo:nil],
+                srcReq.identifier);
+        }
+    }
+    
     if (srcReq.completionBlock != nil) {
-        srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request], nil);
+        srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request], nil, srcReq.identifier);
     }
 
     CheckMemoryLeak(request);
@@ -251,7 +283,7 @@
 
     if (srcReq.completionBlock != nil) {
         srcReq.completionBlock([ALHTTPResponse responseWithASIHttpRequest:request],
-                               [self NSURLErrorTransformingFromASIError:request.error]);
+                               [self NSURLErrorTransformingFromASIError:request.error], srcReq.identifier);
     }
     [_requestDict removeObjectForKey:@(request.tag)];
     if (_invalidated && _requestDict.count == 0 &&
@@ -295,7 +327,7 @@
 - (void)request:(ASIHTTPRequest *)request incrementDownloadSizeBy:(long long)newLength {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     if (srcReq.progressBlock) {
-        srcReq.progressBlock(0, [request partialDownloadSize], newLength);
+        srcReq.progressBlock(0, [request partialDownloadSize], newLength, srcReq.identifier);
     }
 }
 
@@ -303,14 +335,14 @@
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     if (srcReq.progressBlock) {
         srcReq.progressBlock(bytes, [request partialDownloadSize],
-                             [request totalBytesRead] + [request partialDownloadSize]);
+                             [request totalBytesRead] + [request partialDownloadSize], srcReq.identifier);
     }
 }
 
 - (void)request:(ASIHTTPRequest *)request didSendBytes:(long long)bytes {
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     if (srcReq.progressBlock) {
-        srcReq.progressBlock(bytes, [request totalBytesSent], [request postLength]);
+        srcReq.progressBlock(bytes, [request totalBytesSent], [request postLength], srcReq.identifier);
     }
 }
 

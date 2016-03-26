@@ -26,10 +26,10 @@ struct rc4_state {
 };
 
 
-static FORCE_INLINE char find_pos(char ch) {
-    char *ptr = (char *)strrchr(base, ch);  // the last position (the only) in base[]
-    return (ptr - base);
-}
+//static FORCE_INLINE char find_pos(char ch) {
+//    char *ptr = (char *)strrchr(base, ch);  // the last position (the only) in base[]
+//    return (ptr - base);
+//}
 
 static FORCE_INLINE void swap_byte(unsigned char *x, unsigned char *y) {
     *x = *x ^ *y;
@@ -76,11 +76,11 @@ static FORCE_INLINE void rc4(unsigned char *buffer_ptr, int buffer_len, rc4_key 
     key->y = y;
 }
 
-static FORCE_INLINE void rc4encode(char *rc4input, int rc4len) {
-    struct rc4_key s;
-    prepare_key((unsigned char *const)rc4key, 32, &s);
-    rc4((unsigned char *)rc4input, rc4len, &s);
-}
+//static FORCE_INLINE void rc4encode(char *rc4input, int rc4len) {
+//    struct rc4_key s;
+//    prepare_key((unsigned char *const)rc4key, 32, &s);
+//    rc4((unsigned char *)rc4input, rc4len, &s);
+//}
 
 static FORCE_INLINE void swap_bytes(u_char *a, u_char *b) {
     u_char temp;

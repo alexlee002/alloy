@@ -15,6 +15,8 @@ typedef NS_ENUM(NSInteger, ALRequestType){
     ALRequestTypeUpload
 };
 
+extern const NSInteger ALRequestTypeNotInitialized;
+
 typedef NS_ENUM(NSInteger, ALHTTPMethod){
     ALHTTPMethodGet = 0,
     ALHTTPMethodPost,
@@ -34,6 +36,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ALHTTPRequest;
 @class ALHTTPResponse;
+
+typedef void (^ALHTTPHeaderBlock)  (NSDictionary<NSString *, id> *headers, NSInteger statusCode, NSUInteger identifier);
+typedef void (^ALHTTPProgressBlock)(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected,
+                                    NSUInteger identifier);
+typedef void (^ALHTTPCompletionBlock)    (ALHTTPResponse *response, NSError *_Nullable error, NSUInteger identifier);
+typedef void (^ALHTTPResponseModelBlock) (id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier);
 
 // obj = nil then reamove the value for specified key.
 typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockKV)  (NSString *_Nonnull key, id _Nullable value);
@@ -62,6 +70,7 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition
 @property(nullable, readonly, copy) NSURL               *currentURL;
 @property(readonly)                 ALHTTPRequestState   state;
 @property(nullable, readonly)       ALHTTPResponse      *response;
+@property(PROP_ATOMIC_DEF, unsafe_unretained, nullable) Class  responseModelClass;
 
 /* number of body bytes already received */
 @property(readonly) int64_t countOfBytesReceived;
@@ -72,12 +81,22 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition
 /* number of byte bytes we expect to receive, usually derived from the Content-Length header of an HTTP response. */
 @property(readonly) int64_t countOfBytesExpectedToReceive;
 
-@property(PROP_ATOMIC_DEF, copy, nullable) void (^startBlock)(void);
-@property(PROP_ATOMIC_DEF, copy, nullable) void (^headersRespondsBlock)
-    (NSDictionary<NSString *, id> *headers, NSInteger statusCode);
-@property(PROP_ATOMIC_DEF, copy, nullable) void (^progressBlock)
-    (uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected);
-@property(PROP_ATOMIC_DEF, copy, nullable) void (^completionBlock)(ALHTTPResponse *response, NSError *_Nullable error);
+@property(PROP_ATOMIC_DEF, copy, nullable) void (^startBlock)(NSUInteger identifier);
+
+@property(PROP_ATOMIC_DEF, copy, nullable) ALHTTPHeaderBlock    responseHeaderBlock;
+
+@property(PROP_ATOMIC_DEF, copy, nullable) ALHTTPProgressBlock  progressBlock;
+
+/**
+ *  call back when request is finished, return RAW HTTP response or error
+ */
+@property(PROP_ATOMIC_DEF, copy, nullable) ALHTTPCompletionBlock completionBlock;
+/**
+ *  @discussion return a model object that mapped from response JSON, the modelClass properity must be specified.
+ *
+ *  @see completionBlock
+ */
+@property(PROP_ATOMIC_DEF, copy, nullable) ALHTTPResponseModelBlock responseModelBlock;
 
 + (instancetype)requestWithURLString:(NSString *)url;
 
@@ -95,6 +114,8 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition
 
 - (void)setHeader:(nullable id)header forKey:(NSString *)key;
 - (NSDictionary<NSString *, id> *)headers;
+
+- (ALRequestType)autoDetectRequestType;
 
 @end
 

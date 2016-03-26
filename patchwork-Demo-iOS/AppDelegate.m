@@ -12,6 +12,9 @@
 #import "ALHTTPRequest.h"
 #import "NSURLSessionAdaptor.h"
 #import "HHTimer.h"
+#import "ALHTTPRequest+Helper.h"
+#import "ALHTTPResponse.h"
+#import "ALModel.h"
 
 @interface GCDSyncTest : NSObject
 
@@ -76,6 +79,24 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 @end
 
 @implementation TestCase1_1
+@end
+
+//////////////////////////////////////////////////////////////////////////
+@interface GithubUser : ALModel<YYModel>
+@property(copy)     NSString    *login;
+@property(copy)     NSString    *ID;
+@property(strong)   NSURL       *url;
+@property(copy)     NSString    *name;
+@property(copy)     NSString    *location;
+@property(strong)   NSDate      *createdAt;
+@end
+
+@implementation GithubUser
+
++ (NSDictionary *)modelCustomPropertyMapper {
+    return @{keypathForClass(GithubUser, ID): @"id", keypathForClass(GithubUser, createdAt): @"created_at"};
+}
+
 @end
 
 //////////////////////////////////////////////////////////////////////////
@@ -191,9 +212,9 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface AppDelegate () <ALURLRequestQueueAdaptorDelegate>
-//@property(strong) ASIHTTPRequestQueueAdaptor *queue;
-@property(strong) NSURLSessionAdaptor *adaptor;
+@interface AppDelegate ()
+@property(strong) ASIHTTPRequestQueueAdaptor *queue;
+//@property(strong) NSURLSessionAdaptor *adaptor;
 @end
 
 @implementation AppDelegate {
@@ -211,100 +232,105 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[UIViewController alloc] init];
-    
-//    [HHTimer scheduledTimerWithTimeInterval:3 dispatchQueue:dispatch_get_main_queue() block:^{
-//        NSLog(@"====== HHTimer test ======");
-//    } userInfo:nil repeats:NO];
-    
-    
-//    int count = 1;
-//    CFTimeInterval t1 = 0.f;
-//    CFTimeInterval t2 = 0.f;
-//    CFTimeInterval t3 = 0.f;
-//    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];
-//    for (int i = 0; i < count; ++i) {
-//        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
-//        NSDateFormatter *df = [[NSDateFormatter alloc] init];
-//        t1 += CFAbsoluteTimeGetCurrent() - t;
-//        
-//        t = CFAbsoluteTimeGetCurrent();
-//        df.dateFormat = @"yyyy-MM-dd";
-//        t2 += CFAbsoluteTimeGetCurrent() - t;
-//        
-//        t = CFAbsoluteTimeGetCurrent();
-//        df.locale = locale;
-//        t3 += CFAbsoluteTimeGetCurrent() - t;
-//
-//    }
-//    NSLog(@">>> init date formatter: %f", t1 / count);
-//    NSLog(@">>> set format: %f", t2 / count);
-//    NSLog(@">>> set locale: %f", t3 / count);
-//    
-//    CFTimeInterval t4 = 0.f;
-//    for (int i = 0; i < count; ++i) {
-//        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
-//        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];
-//        t4 += CFAbsoluteTimeGetCurrent() - t;
-//    }
-//    NSLog(@">>> init locale: %f", t4 / count);
-    
-    
-    
-    
-//    _adaptor = [NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-//    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"];
-//    request.type = ALRequestTypeDownload;
-//    weakify(request);
-//    request.progressBlock = ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected) {
-//        strongify(request);
-//        NSLog(@"received: %lld, progress: %.02f%%", bytesDone, totalBytesDone * 100.f / totalBytesExpected);
-//        if (totalBytesDone * 1.f / totalBytesExpected > 0.4) {
-//            [_adaptor cancelRequestWithIdentifyer:request.identifier];
-//        }
-//    };
-//    [_adaptor sendRequest:request];
-    
-    
-//    [self testRespondTo];
-    
-//    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
-//    [dt start];
-    
-//    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
-//    _queue.delegate = self;
-//    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
-//    [_queue sendRequest:request];
-//    [_queue finishRequestsAndInvalidate];
 
-    
-//    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
-//    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
-//    
-//    // There seems to cycle-retain here, buy it actually release correctly, why?
-//    
-//    weakify(self);
-//    self.queue.requestQueueDidBecomeInvalidBlock = ^{
-//        //_queue = nil;
-//        strongify(self);
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            self.queue = nil;
-//        });
-//    };
-//   
-//    [_queue sendRequest:request];
-//    [_queue finishRequestsAndInvalidate];
-    
-//    __block ASIHTTPRequestQueueAdaptor *q1 = [[ASIHTTPRequestQueueAdaptor alloc] init];
-//    
-//    q1.requestQueueDidBecomeInvalidBlock = ^{
-//        q1 = nil;
-//    };
-//    
-//  ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [q1 sendRequest:request];
-//        [q1 finishRequestsAndInvalidate];
-//    });
+    [[ALHTTPRequest
+        requestWithURLString:@"https://api.github.com/users/alexlee002"
+                      method:ALHTTPMethodGet
+          responseModelClass:[GithubUser class]
+                  completion:^(id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier){
+                      ALLogVerbose(@"%@", [responseModel yy_modelDescription]);
+                  }] send];
+
+    //    [HHTimer scheduledTimerWithTimeInterval:3 dispatchQueue:dispatch_get_main_queue() block:^{
+    //        NSLog(@"====== HHTimer test ======");
+    //    } userInfo:nil repeats:NO];
+
+    //    int count = 1;
+    //    CFTimeInterval t1 = 0.f;
+    //    CFTimeInterval t2 = 0.f;
+    //    CFTimeInterval t3 = 0.f;
+    //    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];
+    //    for (int i = 0; i < count; ++i) {
+    //        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
+    //        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    //        t1 += CFAbsoluteTimeGetCurrent() - t;
+    //
+    //        t = CFAbsoluteTimeGetCurrent();
+    //        df.dateFormat = @"yyyy-MM-dd";
+    //        t2 += CFAbsoluteTimeGetCurrent() - t;
+    //
+    //        t = CFAbsoluteTimeGetCurrent();
+    //        df.locale = locale;
+    //        t3 += CFAbsoluteTimeGetCurrent() - t;
+    //
+    //    }
+    //    NSLog(@">>> init date formatter: %f", t1 / count);
+    //    NSLog(@">>> set format: %f", t2 / count);
+    //    NSLog(@">>> set locale: %f", t3 / count);
+    //
+    //    CFTimeInterval t4 = 0.f;
+    //    for (int i = 0; i < count; ++i) {
+    //        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
+    //        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];
+    //        t4 += CFAbsoluteTimeGetCurrent() - t;
+    //    }
+    //    NSLog(@">>> init locale: %f", t4 / count);
+
+    //    _adaptor = [NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration
+    //    defaultSessionConfiguration]];
+    //    ALHTTPRequest *request = [ALHTTPRequest
+    //    requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"];
+    //    request.type = ALRequestTypeDownload;
+    //    weakify(request);
+    //    request.progressBlock = ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected) {
+    //        strongify(request);
+    //        NSLog(@"received: %lld, progress: %.02f%%", bytesDone, totalBytesDone * 100.f / totalBytesExpected);
+    //        if (totalBytesDone * 1.f / totalBytesExpected > 0.4) {
+    //            [_adaptor cancelRequestWithIdentifyer:request.identifier];
+    //        }
+    //    };
+    //    [_adaptor sendRequest:request];
+
+    //    [self testRespondTo];
+
+    //    NSURLDownloadTest *dt = [[NSURLDownloadTest alloc] init];
+    //    [dt start];
+
+//        _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
+//    //_queue.delegate = self;
+//        ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+//        [_queue sendRequest:request];
+    //    [_queue finishRequestsAndInvalidate];
+
+    //    _queue = [[ASIHTTPRequestQueueAdaptor alloc] init];
+    //    ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+    //
+    //    // There seems to cycle-retain here, buy it actually release correctly, why?
+    //
+    //    weakify(self);
+    //    self.queue.requestQueueDidBecomeInvalidBlock = ^{
+    //        //_queue = nil;
+    //        strongify(self);
+    //        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(),
+    //        ^{
+    //            self.queue = nil;
+    //        });
+    //    };
+    //
+    //    [_queue sendRequest:request];
+    //    [_queue finishRequestsAndInvalidate];
+
+    //    __block ASIHTTPRequestQueueAdaptor *q1 = [[ASIHTTPRequestQueueAdaptor alloc] init];
+    //
+    //    q1.requestQueueDidBecomeInvalidBlock = ^{
+    //        q1 = nil;
+    //    };
+    //
+    //  ALHTTPRequest *request = [ALHTTPRequest requestWithURLString:@"http://www.baidu.com"];
+    //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    //        [q1 sendRequest:request];
+    //        [q1 finishRequestsAndInvalidate];
+    //    });
     
     return YES;
 }

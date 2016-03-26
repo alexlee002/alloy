@@ -24,6 +24,9 @@
 		430F6F7F1C9A5F7C003E8F6C /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = 430F6F731C9A5F7C003E8F6C /* SHA1.m */; };
 		430F6F801C9A5F7C003E8F6C /* Singleton_Template.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */; };
 		430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */; };
+		4344E0601CA690C700D96243 /* ALHTTPRequest+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4344E05E1CA690C700D96243 /* ALHTTPRequest+Helper.h */; };
+		4344E0611CA690C700D96243 /* ALHTTPRequest+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4344E05F1CA690C700D96243 /* ALHTTPRequest+Helper.m */; };
+		4344E0631CA6A35E00D96243 /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B518601C7590320060C3AA /* patchwork.framework */; };
 		434B75ED1CA1386F00242245 /* RC4.h in Headers */ = {isa = PBXBuildFile; fileRef = 434B75EB1CA1386F00242245 /* RC4.h */; };
 		434B75EE1CA1386F00242245 /* RC4.m in Sources */ = {isa = PBXBuildFile; fileRef = 434B75EC1CA1386F00242245 /* RC4.m */; };
 		434B75F11CA13E1400242245 /* DES.h in Headers */ = {isa = PBXBuildFile; fileRef = 434B75EF1CA13E1400242245 /* DES.h */; };
@@ -88,17 +91,10 @@
 		43FB7AE91C9FE6DF007B62C7 /* ALSQLExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FB7AE71C9FE6DF007B62C7 /* ALSQLExpression.m */; };
 		43FB7AEB1CA00A4D007B62C7 /* DBConditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FB7AEA1CA00A4D007B62C7 /* DBConditionsTests.m */; };
 		566CC29F211F0E71B8E2DB76 /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102D4C7D7F5960683C080401 /* libPods-patchwork.a */; };
-		ED83656BFFF92A6C9898F9D0 /* libPods-patchwork-Demo-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */; };
+		860F6A88E2DAB483D5978252 /* libPods-patchwork-Demo-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		438F63CF1C9019BC003EA9B6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 43B518571C7590320060C3AA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 43B5185F1C7590320060C3AA;
-			remoteInfo = patchwork;
-		};
 		43B5186C1C7590320060C3AA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 43B518571C7590320060C3AA /* Project object */;
@@ -128,6 +124,8 @@
 		430F6F731C9A5F7C003E8F6C /* SHA1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHA1.m; sourceTree = "<group>"; };
 		430F6F741C9A5F7C003E8F6C /* Singleton_Template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton_Template.h; sourceTree = "<group>"; };
 		430F6F751C9A5F7C003E8F6C /* UtilitiesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesHeader.h; sourceTree = "<group>"; };
+		4344E05E1CA690C700D96243 /* ALHTTPRequest+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALHTTPRequest+Helper.h"; sourceTree = "<group>"; };
+		4344E05F1CA690C700D96243 /* ALHTTPRequest+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALHTTPRequest+Helper.m"; sourceTree = "<group>"; };
 		434B75EB1CA1386F00242245 /* RC4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RC4.h; sourceTree = "<group>"; };
 		434B75EC1CA1386F00242245 /* RC4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RC4.m; sourceTree = "<group>"; };
 		434B75EF1CA13E1400242245 /* DES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DES.h; sourceTree = "<group>"; };
@@ -211,7 +209,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED83656BFFF92A6C9898F9D0 /* libPods-patchwork-Demo-iOS.a in Frameworks */,
+				4344E0631CA6A35E00D96243 /* patchwork.framework in Frameworks */,
+				860F6A88E2DAB483D5978252 /* libPods-patchwork-Demo-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +313,8 @@
 				439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */,
 				439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */,
 				439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */,
+				4344E05E1CA690C700D96243 /* ALHTTPRequest+Helper.h */,
+				4344E05F1CA690C700D96243 /* ALHTTPRequest+Helper.m */,
 			);
 			path = NetworkAdaptor;
 			sourceTree = "<group>";
@@ -454,6 +455,7 @@
 				430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */,
 				434B75F11CA13E1400242245 /* DES.h in Headers */,
 				430F6F7A1C9A5F7C003E8F6C /* Base64.h in Headers */,
+				4344E0601CA690C700D96243 /* ALHTTPRequest+Helper.h in Headers */,
 				436296831C7B6D3C00EBA718 /* ALSQLUpdateCommand.h in Headers */,
 				439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */,
 				439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */,
@@ -506,7 +508,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				438F63D01C9019BC003EA9B6 /* PBXTargetDependency */,
 			);
 			name = "patchwork-Demo-iOS";
 			productName = "patchwork-Demo-iOS";
@@ -776,6 +777,7 @@
 				43B518AF1C76CBD80060C3AA /* ALDBColumnInfo.m in Sources */,
 				439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */,
 				43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */,
+				4344E0611CA690C700D96243 /* ALHTTPRequest+Helper.m in Sources */,
 				43D0FE831C7EAC7D0096F232 /* ALModel_Define.m in Sources */,
 				439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */,
 				43B3D5821CA30DEF0076C1AA /* NSObject+JSONTransform.m in Sources */,
@@ -806,11 +808,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		438F63D01C9019BC003EA9B6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 43B5185F1C7590320060C3AA /* patchwork */;
-			targetProxy = 438F63CF1C9019BC003EA9B6 /* PBXContainerItemProxy */;
-		};
 		43B5186D1C7590320060C3AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 43B5185F1C7590320060C3AA /* patchwork */;
@@ -836,8 +833,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PROJECT_DIR}/patchwork\"/**",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/ASIHTTPRequest\"",
+					"\"${PODS_ROOT}/Headers/Public/BlocksKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FMDB\"",
+					"\"${PODS_ROOT}/Headers/Public/ObjcAssociatedObjectHelpers\"",
+					"\"${PODS_ROOT}/Headers/Public/Reachability\"",
+					"\"${PODS_ROOT}/Headers/Public/YYModel\"",
+				);
 				INFOPLIST_FILE = "patchwork-Demo-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-Demo-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -850,8 +858,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PROJECT_DIR}/patchwork\"/**",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/ASIHTTPRequest\"",
+					"\"${PODS_ROOT}/Headers/Public/BlocksKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FMDB\"",
+					"\"${PODS_ROOT}/Headers/Public/ObjcAssociatedObjectHelpers\"",
+					"\"${PODS_ROOT}/Headers/Public/Reachability\"",
+					"\"${PODS_ROOT}/Headers/Public/YYModel\"",
+				);
 				INFOPLIST_FILE = "patchwork-Demo-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-Demo-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";

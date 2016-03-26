@@ -8,8 +8,11 @@
 
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
+#import "NSString+Helper.h"
 
 #define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
+
+const NSInteger ALRequestTypeNotInitialized = -1;
 
 @implementation ALHTTPRequest {
     NSMutableDictionary<NSString *, id>         *_params;
@@ -38,6 +41,7 @@
     if (self) {
         _identifier = [self uniqueRequestId];
         _maximumnConnectionTimeout = 30.f;
+        _type = ALRequestTypeNotInitialized;
     }
     ALLogVerbose(@"--- INIT: <%@:%@> ---", self.class, @(self.hash));
     return self;
@@ -145,6 +149,16 @@
         }
         return self;
     };
+}
+
+- (ALRequestType)autoDetectRequestType {
+    if (_uploadParams.count > 0) {
+        return ALRequestTypeUpload;
+    }
+    if (!isEmptyString(self.downloadFilePath) || !isEmptyString(self.temporaryDownloadFilePath)) {
+        return ALRequestTypeDownload;
+    }
+    return ALRequestTypeNormal;
 }
 
 #pragma - ALRequestProtocol

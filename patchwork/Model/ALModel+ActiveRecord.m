@@ -80,7 +80,7 @@ static const void * const kModelFromDBAssociatedKey = &kModelFromDBAssociatedKey
     objc_setAssociatedObject(self, kModelFromDBAssociatedKey, @(fromDB), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (BOOL)modelFromDB {
+- (BOOL)isModelFromDB {
     return [objc_getAssociatedObject(self, kModelFromDBAssociatedKey) boolValue];;
 }
 
@@ -90,7 +90,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 - (void)setRowid:(NSInteger)rowId {
-    NSAssert([self modelFromDB], @"rowid CAN ONLY be set when this model is load from database!");
+    NSAssert([self isModelFromDB], @"rowid CAN ONLY be set when this model is load from database!");
     objc_setAssociatedObject(self, &kRowIDAssociatedKey, @(rowId), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -222,7 +222,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 - (BOOL)deleteRecord {
-    if (![self modelFromDB]) {
+    if (![self isModelFromDB]) {
         return NO;
     }
     return self.DB.DELETE_FROM([self tableName]).WHERE([self defaultModelUpdateCondition]).EXECUTE_UPDATE();
