@@ -9,6 +9,9 @@
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
+#import "ALHTTPResponse.h"
+#import "NSObject+JSONTransform.h"
+#import "ALModel.h"
 
 #define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
 
@@ -23,6 +26,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 @synthesize identifier                      = _identifier;
 @synthesize currentURL                      = _currentURL;
 @synthesize state                           = _state;
+@synthesize type                            = _type;
 @synthesize response                        = _response;
 @synthesize countOfBytesReceived            = _countOfBytesReceived;
 @synthesize countOfBytesSent                = _countOfBytesSent;
@@ -255,6 +259,91 @@ const NSInteger ALRequestTypeNotInitialized = -1;
         case ALRequestTypeNormal:   return @"Normal request";
         default: return @"Normal request";
     }
+}
+
+@end
+
+
+@implementation ALHTTPRequest (ResponseEvents)
+
+- (void)requestDidStart {
+    ALLogVerbose(@"\nsending request: %@", [self descriptionDetailed:YES]);
+    if (self.startBlock) {
+        self.startBlock(self.identifier);
+    }
+}
+
+- (void)requestDidReceiveResponse:(NSInteger)statusCode headers:(NSDictionary *)headers {
+    if (self.responseHeaderBlock) {
+        self.responseHeaderBlock(headers, statusCode, self.identifier);
+    }
+}
+
+- (void)requestDidReceiveBytes:(int64_t)bytes
+            totalBytesReceived:(int64_t)totalBytesReceived
+   totalBytesExpectedToReceive:(int64_t)totalBytesExpectedToReceive {
+    if (self.progressBlock) {
+        self.progressBlock(bytes, totalBytesReceived, totalBytesExpectedToReceive, self.identifier);
+    }
+}
+
+- (void)requestDidSendBytes:(int64_t)bytes
+             totalBytesSent:(int64_t)totalBytesSent
+   totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
+    if (self.progressBlock) {
+        self.progressBlock(bytes, totalBytesSent, totalBytesExpectedToSend, self.identifier);
+    }
+}
+
+- (void)requestDidSucceedWithResponse:(nullable ALHTTPResponse *)response {
+    ALLogVerbose(@"\nrequest succeeded: %@", [self descriptionDetailed:NO]);
+    id JSON = [response.responseData JSONObject];
+    if (self.responseHeaderBlock != nil) {
+        if (JSON != nil && self.responseModelClass != nil) {
+            NSError *error = nil;
+            ALModel *model = [self modelByParsingResponseJSON:JSON error:&error];
+            self.responseModelBlock(model, error, self.identifier);
+        } else {
+            ALLogWarn(@"Can not parse response model, reason: %@",
+                      JSON == nil ? @"response is not JSON Type!"
+                                  : (self.responseModelClass == nil ? @"response model type is not specified!"
+                                                                    : @"unknown error"));
+            self.responseModelBlock(
+                nil, [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotParseResponse userInfo:nil],
+                self.identifier);
+        }
+    } else if (self.completionBlock != nil) {
+        self.completionBlock(response, nil, self.identifier);
+    }
+}
+
+- (void)requestDidFailWithResponse:(nullable ALHTTPResponse *)response error:(nullable NSError *)error {
+    ALLogVerbose(@"\nrequest Failed: %@\nError: %@", [self descriptionDetailed:NO], error);
+    if (self.completionBlock != nil) {
+        self.completionBlock(response, error, self.identifier);
+    } else if (self.responseModelBlock != nil) {
+        self.responseModelBlock(nil, error, self.identifier);
+    }
+}
+
+#pragma mark -
+- (nullable id)modelByParsingResponseJSON:(in id)JSONObject error:(inout NSError **)error {
+    id result = nil;
+    if ([JSONObject isKindOfClass:[NSArray class]]) {
+        result = [self.responseModelClass modelArrayWithJSON:JSONObject];
+    } else {
+        result = [self.responseModelClass modelWithJSON:JSONObject];
+    }
+    if (result == nil) {
+        *error = [NSError
+            errorWithDomain:NSURLErrorDomain
+                       code:NSURLErrorCannotParseResponse
+                   userInfo:@{
+                       NSLocalizedFailureReasonErrorKey :
+                           [NSString stringWithFormat:@"Can not convert model:[%@] from JSON", self.responseModelClass]
+                   }];
+    }
+    return result;
 }
 
 @end

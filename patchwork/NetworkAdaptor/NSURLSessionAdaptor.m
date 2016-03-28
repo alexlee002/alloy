@@ -16,8 +16,7 @@
 #import <objc/runtime.h>
 #import "ObjcAssociatedObjectHelpers.h"
 #import "NSArray+ArrayExtensions.h"
-#import "NSObject+YYModel.h"
-#import "NSObject+JSONTransform.h"
+#import "UtilitiesHeader.h"
 
 
 @interface NSURLSessionDataTaskALHTTPResponse : ALHTTPResponse {
@@ -49,6 +48,11 @@
     }];
     [_lock unlock];
 }
+
+- (nullable NSData *)responseData {
+    return [super responseData] ?: [_receivingData copy];
+}
+
 @end
 
 
@@ -118,6 +122,8 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     [castToTypeOrNil(task, NSURLSessionTask) bk_removeObserversWithIdentifier:token];
     
     [_requestDict removeObjectForKey:@(request.identifier)];
+    [self bindRequest:nil toTask:task];
+    ALLogVerbose(@"~~~~~ %@", _requestDict[@(request.identifier)]);
 }
 
 #pragma mark -
@@ -138,10 +144,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     [self bindRequest:request toTask:task];
     
     [task resume];
-    if (request.startBlock) {
-        request.startBlock(request.identifier);
-    }
-    ALLogVerbose(@"\nsending request: %@", [request descriptionDetailed:YES]);
+    [request requestDidStart];
     return YES;
 }
 
@@ -254,37 +257,6 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     [_session invalidateAndCancel];
 }
 
-#pragma mark -
-- (void)handleTaskComplete:(NSURLSessionTask *)task {
-    ALHTTPRequest *request   = [self requestWithTask:task];
-    ALHTTPResponse *response = [ALHTTPResponse responseWithNSURLResponse:task.response responseData:nil];
-    ALLogVerbose(@"\nrequet: %@\nresponse: %@", request, response.responseString);
-
-    id responseObject = nil;
-    id json           = [response.responseData JSONObject];
-    if (json != nil) {
-        if ([json isKindOfClass:[NSArray class]]) {
-            responseObject = [NSArray yy_modelArrayWithClass:request.responseModelClass json:json];
-        } else {
-            responseObject = [request.responseModelClass yy_modelWithJSON:json];
-        }
-        request.responseModelBlock(
-            responseObject,
-            responseObject == nil
-                ? [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotParseResponse userInfo:nil]
-                : nil,
-            request.identifier);
-    } else {
-        request.responseModelBlock(
-            nil, [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotParseResponse userInfo:nil],
-            request.identifier);
-    }
-
-    if (request.completionBlock) {
-        request.completionBlock(response, nil, request.identifier);
-    }
-}
-
 #pragma mark - NSURLSession delegates
 
 - (void)URLSession:(NSURLSession *)session
@@ -303,9 +275,11 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     } else {
         request.temporaryDownloadFilePath = location.path;
     }
-    
-    [self handleTaskComplete:downloadTask];
-    
+
+    ALHTTPResponse *response =
+        request.response ?: [ALHTTPResponse responseWithNSURLResponse:downloadTask.response responseData:nil];
+    [request requestDidSucceedWithResponse:response];
+
     CheckMemoryLeak(request);
     CheckMemoryLeak(downloadTask);
     [self destoryRequest:request];
@@ -323,6 +297,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
       completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition,
                                   NSURLCredential *__nullable credential))completionHandler {
     ALLogVerbose(@"%@", session);
+    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
 - (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session {
@@ -347,12 +322,14 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
       completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition,
                                   NSURLCredential *__nullable credential))completionHandler {
     ALLogVerbose(@"%@", task);
+    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
 - (void)URLSession:(NSURLSession *)session
               task:(NSURLSessionTask *)task
  needNewBodyStream:(void (^)(NSInputStream *__nullable bodyStream))completionHandler {
     ALLogVerbose(@"%@", task);
+    //TODO: not implemented yet
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -360,12 +337,11 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
              didSendBodyData:(int64_t)bytesSent
               totalBytesSent:(int64_t)totalBytesSent
     totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
-    ALLogVerbose(@"%@", task);
     
     ALHTTPRequest *request = [self requestWithTask:task];
-    if (request.progressBlock) {
-        request.progressBlock(bytesSent, totalBytesSent, totalBytesExpectedToSend, request.identifier);
-    }
+    [request requestDidSendBytes:bytesSent
+                  totalBytesSent:totalBytesSent
+        totalBytesExpectedToSend:totalBytesExpectedToSend];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -373,8 +349,10 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     didCompleteWithError:(nullable NSError *)error {
 
     ALHTTPRequest *request = [self requestWithTask:task];
-    [self handleTaskComplete:task];
-    
+    ALHTTPResponse *response =
+        request.response ?: [ALHTTPResponse responseWithNSURLResponse:task.response responseData:nil];
+    [request requestDidSucceedWithResponse:response];
+
     CheckMemoryLeak(request);
     CheckMemoryLeak(task);
     [self destoryRequest:request];
@@ -391,24 +369,21 @@ didReceiveResponse:(NSURLResponse *)response
     [request setValue:alResponse forKey:keypath(request.response)];
     
     completionHandler(NSURLSessionResponseAllow);
-    
-    if (request.responseHeaderBlock) {
-        NSHTTPURLResponse *httpResp = castToTypeOrNil(response, NSHTTPURLResponse);
-        request.responseHeaderBlock(httpResp.allHeaderFields, httpResp.statusCode, request.identifier);
-    }
+    NSHTTPURLResponse *httpResponse = castToTypeOrNil(response, NSHTTPURLResponse);
+    [request requestDidReceiveResponse:httpResponse.statusCode headers:httpResponse.allHeaderFields];
 }
 
 - (void)URLSession:(NSURLSession *)session
                  dataTask:(NSURLSessionDataTask *)dataTask
     didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask {
     
-    ALLogVerbose(@"%@", dataTask);
+    ALLogVerbose(@"%@ => %@", dataTask, downloadTask);
 }
 
 - (void)URLSession:(NSURLSession *)session
                dataTask:(NSURLSessionDataTask *)dataTask
     didBecomeStreamTask:(NSURLSessionStreamTask *)streamTask {
-    ALLogVerbose(@"%@", dataTask);
+    ALLogVerbose(@"%@ => %@", dataTask, streamTask);
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
@@ -416,9 +391,10 @@ didReceiveResponse:(NSURLResponse *)response
     ALHTTPRequest *request     = [self requestWithTask:dataTask];
     NSURLSessionDataTaskALHTTPResponse *alResponse = castToTypeOrNil(request.response, NSURLSessionDataTaskALHTTPResponse);
     [alResponse appendResponseData:data];
-    if (request.progressBlock) {
-        request.progressBlock(data.length, alResponse->_totalRead, alResponse.expectedContentLength, request.identifier);
-    }
+
+    [request requestDidReceiveBytes:data.length
+                 totalBytesReceived:alResponse->_totalRead
+        totalBytesExpectedToReceive:alResponse.expectedContentLength];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -437,9 +413,9 @@ didReceiveResponse:(NSURLResponse *)response
     totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
     ALHTTPRequest *request = [self requestWithTask:downloadTask];
-    if (request.progressBlock) {
-        request.progressBlock(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite, request.identifier);
-    }
+    [request requestDidReceiveBytes:bytesWritten
+                 totalBytesReceived:totalBytesWritten
+        totalBytesExpectedToReceive:totalBytesExpectedToWrite];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -449,9 +425,9 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     
     ALLogVerbose(@"%@", downloadTask);
     ALHTTPRequest *request = [self requestWithTask:downloadTask];
-    if (request.progressBlock) {
-        request.progressBlock(0, fileOffset, expectedTotalBytes, request.identifier);
-    }
+    [request requestDidReceiveBytes:0
+                 totalBytesReceived:fileOffset
+        totalBytesExpectedToReceive:expectedTotalBytes];
 }
 
 @end

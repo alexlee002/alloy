@@ -41,6 +41,7 @@ typedef void (^ALHTTPHeaderBlock)  (NSDictionary<NSString *, id> *headers, NSInt
 typedef void (^ALHTTPProgressBlock)(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected,
                                     NSUInteger identifier);
 typedef void (^ALHTTPCompletionBlock)    (ALHTTPResponse *response, NSError *_Nullable error, NSUInteger identifier);
+// response model should be ALModel or NSArray<ALModel *>
 typedef void (^ALHTTPResponseModelBlock) (id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier);
 
 // obj = nil then reamove the value for specified key.
@@ -129,6 +130,28 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition
 @property(readonly) ALHTTPRequestBlockBKV    SET_PARAM_IF;
 @property(readonly) ALHTTPRequestBlockBKV    SET_UPLOAD_PARAM_IF;
 @property(readonly) ALHTTPRequestBlockBKV    SET_HEADER_IF;
+@end
+
+@class ALModel;
+@interface ALHTTPRequest (ResponseEvents)
+- (void)requestDidStart;
+- (void)requestDidReceiveResponse:(NSInteger)statusCode headers:(NSDictionary *)headers;
+
+- (void)requestDidReceiveBytes:(int64_t)bytes
+            totalBytesReceived:(int64_t)totalBytesReceived
+   totalBytesExpectedToReceive:(int64_t)totalBytesExpectedToReceive;
+
+- (void)requestDidSendBytes:(int64_t)bytes
+             totalBytesSent:(int64_t)totalBytesSent
+   totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend;
+
+- (void)requestDidSucceedWithResponse:(nullable ALHTTPResponse *)response;
+- (void)requestDidFailWithResponse:(nullable ALHTTPResponse *)response error:(nullable NSError *)error;
+
+#pragma mark - methods to be override by subclasses
+// return result should be ALModel or NSArray<ALModel *>
+- (nullable id)modelByParsingResponseJSON:(in id)JSONObject error:(inout NSError **)error;
+
 @end
 
 NS_ASSUME_NONNULL_END

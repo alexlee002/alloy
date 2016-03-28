@@ -12,6 +12,8 @@
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls)) {
     NSMutableSet *set = [NSMutableSet set];
     unsigned int classesCount = 0;
@@ -132,4 +134,13 @@ FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls
     return [self allProperties][propertyName] != nil;
 }
 
+- (__kindof NSObject *_Nonnull (^)(NSString *_Nonnull propertyName, id _Nullable propertyValue))SET_PROPERTY {
+    return ^NSObject *_Nonnull (NSString *_Nonnull propertyName, id _Nullable propertyValue) {
+        [self setValue:propertyValue forKey:propertyName];
+        return self;
+    };
+}
+
 @end
+
+NS_ASSUME_NONNULL_END

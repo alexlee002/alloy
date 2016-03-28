@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "YYClassInfo.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ALOCRuntime : NSObject
 
 + (NSSet<Class> *)classConfirmsToProtocol:(Protocol *)protocol;
@@ -29,4 +31,8 @@
 + (NSDictionary<NSString *, YYClassMethodInfo *> *)allMethods;
 
 + (BOOL)hasProperty:(NSString *)propertyName;
+
+- (__kindof NSObject *_Nonnull (^)(NSString *_Nonnull propertyName, id _Nullable propertyValue))SET_PROPERTY;
 @end
+
+NS_ASSUME_NONNULL_END
