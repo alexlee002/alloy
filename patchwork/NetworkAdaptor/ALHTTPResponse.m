@@ -8,6 +8,11 @@
 
 #import "ALHTTPResponse.h"
 #import "NSString+Helper.h"
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+@import CoreServices;
+#else
+@import MobileCoreServices;
+#endif
 
 
 @implementation ALHTTPResponse {
@@ -52,10 +57,23 @@
 }
 
 - (nullable NSString *)responseString {
-    if (self.responseData && !isEmptyString(self.textEncodingName)) {
-        return [[NSString alloc] initWithData:self.responseData encoding:NSStringEncodingWithName(self.textEncodingName)];
+    if (self.responseData && [self isTextResponse]) {
+        NSStringEncoding encoding = NSUTF8StringEncoding;
+        if (!isEmptyString(self.textEncodingName)) {
+            encoding = NSStringEncodingWithName(self.textEncodingName);
+        }
+        return [[NSString alloc] initWithData:self.responseData encoding:encoding];
     }
     return nil;
+}
+
+- (BOOL)isTextResponse {
+    if (!isEmptyString(self.MIMEType)) {
+        CFStringRef uti =
+            UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef) self.MIMEType, NULL);
+        return UTTypeConformsTo(uti, kUTTypeText);
+    }
+    return NO; // unkwon mime type
 }
 
 @end
