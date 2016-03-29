@@ -115,8 +115,12 @@
 eg:
 
 ```objc
-- (NSDate *)modelCustomTransformCurrentTimeFromNSNumber:(NSNumber *)timeInterval {
-	return [NSDate dateWithTimeIntervalSince1970:[timeInterval doubleValue]];
+- (void)modelCustomTransformCurrentTimeFromNSNumber:(NSNumber *)timeInterval {
+	self.currentTime = [NSDate dateWithTimeIntervalSince1970:[timeInterval doubleValue]];
+}
+
+- (void)modelCustomTransformErrorFromNSString:(NSString *)timeInterval {
+	self.error = [NSError error....];
 }
 ```
 
