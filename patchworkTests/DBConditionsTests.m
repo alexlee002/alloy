@@ -26,7 +26,7 @@
 }
 
 - (void)testSimleConditions {
-    ALSQLCondition *condition = EQ(@"col2", @4).AND(GT(@"col3", @4)).AND(EQ(@"col1", @"s")).build;
+    ALSQLCondition *condition = @"col2".EQ(@4).AND(@"col3".GT(@4)).AND(@"col1".EQ(@"s")).build;
     XCTAssert([condition isKindOfClass:[ALSQLCondition class]]);
     NSLog(@"condition: %@", condition);
     XCTAssertEqualObjects(condition.sqlClause, @"(col2 = ?) AND (col3 > ?) AND (col1 = ?)");

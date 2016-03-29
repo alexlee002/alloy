@@ -99,18 +99,18 @@
 
     NSString *sql = [db.UPDATE([TestUser tableName])
                          .VALUES(
-                             @{ keypathForClass(TestUser, age):  @20,
-                                keypathForClass(TestUser, addr): @"Beijing" })
-                         .WHERE(EQ(keypathForClass(TestUser, name), @"alex")) sql];
-    XCTAssertEqualObjects(sql, @"UPDATE user SET age=?, addr=? WHERE (name = ?)");
+                             @{ AS_COL(TestUser, age) : @20,
+                                AS_COL(TestUser, addr) : @"Beijing" })
+                         .WHERE(EQ(AS_COL(TestUser, name), @"alex")) sql];
+    XCTAssertEqualObjects(sql, @"UPDATE user SET age=?, address=? WHERE (user_name = ?)");
 
     sql = db.UPDATE([TestUser tableName])
               .POLICY(kALDBConflictPolicyFail)
-              .SET(keypathForClass(TestUser, addr), @"Beijing")
-              .SET(keypathForClass(TestUser, age), @20)
-              .WHERE(EQ(keypathForClass(TestUser, name), @"alex"))
+              .SET(AS_COL(TestUser, addr), @"Beijing")
+              .SET(AS_COL(TestUser, age), @20)
+              .WHERE(EQ(AS_COL(TestUser, name), @"alex"))
               .sql;
-    XCTAssertEqualObjects(sql, @"UPDATE OR FAIL user SET age=?, addr=? WHERE (name = ?)");
+    XCTAssertEqualObjects(sql, @"UPDATE OR FAIL user SET address=?, age=? WHERE (user_name = ?)");
 }
 
 - (void)testSQLInsert {
@@ -164,11 +164,23 @@
     NSString *str = [NSString stringWithUTF8String:strchr(keypath, '.') + 1];
     NSLog(@"%@", str);
     
+    NSString *sql = nil;
     
-    TestUser *user1 = [TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].firstObject;
+    TestUser *user1 = [TestUser modelsWithCondition:AS_COL(TestUser, age).EQ(@35)].firstObject;
     XCTAssertEqualObjects(user1.name, user.name);
     XCTAssertEqualObjects(user1.addr, user.addr);
-    
+
+    NSArray *users = [TestUser fetcher]
+                         .WHERE(AS_COL(TestUser, age).GT(@10)
+                                .AND(AS_COL(TestUser, age).LT(@"20"))
+                                .AND(AS_COL(TestUser, addr).MATCHS_PREFIX(@"Beijing", matchsAny)))
+                         .ORDER_BY(DESC_ORDER(AS_COL(TestUser, age)))
+                         .ORDER_BY(AS_COL(TestUser, name))
+                         .GROUP_BY(AS_COL(TestUser, addr))
+                         .OFFSET(5)
+                         .LIMIT(10)
+                         .FETCH_MODELS();
+
     user1.age = 40;
     [user1 updateOrReplace:YES];
     XCTAssertTrue([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].count == 0);
@@ -178,13 +190,16 @@
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == 0);
     
     NSInteger count = 10;
+    NSMutableArray *insertingUsers = [NSMutableArray array];
     for (NSInteger i = 0; i < count; ++i) {
         TestUser *user0 = [[TestUser alloc] init];
         user0.age = 30 + i;
         user0.name = [NSString stringWithFormat:@"alex %zd", i];
         user0.addr = [NSString stringWithFormat:@"BJ %zd", i];
-        [user0 saveOrReplce:YES];
+        [insertingUsers addObject:user0];
     }
+    [TestUser saveRecords:insertingUsers repleace:YES];
+    
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == count);
     
     [[TestUser fetcher].SELECT(@[@"count(*)"]) fetchWithCompletion:^(FMResultSet * _Nullable rs) {
@@ -197,7 +212,7 @@
     XCTAssertTrue(models.count == count);
     
     // test Raw Where
-    NSString *sql = [TestUser fetcher]
+    sql = [TestUser fetcher]
                         .SELECT(@[ @"COUNT(*)" ])
                         .RAW_WHERE(@"age > ? OR addr LIKE ? GROUP BY name LIMIT 100", @[ @10, @"Beijing%" ])
                         .sql;

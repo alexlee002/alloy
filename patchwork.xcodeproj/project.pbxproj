@@ -45,6 +45,8 @@
 		436296A91C7C693D00EBA718 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 436296A71C7C693D00EBA718 /* LaunchScreen.storyboard */; };
 		436296B01C7C6C2200EBA718 /* ALSQLDeleteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */; };
 		436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */; };
+		436E36491CA92D9A0065E8D6 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		436E365B1CAA5AB80065E8D6 /* JSONMapping1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 436E365A1CAA5AB80065E8D6 /* JSONMapping1Tests.m */; };
 		439B6A241C9308C700900FEB /* ALHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1A1C9308C700900FEB /* ALHTTPRequest.h */; };
 		439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A1B1C9308C700900FEB /* ALHTTPRequest.m */; };
 		439B6A261C9308C700900FEB /* ALHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A1C1C9308C700900FEB /* ALHTTPResponse.h */; };
@@ -147,6 +149,7 @@
 		436296AA1C7C693D00EBA718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		436296AE1C7C6C2200EBA718 /* ALSQLDeleteCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLDeleteCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		436296AF1C7C6C2200EBA718 /* ALSQLDeleteCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLDeleteCommand.m; sourceTree = "<group>"; };
+		436E365A1CAA5AB80065E8D6 /* JSONMapping1Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONMapping1Tests.m; sourceTree = "<group>"; };
 		439B6A1A1C9308C700900FEB /* ALHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPRequest.h; sourceTree = "<group>"; };
 		439B6A1B1C9308C700900FEB /* ALHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALHTTPRequest.m; sourceTree = "<group>"; };
 		439B6A1C1C9308C700900FEB /* ALHTTPResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPResponse.h; sourceTree = "<group>"; };
@@ -358,6 +361,7 @@
 		43B5186E1C7590320060C3AA /* patchworkTests */ = {
 			isa = PBXGroup;
 			children = (
+				436E365A1CAA5AB80065E8D6 /* JSONMapping1Tests.m */,
 				43B5186F1C7590320060C3AA /* patchworkTests.m */,
 				43B518711C7590320060C3AA /* Info.plist */,
 				43B518BC1C7735270060C3AA /* DBManageTests.m */,
@@ -798,7 +802,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				436E36491CA92D9A0065E8D6 /* (null) in Sources */,
 				43B518BD1C7735270060C3AA /* DBManageTests.m in Sources */,
+				436E365B1CAA5AB80065E8D6 /* JSONMapping1Tests.m in Sources */,
 				43FB7AEB1CA00A4D007B62C7 /* DBConditionsTests.m in Sources */,
 				43B3D5E51CA45BC50076C1AA /* JSONMappingTests.m in Sources */,
 				43B518701C7590320060C3AA /* patchworkTests.m in Sources */,

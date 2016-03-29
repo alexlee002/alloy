@@ -239,22 +239,31 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     
 #undef AL_ENABLE_NSURLSESSION
 #define AL_ENABLE_NSURLSESSION   1
-    [[ALHTTPRequest
-         requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"
-                       method:ALHTTPMethodGet
-           responseModelClass:[GithubUser class]
-                   completion:^(id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier) {
-                       ALLogVerbose(@"%@", [responseModel yy_modelDescription]);
-                   }]
-            .SET_PROPERTY(keypathForClass(ALHTTPRequest, type), @(ALRequestTypeDownload))
-            .SET_PROPERTY(
-                keypathForClass(ALHTTPRequest, progressBlock),
-                ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected, NSUInteger identifier) {
-                    ALLogVerbose(@"%lld\t%lld\t%lld\t%.2f", bytesDone, totalBytesDone, totalBytesExpected,
-                                 totalBytesDone * 100.f / totalBytesExpected);
-                })
-        sendUsingNetworkAdaptor:[NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration
-                                                                                         defaultSessionConfiguration]]];
+
+[[ALHTTPRequest requestWithURLString:@"https://api.github.com/users/alexlee002"
+                             method:ALHTTPMethodGet
+                 responseModelClass:[GithubUser class]
+                         completion:^(id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier){
+                             NSLog(@"user model: %@", [responseModel yy_modelDescription]);
+                         }] send];
+
+    //    [[ALHTTPRequest
+    //         requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"
+    //                       method:ALHTTPMethodGet
+    //           responseModelClass:[GithubUser class]
+    //                   completion:^(id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier) {
+    //                       ALLogVerbose(@"%@", [responseModel yy_modelDescription]);
+    //                   }]
+    //            .SET_PROPERTY(keypathForClass(ALHTTPRequest, type), @(ALRequestTypeDownload))
+    //            .SET_PROPERTY(
+    //                keypathForClass(ALHTTPRequest, progressBlock),
+    //                ^(uint64_t bytesDone, uint64_t totalBytesDone, uint64_t totalBytesExpected, NSUInteger identifier)
+    //                {
+    //                    ALLogVerbose(@"%lld\t%lld\t%lld\t%.2f", bytesDone, totalBytesDone, totalBytesExpected,
+    //                                 totalBytesDone * 100.f / totalBytesExpected);
+    //                })
+    //        sendUsingNetworkAdaptor:[NSURLSessionAdaptor adaptorWithSessionConfiguration:[NSURLSessionConfiguration
+    //                                                                                         defaultSessionConfiguration]]];
 
     //    [HHTimer scheduledTimerWithTimeInterval:3 dispatchQueue:dispatch_get_main_queue() block:^{
     //        NSLog(@"====== HHTimer test ======");

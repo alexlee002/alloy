@@ -298,7 +298,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 - (void)requestDidSucceedWithResponse:(nullable ALHTTPResponse *)response {
     ALLogVerbose(@"\nrequest succeeded: %@", [self descriptionDetailed:NO]);
     id JSON = [response.responseData JSONObject];
-    if (self.responseHeaderBlock != nil) {
+    if (self.responseModelBlock != nil) {
         if (JSON != nil && self.responseModelClass != nil) {
             NSError *error = nil;
             ALModel *model = [self modelByParsingResponseJSON:JSON error:&error];

@@ -230,14 +230,15 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
 
 - (BOOL)modelCustomTransformToDictionary:(NSMutableDictionary *)dic {
     [[self customToJSONTransformers] bk_each:^(NSString *propertyName, ModelCustomTransformToJSON block) {
-        YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
-        YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
-        id value = nil;
-        if (property.getter != nil) {
-            value = ((id (*)(id, SEL))(void *) objc_msgSend)(self, property.getter);
-        }
-        if ((id)block != NSNull.null) {
-            block(propertyName, value);
+//        YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
+//        YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
+//        id value = nil;
+//        if (property.getter != nil) {
+//            value = ((id (*)(id, SEL))(void *) objc_msgSend)(self, property.getter);
+//        }
+        NSString *key = [self mappedKeysForProperty:propertyName].firstObject;
+        if ((id)block != NSNull.null && !isEmptyString(key)) {
+            dic[key] = block(propertyName, [self valueForKey:propertyName]);
         }
     }];
     return YES;
@@ -265,7 +266,8 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
                                    error:nil];
     });
 
-    NSMutableDictionary<NSString *, NSArray<ALCustomTransformMethodInfo *> *> *customTransformers;
+    NSMutableDictionary<NSString *, NSArray<ALCustomTransformMethodInfo *> *> *customTransformers =
+        [NSMutableDictionary dictionary];
     YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
 
     [classInfo.methodInfos bk_each:^(NSString *selector, YYClassMethodInfo *m) {
@@ -273,17 +275,20 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
             [regexp firstMatchInString:selector options:0 range:NSMakeRange(0, selector.length)];
         if (result && result.range.length == selector.length && result.numberOfRanges == 3) {
             NSString *propertyName = stringOrEmpty([selector substringWithRange:[result rangeAtIndex:1]]);
+            propertyName           = [[[propertyName substringToIndexSafety:1] lowercaseString]
+                stringByAppendingString:[propertyName substringFromIndexSafety:1]];
+            
             Class classType = NSClassFromString(stringOrEmpty([selector substringWithRange:[result rangeAtIndex:2]]));
             YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
             if (property != nil && classType != nil) {
                 ALCustomTransformMethodInfo *info = [[ALCustomTransformMethodInfo alloc] init];
-                info->_selector  = m.sel;
-                info->_classType = classType;
-                info->_property  = property;
+                info->_selector                   = m.sel;
+                info->_classType                  = classType;
+                info->_property                   = property;
 
                 NSMutableArray *array = (NSMutableArray *) customTransformers[propertyName];
                 if (array == nil) {
-                    array = [NSMutableArray array];
+                    array                            = [NSMutableArray array];
                     customTransformers[propertyName] = array;
                 }
                 [array addObject:info];
