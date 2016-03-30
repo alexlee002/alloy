@@ -45,6 +45,18 @@ typedef id _Nullable (^ModelCustomTransformToJSON)(NSString *_Nonnull propertyNa
 + (nullable instancetype)modelCopyFromModel:(__kindof ALModel *)other
                           excludeProperties:(NSArray<NSString *> *)properties;
 
+/**
+ *  Copy properties' value from &lt; other &gt; model.
+ *  Copy rules:
+ *      find out the 'last common ancestor' class of the 'self' and 'other' model
+ *      ignore the properties that specified by param 'properties' but not belongs to the 'last common ancestor' class
+ *      copy properties values
+ *
+ *  @param properties properties to copy
+ *  @param other      model that copy from
+ */
+- (void)modelCopyProperties:(nullable NSArray<NSString *> *)properties fromModel:(__kindof ALModel *)other;
+
 #pragma mark JSON -> Model
 + (nullable instancetype)modelWithJSON:(id)json;
 - (nullable instancetype)initWithJSON:(id)json;

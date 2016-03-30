@@ -103,9 +103,14 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     static NSDictionary *columns = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSSet *blacklist = [NSSet setWithArray:[self ignoreRecordProperties]];
-        columns = [[[self allModelProperties] bk_reject:^BOOL(NSString *key, YYClassPropertyInfo *p) {
-            return [blacklist containsObject:key];
+        NSSet *blacklist = [NSSet setWithArray:[self recordPropertyBlacklist]];
+        NSSet *whitelist = [NSSet setWithArray:[self recordPropertyWhitelist]];
+        columns = [[[self allModelProperties] bk_select:^BOOL(NSString *key, YYClassPropertyInfo *p) {
+            if (![self withoudRowId] && [key isEqualToString:keypathForClass(ALModel, rowid)]) {
+                return YES;
+            }
+            if ([blacklist containsObject:key]) { return NO; }
+            return whitelist == nil || [whitelist containsObject:key];
         }] bk_map:^ALDBColumnInfo *(NSString *key, YYClassPropertyInfo *p) {
             ALDBColumnInfo *colum = [[ALDBColumnInfo alloc] init];
             colum.property        = p;
@@ -341,8 +346,12 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     return nil;
 }
 
-+ (nullable NSArray<NSString *> *)ignoreRecordProperties {
++ (nullable NSArray<NSString *> *)recordPropertyBlacklist {
     return [ALOCRuntime propertiesOfProtocol:@protocol(NSObject)].allKeys;
+}
+
++ (nullable NSArray<NSString *> *)recordPropertyWhitelist {
+    return nil;
 }
 
 + (nullable NSDictionary<NSString *, NSString *>  *)modelCustomColumnNameMapper {
@@ -351,7 +360,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 
 + (NSComparator)columnOrderComparator {
     return ^NSComparisonResult(ALDBColumnInfo *_Nonnull col1, ALDBColumnInfo *_Nonnull col2) {
-        NSArray *allIndexedKeys = [[@[
+        NSArray *list = [self recordPropertyWhitelist] ?: [[@[
             wrapNil([self primaryKeys]),
             wrapNil([[self uniqueKeys] al_flatten]),
             wrapNil([[self indexKeys] al_flatten])
@@ -359,8 +368,10 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
             return obj == NSNull.null;
         }] al_flatten];
 
-        NSInteger idx1 = [allIndexedKeys indexOfObject:col1.property.name];
-        NSInteger idx2 = [allIndexedKeys indexOfObject:col2.property.name];
+        NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:list];
+
+        NSInteger idx1 = [orderedSet indexOfObject:col1.property.name];
+        NSInteger idx2 = [orderedSet indexOfObject:col2.property.name];
         if (idx1 != NSNotFound && idx2 != NSNotFound) {
             return [@(idx1) compare:@(idx2)];
         } else if (idx1 != NSNotFound) {

@@ -164,7 +164,7 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
     if (property.name.length == 0) {
         return nil;
     }
-    if ([self.class instancesRespondToSelector:@selector(modelCustomPropertyMapper)]) {
+    if ([self.class respondsToSelector:@selector(modelCustomPropertyMapper)]) {
         NSDictionary *mapper = [self.class modelCustomPropertyMapper];
         id keys = mapper[property.name];
         if ([keys isKindOfClass:[NSArray class]]) {
@@ -212,30 +212,25 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
 }
 
 - (BOOL)modelCustomTransformFromDictionary:(NSDictionary *)dic {
-    [[self modelCustomFromJSONTransformers] bk_each:^(NSString *propertyName, NSArray<ALCustomTransformMethodInfo *> *transformers) {
-        NSArray<NSString *> *keys = [self mappedKeysForProperty:propertyName];
-        id value = [self valueForKeys:keys OfDictionary:dic];
-        if (value == nil) {
-            return;
-        }
-        [transformers bk_each:^(ALCustomTransformMethodInfo *info) {
-            if ([value isKindOfClass:info->_classType]) {
-                ((void (*)(id, SEL, id))(void *) objc_msgSend)(self, info->_selector, value);
+    [[self modelCustomFromJSONTransformers]
+        bk_each:^(NSString *propertyName, NSArray<ALCustomTransformMethodInfo *> *transformers) {
+            NSArray<NSString *> *keys = [self mappedKeysForProperty:propertyName];
+            id value = [self valueForKeys:keys OfDictionary:dic];
+            if (value == nil) {
+                return;
             }
+            [transformers bk_each:^(ALCustomTransformMethodInfo *info) {
+                if ([value isKindOfClass:info->_classType]) {
+                    ((void (*)(id, SEL, id))(void *) objc_msgSend)(self, info->_selector, value);
+                }
+            }];
         }];
-    }];
-    
+
     return YES;
 }
 
 - (BOOL)modelCustomTransformToDictionary:(NSMutableDictionary *)dic {
     [[self customToJSONTransformers] bk_each:^(NSString *propertyName, ModelCustomTransformToJSON block) {
-//        YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:self.class];
-//        YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
-//        id value = nil;
-//        if (property.getter != nil) {
-//            value = ((id (*)(id, SEL))(void *) objc_msgSend)(self, property.getter);
-//        }
         NSString *key = [self mappedKeysForProperty:propertyName].firstObject;
         if ((id)block != NSNull.null && !isEmptyString(key)) {
             dic[key] = block(propertyName, [self valueForKey:propertyName]);

@@ -123,7 +123,6 @@ eg:
 	self.error = [NSError error....];
 }
 ```
-
 ####model property to JSON
 
 eg:

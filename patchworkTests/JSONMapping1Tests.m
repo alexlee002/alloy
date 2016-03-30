@@ -8,25 +8,45 @@
 
 #import <XCTest/XCTest.h>
 #import "ALModel.h"
+#import "ALModel+JSON.h"
 #import "ALOCRuntime.h"
 #import "UtilitiesHeader.h"
+#import <objc/runtime.h>
 
 @interface TestCaseUser : ALModel
 @property(copy)     NSString    *name;
 @property(assign)   NSUInteger   age;
 @property(copy)     NSString    *email;
 @property(strong)   NSURL       *homepage;
-@property(strong)   NSDate      *brithday;
+//@property(strong)   NSDate      *brithday;
 @end
 
 @implementation TestCaseUser
 
-- (void)modelCustomTransformBrithdayFromNSNumber:(NSNumber *)timeinterval {
-    self.brithday = [NSDate dateWithTimeIntervalSince1970:timeinterval.doubleValue];
-}
+//- (void)modelCustomTransformBrithdayFromNSNumber:(NSNumber *)timeinterval {
+//    self.brithday = [NSDate dateWithTimeIntervalSince1970:timeinterval.doubleValue];
+//}
+
+//+ (nullable NSDictionary *)modelCustomPropertyMapper {
+//    return @{keypathForClass(TestCaseUser, brithday): @"brithday_timestamp"};
+//}
 
 @end
 
+
+@interface TestCaseUser (Category)
+@property(strong)   NSDate      *brithday;
+@end
+@implementation TestCaseUser (Category)
+
+- (void)setBrithday:(NSDate *)brithday {
+    objc_setAssociatedObject(self, @selector(brithday), brithday, OBJC_ASSOCIATION_RETAIN);
+}
+- (NSDate *)brithday {
+    return objc_getAssociatedObject(self, @selector(brithday));
+}
+
+@end
 
 
 @interface JSONMapping1Tests : XCTestCase
@@ -37,6 +57,7 @@
 
 - (void)setUp {
     [super setUp];
+    YYClassPropertyInfo *p = [TestCaseUser allModelProperties][keypathForClass(TestCaseUser, brithday)];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
@@ -49,13 +70,13 @@
     NSString *json = @"{\"name\": \"Alex Lee\", "
                      @"\"age\": 35, "
                      @"\"email\": \"alex***@hotmail.com\", "
-                     @"\"brithday\": 0,"
+                     @"\"brithday_timestamp\": 0,"
                      @"\"homepage\":\"https://github.com/alexlee002\"}";
     TestCaseUser *user = [TestCaseUser modelWithJSON:json];
     XCTAssertEqualObjects(user.name, @"Alex Lee");
     XCTAssertEqualObjects(user.email, @"alex***@hotmail.com");
     XCTAssertEqualObjects(user.homepage, [NSURL URLWithString:@"https://github.com/alexlee002"]);
-    XCTAssertEqualObjects(user.brithday, [NSDate dateWithTimeIntervalSince1970:0]);
+    //XCTAssertEqualObjects(user.brithday, [NSDate dateWithTimeIntervalSince1970:0]);
     XCTAssertEqual(user.age, 35);
 }
 

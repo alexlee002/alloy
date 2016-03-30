@@ -69,12 +69,35 @@ extern NSString * const kRowIdColumnName;
 + (nullable NSString *)tableName;
 + (nullable NSString *)databaseIdentifier;
 
-+ (nullable NSArray<NSString *> *)ignoreRecordProperties;
+/**
+ *  All properties in blacklist would not be mapped to the database table column.
+ *  return nil to ignore this feature.
+ *
+ *  @return an Array of property name, or nil;
+ */
++ (nullable NSArray<NSString *> *)recordPropertyBlacklist;
+
+/**
+ *  Only properties in whitelist would be mapped to the database table column.
+ *  The Order of table columns is the same as the order of whitelist.
+ *
+ *  return nil to ignore this feature.
+ *
+ *  @return an Array of property name, or nil;
+ */
++ (nullable NSArray<NSString *> *)recordPropertyWhitelist;
 
 // @{propertyName: columnName}
 + (nullable NSDictionary<NSString *, NSString *>  *)modelCustomColumnNameMapper;
 
-//typedef NSComparisonResult (^NSComparator)(ALDBColumnInfo *_Nonnull col1, ALDBColumnInfo *_Nonnull col2)
+/**
+ *  The comparator to sort the table columns
+ *  The default order is:
+ *      if "-recordPropertyWhitelist" is not nil, using the same order of properties in whitelist.
+ *      else the order should be: "primary key columns; unique columns; index columns; other columns"
+ *
+ *  @return typedef NSComparisonResult (^NSComparator)(ALDBColumnInfo *_Nonnull col1, ALDBColumnInfo *_Nonnull col2)
+ */
 + (NSComparator)columnOrderComparator;
 
 + (void)customColumnDefine:(ALDBColumnInfo *)cloumn forProperty:(in YYClassPropertyInfo *)property;
@@ -88,7 +111,7 @@ extern NSString * const kRowIdColumnName;
 
 /**
  *  Custom transform property value from resultSet
- *  @see "-recordsWithCondition:"
+ *  @see "+modelsWithCondition:"
  */
 //- (void)customTransform{PropertyName}FromRecord:(in FMResultSet *)rs columnIndex:(int)index;
 
