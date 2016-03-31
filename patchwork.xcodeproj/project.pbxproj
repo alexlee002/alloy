@@ -136,7 +136,7 @@
 		4362967A1C7B6D3C00EBA718 /* ALSQLCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLCommand.m; sourceTree = "<group>"; };
 		4362967B1C7B6D3C00EBA718 /* ALSQLSelectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLSelectCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		4362967C1C7B6D3C00EBA718 /* ALSQLSelectCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLSelectCommand.m; sourceTree = "<group>"; };
-		4362967D1C7B6D3C00EBA718 /* ALSQLUpdateCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLUpdateCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		4362967D1C7B6D3C00EBA718 /* ALSQLUpdateCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLUpdateCommand.h; sourceTree = "<group>"; };
 		4362967E1C7B6D3C00EBA718 /* ALSQLUpdateCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLUpdateCommand.m; sourceTree = "<group>"; };
 		436296851C7B6D5400EBA718 /* ALSQLInsertCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALSQLInsertCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		436296861C7B6D5400EBA718 /* ALSQLInsertCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLInsertCommand.m; sourceTree = "<group>"; };

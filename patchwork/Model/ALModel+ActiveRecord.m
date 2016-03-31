@@ -103,8 +103,9 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     static NSDictionary *columns = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSSet *blacklist = [NSSet setWithArray:[self recordPropertyBlacklist]];
-        NSSet *whitelist = [NSSet setWithArray:[self recordPropertyWhitelist]];
+        NSArray *list    = nil;
+        NSSet *blacklist = (list = [self recordPropertyBlacklist]) ? [NSSet setWithArray:list] : nil;
+        NSSet *whitelist = (list = [self recordPropertyWhitelist]) ? [NSSet setWithArray:list] : nil;
         columns = [[[self allModelProperties] bk_select:^BOOL(NSString *key, YYClassPropertyInfo *p) {
             if (![self withoudRowId] && [key isEqualToString:keypathForClass(ALModel, rowid)]) {
                 return YES;
@@ -146,6 +147,10 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 
 + (ALSQLSelectCommand *)fetcher {
     return self.DB.SELECT(@[kRowIdColumnName, @"*"]).FROM([self tableName]).APPLY_MODEL(self.class);
+}
+
++ (ALSQLUpdateCommand *)updateExector {
+    return self.DB.UPDATE([self tableName]);
 }
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted {

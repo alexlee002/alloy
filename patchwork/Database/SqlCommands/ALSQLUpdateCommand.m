@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSString            *_tableStatement;
     NSString            *_policy;
     NSMutableDictionary *_values;
+    NSMutableArray      *_rawValues;
 }
 
 - (ALSQLUpdateBlockString)UPDATE {
@@ -52,6 +53,21 @@ NS_ASSUME_NONNULL_BEGIN
     };
 }
 
+- (ALSQLUpdateConditionBlock)RAW_SET {
+    return ^ALSQLUpdateCommand *_Nonnull(ALSQLCondition *_Nonnull expression) {
+        expression = castToTypeOrNil(expression, ALSQLCondition);
+        if (expression) {
+            @synchronized(self) {
+                if (_rawValues == nil) {
+                    _rawValues = [NSMutableArray array];
+                }
+            }
+            [_rawValues addObject:expression.build];
+        }
+        return self;
+    };
+}
+
 - (ALSQLUpdateConditionBlock)WHERE {
     return ^ALSQLUpdateCommand *_Nonnull(ALSQLCondition *_Nonnull condition) {
         [condition build];
@@ -74,19 +90,37 @@ NS_ASSUME_NONNULL_BEGIN
     [sql appendString:_tableStatement];
     
     // SET VALUES
-    if (_values.count == 0) {
+    if (_values.count == 0 && _rawValues.count == 0) {
         NSAssert(NO, @"no update values specified.");
         return nil;
     }
     
     [sql appendString:@" SET "];
-    NSMutableArray *updateClauses = [NSMutableArray array];
     _sqlArgs = [NSMutableArray arrayWithCapacity:_values.count];
-    [_values bk_each:^(NSString *colName, id expr) {
-        [updateClauses addObject:[colName stringByAppendingString:@"=?"]];
-        [(NSMutableArray *)_sqlArgs addObject:expr];
-    }];
-    [sql appendString:[updateClauses componentsJoinedByString:@", "]];
+    
+    if (_values.count > 0) {
+        NSMutableArray *updateClauses = [NSMutableArray array];
+        [_values bk_each:^(NSString *colName, id expr) {
+            [updateClauses addObject:[colName stringByAppendingString:@"=?"]];
+            [(NSMutableArray *)_sqlArgs addObject:expr];
+        }];
+        [sql appendString:[updateClauses componentsJoinedByString:@", "]];
+        
+        if (_rawValues.count > 0) {
+            [sql appendString:@", "];
+        }
+    }
+    
+    if (_rawValues.count > 0) {
+        [_rawValues bk_each:^(ALSQLCondition *exp) {
+            [sql appendString:exp.sqlClause];
+            [sql appendString:@", "];
+            [(NSMutableArray *)_sqlArgs addObjectsFromArray:exp.sqlArguments];
+        }];
+        NSRange range = [sql rangeOfString:@", " options:NSBackwardsSearch];
+        range.length = sql.length - range.location;
+        [sql deleteCharactersInRange:range];
+    }
     
     // WHERE
     if (!isEmptyString(_where.sqlClause)) {

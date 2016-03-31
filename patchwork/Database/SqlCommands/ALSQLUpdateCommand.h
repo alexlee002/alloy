@@ -23,6 +23,7 @@ typedef ALSQLUpdateCommand *_Nonnull (^ALSQLUpdateBlockStrId)     (NSString *_Nu
 @property(readonly) ALSQLUpdateBlockString    POLICY;
 @property(readonly) ALSQLUpdateBlockDict      VALUES;  //set multi values
 @property(readonly) ALSQLUpdateBlockStrId     SET;     //set one value
+@property(readonly) ALSQLUpdateConditionBlock RAW_SET; //eg: SET (col = REPLACE(col, ?, ?))
 @property(readonly) ALSQLUpdateConditionBlock WHERE;
 
 @end

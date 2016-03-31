@@ -154,7 +154,7 @@
     user.name = @"Alex Lee";
     user.age = 35;
     user.addr = @"Beijing";
-    [user saveOrReplce:YES];
+    XCTAssert([user saveOrReplce:YES]);
     
 
     XCTAssertEqualObjects(@"user_name", AS_COL_O(user, name));
@@ -169,25 +169,27 @@
     TestUser *user1 = [TestUser modelsWithCondition:AS_COL(TestUser, age).EQ(@35)].firstObject;
     XCTAssertEqualObjects(user1.name, user.name);
     XCTAssertEqualObjects(user1.addr, user.addr);
-
-    NSArray *users = [TestUser fetcher]
-                         .WHERE(AS_COL(TestUser, age).GT(@10)
-                                .AND(AS_COL(TestUser, age).LT(@"20"))
-                                .AND(AS_COL(TestUser, addr).MATCHS_PREFIX(@"Beijing", matchsAny)))
-                         .ORDER_BY(DESC_ORDER(AS_COL(TestUser, age)))
-                         .ORDER_BY(AS_COL(TestUser, name))
-                         .GROUP_BY(AS_COL(TestUser, addr))
-                         .OFFSET(5)
-                         .LIMIT(10)
-                         .FETCH_MODELS();
-
     user1.age = 40;
-    [user1 updateOrReplace:YES];
-    XCTAssertTrue([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].count == 0);
-    XCTAssertTrue([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @40)].count == 1);
+    XCTAssert([user1 updateOrReplace:YES]);
+    [[TestUser modelsWithCondition:nil] bk_each:^(TestUser *obj) {
+        NSLog(@"%@", [obj yy_modelDescription]);
+    }];
+    XCTAssert([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].count == 0);
+    XCTAssert([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @40)].count == 1);
     
     [user1 deleteRecord];
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == 0);
+    
+    [TestUser fetcher]
+    .WHERE(AS_COL(TestUser, age).GT(@10)
+           .AND(AS_COL(TestUser, age).LT(@"20"))
+           .AND(AS_COL(TestUser, addr).MATCHS_PREFIX(@"Beijing", matchsAny)))
+    .ORDER_BY(DESC_ORDER(AS_COL(TestUser, age)))
+    .ORDER_BY(AS_COL(TestUser, name))
+    .GROUP_BY(AS_COL(TestUser, addr))
+    .OFFSET(5)
+    .LIMIT(10)
+    .FETCH_MODELS();
     
     NSInteger count = 10;
     NSMutableArray *insertingUsers = [NSMutableArray array];
@@ -198,7 +200,7 @@
         user0.addr = [NSString stringWithFormat:@"BJ %zd", i];
         [insertingUsers addObject:user0];
     }
-    [TestUser saveRecords:insertingUsers repleace:YES];
+    XCTAssert([TestUser saveRecords:insertingUsers repleace:YES]);
     
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == count);
     
@@ -231,6 +233,12 @@
               .LIMIT    (10)
               .sql;
     XCTAssertEqualObjects(sql, @"SELECT user_name FROM user WHERE (address = ?) ORDER BY user_name DESC, age LIMIT 5, 10");
+    
+    
+    ALSQLCondition *rawSet =[ALSQLCondition conditionWithString:[NSString stringWithFormat:@"%@ = REPLACE(%@, ?, ?)", AS_COL(TestUser, addr), AS_COL(TestUser, addr)] args:@"a", @"b", nil];
+    ALSQLUpdateCommand *cmd = [TestUser updateExector].RAW_SET(rawSet);
+    NSLog(@"%@", cmd);
+    
 }
 
 

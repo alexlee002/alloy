@@ -43,6 +43,7 @@ extern NSString * const kRowIdColumnName;
 + (NSString *)mappedColumnNameForProperty:(NSString *)propertyName;
 + (nullable NSArray<__kindof ALModel *> *)modelsWithCondition:(nullable ALSQLCondition *)condition;
 + (ALSQLSelectCommand *)fetcher;
++ (ALSQLUpdateCommand *)updateExector;
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted;
 - (BOOL)updateOrReplace:(BOOL)replaceExisted;
