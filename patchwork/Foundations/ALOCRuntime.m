@@ -84,9 +84,9 @@ FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls
 @implementation NSObject (ClassMetasExtension)
 
 + (Class)commonAncestorWithClass:(Class)other {
-    return [[[[self ancestorClasses] al_zip:[other ancestorClasses], nil] bk_match:^BOOL(NSArray<Class> *obj) {
-        return !(obj.count == 2 && obj.firstObject == obj.lastObject);
-    }] firstObject] ?: NSObject.class;
+    return [[[[[self ancestorClasses] al_zip:[other ancestorClasses], nil] bk_select:^BOOL(NSArray<Class> *obj) {
+        return (obj.count == 2 && obj.firstObject == obj.lastObject);
+    }] lastObject] firstObject] ?: NSObject.class;
 }
 
 + (NSArray<Class> *)ancestorClasses {

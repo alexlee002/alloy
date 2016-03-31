@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "NSString+Helper.h"
+#import "NSObject+JSONTransform.h"
 
 
 @interface patchworkTests : XCTestCase
@@ -22,6 +23,10 @@
 }
 
 - (void)testStringHelper {
+    NSArray *arr = @[ @1, @"2", @(3.1)];
+    XCTAssertEqualObjects([arr JSONString] , @"[1,\"2\",3.1]" );
+    XCTAssertEqualObjects([[NSOrderedSet orderedSetWithArray:arr] JSONString] , @"[1,\"2\",3.1]" );
+    
     XCTAssertEqualObjects(@" \"xctassert_equal_objects", [@" \"XCTAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);
     XCTAssertEqualObjects(@"m3u8download_request", [@"M3U8DownloadRequest" stringByConvertingCamelCaseToUnderscore]);
     XCTAssertEqualObjects(@"xctassert_equal_objects", [@"XCTAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);

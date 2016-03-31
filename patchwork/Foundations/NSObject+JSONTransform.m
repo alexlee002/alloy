@@ -17,7 +17,7 @@
 }
 
 - (nullable NSData *)JSONData {
-    id obj = castToTypeOrNil(self, NSSet).allObjects ?: castToTypeOrNil(self, NSOrderedSet).array;
+    id obj = castToTypeOrNil(self, NSSet).allObjects ?: (castToTypeOrNil(self, NSOrderedSet).array ?: self);
     if (obj == nil || ![NSJSONSerialization isValidJSONObject:obj]) {
         return nil;
     }
