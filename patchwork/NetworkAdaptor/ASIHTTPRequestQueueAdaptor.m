@@ -255,31 +255,32 @@
 }
 
 - (NSError *)NSURLErrorTransformingFromASIError:(NSError *)error {
+    NSDictionary *userinfo = @{NSUnderlyingErrorKey: error};
     switch (error.code) {
         case ASIConnectionFailureErrorType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotConnectToHost userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotConnectToHost userInfo:userinfo];
         case ASIRequestTimedOutErrorType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:userinfo];
         case ASIAuthenticationErrorType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired userInfo:userinfo];
         case ASIRequestCancelledErrorType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:userinfo];
         case ASIUnableToCreateRequestErrorType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:userinfo];
         case ASIInternalErrorWhileBuildingRequestType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:userinfo];
         case ASIInternalErrorWhileApplyingCredentialsType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired userInfo:userinfo];
         case ASIFileManagementError:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:userinfo];
         case ASITooMuchRedirectionErrorType:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorHTTPTooManyRedirects userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorHTTPTooManyRedirects userInfo:userinfo];
         case ASIUnhandledExceptionError:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:userinfo];
         case ASICompressionError:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:userinfo];
         default:
-            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+            return [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:userinfo];
     }
 }
 

@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "NSString+Helper.h"
 #import "NSObject+JSONTransform.h"
+#import "NSArray+ArrayExtensions.h"
 
 
 @interface patchworkTests : XCTestCase
@@ -41,5 +42,9 @@
     XCTAssertEqualObjects(@"xct_assert_equal_objects", [@"xctAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);
 }
 
+- (void)testArray {
+    NSArray *arr = @[];
+    XCTAssertNil([arr objectAtIndexSafely:-1]);
+}
 
 @end
