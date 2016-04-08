@@ -207,7 +207,7 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
     return compareStringsUsingLocale(self, other, @"zh@collation=gb2312");
 }
 
-- (NSString *)sizeFormattedStringWithBytes:(uint64_t)size {
++ (NSString *)sizeFormattedStringWithBytes:(uint64_t)size {
     if (size < 1024) {
         return [NSString stringWithFormat:@"%lldB", size];
     }

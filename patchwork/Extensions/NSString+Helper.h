@@ -41,7 +41,7 @@ extern NSString         *URLParamStringify (id _Nullable value);
 - (NSComparisonResult)compareUsingPinyinTo:(NSString *)other;
 - (NSComparisonResult)compareUsingGB2312To:(NSString *)other;
 
-- (NSString *)sizeFormattedStringWithBytes:(uint64_t)size;
++ (NSString *)sizeFormattedStringWithBytes:(uint64_t)size;
 @end
 
 
