@@ -207,6 +207,27 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
     return compareStringsUsingLocale(self, other, @"zh@collation=gb2312");
 }
 
+- (NSString *)sizeFormattedStringWithBytes:(uint64_t)size {
+    if (size < 1024) {
+        return [NSString stringWithFormat:@"%lldB", size];
+    }
+    else if (size < 1024 * 1024) {
+        return [NSString stringWithFormat:@"%lldKB", size];
+    }
+    else if (size < 1024 * 1024 * 1024) {
+        return [NSString stringWithFormat:@"%.2fMB", size * 1.f / (1024 * 1024 * 1024)];
+    }
+    else if (size < 1024 * 1024 * 1024 * 1024L) {
+        return [NSString stringWithFormat:@"%.2fGB", size * 1.f / (1024 * 1024 * 1024 * 1024L)];
+    }
+    else if (size < 1024 * 1024 * 1024 * 1024L * 1024L) {
+        return [NSString stringWithFormat:@"%.2fTB", size * 1.f / (1024 * 1024 * 1024 * 1024L * 1024L)];
+    }
+    else {
+        return [NSString stringWithFormat:@"%.2fPB", size * 1.f / (1024 * 1024 * 1024 * 1024L * 1024L * 1024L)];
+    }
+}
+
 @end
 
 

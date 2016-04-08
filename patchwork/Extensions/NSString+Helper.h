@@ -40,6 +40,8 @@ extern NSString         *URLParamStringify (id _Nullable value);
 - (BOOL)containsEmojiCharacters;
 - (NSComparisonResult)compareUsingPinyinTo:(NSString *)other;
 - (NSComparisonResult)compareUsingGB2312To:(NSString *)other;
+
+- (NSString *)sizeFormattedStringWithBytes:(uint64_t)size;
 @end
 
 
