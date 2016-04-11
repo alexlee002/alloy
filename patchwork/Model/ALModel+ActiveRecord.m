@@ -247,6 +247,15 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     return YES;
 }
 
++ (BOOL)updateRecords:(NSArray<ALModel *> *)models replace:(BOOL)replaceExisted {
+    [self.DB.queue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        [models bk_each:^(ALModel *obj) {
+            [obj updateOrReplace:replaceExisted];
+        }];
+    }];
+    return YES;
+}
+
 + (BOOL)updateProperties:(NSDictionary *)contentValues
            withCondition:(nullable ALSQLCondition *)condition
                 repleace:(BOOL)replaceExisted {

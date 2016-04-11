@@ -55,6 +55,7 @@ extern NSString * const kRowIdColumnName;
 + (BOOL)updateProperties:(NSDictionary *)contentValues
            withCondition:(nullable ALSQLCondition *)condition
                 repleace:(BOOL)replaceExisted;
++ (BOOL)updateRecords:(NSArray<ALModel *> *)models replace:(BOOL)replaceExisted;
 + (BOOL)deleteRecordsWithCondition:(nullable ALSQLCondition *)condition;
 
 // sql statments
