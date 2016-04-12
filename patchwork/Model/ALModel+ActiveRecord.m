@@ -100,9 +100,22 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 + (NSDictionary<NSString *, ALDBColumnInfo *> *)columns {
-    static NSDictionary *columns = nil;
+    //NSMutableDictionary<class_name, NSDictionary<property_name, ALDBColumnInfo>>
+    static NSMutableDictionary<NSString *, NSDictionary<NSString *, ALDBColumnInfo *> *> *modelsColumnsDict = nil;
+    
     static dispatch_once_t onceToken;
+    static dispatch_semaphore_t lock = nil;
     dispatch_once(&onceToken, ^{
+        modelsColumnsDict = [NSMutableDictionary dictionary];
+        lock = dispatch_semaphore_create(1);
+    });
+    
+    NSString *className = NSStringFromClass(self);
+    
+    NSDictionary *columns = nil;
+    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+    columns = modelsColumnsDict[className];
+    if (columns == nil) {
         NSArray *list    = nil;
         NSSet *blacklist = (list = [self recordPropertyBlacklist]) ? [NSSet setWithArray:list] : nil;
         NSSet *whitelist = (list = [self recordPropertyWhitelist]) ? [NSSet setWithArray:list] : nil;
@@ -120,7 +133,9 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
             [self customColumnDefine:colum forProperty:p];
             return colum;
         }];
-    });
+        modelsColumnsDict[className] = columns;
+    }
+    dispatch_semaphore_signal(lock);
     return columns;
 }
 
