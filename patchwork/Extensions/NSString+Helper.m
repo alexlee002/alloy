@@ -209,22 +209,22 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 
 + (NSString *)sizeFormattedStringWithBytes:(uint64_t)size {
     if (size < 1024) {
-        return [NSString stringWithFormat:@"%lldB", size];
+        return [NSString stringWithFormat:@"%lld B", size];
     }
     else if (size < 1024 * 1024) {
-        return [NSString stringWithFormat:@"%lldKB", size];
+        return [NSString stringWithFormat:@"%lld KB", size / 1024];
     }
     else if (size < 1024 * 1024 * 1024) {
-        return [NSString stringWithFormat:@"%.2fMB", size * 1.f / (1024 * 1024 * 1024)];
+        return [NSString stringWithFormat:@"%.2f MB", size * 1.f / (1024 * 1024)];
     }
     else if (size < 1024 * 1024 * 1024 * 1024L) {
-        return [NSString stringWithFormat:@"%.2fGB", size * 1.f / (1024 * 1024 * 1024 * 1024L)];
+        return [NSString stringWithFormat:@"%.2f GB", size * 1.f / (1024 * 1024* 1024)];
     }
     else if (size < 1024 * 1024 * 1024 * 1024L * 1024L) {
-        return [NSString stringWithFormat:@"%.2fTB", size * 1.f / (1024 * 1024 * 1024 * 1024L * 1024L)];
+        return [NSString stringWithFormat:@"%.2f TB", size * 1.f / (1024 * 1024 * 1024 * 1024L)];
     }
     else {
-        return [NSString stringWithFormat:@"%.2fPB", size * 1.f / (1024 * 1024 * 1024 * 1024L * 1024L * 1024L)];
+        return [NSString stringWithFormat:@"%.2f PB", size * 1.f / (1024 * 1024 * 1024 * 1024L * 1024L)];
     }
 }
 

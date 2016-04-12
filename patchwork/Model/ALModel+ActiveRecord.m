@@ -336,6 +336,9 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
         return [[indexKeys bk_reject:^BOOL(NSArray<NSString *> *cols) {
             return ![cols isKindOfClass:[NSArray class]] || cols.count == 0;
         }] bk_map:^NSString *(NSArray<NSString *> *cols) {
+            cols = [cols bk_map:^NSString *(NSString *pn) {
+                return [self mappedColumnNameForProperty:pn];
+            }];
             NSString *idxName = [cols componentsJoinedByString:@"_"];
             idxName           = [(unique ? @"uniq_" : @"idx_") stringByAppendingString:idxName];
             NSString *idxVal  = [cols componentsJoinedByString:@", "];
