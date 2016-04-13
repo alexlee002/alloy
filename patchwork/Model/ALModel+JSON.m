@@ -313,9 +313,9 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
         return;
     }
     Class clazz = [self.class commonAncestorWithClass:other.class];
-    if (clazz != self.class || ![clazz isSubclassOfClass:[ALModel class]]) {
-        return;
-    }
+//    if (clazz != self.class || ![clazz isSubclassOfClass:[ALModel class]]) {
+//        return;
+//    }
     NSDictionary<NSString *, YYClassPropertyInfo *> *modelProperties = [clazz allModelProperties];
     if (properties == nil) {
         NSSet *blacklist = [self.class respondsToSelector:@selector(modelPropertyBlacklist)]
@@ -355,7 +355,14 @@ FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
         SEL getter = p.getter;
         SEL setter = p.setter;
         
-        if (getter == nil || setter == nil) {
+        if (getter == nil || ![from respondsToSelector:getter]) {
+            return;
+        }
+        if (setter == nil || ![to respondsToSelector:setter]) {
+            if (!isEmptyString(p.ivarName)) {
+                id value = [from valueForKey:p.ivarName];
+                [to setValue:value forKey:p.ivarName];
+            }
             return;
         }
         

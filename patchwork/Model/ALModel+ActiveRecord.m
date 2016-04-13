@@ -90,7 +90,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 - (void)setRowid:(NSInteger)rowId {
-    NSAssert([self isModelFromDB], @"rowid CAN ONLY be set when this model is load from database!");
+    //NSAssert([self isModelFromDB], @"rowid CAN ONLY be set when this model is load from database!");
     objc_setAssociatedObject(self, &kRowIDAssociatedKey, @(rowId), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
