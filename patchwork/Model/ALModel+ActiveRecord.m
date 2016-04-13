@@ -274,11 +274,16 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 + (BOOL)updateProperties:(NSDictionary *)contentValues
            withCondition:(nullable ALSQLCondition *)condition
                 repleace:(BOOL)replaceExisted {
+    
+    NSMutableDictionary *updateValues = [NSMutableDictionary dictionaryWithCapacity:contentValues.count];
+    [contentValues bk_each:^(NSString *propertyName, id value) {
+        updateValues[[self mappedColumnNameForProperty:propertyName]] = value;
+    }];
     __block BOOL ret = YES;
     [self.DB.queue inTransaction:^(FMDatabase *_Nonnull db, BOOL *_Nonnull rollback) {
         ret = self.DB.UPDATE([self tableName])
                   .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
-                  .VALUES(contentValues)
+                  .VALUES(updateValues)
                   .WHERE(condition)
                   .EXECUTE_UPDATE();
     }];
