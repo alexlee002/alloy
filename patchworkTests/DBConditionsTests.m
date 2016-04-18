@@ -78,13 +78,13 @@
 - (void)testInExp {
     ALSQLCondition *condition = IN(@"col", @[@1, @2, @3, @4, @5]);
     NSLog(@"condition: %@", condition);
-    XCTAssertEqualObjects(condition.sqlClause, @"(col IN [?, ?, ?, ?, ?])");
+    XCTAssertEqualObjects(condition.sqlClause, @"(col IN (?, ?, ?, ?, ?))");
 }
 
 - (void)testNextedInExp {
     ALSQLCondition *condition = IN(@"col", @[@1, @2, @3]).AND(NGT(@"col2", @6));
     NSLog(@"condition: %@", condition);
-    XCTAssertEqualObjects(condition.sqlClause, @"(col IN [?, ?, ?]) AND (col2 <= ?)");
+    XCTAssertEqualObjects(condition.sqlClause, @"(col IN (?, ?, ?)) AND (col2 <= ?)");
 }
 
 - (void)testLikeExp {

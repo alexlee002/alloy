@@ -129,7 +129,7 @@ va_end(args);       \
 }
 
 - (NSString *)description {
-    return [[super description] stringByAppendingFormat:@"\nsql:%@\nargs:%@", self.sqlClause, self.sqlClause];
+    return [[super description] stringByAppendingFormat:@"\nsql:%@\nargs:%@", self.sqlClause, self.sqlArguments];
 }
 
 @end
@@ -310,7 +310,7 @@ FORCE_INLINE ALSQLCondition *IN(id expression, NSArray *values){
         NSString *inStr = [[values bk_map:^NSString *(id obj) {
             return @"?";
         }] componentsJoinedByString:@", "];
-        inStr = [NSString stringWithFormat:@"%@ IN [%@]", expression, inStr];
+        inStr = [NSString stringWithFormat:@"%@ IN (%@)", expression, inStr];
         return [ALSQLCondition conditionWithString:inStr args:values, nil];
     }
     return nil;
