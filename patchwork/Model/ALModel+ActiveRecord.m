@@ -24,6 +24,12 @@
 #import <objc/message.h>
 
 
+#define verifyDBHandler()                   \
+    if (self.DB == nil) {                   \
+        ALLogWarn(@"*** self.DB is nil!");  \
+        return nil;                         \
+    }
+
 NSString * const kRowIdColumnName = @"rowid";
 
 @class _ColumnPropertyInfo;
@@ -156,19 +162,25 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (![self withoudRowId]) {
         selectingColumns = @[ kRowIdColumnName, @"*" ];
     }
+    
+    verifyDBHandler();
+    
     FMResultSet *rs = self.DB.SELECT(selectingColumns).FROM([self tableName]).WHERE(condition).EXECUTE_QUERY();
     return modelsFromResultSet(rs, self);
 }
 
 + (ALSQLSelectCommand *)fetcher {
+    verifyDBHandler();
     return self.DB.SELECT(@[kRowIdColumnName, @"*"]).FROM([self tableName]).APPLY_MODEL(self.class);
 }
 
 + (ALSQLUpdateCommand *)updateExector {
+    verifyDBHandler();
     return self.DB.UPDATE([self tableName]);
 }
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted {
+    verifyDBHandler();
     return self.DB.INSERT([self tableName])
         .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
         .VALUES([self propertiesToSaved])
@@ -222,6 +234,8 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (condition == nil) {
         return NO;
     }
+    
+    verifyDBHandler();
     return self.DB.UPDATE([self tableName])
         .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
         .VALUES([self propertiesToSaved])
@@ -239,6 +253,8 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     [properties bk_each:^(NSString *propertyName) {
         updateValues[[self.class mappedColumnNameForProperty:propertyName]] = [self valueForKey:propertyName];
     }];
+    
+    verifyDBHandler();
     return self.DB.UPDATE([self tableName])
         .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
         .VALUES(updateValues)
@@ -250,10 +266,13 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (![self isModelFromDB]) {
         return NO;
     }
+    
+    verifyDBHandler();
     return self.DB.DELETE_FROM([self tableName]).WHERE([self defaultModelUpdateCondition]).EXECUTE_UPDATE();
 }
 
 + (BOOL)saveRecords:(NSArray<ALModel *> *)models repleace:(BOOL)replaceExisted {
+    verifyDBHandler();
     [self.DB.queue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [models bk_each:^(ALModel *obj) {
             [obj saveOrReplce:replaceExisted];
@@ -263,6 +282,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 + (BOOL)updateRecords:(NSArray<ALModel *> *)models replace:(BOOL)replaceExisted {
+    verifyDBHandler();
     [self.DB.queue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [models bk_each:^(ALModel *obj) {
             [obj updateOrReplace:replaceExisted];
@@ -279,6 +299,8 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     [contentValues bk_each:^(NSString *propertyName, id value) {
         updateValues[[self mappedColumnNameForProperty:propertyName]] = value;
     }];
+    
+    verifyDBHandler();
     __block BOOL ret = YES;
     [self.DB.queue inTransaction:^(FMDatabase *_Nonnull db, BOOL *_Nonnull rollback) {
         ret = self.DB.UPDATE([self tableName])
@@ -295,6 +317,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
         ALLogWarn(@"condition is nil, DELETE ALL records");
     }
 
+    verifyDBHandler();
     return self.DB.DELETE_FROM([self tableName]).WHERE(condition).EXECUTE_UPDATE();
 }
 

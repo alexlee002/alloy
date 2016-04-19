@@ -12,6 +12,28 @@
 #import "NSArray+ArrayExtensions.h"
 
 
+@interface NSObject (NilTest)
+
+@property(readonly) void (^BlockTest)(void);
+@property(readonly) NSString *propTest;
+
+@end
+
+@implementation NSObject(NilTest)
+
+- (void (^)(void))BlockTest {
+    return ^{
+        NSLog(@"Block test");
+    };
+}
+
+- (NSString *)propTest {
+    return @"Property test";
+}
+
+@end
+
+
 @interface patchworkTests : XCTestCase
 
 @end
@@ -24,6 +46,13 @@
 }
 
 - (void)testStringHelper {
+    
+    NSObject *obj = nil;
+    NSLog(@"=== %@", obj.propTest);
+    //obj.BlockTest();
+    
+    
+    
     NSArray *arr = @[ @1, @"2", @(3.1)];
     XCTAssertEqualObjects([arr JSONString] , @"[1,\"2\",3.1]" );
     XCTAssertEqualObjects([[NSOrderedSet orderedSetWithArray:arr] JSONString] , @"[1,\"2\",3.1]" );
