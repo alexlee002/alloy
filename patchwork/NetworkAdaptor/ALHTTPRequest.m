@@ -299,7 +299,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
     ALLogVerbose(@"\nrequest succeeded: %@", [self descriptionDetailed:NO]);
     id JSON = [response.responseData JSONObject];
     if (self.responseModelBlock != nil) {
-        if (JSON != nil && self.responseModelClass != nil) {
+        if (JSON != nil /*&& self.responseModelClass != nil*/) {
             NSError *error = nil;
             ALModel *model = [self modelByParsingResponseJSON:JSON error:&error];
             self.responseModelBlock(model, error, self.identifier);
@@ -328,6 +328,10 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 
 #pragma mark -
 - (nullable id)modelByParsingResponseJSON:(in id)JSONObject error:(inout NSError **)error {
+    if (self.responseModelClass == nil) {
+        return nil;
+    }
+    
     id result = nil;
     if ([JSONObject isKindOfClass:[NSArray class]]) {
         result = [self.responseModelClass modelArrayWithJSON:JSONObject];
