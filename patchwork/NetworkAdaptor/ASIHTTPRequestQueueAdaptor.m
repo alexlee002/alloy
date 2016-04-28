@@ -96,10 +96,11 @@
     if (request.type == ALRequestTypeNotInitialized) {
         request.type = [request autoDetectRequestType];
     }
-    if (request.uploadParams.count > 0) {
+    if (request.uploadParams.count > 0 && request.method == ALHTTPMethodGet) {
         request.method = ALHTTPMethodPost;
     }
-    if (request.method == ALHTTPMethodPost) {
+    
+    if (request.method == ALHTTPMethodPost || request.type == ALRequestTypeUpload) {
         asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:request.url]];
         [request.params bk_each:^(NSString *key, id value) {
             [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
