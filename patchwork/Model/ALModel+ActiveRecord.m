@@ -181,10 +181,19 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted {
     verifyDBHandler();
-    return self.DB.INSERT([self tableName])
-        .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
-        .VALUES([self propertiesToSaved])
-        .EXECUTE_UPDATE();
+    
+    __block BOOL result = NO;
+    [self.DB.queue inDatabase:^(FMDatabase *_Nonnull db) {
+        result = self.DB.INSERT([self tableName])
+                     .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
+                     .VALUES([self propertiesToSaved])
+                     .EXECUTE_UPDATE();
+        if (result) {
+            self.rowid = [db lastInsertRowId];
+        }
+    }];
+    
+    return result;
 }
 
 - (nullable NSDictionary<NSString *, id> *)propertiesToSaved {
