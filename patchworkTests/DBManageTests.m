@@ -242,4 +242,23 @@
 }
 
 
+- (void)testSubCommand {
+    ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];
+    NSString *sql = db.SELECT(@[@"COUNT(*)"]).FROM(db.SELECT(nil).FROM([TestUser tableName])).sql;
+    XCTAssertEqualObjects(sql, @"SELECT COUNT(*) FROM (SELECT * FROM user)");
+
+    ALSQLCommand *cmd =
+        db.SELECT(@[ @"COUNT(*)" ])
+            .FROM(
+                db.SELECT(nil)
+                    .FROM([TestUser tableName])
+                    .WHERE(AS_COL(TestUser, name).MATCHS_PREFIX(@"alex", matchsAny).AND(AS_COL(TestUser, age).GT(@20)))
+                    .ORDER_BY(AS_COL(TestUser, name))).WHERE(AS_COL(TestUser, age).LT(@30));
+    
+    XCTAssertEqualObjects(cmd.sql, @"SELECT COUNT(*) FROM (SELECT * FROM user WHERE (user_name LIKE ?) AND (age > ?) ORDER BY user_name) WHERE (age < ?)");
+    NSArray *args =  @[@"alex%", @20, @30 ];
+    XCTAssertEqualObjects(cmd.sqlArgs, args);
+}
+
+
 @end

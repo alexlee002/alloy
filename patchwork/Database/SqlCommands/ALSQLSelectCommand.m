@@ -39,9 +39,20 @@
     };
 }
 
-- (ALSQLSelectBlockString)FROM {
-    return ^ALSQLSelectCommand *_Nonnull(NSString * str) {
-        _from = [str copy];
+- (ALSQLSelectBlockId)FROM {
+    return ^ALSQLSelectCommand *_Nonnull(id expression) {
+        if ([expression isKindOfClass:[NSString class]]) {
+            _from = [expression copy];
+        } else if ([expression isKindOfClass:[ALSQLSelectCommand class]]) {
+            ALSQLSelectCommand *subSelect = (ALSQLSelectCommand *)expression;
+            _from = [NSString stringWithFormat:@"(%@)", subSelect.sql];
+            if (_sqlArgs == nil) {
+                _sqlArgs = subSelect.sqlArgs;
+            } else {
+                _sqlArgs = [_sqlArgs arrayByAddingObjectsFromArray:subSelect.sqlArgs];
+            }
+        }
+        
         return self;
     };
 }
@@ -192,7 +203,7 @@
         }
     }
     
-    _sqlArgs = _where.sqlArguments;
+    _sqlArgs = _sqlArgs == nil ? _where.sqlArguments : [_sqlArgs arrayByAddingObjectsFromArray:_where.sqlArguments];
     return [sql copy];
 }
 @end

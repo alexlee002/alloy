@@ -64,6 +64,7 @@ static const void * const kModelClassAssociatedKey = &kModelClassAssociatedKey;
     if (completion != nil) {
         completion(rs);
     }
+    [rs close];
 }
 
 - (NSArray<__kindof ALModel *> *_Nullable (^)(void))FETCH_MODELS {
@@ -656,6 +657,7 @@ static FORCE_INLINE void constructModelFromResultSet(FMResultSet *rs, ALModel *m
 
 static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(FMResultSet *rs, Class modelClass) {
     if (rs == nil || ![modelClass isSubclassOfClass:[ALModel class]] || rs.columnCount == 0) {
+        [rs close];
         return nil;
     }
     
@@ -699,6 +701,7 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
         constructModelFromResultSet(rs, oneModel, columnPropertyMapper);
         [models addObject:oneModel];
     }
+    [rs close];
     
     return [models copy];
 }

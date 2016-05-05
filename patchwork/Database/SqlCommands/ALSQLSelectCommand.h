@@ -24,7 +24,7 @@ typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectRawWhereBLock)  (NSString *_Nu
 
 @property(readonly, nullable) NSArray<NSString *> *columns;
 
-@property(readonly) ALSQLSelectBlockString    FROM;
+@property(readonly) ALSQLSelectBlockId        FROM;
 @property(readonly) ALSQLSelectBlockArray     SELECT;
 @property(readonly) ALSQLSelectConditionBlock WHERE;
 /**
