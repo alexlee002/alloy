@@ -84,7 +84,6 @@
     }
     ASIHTTPRequest *asiRequest = [self transformFromALRequest:request];
     _requestDict[@(asiRequest.tag)] = @[ request, asiRequest ];
-    //[asiRequest startAsynchronous];
     [_requestQueue addOperation:asiRequest];
     [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
     return YES;
@@ -99,24 +98,21 @@
     if (request.uploadParams.count > 0 && request.method == ALHTTPMethodGet) {
         request.method = ALHTTPMethodPost;
     }
-    
-    if (request.method == ALHTTPMethodPost || request.type == ALRequestTypeUpload) {
+
+    if (request.type == ALRequestTypeUpload) {
+        [self buildUploadRequest:&asiRequest with:request];
+    } else if (request.type == ALRequestTypeDownload) {
+        [self buildDownloadRequest:&asiRequest with:request];
+    } else if (request.method == ALHTTPMethodPost) {
         asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:request.url]];
         [request.params bk_each:^(NSString *key, id value) {
             [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
         }];
-
-        if (request.type == ALRequestTypeUpload) {
-            [self buildUploadRequest:&asiRequest with:request];
-        }
     } else {
-        if (request.type == ALRequestTypeDownload) {
-            [self buildDownloadRequest:&asiRequest with:request];
-        } else {
-            NSURL *url = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
-            asiRequest = [ASIHTTPRequest requestWithURL:url];
-        }
+        NSURL *url = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
+        asiRequest = [ASIHTTPRequest requestWithURL:url];
     }
+
     asiRequest.requestMethod = [request methodName];
 
     [[request headers] bk_each:^(NSString *key, id value) {
@@ -137,6 +133,10 @@
 }
 
 - (void)buildUploadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
+    NSParameterAssert(asiRequest != NULL);
+    
+    NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
+    *asiRequest = [ASIFormDataRequest requestWithURL:url];
     [request.uploadParams bk_each:^(NSString *key, id fileObj) {
         if ([fileObj isKindOfClass:[NSDictionary class]]) {
             [(ASIFormDataRequest *) (*asiRequest) setData:fileObj[@"data"]
@@ -152,6 +152,8 @@
 }
 
 - (void)buildDownloadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
+    NSParameterAssert(asiRequest != NULL);
+    
     NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
     *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;

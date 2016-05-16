@@ -15,6 +15,8 @@
 
 #define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
 
+static FORCE_INLINE NSString *ObjectDescription(id obj);
+
 const NSInteger ALRequestTypeNotInitialized = -1;
 
 @implementation ALHTTPRequest {
@@ -73,7 +75,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
         [components addObject:[NSString stringWithFormat:@"params: %@", self.params]];
     }
     if (self.uploadParams.count > 0) {
-        [components addObject:[NSString stringWithFormat:@"upload: %@", self.uploadParams]];
+        [components addObject:[NSString stringWithFormat:@"upload: %@", ObjectDescription(self.uploadParams)]];
     }
     if (self.headers.count > 0) {
         [components addObject:[NSString stringWithFormat:@"headers: %@", self.headers]];
@@ -351,3 +353,51 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 }
 
 @end
+
+static const NSUInteger kMaxDescriptionLength = 100;
+static FORCE_INLINE NSString *ObjectDescription(id obj) {
+    if ([obj isKindOfClass:[NSString class]]) {
+        return ((NSString *) obj).length <= kMaxDescriptionLength
+                   ? obj
+                   : [[((NSString *) obj) substringToIndex:kMaxDescriptionLength - 3] stringByAppendingString:@"..."];
+    }
+    if ([obj isKindOfClass:[NSValue class]]) {
+        return [obj description];
+    }
+    if ([obj isKindOfClass:[NSData class]]) {
+        if (((NSData *)obj).length <= kMaxDescriptionLength) {
+            return [obj description];
+        }
+        return [[[((NSData *) obj) subdataWithRange:NSMakeRange(0, kMaxDescriptionLength - 3)] description]
+            stringByAppendingString:@"..."];
+    }
+    if ([obj isKindOfClass:[NSURL class]]) {
+        return ObjectDescription(((NSURL *)obj).absoluteString);
+    }
+    if ([obj isKindOfClass:[NSArray class]]) {
+        NSArray *desc = [((NSArray *)obj) bk_map:^NSString *(id item) {
+            return [@"\t" stringByAppendingString:ObjectDescription(item)];
+        }];
+        return [NSString stringWithFormat:@"(\n%@\n)", [desc componentsJoinedByString:@"\n"]];
+    }
+    if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableArray *desc = [NSMutableArray arrayWithCapacity:[(NSDictionary *)obj count]];
+        [desc addObject:@"("];
+        
+        [(NSDictionary *)obj bk_each:^(id key, id value) {
+            NSString *str = [NSString stringWithFormat:@"\t%@: %@", [key description], ObjectDescription(value)];
+            [desc addObject:str];
+        }];
+        
+        [desc addObject:@")"];
+        return [desc componentsJoinedByString:@"\n"];
+    }
+    if ([obj isKindOfClass:[NSSet class]]) {
+        return ObjectDescription(((NSSet *)obj).allObjects);
+    }
+    if ([obj isKindOfClass:[NSOrderedSet class]]) {
+        return ObjectDescription(((NSOrderedSet *)obj).array);
+    }
+    
+    return [obj description];
+}
