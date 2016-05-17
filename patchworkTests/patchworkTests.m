@@ -10,6 +10,7 @@
 #import "NSString+Helper.h"
 #import "NSObject+JSONTransform.h"
 #import "NSArray+ArrayExtensions.h"
+#import "MD5.h"
 
 
 @interface NSObject (NilTest)
@@ -74,6 +75,15 @@
 - (void)testArray {
     NSArray *arr = @[];
     XCTAssertNil([arr objectAtIndexSafely:-1]);
+}
+
+
+- (void)testFileMD5 {
+    NSString *tmpfile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"Charles.dmg"];
+    NSLog(@"file: %@", tmpfile);
+    
+    NSString *md5 = fileMD5Hash(tmpfile);
+    XCTAssertEqualObjects(@"7a30a08d8e0d896dacd2631169f8116f", md5);
 }
 
 @end
