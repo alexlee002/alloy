@@ -208,7 +208,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     [properties bk_each:^(NSString *propertyName) {
         NSString *selectorName = [NSString
             stringWithFormat:@"customColumnValueTransformFrom%@",
-                             [[propertyName substringToIndexSafety:1]
+                             [[propertyName substringToIndexSafety:1].uppercaseString
                                  stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])]];
         SEL selector = NSSelectorFromString(selectorName);
         id value = nil;
@@ -673,7 +673,7 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
             return;
         }
 
-        NSString *firstUpperPropertyName = [[propertyName substringToIndexSafety:1]
+        NSString *firstUpperPropertyName = [[propertyName substringToIndexSafety:1].uppercaseString
             stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])];
         NSString *customSetterName =
             [NSString stringWithFormat:@"customTransform%@FromRecord:columnIndex:", firstUpperPropertyName];
