@@ -23,5 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 extern NSString *_Nullable fileMD5Hash(NSString *filepath);
+extern NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRange range);
 
 NS_ASSUME_NONNULL_END

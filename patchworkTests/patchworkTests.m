@@ -84,6 +84,17 @@
     
     NSString *md5 = fileMD5Hash(tmpfile);
     XCTAssertEqualObjects(@"7a30a08d8e0d896dacd2631169f8116f", md5);
+    
+    NSDictionary *fileAttrs = [[NSFileManager defaultManager] attributesOfItemAtPath:tmpfile error:nil];
+    NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:tmpfile];
+    uint32_t offset = arc4random() % (fileAttrs.fileSize / 2);
+    uint32_t length = (uint32_t)MIN(fileAttrs.fileSize - offset, 2 * 1024 * 1024);
+    [fh seekToFileOffset:offset];
+    NSData *data = [fh readDataOfLength:length];
+    [fh closeFile];
+    
+    md5 = partialFileMD5Hash(tmpfile, NSMakeRange(offset, length));
+    XCTAssertEqualObjects([data MD5], md5);
 }
 
 @end
