@@ -34,9 +34,9 @@ else
 fi
 
 if [[ $REPO == "trunk" ]]; then
-	sed -ie 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' patchwork.podspec
+	sed -i .bakup  -e 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' patchwork.podspec
 else
-	sed -ie 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' patchwork.podspec
+	sed -i .bakup  -e 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' patchwork.podspec
 fi
 
 git add .

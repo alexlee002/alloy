@@ -21,8 +21,8 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = "10.9"
 
 
-  #s.source       = { :git => "https://github.com/BaiduYun-iOS/patchwork.git", :tag => s.version.to_s }
-  s.source        = { :git => "https://github.com/BaiduYun-iOS/patchwork.git", :branch => "master"}
+  #s.source       = { :git => "https://github.com/alexlee002/patchwork.git", :tag => s.version.to_s }
+  s.source        = { :git => "https://github.com/alexlee002/patchwork.git", :branch => "master"}
   s.source_files  = "patchwork", "patchwork/**/*.{h,m}"
   #s.exclude_files = "Classes/Exclude"
   s.public_header_files = "patchwork/**/*.h"
@@ -34,3 +34,4 @@ Pod::Spec.new do |s|
   s.dependency  "BlocksKit/Core",   "~> 2.2.5"
   s.dependency  "ASIHTTPRequest/Core", "~> 1.8.2"
 end
+
