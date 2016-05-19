@@ -237,8 +237,11 @@
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     [srcReq requestDidSucceedWithResponse:[ALHTTPResponse responseWithASIHttpRequest:request]];
 
-    CheckMemoryLeak(request);
+    TrackMemoryLeak(request);
+    ALLogVerbose(@"srcRequest:%@", srcReq.class);
     [_requestDict removeObjectForKey:@(request.tag)];
+    CheckMemoryLeak(request);
+    
     if (_invalidated && _requestDict.count == 0 &&
         [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
         [self.delegate queueAdaptorDidBecomeInvalid:self];
@@ -249,8 +252,12 @@
     ALHTTPRequest *srcReq = sourceRequestOf(request);
     [srcReq requestDidFailWithResponse:[ALHTTPResponse responseWithASIHttpRequest:request]
                                  error:[self NSURLErrorTransformingFromASIError:request.error]];
-    CheckMemoryLeak(request);
+    
+    TrackMemoryLeak(request);
+    ALLogVerbose(@"srcRequest:%@", srcReq.class);
     [_requestDict removeObjectForKey:@(request.tag)];
+    CheckMemoryLeak(request);
+
     if (_invalidated && _requestDict.count == 0 &&
         [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
         [self.delegate queueAdaptorDidBecomeInvalid:self];

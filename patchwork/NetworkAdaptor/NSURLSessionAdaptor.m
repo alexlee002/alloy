@@ -279,7 +279,9 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     ALHTTPResponse *response =
         request.response ?: [ALHTTPResponse responseWithNSURLResponse:downloadTask.response responseData:nil];
     [request requestDidSucceedWithResponse:response];
-
+    
+    TrackMemoryLeak(request);
+    TrackMemoryLeak(downloadTask);
     CheckMemoryLeak(request);
     CheckMemoryLeak(downloadTask);
     [self destoryRequest:request];
@@ -288,6 +290,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
 //@optional
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error {
     ALLogInfo(@"session: %@ become invalid. Error: %@", _session, error);
+    TrackMemoryLeak(_session);
     CheckMemoryLeak(_session);
     _session = nil;
 }
@@ -353,6 +356,8 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
         request.response ?: [ALHTTPResponse responseWithNSURLResponse:task.response responseData:nil];
     [request requestDidSucceedWithResponse:response];
 
+    TrackMemoryLeak(request);
+    TrackMemoryLeak(task);
     CheckMemoryLeak(request);
     CheckMemoryLeak(task);
     [self destoryRequest:request];
