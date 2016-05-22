@@ -136,17 +136,32 @@
     NSParameterAssert(asiRequest != NULL);
     
     NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
-    *asiRequest = [ASIFormDataRequest requestWithURL:url];
-    [request.uploadParams bk_each:^(NSString *key, id fileObj) {
-        if ([fileObj isKindOfClass:[NSDictionary class]]) {
-            [(ASIFormDataRequest *) (*asiRequest) setData:fileObj[@"data"]
-                                             withFileName:fileObj[@"filename"]
-                                           andContentType:@"contenttype"
-                                                   forKey:key];
-        } else {
-            [(ASIFormDataRequest *) (*asiRequest) setData:fileObj forKey:key];
-        }
-    }];
+    if (request.method == ALHTTPMethodPut) {
+        *asiRequest = [ASIHTTPRequest requestWithURL:url];
+        (*asiRequest).shouldStreamPostDataFromDisk = YES;
+        [request.uploadParams bk_each:^(NSString *key, id fileObj) {
+            NSData *data = castToTypeOrNil(fileObj, NSData);
+            if (data != nil) {
+                [(*asiRequest) appendPostData:data];
+            } else {
+                //TODO: setPostBodyFilePath: ?
+            }
+        }];
+    } else {
+        // default method is Post
+        *asiRequest = [ASIFormDataRequest requestWithURL:url];
+        [request.uploadParams bk_each:^(NSString *key, id fileObj) {
+            if ([fileObj isKindOfClass:[NSDictionary class]]) {
+                [(ASIFormDataRequest *) (*asiRequest) setData:fileObj[@"data"]
+                                                 withFileName:fileObj[@"filename"]
+                                               andContentType:@"contenttype"
+                                                       forKey:key];
+            } else {
+                [(ASIFormDataRequest *) (*asiRequest) setData:fileObj forKey:key];
+            }
+        }];
+    }
+    
     (*asiRequest).uploadProgressDelegate = self;
     (*asiRequest).showAccurateProgress   = YES;
 }
