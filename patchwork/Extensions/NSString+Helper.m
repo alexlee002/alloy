@@ -7,6 +7,7 @@
 //
 
 #import "NSString+Helper.h"
+#import "BlocksKit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -208,19 +209,19 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 }
 
 + (NSString *)sizeFormattedStringWithBytes:(uint64_t)size {
-    if (size < 1024) {
+    if (size < 1000) {
         return [NSString stringWithFormat:@"%lld B", size];
     }
-    else if (size < 1024 * 1024) {
+    else if (size < 1000 * 1000) {
         return [NSString stringWithFormat:@"%lld KB", size / 1024];
     }
-    else if (size < 1024 * 1024 * 1024) {
+    else if (size < 1000 * 1000 * 1000) {
         return [NSString stringWithFormat:@"%.2f MB", size * 1.f / (1024 * 1024)];
     }
-    else if (size < 1024 * 1024 * 1024 * 1024L) {
+    else if (size < 1000 * 1000 * 1000 * 1000L) {
         return [NSString stringWithFormat:@"%.2f GB", size * 1.f / (1024 * 1024* 1024)];
     }
-    else if (size < 1024 * 1024 * 1024 * 1024L * 1024L) {
+    else if (size < 1000 * 1000 * 1000 * 1000L * 1000L) {
         return [NSString stringWithFormat:@"%.2f TB", size * 1.f / (1024 * 1024 * 1024 * 1024L)];
     }
     else {
@@ -234,20 +235,45 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 @implementation NSString (NSURL_Utils)
 
 - (NSString * (^)(NSString *key, id value))SET_QUERY_PARAM {
-    return ^NSString *(NSString *key, id value) {
-        return [self stringByAppendingFormat:@"%@%@=%@",
-                ([self rangeOfString:@"?"].location == NSNotFound ? @"?" : @"&"),
-                [URLParamStringify(key)   stringByURLEncoding],
-                [URLParamStringify(value) stringByURLEncoding]];
-    };
+    return ^NSString *(NSString *key, id value) { return [self urlStringbyAppendingQueryItems:@{key : value}]; };
 }
 
 - (NSString *)urlStringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items {
-    __block NSString *string = self;
-    [items enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        string = string.SET_QUERY_PARAM(key, obj);
+    NSString *queryString = self;
+    NSURL *URL            = [NSURL URLWithString:self];
+    if (URL != nil) {
+        queryString = URL.query;
+    }
+
+    NSMutableDictionary *queryItems = [NSMutableDictionary dictionary];
+    [[queryString componentsSeparatedByString:@"&"] bk_each:^(NSString *obj) {
+        NSInteger location = [obj rangeOfString:@"="].location;
+        NSString *k        = obj;
+        id v               = NSNull.null;
+        if (location != NSNotFound) {
+            k = [obj substringToIndex:location];
+            v = [obj substringFromIndexSafety:location + 1];
+        }
+        queryItems[k] = v;
     }];
-    return string;
+
+    [queryItems setValuesForKeysWithDictionary:items];
+
+    queryString = [[queryItems.allKeys bk_map:^NSString *(NSString *key) {
+        id value = queryItems[key];
+        if (value == NSNull.null) {
+            return [NSString stringWithFormat:@"%@", [URLParamStringify(key) stringByURLEncoding]];
+        }
+        return [NSString stringWithFormat:@"%@=%@", [URLParamStringify(key) stringByURLEncoding],
+                                          [URLParamStringify(value) stringByURLEncoding]];
+    }] componentsJoinedByString:@"&"];
+
+    if (URL != nil) {
+        NSURLComponents *urlComp = [NSURLComponents componentsWithString:self];
+        urlComp.query            = queryString;
+        return urlComp.string;
+    }
+    return queryString;
 }
 
 - (NSString *)stringByURLEncoding {
