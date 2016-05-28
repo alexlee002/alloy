@@ -11,6 +11,7 @@
 #import "ALHTTPResponse.h"
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
+#import "URLHelper.h"
 #import "UtilitiesHeader.h"
 #import "BlocksKitExtension.h"
 #import <objc/runtime.h>
@@ -163,7 +164,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
             [urlRequest setValue:value forHTTPHeaderField:key];
         }];
     } else {
-        NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
+        NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
         urlRequest = [NSMutableURLRequest requestWithURL:url];
     }
     urlRequest.HTTPMethod = [request methodName];

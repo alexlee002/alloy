@@ -13,6 +13,7 @@
 #import "ALHTTPResponse.h"
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
+#import "URLHelper.h"
 #import "NSString+Helper.h"
 #import "NSArray+ArrayExtensions.h"
 #import "NSObject+JSONTransform.h"
@@ -109,7 +110,7 @@
             [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
         }];
     } else {
-        NSURL *url = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
+        NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
         asiRequest = [ASIHTTPRequest requestWithURL:url];
     }
 
@@ -135,7 +136,7 @@
 - (void)buildUploadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSParameterAssert(asiRequest != NULL);
     
-    NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
+    NSURL *url  = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
     if (request.method == ALHTTPMethodPut) {
         *asiRequest = [ASIHTTPRequest requestWithURL:url];
         (*asiRequest).shouldStreamPostDataFromDisk = YES;
@@ -169,7 +170,7 @@
 - (void)buildDownloadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSParameterAssert(asiRequest != NULL);
     
-    NSURL *url  = [NSURL URLWithString:[stringOrEmpty(request.url) urlStringbyAppendingQueryItems:request.params]];
+    NSURL *url  = [[NSURL URLWithString:stringOrEmpty(request.url) ] URLBySettingQueryParamsOfDictionary:request.params];
     *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;
     (*asiRequest).allowResumeForFileDownloads = YES;

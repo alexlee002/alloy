@@ -47,21 +47,6 @@ FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encod
     return NSUTF8StringEncoding;
 }
 
-FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
-    NSString *canonicalString = nil;
-    if ([value isKindOfClass:[NSString class]]) {
-        canonicalString = (NSString *)value;
-    } else if ([NSJSONSerialization isValidJSONObject:value]) {
-        NSData *data = [NSJSONSerialization dataWithJSONObject:value options:0 error:nil];
-        canonicalString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    } else {
-        canonicalString = [value stringify];
-    }
-    
-    return stringOrEmpty(canonicalString);
-}
-
-
 FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1, NSString *str2, NSString *localeName) {
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeName];
     NSComparisonResult result = [str1 compare:str2 options:0 range:NSMakeRange(0, [str1 length]) locale:locale];
@@ -230,84 +215,5 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 }
 
 @end
-
-
-@implementation NSString (NSURL_Utils)
-
-- (NSString * (^)(NSString *key, id value))SET_QUERY_PARAM {
-    return ^NSString *(NSString *key, id value) { return [self urlStringbyAppendingQueryItems:@{key : value}]; };
-}
-
-- (NSString *)urlStringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items {
-    NSString *queryString = self;
-    NSURL *URL            = [NSURL URLWithString:self];
-    if (URL != nil) {
-        queryString = URL.query;
-    }
-
-    NSMutableDictionary *queryItems = [NSMutableDictionary dictionary];
-    [[queryString componentsSeparatedByString:@"&"] bk_each:^(NSString *obj) {
-        NSInteger location = [obj rangeOfString:@"="].location;
-        NSString *k        = obj;
-        id v               = NSNull.null;
-        if (location != NSNotFound) {
-            k = [obj substringToIndex:location];
-            v = [obj substringFromIndexSafety:location + 1];
-        }
-        queryItems[k] = v;
-    }];
-
-    [queryItems setValuesForKeysWithDictionary:items];
-
-    queryString = [[queryItems.allKeys bk_map:^NSString *(NSString *key) {
-        id value = queryItems[key];
-        if (value == NSNull.null) {
-            return [NSString stringWithFormat:@"%@", [URLParamStringify(key) stringByURLEncoding]];
-        }
-        return [NSString stringWithFormat:@"%@=%@", [URLParamStringify(key) stringByURLEncoding],
-                                          [URLParamStringify(value) stringByURLEncoding]];
-    }] componentsJoinedByString:@"&"];
-
-    if (URL != nil) {
-        NSURLComponents *urlComp = [NSURLComponents componentsWithString:self];
-        urlComp.query            = queryString;
-        return urlComp.string;
-    }
-    return queryString;
-}
-
-- (NSString *)stringByURLEncoding {
-    NSString *resultStr = self;
-
-    CFStringRef originalString = (__bridge CFStringRef) self;
-    CFStringRef leaveUnescaped = CFSTR(" ");
-    CFStringRef forceEscaped   = CFSTR("!*'();:@&=+$,/?%#[]");
-
-    CFStringRef escapedStr;
-    escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, originalString, leaveUnescaped,
-                                                         forceEscaped, kCFStringEncodingUTF8);
-
-    if (escapedStr) {
-        NSMutableString *mutableStr = [NSMutableString stringWithString:(__bridge NSString *) escapedStr];
-        CFRelease(escapedStr);
-
-        // replace spaces with plusses
-        [mutableStr replaceOccurrencesOfString:@" "
-                                    withString:@"%20"
-                                       options:0
-                                         range:NSMakeRange(0, [mutableStr length])];
-        resultStr = mutableStr;
-    }
-    return resultStr;
-}
-
-- (NSString *)stringByURLDecoding {
-    NSString *result = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
-    result           = [result stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    return result;
-}
-
-@end
-
 
 NS_ASSUME_NONNULL_END

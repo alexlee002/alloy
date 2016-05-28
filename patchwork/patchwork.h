@@ -58,6 +58,7 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "NSString+Helper.h"
 #import "NSCache+ALExtensions.h"
 #import "NSDate+ALExtensions.h"
+#import "URLHelper.h"
 
 // network adaptor
 #import "ALHTTPRequest.h"

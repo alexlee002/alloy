@@ -59,6 +59,9 @@
 		439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */; };
 		43A8AFD91CC0DFA5002FA8F6 /* CRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A8AFD71CC0DFA5002FA8F6 /* CRC.h */; };
 		43A8AFDA1CC0DFA5002FA8F6 /* CRC.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A8AFD81CC0DFA5002FA8F6 /* CRC.m */; };
+		43ACA4E51CF87330006941C3 /* URLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43ACA4E31CF87330006941C3 /* URLHelper.h */; };
+		43ACA4E61CF87330006941C3 /* URLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43ACA4E41CF87330006941C3 /* URLHelper.m */; };
+		43ACA4E81CFA18D5006941C3 /* URLHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43ACA4E71CFA18D5006941C3 /* URLHelperTests.m */; };
 		43B3D57D1CA308CF0076C1AA /* HHTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B3D57B1CA308CF0076C1AA /* HHTimer.m */; };
 		43B3D57E1CA30B3F0076C1AA /* HHTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B3D57A1CA308CF0076C1AA /* HHTimer.h */; };
 		43B3D5811CA30DEF0076C1AA /* NSObject+JSONTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */; };
@@ -164,6 +167,9 @@
 		439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
 		43A8AFD71CC0DFA5002FA8F6 /* CRC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRC.h; sourceTree = "<group>"; };
 		43A8AFD81CC0DFA5002FA8F6 /* CRC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRC.m; sourceTree = "<group>"; };
+		43ACA4E31CF87330006941C3 /* URLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHelper.h; sourceTree = "<group>"; };
+		43ACA4E41CF87330006941C3 /* URLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLHelper.m; sourceTree = "<group>"; };
+		43ACA4E71CFA18D5006941C3 /* URLHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLHelperTests.m; sourceTree = "<group>"; };
 		43B3D57A1CA308CF0076C1AA /* HHTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HHTimer.h; sourceTree = "<group>"; };
 		43B3D57B1CA308CF0076C1AA /* HHTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHTimer.m; sourceTree = "<group>"; };
 		43B3D57F1CA30DEF0076C1AA /* NSObject+JSONTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+JSONTransform.h"; sourceTree = "<group>"; };
@@ -373,6 +379,7 @@
 				43B518BC1C7735270060C3AA /* DBManageTests.m */,
 				43FB7AEA1CA00A4D007B62C7 /* DBConditionsTests.m */,
 				43B3D5E41CA45BC50076C1AA /* JSONMappingTests.m */,
+				43ACA4E71CFA18D5006941C3 /* URLHelperTests.m */,
 			);
 			path = patchworkTests;
 			sourceTree = "<group>";
@@ -409,6 +416,8 @@
 				43B5188A1C759AAF0060C3AA /* BlocksKitExtension.m */,
 				43B518831C759A3F0060C3AA /* NSString+Helper.h */,
 				43B518841C759A3F0060C3AA /* NSString+Helper.m */,
+				43ACA4E31CF87330006941C3 /* URLHelper.h */,
+				43ACA4E41CF87330006941C3 /* URLHelper.m */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -496,6 +505,7 @@
 				430F6F651C9A5F3D003E8F6C /* NSCache+ALExtensions.h in Headers */,
 				43B5189E1C75AC3F0060C3AA /* ALDatabase.h in Headers */,
 				430F6F7C1C9A5F7C003E8F6C /* MD5.h in Headers */,
+				43ACA4E51CF87330006941C3 /* URLHelper.h in Headers */,
 				430F6F671C9A5F3D003E8F6C /* NSDate+ALExtensions.h in Headers */,
 				43FB7AE81C9FE6DF007B62C7 /* ALSQLExpression.h in Headers */,
 				43B518851C759A3F0060C3AA /* NSString+Helper.h in Headers */,
@@ -773,6 +783,7 @@
 				43A8AFDA1CC0DFA5002FA8F6 /* CRC.m in Sources */,
 				430F6F7F1C9A5F7C003E8F6C /* SHA1.m in Sources */,
 				436296841C7B6D3C00EBA718 /* ALSQLUpdateCommand.m in Sources */,
+				43ACA4E61CF87330006941C3 /* URLHelper.m in Sources */,
 				439B6A271C9308C700900FEB /* ALHTTPResponse.m in Sources */,
 				430F6F661C9A5F3D003E8F6C /* NSCache+ALExtensions.m in Sources */,
 				436296B11C7C6C2200EBA718 /* ALSQLDeleteCommand.m in Sources */,
@@ -812,6 +823,7 @@
 			files = (
 				436E36491CA92D9A0065E8D6 /* (null) in Sources */,
 				43B518BD1C7735270060C3AA /* DBManageTests.m in Sources */,
+				43ACA4E81CFA18D5006941C3 /* URLHelperTests.m in Sources */,
 				436E365B1CAA5AB80065E8D6 /* JSONMapping1Tests.m in Sources */,
 				43FB7AEB1CA00A4D007B62C7 /* DBConditionsTests.m in Sources */,
 				43B3D5E51CA45BC50076C1AA /* JSONMappingTests.m in Sources */,

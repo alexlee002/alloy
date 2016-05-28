@@ -17,7 +17,6 @@ extern id _Nullable unwrapNil(id _Nullable obj);
 extern NSString         *stringOrEmpty     (NSString *_Nullable string);
 extern BOOL             isEmptyString      (NSString *_Nullable string);
 extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName);
-extern NSString         *URLParamStringify (id _Nullable value);
 
 @interface NSObject (StringHelper)
 
@@ -44,14 +43,5 @@ extern NSString         *URLParamStringify (id _Nullable value);
 + (NSString *)sizeFormattedStringWithBytes:(uint64_t)size;
 @end
 
-
-@interface NSString (NSURL_Utils)
-
-@property(nonatomic, readonly) NSString * (^SET_QUERY_PARAM)(NSString *key, id value);
-
-- (NSString *)urlStringbyAppendingQueryItems:(NSDictionary<NSString *, id> *)items;
-- (NSString *)stringByURLEncoding;
-- (NSString *)stringByURLDecoding;
-@end
 
 NS_ASSUME_NONNULL_END
