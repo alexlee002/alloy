@@ -38,14 +38,16 @@ NSString * const kALDBConflictPolicyReplace     = @"OR REPLACE";
 }
 
 - (ALSQLExecuteQueryBlock)EXECUTE_QUERY {
-    return ^FMResultSet *_Nullable(void) {
-        __block FMResultSet *rs = nil;
+    return ^(void (^resultHandler)(FMResultSet *_Nullable rs)) {
         [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
             NSString *sql = [self sql];
             ALLogVerbose(@"sql: %@\nargs: %@", sql, _sqlArgs);
-            rs = [db executeQuery:sql withArgumentsInArray:_sqlArgs];
+            FMResultSet *rs = [db executeQuery:sql withArgumentsInArray:_sqlArgs];
+            if (resultHandler) {
+                resultHandler(rs);
+            }
+            [rs close];
         }];
-        return rs;
     };
 }
 

@@ -24,8 +24,6 @@ extern NSString * const kRowIdColumnName;
 @property(readonly) NSArray<__kindof ALModel *> *_Nullable (^FETCH_MODELS)(void);
 @property(readonly) ALSQLSelectCommand *_Nonnull           (^APPLY_MODEL) (Class _Nonnull modelClass);
 
-- (void)fetchWithCompletion:(void (^_Nullable)(FMResultSet *_Nullable rs))completion;
-
 @end
 
 
@@ -38,7 +36,6 @@ extern NSString * const kRowIdColumnName;
 
 @property(PROP_ATOMIC_DEF) NSInteger rowid; // the rowid in database, if the table is "without rowid", return 0;
 
-//+ (nullable ALDatabase *)DB;
 + (NSDictionary<NSString *, ALDBColumnInfo *> *)columns;
 + (NSString *)mappedColumnNameForProperty:(NSString *)propertyName;
 + (nullable NSArray<__kindof ALModel *> *)modelsWithCondition:(nullable ALSQLCondition *)condition;

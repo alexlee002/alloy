@@ -82,6 +82,10 @@
     NSString *tmpfile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"Charles.dmg"];
     NSLog(@"file: %@", tmpfile);
     
+    if (![[NSFileManager defaultManager] fileExistsAtPath:tmpfile]) {
+        return;
+    }
+    
     NSString *md5 = fileMD5Hash(tmpfile);
     XCTAssertEqualObjects(@"7a30a08d8e0d896dacd2631169f8116f", md5);
     

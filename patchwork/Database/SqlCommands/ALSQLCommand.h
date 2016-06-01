@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - typedefs
 
-typedef FMResultSet *_Nullable (^ALSQLExecuteQueryBlock)  (void);
-typedef BOOL                   (^ALSQLExecuteUpdateBlock) (void);
+typedef void (^ALSQLExecuteQueryBlock)  (void (^)(FMResultSet *_Nullable rs));
+typedef BOOL (^ALSQLExecuteUpdateBlock) (void);
 
 #pragma mark - constants
 extern NSString * const kALDBConflictPolicyRollback;

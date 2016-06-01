@@ -204,10 +204,10 @@
     
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == count);
     
-    [[TestUser fetcher].SELECT(@[@"count(*)"]) fetchWithCompletion:^(FMResultSet * _Nullable rs) {
+    [TestUser fetcher].SELECT(@[@"count(*)"]).EXECUTE_QUERY(^(FMResultSet * _Nullable rs) {
         [rs next];
         XCTAssertTrue([rs intForColumnIndex:0] == count);
-    }];
+    });
     
     NSArray *models = [TestUser fetcher].FETCH_MODELS();
     NSLog(@"%@", models);

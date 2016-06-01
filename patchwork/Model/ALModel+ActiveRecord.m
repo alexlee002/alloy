@@ -59,19 +59,13 @@ static const void * const kModelClassAssociatedKey = &kModelClassAssociatedKey;
     };
 }
 
-- (void)fetchWithCompletion:(void (^_Nullable)(FMResultSet *_Nullable rs))completion {
-    FMResultSet *rs = self.EXECUTE_QUERY();
-    if (completion != nil) {
-        completion(rs);
-    }
-    [rs close];
-}
-
 - (NSArray<__kindof ALModel *> *_Nullable (^)(void))FETCH_MODELS {
     return ^NSArray<__kindof ALModel *> *_Nullable(void) {
-        self.SELECT(@[kRowIdColumnName, @"*"]);
-        FMResultSet *rs = self.EXECUTE_QUERY();
-        return modelsFromResultSet(rs, [self modelClass]);
+        __block NSArray *models = nil;
+        self.SELECT(@[kRowIdColumnName, @"*"]).EXECUTE_QUERY(^(FMResultSet *rs){
+            models = modelsFromResultSet(rs, [self modelClass]);
+        });
+        return models;
     };
 }
 
@@ -166,8 +160,11 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     
     verifyDBHandler();
     
-    FMResultSet *rs = self.DB.SELECT(selectingColumns).FROM([self tableName]).WHERE(condition).EXECUTE_QUERY();
-    return modelsFromResultSet(rs, self);
+    __block NSArray *models = nil;
+    self.DB.SELECT(selectingColumns).FROM([self tableName]).WHERE(condition).EXECUTE_QUERY(^(FMResultSet *rs) {
+        models = modelsFromResultSet(rs, self);
+    });
+    return models;
 }
 
 + (ALSQLSelectCommand *)fetcher {
