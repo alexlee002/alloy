@@ -390,7 +390,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
                 return [self mappedColumnNameForProperty:pn];
             }];
             NSString *idxName = [cols componentsJoinedByString:@"_"];
-            idxName           = [(unique ? @"uniq_" : @"idx_") stringByAppendingString:idxName];
+            idxName = [NSString stringWithFormat:@"%@_%@_%@", (unique ? @"uniq" : @"idx"), tableName, idxName];
             NSString *idxVal  = [cols componentsJoinedByString:@", "];
             
             return [NSString
