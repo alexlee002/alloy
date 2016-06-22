@@ -25,7 +25,6 @@
                                       block:(dispatch_block_t)block
                                    userInfo:(id)userInfo
                                     repeats:(BOOL)yesOrNo {
-    NSParameterAssert(seconds);
     NSParameterAssert(block);
 
     HHTimer *timer = [[self alloc] init];
@@ -35,6 +34,9 @@
     uint64_t nsec = (uint64_t)(seconds * NSEC_PER_SEC);
     dispatch_source_set_timer(timer->_source, dispatch_time(DISPATCH_TIME_NOW, nsec), nsec, 0);
     void (^internalBlock)(void) = ^{
+        if (block == nil) {
+            return;
+        }
         if (!yesOrNo) {
             block();
             [timer invalidate];

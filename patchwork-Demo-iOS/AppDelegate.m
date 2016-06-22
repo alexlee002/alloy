@@ -233,19 +233,21 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[UIViewController alloc] init];
-
-#undef AL_ENABLE_ASIHTTPREQUEST
-#define AL_ENABLE_ASIHTTPREQUEST 0
     
-#undef AL_ENABLE_NSURLSESSION
-#define AL_ENABLE_NSURLSESSION   1
+    [self syncTest];
 
-[[ALHTTPRequest requestWithURLString:@"https://api.github.com/users/alexlee002"
-                             method:ALHTTPMethodGet
-                 responseModelClass:[GithubUser class]
-                         completion:^(id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier){
-                             NSLog(@"user model: %@", [responseModel yy_modelDescription]);
-                         }] send];
+//#undef AL_ENABLE_ASIHTTPREQUEST
+//#define AL_ENABLE_ASIHTTPREQUEST 0
+//    
+//#undef AL_ENABLE_NSURLSESSION
+//#define AL_ENABLE_NSURLSESSION   1
+//
+//[[ALHTTPRequest requestWithURLString:@"https://api.github.com/users/alexlee002"
+//                             method:ALHTTPMethodGet
+//                 responseModelClass:[GithubUser class]
+//                         completion:^(id _Nullable responseModel, NSError *_Nullable error, NSUInteger identifier){
+//                             NSLog(@"user model: %@", [responseModel yy_modelDescription]);
+//                         }] send];
 
     //    [[ALHTTPRequest
     //         requestWithURLString:@"http://shouji.baidu.com/download/baiduinput_mac_v3.4_1000e.dmg"

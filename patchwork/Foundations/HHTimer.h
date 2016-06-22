@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HHTimer : NSObject
 
 + (HHTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)seconds
                               dispatchQueue:(dispatch_queue_t)queue
                                       block:(dispatch_block_t)block
-                                   userInfo:(id)userInfo
+                                   userInfo:(nullable id)userInfo
                                     repeats:(BOOL)yesOrNo;
 
 - (void)fire;
@@ -22,3 +24,5 @@
 - (BOOL)isValid;
 - (id)userInfo;
 @end
+
+NS_ASSUME_NONNULL_END

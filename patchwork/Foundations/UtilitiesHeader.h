@@ -69,9 +69,10 @@
 // clang-format on
 
 //-Warc-performSelector-leaks
-#define IgnoreClangDiagnostic(ignoreStatement, wrappedStatements) \
+#define _AL_PRAGMA(msg) _Pragma(#msg)
+#define IgnoreClangDiagnostic(SUPPRESSED, wrappedStatements) \
     _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"##ignoreStatement\"") \
+    _AL_PRAGMA(clang diagnostic ignored SUPPRESSED) \
     wrappedStatements \
     _Pragma("clang diagnostic pop")
 
