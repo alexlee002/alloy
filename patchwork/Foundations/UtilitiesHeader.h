@@ -20,6 +20,12 @@
 // cast "obj" to "type", or return nil if failed
 #define castToTypeOrNil(obj, type) ([(obj) isKindOfClass:[type class]] ? (type *)(obj) : nil)
 
+// verify and invoke block
+#define verifyAndInvokeBlock(block, ...) \
+    if ((block) != nil) {                \
+        (block)( __VA_ARGS__ );          \
+    }
+
 // CheckMemoryLeak
 #if DEBUG
 #define TrackMemoryLeak(willReleaseObject) __weak typeof(willReleaseObject) _weak_##willReleaseObject = willReleaseObject;
