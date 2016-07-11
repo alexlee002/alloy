@@ -12,29 +12,33 @@
 
 
 static FORCE_INLINE NSData *DES_Crypt(CCOperation op, NSData *input, NSData *key) {
-#if DEBUG
-    assert(key.length <= kCCKeySizeAES256);
-#endif
-    char keyPtr[kCCKeySizeAES256 + 1];
+    char keyPtr[kCCBlockSizeDES + 1];
     bzero(keyPtr, sizeof(keyPtr));
-    memcpy(keyPtr, [key bytes], MIN(key.length, kCCKeySizeAES256));
+    memcpy(keyPtr, [key bytes], MIN(key.length, kCCBlockSizeDES));
     
-    NSUInteger dataLength = [input length];
-    size_t bufferSize = dataLength + kCCBlockSizeAES128;
-    void *buffer      = malloc(bufferSize);
-    
-    NSData *outputData = nil;
+    size_t bufferSize = (input.length + kCCBlockSizeDES) & ~(kCCBlockSizeDES - 1);
+    uint8_t *outputBytes = malloc(bufferSize * sizeof(uint8_t));
+    memset((void *)outputBytes, 0x0, bufferSize);
     size_t outputBytesLength = 0;
-    CCCryptorStatus result =
-        CCCrypt(op, kCCAlgorithmDES, kCCOptionPKCS7Padding | kCCOptionECBMode, keyPtr, kCCBlockSizeDES, NULL,
-                [input bytes], dataLength, buffer, bufferSize, &outputBytesLength);
+    
+    CCCryptorStatus result = CCCrypt(op,
+                                     kCCAlgorithmDES,
+                                     kCCOptionPKCS7Padding | kCCOptionECBMode,
+                                     keyPtr,
+                                     kCCBlockSizeDES,
+                                     NULL,
+                                     [input bytes],
+                                     input.length,
+                                     outputBytes,
+                                     bufferSize,
+                                     &outputBytesLength);
     if (result == kCCSuccess) {
-        outputData = [NSData dataWithBytesNoCopy:buffer length:outputBytesLength];
+        return [NSData dataWithBytesNoCopy:outputBytes length:outputBytesLength];
     } else {
-        ALLogWarn(@"DES Error status: %@", @(result));
+        ALLogWarn(@"*** DES Error status: %@", @(result));
     }
-    free(buffer);
-    return outputData;
+    free(outputBytes);
+    return nil;
 }
 
 
