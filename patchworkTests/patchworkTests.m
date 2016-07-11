@@ -11,6 +11,7 @@
 #import "NSObject+JSONTransform.h"
 #import "NSArray+ArrayExtensions.h"
 #import "MD5.h"
+#import "DES.h"
 
 
 @interface NSObject (NilTest)
@@ -101,4 +102,14 @@
     XCTAssertEqualObjects([data MD5], md5);
 }
 
+
+- (void)testDES {
+    NSData *key = [@"patchwork" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *string = @"NSString *tmpfile = [NSTemporaryDirectory() stringByAppendingPathComponent:@\"Charles.dmg\"];";
+    
+    NSData *encData = [[string dataUsingEncoding:NSUTF8StringEncoding] dataByDESEncryptingWithKey:key];
+    NSData *decData = [encData dataByDESDecryptingWithKey:key];
+    NSString *decString = [[NSString alloc] initWithData:decData encoding:NSUTF8StringEncoding];
+    XCTAssertEqualObjects(decString, string);
+}
 @end
