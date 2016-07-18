@@ -33,14 +33,14 @@ else
 	LOCAL_REF=$REMOTE_REF
 fi
 
-if [[ $REPO == "trunk" ]]; then
-	sed -i .bakup  -e 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' patchwork.podspec
-else
-	sed -i .bakup  -e 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' patchwork.podspec
-fi
+# if [[ $REPO == "trunk" ]]; then
+# 	sed -i .bakup  -e 's/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/https:\/\/github.com\/alexlee002\/patchwork.git/g' patchwork.podspec
+# else
+# 	sed -i .bakup  -e 's/https:\/\/github.com\/alexlee002\/patchwork.git/https:\/\/github.com\/BaiduYun-iOS\/patchwork.git/g' patchwork.podspec
+# fi
 
-git add .
-git commit --amend --no-edit
+# git add .
+# git commit --amend --no-edit
 
 echo "executing... 'git push $REPO $LOCAL_REF:$REMOTE_REF'"
 git push $REPO $LOCAL_REF:$REMOTE_REF

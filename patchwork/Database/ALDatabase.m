@@ -76,7 +76,8 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 }
 
 - (nullable instancetype)init {
-    NSAssert(NO, @"Not supported!");
+    // To support chain expression syntax, we need to support default -init constructor that we can
+    // create a "fake" object to avoid crash. -- Think about "nil();".
     return nil;
 }
 
