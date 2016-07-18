@@ -17,6 +17,7 @@
 #import <objc/runtime.h>
 
 
+
 @interface NSObject (NilTest)
 
 @property(readonly) void (^BlockTest)(void);
@@ -144,7 +145,5 @@
 - (void)testNilBlockProperty {
     XCTAssert(SafeBlocksChainObj(nil, ALSQLSelectCommand).SELECT(@[@"*"]).end() == nil);
 }
-
-
 
 @end
