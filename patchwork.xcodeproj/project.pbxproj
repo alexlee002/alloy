@@ -57,6 +57,8 @@
 		439B6A2B1C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */; };
 		439B6A2C1C9308C700900FEB /* NSURLSessionAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */; };
 		439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */; };
+		43A7F3A31D3BFF8A009EB97F /* SafeBlocksChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A7F3A11D3BFF8A009EB97F /* SafeBlocksChain.h */; };
+		43A7F3A41D3BFF8A009EB97F /* SafeBlocksChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A7F3A21D3BFF8A009EB97F /* SafeBlocksChain.m */; };
 		43A8AFD91CC0DFA5002FA8F6 /* CRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A8AFD71CC0DFA5002FA8F6 /* CRC.h */; };
 		43A8AFDA1CC0DFA5002FA8F6 /* CRC.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A8AFD81CC0DFA5002FA8F6 /* CRC.m */; };
 		43ACA4E51CF87330006941C3 /* URLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43ACA4E31CF87330006941C3 /* URLHelper.h */; };
@@ -165,6 +167,8 @@
 		439B6A211C9308C700900FEB /* ASIHTTPRequestQueueAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIHTTPRequestQueueAdaptor.m; sourceTree = "<group>"; };
 		439B6A221C9308C700900FEB /* NSURLSessionAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionAdaptor.h; sourceTree = "<group>"; };
 		439B6A231C9308C700900FEB /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
+		43A7F3A11D3BFF8A009EB97F /* SafeBlocksChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBlocksChain.h; sourceTree = "<group>"; };
+		43A7F3A21D3BFF8A009EB97F /* SafeBlocksChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SafeBlocksChain.m; sourceTree = "<group>"; };
 		43A8AFD71CC0DFA5002FA8F6 /* CRC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRC.h; sourceTree = "<group>"; };
 		43A8AFD81CC0DFA5002FA8F6 /* CRC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRC.m; sourceTree = "<group>"; };
 		43ACA4E31CF87330006941C3 /* URLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHelper.h; sourceTree = "<group>"; };
@@ -273,6 +277,8 @@
 				43B3D5801CA30DEF0076C1AA /* NSObject+JSONTransform.m */,
 				43A8AFD71CC0DFA5002FA8F6 /* CRC.h */,
 				43A8AFD81CC0DFA5002FA8F6 /* CRC.m */,
+				43A7F3A11D3BFF8A009EB97F /* SafeBlocksChain.h */,
+				43A7F3A21D3BFF8A009EB97F /* SafeBlocksChain.m */,
 			);
 			path = Foundations;
 			sourceTree = "<group>";
@@ -471,6 +477,7 @@
 				43D0FE881C7EB3F40096F232 /* ALModel+ActiveRecord.h in Headers */,
 				43B3D57E1CA30B3F0076C1AA /* HHTimer.h in Headers */,
 				4362967F1C7B6D3C00EBA718 /* ALSQLCommand.h in Headers */,
+				43A7F3A31D3BFF8A009EB97F /* SafeBlocksChain.h in Headers */,
 				430F6F811C9A5F7C003E8F6C /* UtilitiesHeader.h in Headers */,
 				434B75F11CA13E1400242245 /* DES.h in Headers */,
 				430F6F7A1C9A5F7C003E8F6C /* Base64.h in Headers */,
@@ -801,6 +808,7 @@
 				439B6A251C9308C700900FEB /* ALHTTPRequest.m in Sources */,
 				43B518801C7595870060C3AA /* ALModel+JSON.m in Sources */,
 				4344E0611CA690C700D96243 /* ALHTTPRequest+Helper.m in Sources */,
+				43A7F3A41D3BFF8A009EB97F /* SafeBlocksChain.m in Sources */,
 				43D0FE831C7EAC7D0096F232 /* ALModel_Define.m in Sources */,
 				439B6A2D1C9308C700900FEB /* NSURLSessionAdaptor.m in Sources */,
 				43B3D5821CA30DEF0076C1AA /* NSObject+JSONTransform.m in Sources */,

@@ -83,6 +83,7 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "HHTimer.h"
 #import "NSObject+JSONTransform.h"
 #import "CRC.h"
+#import "SafeBlocksChain.h"
 //#endif
 
 

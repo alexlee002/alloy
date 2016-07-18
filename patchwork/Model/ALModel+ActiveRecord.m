@@ -22,13 +22,7 @@
 #import "ALOCRuntime.h"
 #import <sqlite3.h>
 #import <objc/message.h>
-
-
-#define verifyDBHandler()                   \
-    if (self.DB == nil) {                   \
-        ALLogWarn(@"*** self.DB is nil!");  \
-        return nil;                         \
-    }
+#import "SafeBlocksChain.h"
 
 NSString * const kRowIdColumnName = @"rowid";
 
@@ -61,6 +55,8 @@ static const void * const kModelClassAssociatedKey = &kModelClassAssociatedKey;
 
 - (NSArray<__kindof ALModel *> *_Nullable (^)(void))FETCH_MODELS {
     return ^NSArray<__kindof ALModel *> *_Nullable(void) {
+        VerifyChainingObjAndReturn(self, nil);
+        
         __block NSArray *models = nil;
         self.SELECT(@[kRowIdColumnName, @"*"]).EXECUTE_QUERY(^(FMResultSet *rs){
             models = modelsFromResultSet(rs, [self modelClass]);
@@ -149,7 +145,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 + (nullable ALDatabase *)DB {
-    return [ALDatabase databaseWithPath:[self databaseIdentifier]];
+    return SafeBlocksChainObj([ALDatabase databaseWithPath:[self databaseIdentifier]], ALDatabase);
 }
 
 + (nullable NSArray<__kindof ALModel *> *)modelsWithCondition:(nullable ALSQLCondition *)condition {
@@ -157,8 +153,6 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (![self withoudRowId]) {
         selectingColumns = @[ kRowIdColumnName, @"*" ];
     }
-    
-    verifyDBHandler();
     
     __block NSArray *models = nil;
     self.DB.SELECT(selectingColumns).FROM([self tableName]).WHERE(condition).EXECUTE_QUERY(^(FMResultSet *rs) {
@@ -168,24 +162,20 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 + (ALSQLSelectCommand *)fetcher {
-    verifyDBHandler();
     return self.DB.SELECT(@[kRowIdColumnName, @"*"]).FROM([self tableName]).APPLY_MODEL(self.class);
 }
 
 + (ALSQLUpdateCommand *)updateExector {
-    verifyDBHandler();
     return self.DB.UPDATE([self tableName]);
 }
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted {
-    verifyDBHandler();
-    
     __block BOOL result = NO;
     [self.DB.queue inDatabase:^(FMDatabase *_Nonnull db) {
         result = self.DB.INSERT([self tableName])
-                     .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
-                     .VALUES([self propertiesToSaved])
-                     .EXECUTE_UPDATE();
+        .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
+        .VALUES([self propertiesToSaved])
+        .EXECUTE_UPDATE();
         if (result) {
             self.rowid = [db lastInsertRowId];
         }
@@ -200,13 +190,13 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     }] bk_reject:^BOOL(NSString *propertyName) {
         return unwrapNil(propertyName) == nil || [propertyName isEqualToString:keypath(self.rowid)];
     }];
-
+    
     NSMutableDictionary *updateValues = [NSMutableDictionary dictionaryWithCapacity:properties.count];
     [properties bk_each:^(NSString *propertyName) {
         NSString *selectorName = [NSString
-            stringWithFormat:@"customColumnValueTransformFrom%@",
-                             [[propertyName substringToIndexSafety:1].uppercaseString
-                                 stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])]];
+                                  stringWithFormat:@"customColumnValueTransformFrom%@",
+                                  [[propertyName substringToIndexSafety:1].uppercaseString
+                                   stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])]];
         SEL selector = NSSelectorFromString(selectorName);
         id value = nil;
         if (selector != nil && [self respondsToSelector:selector]) {
@@ -230,9 +220,9 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
         return [[[self.class primaryKeys] bk_map:^ALSQLCondition *(NSString *propertyName) {
             return [EQ([self.class mappedColumnNameForProperty:propertyName], [self valueForKey:propertyName]) build];
         }] bk_reduce:nil
-            withBlock:^ALSQLCondition *(ALSQLCondition *result, ALSQLCondition *obj) {
-                return result == nil ? [obj build] : result.AND(obj);
-            }];
+                withBlock:^ALSQLCondition *(ALSQLCondition *result, ALSQLCondition *obj) {
+                    return result == nil ? [obj build] : result.AND(obj);
+                }];
     }
 }
 
@@ -241,13 +231,12 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (condition == nil) {
         return NO;
     }
-    
-    verifyDBHandler();
+
     return self.DB.UPDATE([self tableName])
-        .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
-        .VALUES([self propertiesToSaved])
-        .WHERE(condition)
-        .EXECUTE_UPDATE();
+    .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
+    .VALUES([self propertiesToSaved])
+    .WHERE(condition)
+    .EXECUTE_UPDATE();
 }
 
 - (BOOL)updateProperties:(NSArray<NSString *> *)properties repleace:(BOOL)replaceExisted {
@@ -255,31 +244,29 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (condition == nil) {
         return NO;
     }
-
+    
     NSMutableDictionary *updateValues = [NSMutableDictionary dictionaryWithCapacity:properties.count];
     [properties bk_each:^(NSString *propertyName) {
         updateValues[[self.class mappedColumnNameForProperty:propertyName]] = [self valueForKey:propertyName];
     }];
-    
-    verifyDBHandler();
+
     return self.DB.UPDATE([self tableName])
-        .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
-        .VALUES(updateValues)
-        .WHERE(condition)
-        .EXECUTE_UPDATE();
+    .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
+    .VALUES(updateValues)
+    .WHERE(condition)
+    .EXECUTE_UPDATE();
 }
 
 - (BOOL)deleteRecord {
     if (![self isModelFromDB]) {
         return NO;
     }
-    
-    verifyDBHandler();
+
     return self.DB.DELETE_FROM([self tableName]).WHERE([self defaultModelUpdateCondition]).EXECUTE_UPDATE();
 }
 
 + (BOOL)saveRecords:(NSArray<ALModel *> *)models repleace:(BOOL)replaceExisted {
-    verifyDBHandler();
+
     [self.DB.queue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [models bk_each:^(ALModel *obj) {
             [obj saveOrReplce:replaceExisted];
@@ -289,7 +276,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 }
 
 + (BOOL)updateRecords:(NSArray<ALModel *> *)models replace:(BOOL)replaceExisted {
-    verifyDBHandler();
+
     [self.DB.queue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [models bk_each:^(ALModel *obj) {
             [obj updateOrReplace:replaceExisted];
@@ -306,15 +293,14 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     [contentValues bk_each:^(NSString *propertyName, id value) {
         updateValues[[self mappedColumnNameForProperty:propertyName]] = value;
     }];
-    
-    verifyDBHandler();
+
     __block BOOL ret = YES;
     [self.DB.queue inTransaction:^(FMDatabase *_Nonnull db, BOOL *_Nonnull rollback) {
         ret = self.DB.UPDATE([self tableName])
-                  .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
-                  .VALUES(updateValues)
-                  .WHERE(condition)
-                  .EXECUTE_UPDATE();
+        .POLICY(replaceExisted ? kALDBConflictPolicyReplace : nil)
+        .VALUES(updateValues)
+        .WHERE(condition)
+        .EXECUTE_UPDATE();
     }];
     return ret;
 }
@@ -323,8 +309,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if (condition == nil) {
         ALLogWarn(@"condition is nil, DELETE ALL records");
     }
-
-    verifyDBHandler();
+    
     return self.DB.DELETE_FROM([self tableName]).WHERE(condition).EXECUTE_UPDATE();
 }
 
@@ -341,12 +326,12 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     
     // COLUMN DEF
     [sqlClause appendString:[[[[[self columns] bk_reject:^BOOL(NSString *key, id obj) {
-                                   return [key isEqualToString:keypathForClass(ALModel, rowid)];
-                               }].allValues sortedArrayUsingComparator:[self columnOrderComparator]]
-                                bk_map:^NSString *(ALDBColumnInfo *column) {
-                                    return [column columnDefine];
-                                }] componentsJoinedByString:@", "]];
-
+        return [key isEqualToString:keypathForClass(ALModel, rowid)];
+    }].allValues sortedArrayUsingComparator:[self columnOrderComparator]]
+                              bk_map:^NSString *(ALDBColumnInfo *column) {
+                                  return [column columnDefine];
+                              }] componentsJoinedByString:@", "]];
+    
     // PRIMARY KEY
     NSArray *indexKeys = [[self primaryKeys] bk_map:^NSString *(NSString *propertyName) {
         return [self mappedColumnNameForProperty:propertyName];
@@ -354,7 +339,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     if ([indexKeys count] > 0) {
         [sqlClause appendFormat:@", PRIMARY KEY (%@)", [indexKeys componentsJoinedByString:@", "]];
     }
-
+    
     [sqlClause appendString:@")"];
     
     if ([self withoudRowId]) {
@@ -428,15 +413,15 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
 + (NSComparator)columnOrderComparator {
     return ^NSComparisonResult(ALDBColumnInfo *_Nonnull col1, ALDBColumnInfo *_Nonnull col2) {
         NSArray *list = [self recordPropertyWhitelist] ?: [[@[
-            wrapNil([self primaryKeys]),
-            wrapNil([[self uniqueKeys] al_flatten]),
-            wrapNil([[self indexKeys] al_flatten])
-        ] bk_reject:^BOOL(id obj) {
-            return obj == NSNull.null;
-        }] al_flatten];
-
+                                                              wrapNil([self primaryKeys]),
+                                                              wrapNil([[self uniqueKeys] al_flatten]),
+                                                              wrapNil([[self indexKeys] al_flatten])
+                                                              ] bk_reject:^BOOL(id obj) {
+                                                                  return obj == NSNull.null;
+                                                              }] al_flatten];
+        
         NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:list];
-
+        
         NSInteger idx1 = [orderedSet indexOfObject:col1.property.name];
         NSInteger idx2 = [orderedSet indexOfObject:col2.property.name];
         if (idx1 != NSNotFound && idx2 != NSNotFound) {
@@ -537,7 +522,7 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
                                                             columnIndex);
         return;
     }
-
+    
     if (property.setter == nil) {
         return;
     }
@@ -546,37 +531,37 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
         case YYEncodingTypeBool:  ///< bool
             ((void (*)(id, SEL, bool))(void *) objc_msgSend)((id) model, setter, [rs boolForColumnIndex:columnIndex]);
             break;
-
+            
         case YYEncodingTypeInt8:   ///< char / BOOL
         case YYEncodingTypeInt16:  ///< short
         case YYEncodingTypeInt32:  ///< int
             ((void (*)(id, SEL, int))(void *) objc_msgSend)((id) model, setter, [rs intForColumnIndex:columnIndex]);
             break;
-
+            
         case YYEncodingTypeUInt8:   ///< unsigned char
         case YYEncodingTypeUInt16:  ///< unsigned short
         case YYEncodingTypeUInt32:  ///< unsigned int
             ((void (*)(id, SEL, uint))(void *) objc_msgSend)((id) model, setter,
                                                              (uint) [rs intForColumnIndex:columnIndex]);
             break;
-
+            
         case YYEncodingTypeInt64:  ///< long long
             ((void (*)(id, SEL, long long))(void *) objc_msgSend)((id) model, setter,
                                                                   [rs longLongIntForColumnIndex:columnIndex]);
             break;
-
+            
         case YYEncodingTypeUInt64:  ///< unsigned long long
             ((void (*)(id, SEL, unsigned long long))(void *) objc_msgSend)(
-                (id) model, setter, [rs unsignedLongLongIntForColumnIndex:columnIndex]);
+                                                                           (id) model, setter, [rs unsignedLongLongIntForColumnIndex:columnIndex]);
             break;
-
+            
         case YYEncodingTypeFloat:       ///< float
         case YYEncodingTypeDouble:      ///< double
         case YYEncodingTypeLongDouble:  ///< long double
             ((void (*)(id, SEL, CGFloat))(void *) objc_msgSend)((id) model, setter,
                                                                 [rs doubleForColumnIndex:columnIndex]);
             break;
-
+            
         default: {
             id value = nil;
             if ([property.cls isSubclassOfClass:[NSString class]]) {
@@ -611,7 +596,7 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
                     }
                     value = [value mutableCopy];
                 }
-
+                
             } else {
                 value = [rs dataForColumnIndex:columnIndex];
                 if (value != nil) {
@@ -623,7 +608,7 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs, int
                     }
                 }
             }
-
+            
             if (value == NSNull.null) {
                 value = nil;
             }
@@ -669,19 +654,19 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
         if (![columnNames containsObject:mappedColName]) {
             return;
         }
-
+        
         NSString *firstUpperPropertyName = [[propertyName substringToIndexSafety:1].uppercaseString
-            stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])];
+                                            stringByAppendingString:stringOrEmpty([propertyName substringFromIndexSafety:1])];
         NSString *customSetterName =
-            [NSString stringWithFormat:@"customTransform%@FromRecord:columnIndex:", firstUpperPropertyName];
+        [NSString stringWithFormat:@"customTransform%@FromRecord:columnIndex:", firstUpperPropertyName];
         SEL customSetter = NSSelectorFromString(customSetterName);
-
+        
         _ColumnPropertyInfo *cpi = [[_ColumnPropertyInfo alloc] init];
         cpi->_property = colInfo.property;
         if (customSetter != nil && [modelClass instancesRespondToSelector:customSetter]) {
             cpi->_customSetter = customSetter;
         }
-
+        
         id obj = columnPropertyMapper[mappedColName];
         if ([obj isKindOfClass:[NSMutableArray class]]) {
             [(NSMutableArray *) obj addObject:cpi];
@@ -691,7 +676,7 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
             columnPropertyMapper[mappedColName] = cpi;
         }
     }];
-
+    
     NSMutableArray *models = [NSMutableArray array];
     while ([rs next]) {
         ALModel *oneModel = [[modelClass alloc] init];
@@ -702,6 +687,3 @@ static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(F
     
     return [models copy];
 }
-
-
-
