@@ -16,8 +16,6 @@
 #import "SafeBlocksChain.h"
 #import <objc/runtime.h>
 
-
-
 @interface NSObject (NilTest)
 
 @property(readonly) void (^BlockTest)(void);

@@ -32,9 +32,9 @@
 #define castToTypeOrNil(obj, type) ([(obj) isKindOfClass:[type class]] ? (type *)(obj) : nil)
 
 // verify and invoke block
-#define verifyAndInvokeBlock(block, ...) \
-    if ((block) != nil) {                \
-        (block)( __VA_ARGS__ );          \
+#define safeInvokeBlock(block, ...) \
+    if ((block) != nil) {           \
+        (block)( __VA_ARGS__ );     \
     }
 
 // CheckMemoryLeak
