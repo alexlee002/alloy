@@ -8,6 +8,7 @@
 
 #import "ALSQLCommand.h"
 #import "ALDatabase.h"
+#import "SafeBlocksChain.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -39,6 +40,8 @@ NSString * const kALDBConflictPolicyReplace     = @"OR REPLACE";
 
 - (ALSQLExecuteQueryBlock)EXECUTE_QUERY {
     return ^(void (^resultHandler)(FMResultSet *_Nullable rs)) {
+        VerifyChainingObjAndReturnVoid(self);
+        
         [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
             NSString *sql = [self sql];
             ALLogVerbose(@"sql: %@\nargs: %@", sql, _sqlArgs);
@@ -53,6 +56,8 @@ NSString * const kALDBConflictPolicyReplace     = @"OR REPLACE";
 
 - (ALSQLExecuteUpdateBlock)EXECUTE_UPDATE {
     return ^BOOL(void) {
+        VerifyChainingObjAndReturn(self, NO);
+        
         __block BOOL rs = YES;
         [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
             NSString *sql = [self sql];

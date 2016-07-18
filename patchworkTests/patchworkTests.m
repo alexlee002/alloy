@@ -12,6 +12,9 @@
 #import "NSArray+ArrayExtensions.h"
 #import "MD5.h"
 #import "DES.h"
+#import "ALSQLSelectCommand.h"
+#import "SafeBlocksChain.h"
+#import <objc/runtime.h>
 
 
 @interface NSObject (NilTest)
@@ -112,4 +115,36 @@
     NSString *decString = [[NSString alloc] initWithData:decData encoding:NSUTF8StringEncoding];
     XCTAssertEqualObjects(decString, string);
 }
+
+#define TestObj(obj) do { \
+    id v = object_getClass((obj));\
+    if (v) {\
+        if (class_isMetaClass(v)) {\
+            NSLog(@"%s is Class", #obj);\
+        } else {\
+            NSLog(@"%s is instance", #obj);\
+        }\
+    } else {\
+        NSLog(@"%s is unknown type", #obj);\
+    }\
+}while(0)
+
+#define TestType(t) do {\
+    id v = objc_getClass(#t);\
+    if (v) {\
+        NSLog(@"%s is ObjectType", #t);\
+    } else {\
+        NSLog(@"%s is NOT ObjectType", #t);\
+    }\
+}while(0)
+
+
+#define ChainExp(obj)
+
+- (void)testNilBlockProperty {
+    XCTAssert(SafeBlocksChainObj(nil, ALSQLSelectCommand).SELECT(@[@"*"]).end() == nil);
+}
+
+
+
 @end

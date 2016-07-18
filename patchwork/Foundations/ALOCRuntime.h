@@ -11,6 +11,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if __IPHONE_8_0 || __MAC_10_10
+#   define isClassObject(obj) object_isClass((obj))
+#else
+#   define isClassObject(obj) class_isMetaClass(object_getClass((obj)))
+#endif
+
 @interface ALOCRuntime : NSObject
 
 + (NSSet<Class> *)classConfirmsToProtocol:(Protocol *)protocol;
