@@ -10,6 +10,7 @@
 #import "UtilitiesHeader.h"
 #import <objc/runtime.h>
 #import "NSString+Helper.h"
+#import "ALOCRuntime.h"
 
 static NSString * const kFakeChainingObjectProtocolName = @"FakeChainingObjectProtocol";
 
@@ -53,7 +54,7 @@ Class fakeClass(Class forClass) {
 
 BOOL isValidChainingObject(id obj) {
     if ([obj conformsToProtocol:fakeProtocol()]) {
-        ALLogWarn(@"*** nil value found in chaining expression!!!");
+        ALLogWarn(@"*** nil value found in chaining expression!!!\nback trace stack:\n%@", backtraceStack(5));
         return NO;
     }
     return obj != nil;

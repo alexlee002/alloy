@@ -17,6 +17,7 @@
 #import "ALSQLInsertCommand.h"
 #import "ALOCRuntime.h"
 #import "ALDBMigrationProtocol.h"
+#import "SafeBlocksChain.h"
 
 #import <objc/runtime.h>
 
@@ -75,11 +76,11 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     return self;
 }
 
-- (nullable instancetype)init {
-    // To support chain expression syntax, we need to support default -init constructor that we can
-    // create a "fake" object to avoid crash. -- Think about "nil();".
-    return nil;
-}
+// To support chain expression syntax, we need to support default -init constructor that we can
+// create a "fake" object to avoid crash. -- Think about "nil();".
+//- (nullable instancetype)init {
+//    return nil;
+//}
 
 - (id)copy {
     return self;
@@ -192,25 +193,37 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 #pragma mark - database operations
 - (ALSQLSelectBlock)SELECT {
     return ^ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
-        return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
+        if (isValidChainingObject(self)) {
+            return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
+        }
+        return SafeBlocksChainObj(nil, ALSQLSelectCommand);
     };
 }
 
 - (ALSQLUpdateBlock)UPDATE {
     return ^ALSQLUpdateCommand *_Nonnull(NSString *_Nonnull table) {
-        return [ALSQLUpdateCommand commandWithDatabase:self].UPDATE(table);
+        if (isValidChainingObject(self)) {
+            return [ALSQLUpdateCommand commandWithDatabase:self].UPDATE(table);
+        }
+        return SafeBlocksChainObj(nil, ALSQLUpdateCommand);
     };
 }
 
 - (ALSQLInsertBlock)INSERT {
     return ^ALSQLInsertCommand *_Nonnull(NSString *_Nonnull table) {
-        return [ALSQLInsertCommand commandWithDatabase:self].INSERT(table);
+        if (isValidChainingObject(self)) {
+            return [ALSQLInsertCommand commandWithDatabase:self].INSERT(table);
+        }
+        return SafeBlocksChainObj(nil, ALSQLInsertCommand);
     };
 }
 
 - (ALSQLDeleteBlock)DELETE_FROM {
     return ^ALSQLDeleteCommand *_Nonnull(NSString *_Nonnull table) {
-        return [ALSQLDeleteCommand commandWithDatabase:self].DELETE_FROM(table);
+        if (isValidChainingObject(self)) {
+            return [ALSQLDeleteCommand commandWithDatabase:self].DELETE_FROM(table);
+        }
+        return SafeBlocksChainObj(nil, ALSQLDeleteCommand);
     };
 }
 

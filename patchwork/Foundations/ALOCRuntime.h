@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 #   define isClassObject(obj) class_isMetaClass(object_getClass((obj)))
 #endif
 
+extern NSArray<NSString *> *backtraceStack(int size);
+
 @interface ALOCRuntime : NSObject
 
 + (NSSet<Class> *)classConfirmsToProtocol:(Protocol *)protocol;

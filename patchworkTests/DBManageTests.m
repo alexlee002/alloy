@@ -17,6 +17,7 @@
 #import "ALSQLInsertCommand.h"
 #import "ALSQLUpdateCommand.h"
 #import "ALSQLCondition.h"
+#import "SafeBlocksChain.h"
 
 
 @interface TestUser : ALModel
@@ -58,7 +59,19 @@
 
 @end
 
+//////////////////////////////
+@interface TestSubUser : TestUser
+@end
 
+@implementation TestSubUser
+
++ (NSString *)databaseIdentifier {
+    return nil;
+}
+
+@end
+
+/////////////////////////////
 @interface DBManageTests : XCTestCase
 @end
 
@@ -241,6 +254,16 @@
     
 }
 
+- (void)testBlocksChain {
+    TestSubUser *user = nil;
+    [user saveOrReplce:NO];
+    
+    [TestSubUser fetcher].SELECT(@[@"COUNT"]).EXECUTE_QUERY(^(FMResultSet *rs) {
+        XCTAssertNil(rs);
+    });
+    
+    XCTAssertNil(nil);
+}
 
 - (void)testSubCommand {
     ALDatabase *db = [ALDatabase databaseWithPath:[TestUser databaseIdentifier]];

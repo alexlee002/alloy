@@ -11,6 +11,7 @@
 #import "BlocksKitExtension.h"
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
+#include <execinfo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,6 +41,28 @@ FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls
     
     return set;
 }
+
+NSArray<NSString *> *backtraceStack(int size) {
+    size = size > 0 ? size : 128;
+    void* callstack[size];
+    int frames = backtrace(callstack, size);
+    char **symbols = backtrace_symbols(callstack, frames);
+    
+    int i;
+    NSMutableArray *backtrace = [NSMutableArray arrayWithCapacity:frames];
+    for (i = 0; i < frames; ++i) {
+        NSString *line = [NSString stringWithUTF8String:symbols[i]];
+        if (line == nil) {
+            break;
+        }
+        [backtrace addObject:line];
+    }
+    
+    free(symbols);
+    
+    return backtrace;
+}
+
 
 @implementation ALOCRuntime
 
