@@ -40,7 +40,11 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
 - (NSComparisonResult)compareUsingPinyinTo:(NSString *)other;
 - (NSComparisonResult)compareUsingGB2312To:(NSString *)other;
 
-+ (NSString *)sizeFormattedStringWithBytes:(uint64_t)size;
++ (NSString *)stringByFormattingSize:(int64_t)bytesCount;
++ (NSString *)stringByFormattingSize:(int64_t)bytesCount maxUnits:(NSByteCountFormatterUnits)maxUnits;
++ (NSString *)stringByFormattingSize:(int64_t)bytesCount
+                            maxUnits:(NSByteCountFormatterUnits)maxUnits
+                       decimalPlaces:(uint)places;
 @end
 
 

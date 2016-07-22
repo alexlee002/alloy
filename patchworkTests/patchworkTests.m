@@ -144,4 +144,35 @@
     XCTAssert(SafeBlocksChainObj(nil, ALSQLSelectCommand).SELECT(@[@"*"]).end() == nil);
 }
 
+- (void)testSizeFormat {
+    NSInteger index = 0;
+    NSInteger value = 1UL << 5;
+    while ((value = value >> 1) > 0) {
+        NSLog(@"    >>> value: %lu; index: %ld", value, index);
+        index ++;
+    }
+    XCTAssertEqual(index, 5);
+    
+    NSInteger maxUnits = NSByteCountFormatterUseGB;
+    NSArray<NSString *> *unitNames = @[@"B", @"KB", @"MB", @"GB", @"TB", @"PB", @"EB", @"ZB", @"YB"];
+    NSInteger unitsIndex = 0;
+    while ((maxUnits = maxUnits >> 1) > 0 && unitsIndex < unitNames.count) {
+        unitsIndex ++;
+    }
+    XCTAssertEqualObjects(@"GB", unitNames[unitsIndex]);
+    
+    unsigned long long size = 2.385485492829 * 1024 * 1024 * 1024;
+    NSString *sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseDefault decimalPlaces:2];
+    XCTAssertEqualObjects(@"2.39 GB", sizeStr);
+    
+    sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseDefault decimalPlaces:4];
+    XCTAssertEqualObjects(@"2.3855 GB", sizeStr);
+    
+    sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseMB decimalPlaces:3];
+    XCTAssertEqualObjects(@"2442.737 MB", sizeStr);
+    
+    sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseZB decimalPlaces:3];
+    XCTAssertEqualObjects(@"2.385 GB", sizeStr);
+}
+
 @end

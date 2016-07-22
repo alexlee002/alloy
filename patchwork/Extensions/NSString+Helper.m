@@ -193,25 +193,37 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
     return compareStringsUsingLocale(self, other, @"zh@collation=gb2312");
 }
 
-+ (NSString *)sizeFormattedStringWithBytes:(uint64_t)size {
-    if (size < 1000) {
-        return [NSString stringWithFormat:@"%lld B", size];
++ (NSString *)stringByFormattingSize:(int64_t)bytesCount {
+    return [self stringByFormattingSize:bytesCount maxUnits:NSByteCountFormatterUseDefault decimalPlaces:2];
+}
+
++ (NSString *)stringByFormattingSize:(int64_t)bytesCount maxUnits:(NSByteCountFormatterUnits)maxUnits {
+    return [self stringByFormattingSize:bytesCount maxUnits:maxUnits decimalPlaces:2];
+}
+
++ (NSString *)stringByFormattingSize:(int64_t)bytesCount
+                            maxUnits:(NSByteCountFormatterUnits)maxUnits
+                       decimalPlaces:(uint)places {
+    maxUnits = maxUnits == NSByteCountFormatterUseAll ? NSByteCountFormatterUseDefault : maxUnits;
+    
+    NSArray<NSString *> *unitNames = @[@"B", @"KB", @"MB", @"GB", @"TB", @"PB", @"EB", @"ZB", @"YB"];
+    
+    NSInteger maxUnitsIndex = unitNames.count - 1;
+    if (maxUnits != NSByteCountFormatterUseDefault) {
+        maxUnitsIndex = 0;
+        while ((maxUnits = maxUnits >> 1) > 0 && maxUnitsIndex < unitNames.count) {
+            maxUnitsIndex ++;
+        }
     }
-    else if (size < 1000 * 1000) {
-        return [NSString stringWithFormat:@"%lld KB", size / 1024];
+
+    NSInteger unitsIndex = 0;
+    long double value = bytesCount * 1.f;
+    while (value > 1000 && unitsIndex < maxUnitsIndex) {
+        value /= 1024;
+        unitsIndex ++;
     }
-    else if (size < 1000 * 1000 * 1000) {
-        return [NSString stringWithFormat:@"%.2f MB", size * 1.f / (1024 * 1024)];
-    }
-    else if (size < 1000 * 1000 * 1000 * 1000L) {
-        return [NSString stringWithFormat:@"%.2f GB", size * 1.f / (1024 * 1024* 1024)];
-    }
-    else if (size < 1000 * 1000 * 1000 * 1000L * 1000L) {
-        return [NSString stringWithFormat:@"%.2f TB", size * 1.f / (1024 * 1024 * 1024 * 1024L)];
-    }
-    else {
-        return [NSString stringWithFormat:@"%.2f PB", size * 1.f / (1024 * 1024 * 1024 * 1024L * 1024L)];
-    }
+    NSString *formatPattern = [NSString stringWithFormat:@"%%.%df %@", places, unitNames[unitsIndex]];
+    return [NSString stringWithFormat:formatPattern, (double)value];
 }
 
 @end
