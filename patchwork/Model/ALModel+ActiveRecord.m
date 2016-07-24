@@ -247,7 +247,7 @@ static const void *const kRowIDAssociatedKey = &kRowIDAssociatedKey;
     
     NSMutableDictionary *updateValues = [NSMutableDictionary dictionaryWithCapacity:properties.count];
     [properties bk_each:^(NSString *propertyName) {
-        updateValues[[self.class mappedColumnNameForProperty:propertyName]] = [self valueForKey:propertyName];
+        updateValues[[self.class mappedColumnNameForProperty:propertyName]] = wrapNil([self valueForKey:propertyName]);
     }];
 
     return self.DB.UPDATE([self tableName])
