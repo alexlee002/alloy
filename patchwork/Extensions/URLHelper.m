@@ -193,6 +193,15 @@ FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *it
 
 @implementation NSString (ALURLHelper)
 
+- (NSArray<ALNSURLQueryItem *> *)queryItems {
+    NSString *queryString = self;
+    NSURLComponents *comps = [NSURLComponents componentsWithString:self];
+    if (comps) {
+        queryString = comps.query;
+    }
+    return queryItemsFromQueryStirng(queryString);
+}
+
 - (NSRange)URLQueryStringRange {
     // @see RFC 1808: https://www.ietf.org/rfc/rfc1808.txt
     // URL Components: <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>

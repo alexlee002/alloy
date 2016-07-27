@@ -86,6 +86,12 @@ extern NSString *URLParamStringify (id _Nullable value);
 - (NSString *)URLStringBySettingQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict;
 
 - (NSRange)URLQueryStringRange;
+/**
+ *  extract query items from 'string'.  'string' can be an absolute url string, or the query string of the URL.
+ *
+ *  @return array of query items
+ */
+- (nullable NSArray<ALNSURLQueryItem *> *)queryItems;
 
 - (NSString *)stringByURLEncoding;
 - (NSString *)stringByURLDecoding;
