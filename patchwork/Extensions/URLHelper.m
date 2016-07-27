@@ -195,10 +195,11 @@ FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *it
 
 - (NSArray<ALNSURLQueryItem *> *)queryItems {
     NSString *queryString = self;
-    NSURLComponents *comps = [NSURLComponents componentsWithString:self];
-    if (comps) {
-        queryString = comps.query;
-    }
+    //FIXME: if a string is the query string of the URL, [NSURLComponents componentsWithString:] will treat it as 'path' not 'query'. Anyone could help me to solve it?
+//    NSURLComponents *comps = [NSURLComponents componentsWithString:self];
+//    if (comps) {
+//        queryString = comps.query;
+//    }
     return queryItemsFromQueryStirng(queryString);
 }
 

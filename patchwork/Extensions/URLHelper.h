@@ -87,7 +87,9 @@ extern NSString *URLParamStringify (id _Nullable value);
 
 - (NSRange)URLQueryStringRange;
 /**
- *  extract query items from 'string'.  'string' can be an absolute url string, or the query string of the URL.
+ *  extract query items from 'string'.  'string' must be the 'query' part of a URL.
+ *
+ *  FIXME: if a string is the query string of the URL, [NSURLComponents componentsWithString:] will treat it as 'path' not 'query'. Anyone could help me to solve it?
  *
  *  @return array of query items
  */
