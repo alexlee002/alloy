@@ -92,6 +92,7 @@ extern NSString *URLParamStringify (id _Nullable value);
  *  @return array of query items
  */
 - (nullable NSArray<ALNSURLQueryItem *> *)queryItems;
+- (nullable NSDictionary<NSString *, NSString *> *)queryItemsDictionary;
 
 - (NSString *)stringByURLEncoding;
 - (NSString *)stringByURLDecoding;

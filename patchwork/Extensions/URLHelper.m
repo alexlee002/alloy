@@ -202,6 +202,18 @@ FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *it
     return queryItemsFromQueryStirng(queryString);
 }
 
+- (NSDictionary<NSString *, NSString *> *)queryItemsDictionary {
+    NSArray *items = [self queryItems];
+    if (items == nil) {
+        return nil;
+    }
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [items bk_each:^(ALNSURLQueryItem *item) {
+        dict[item.name] = item.value;
+    }];
+    return [dict copy];
+}
+
 - (NSRange)URLQueryStringRange {
     // @see RFC 1808: https://www.ietf.org/rfc/rfc1808.txt
     // URL Components: <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
