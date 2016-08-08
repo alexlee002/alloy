@@ -179,31 +179,32 @@
     
     NSString *sql = nil;
     
-    TestUser *user1 = [TestUser modelsWithCondition:AS_COL(TestUser, age).EQ(@35)].firstObject;
-    XCTAssertEqualObjects(user1.name, user.name);
-    XCTAssertEqualObjects(user1.addr, user.addr);
-    user1.age = 40;
-    XCTAssert([user1 updateOrReplace:YES]);
+//    TestUser *user1 = [TestUser modelsWithCondition:AS_COL(TestUser, age).EQ(@35)].firstObject;
+//    XCTAssertEqualObjects(user1.name, user.name);
+//    XCTAssertEqualObjects(user1.addr, user.addr);
+//    user1.age = 40;
+//    XCTAssert([user1 updateOrReplace:YES]);
     [[TestUser modelsWithCondition:nil] bk_each:^(TestUser *obj) {
         NSLog(@"%@", [obj yy_modelDescription]);
     }];
     XCTAssert([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @35)].count == 0);
     XCTAssert([TestUser modelsWithCondition:EQ(AS_COL(TestUser, age), @40)].count == 1);
     
-    [user1 deleteRecord];
+//    [user1 deleteRecord];
     XCTAssertTrue([TestUser modelsWithCondition:nil].count == 0);
-    
-    [TestUser fetcher]
-    .WHERE(AS_COL(TestUser, age).GT(@10)
-           .AND(AS_COL(TestUser, age).LT(@"20"))
-           .AND(AS_COL(TestUser, addr).MATCHS_PREFIX(@"Beijing", matchsAny)))
-    .ORDER_BY(DESC_ORDER(AS_COL(TestUser, age)))
-    .ORDER_BY(AS_COL(TestUser, name))
-    .GROUP_BY(AS_COL(TestUser, addr))
-    .OFFSET(5)
-    .LIMIT(10)
-    .FETCH_MODELS();
-    
+
+    TestUser *user1 = [TestUser modelsWithCondition:AS_COL(TestUser, age).EQ(@35)].firstObject;
+    NSArray<TestUser *> *users = [TestUser fetcher]
+                                     .WHERE(AS_COL(TestUser, age).GT(@10)
+                                            .AND(AS_COL(TestUser, age).LT(@"20"))
+                                            .AND(AS_COL(TestUser, addr).MATCHS_PREFIX(@"Beijing", matchsAny)))
+                                     .ORDER_BY(DESC_ORDER(AS_COL(TestUser, age)))
+                                     .ORDER_BY(AS_COL(TestUser, name))
+                                     .GROUP_BY(AS_COL(TestUser, addr))
+                                     .OFFSET(5)
+                                     .LIMIT(10)
+                                     .FETCH_MODELS();
+
     NSInteger count = 10;
     NSMutableArray *insertingUsers = [NSMutableArray array];
     for (NSInteger i = 0; i < count; ++i) {

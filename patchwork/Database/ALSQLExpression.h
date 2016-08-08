@@ -16,12 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
  *  eg: (col1 & 2)
  *
  *  @param exp1     ALSQLExpression or NSString
- *  @param operator
+ *  @param optor
  *  @param exp2     ALSQLExpression or NSString
  *
  *  @return ALSQLExpression
  */
-extern ALSQLExpression *EXP_OP  (id exp1, NSString *operator, id exp2);
+extern ALSQLExpression *EXP_OP  (id exp1, NSString *optor, id exp2);
 extern ALSQLExpression *BIT_AND (id exp1, id exp2);
 extern ALSQLExpression *BIT_OR  (id exp1, id exp2);
 extern ALSQLExpression *BIT_XOR (id exp1, id exp2);

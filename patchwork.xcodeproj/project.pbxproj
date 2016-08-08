@@ -210,7 +210,7 @@
 		43D0FE871C7EB3F40096F232 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
 		43FB7AE41C9C81FB007B62C7 /* libPods-patchworkTests-ASIHTTPRequest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-patchworkTests-ASIHTTPRequest.a"; path = "Pods/../build/Debug-iphoneos/libPods-patchworkTests-ASIHTTPRequest.a"; sourceTree = "<group>"; };
 		43FB7AE61C9FE6DF007B62C7 /* ALSQLExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLExpression.h; sourceTree = "<group>"; };
-		43FB7AE71C9FE6DF007B62C7 /* ALSQLExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALSQLExpression.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		43FB7AE71C9FE6DF007B62C7 /* ALSQLExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALSQLExpression.m; sourceTree = "<group>"; };
 		43FB7AEA1CA00A4D007B62C7 /* DBConditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBConditionsTests.m; sourceTree = "<group>"; };
 		81FDE66C67E6452F8F285B2B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8322435AE68A8E9DB0B311D4 /* libPods-patchwork-Demo-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork-Demo-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
