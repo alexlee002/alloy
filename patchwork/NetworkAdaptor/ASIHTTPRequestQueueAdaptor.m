@@ -51,6 +51,7 @@
     NSOperationQueue                           *_requestQueue;
     
     BOOL  _invalidated;
+    dispatch_semaphore_t _requestDictLock;
 }
 
 @dynamic maxConcurrentRequestCount;
@@ -62,6 +63,7 @@
         _requestDict  = [NSMutableDictionary dictionary];
         _requestQueue = [[NSOperationQueue alloc] init];
         _requestQueue.maxConcurrentOperationCount = 10;
+        _requestDictLock = dispatch_semaphore_create(1);
     }
     return self;
 }
@@ -84,7 +86,11 @@
         return NO;
     }
     ASIHTTPRequest *asiRequest = [self transformFromALRequest:request];
+    
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     _requestDict[@(asiRequest.tag)] = @[ request, asiRequest ];
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [_requestQueue addOperation:asiRequest];
     [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
     return YES;
@@ -255,7 +261,11 @@
 
     TrackMemoryLeak(request);
     ALLogVerbose(@"srcRequest:%@", srcReq.class);
+    
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     [_requestDict removeObjectForKey:@(request.tag)];
+    dispatch_semaphore_signal(_requestDictLock);
+    
     CheckMemoryLeak(request);
     
     if (_invalidated && _requestDict.count == 0 &&
@@ -271,7 +281,11 @@
     
     TrackMemoryLeak(request);
     ALLogVerbose(@"srcRequest:%@", srcReq.class);
+    
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     [_requestDict removeObjectForKey:@(request.tag)];
+    dispatch_semaphore_signal(_requestDictLock);
+    
     CheckMemoryLeak(request);
 
     if (_invalidated && _requestDict.count == 0 &&
