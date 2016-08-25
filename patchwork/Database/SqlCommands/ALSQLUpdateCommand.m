@@ -113,7 +113,15 @@ NS_ASSUME_NONNULL_BEGIN
     
     if (_rawValues.count > 0) {
         [_rawValues bk_each:^(ALSQLCondition *exp) {
-            [sql appendString:exp.sqlClause];
+
+            NSString *setClause =
+                [exp.sqlClause stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            if ([setClause hasPrefix:@"("] && [setClause hasSuffix:@")"]) {
+                setClause = [setClause substringFromIndex:1];
+                setClause = [setClause substringToIndex:setClause.length - 1];
+            }
+            
+            [sql appendString:setClause];
             [sql appendString:@", "];
             [(NSMutableArray *)_sqlArgs addObjectsFromArray:exp.sqlArguments];
         }];
