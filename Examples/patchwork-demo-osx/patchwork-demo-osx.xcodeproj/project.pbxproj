@@ -1,0 +1,378 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		35CC199BE018AB4D1539ECE7 /* libPods-patchwork-demo-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F7A147BA79957F736D9AE26 /* libPods-patchwork-demo-osx.a */; };
+		AF5218171DACD7330072FA26 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5218161DACD7330072FA26 /* AppDelegate.m */; };
+		AF52181A1DACD7330072FA26 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5218191DACD7330072FA26 /* main.m */; };
+		AF52181C1DACD7330072FA26 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF52181B1DACD7330072FA26 /* Assets.xcassets */; };
+		AF52181F1DACD7330072FA26 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF52181D1DACD7330072FA26 /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7F7A147BA79957F736D9AE26 /* libPods-patchwork-demo-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork-demo-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A162AE812617ACF4074EEE34 /* Pods-patchwork-demo-osx.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork-demo-osx.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-patchwork-demo-osx/Pods-patchwork-demo-osx.debug.xcconfig"; sourceTree = "<group>"; };
+		AF5218121DACD7330072FA26 /* patchwork-demo-osx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "patchwork-demo-osx.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF5218151DACD7330072FA26 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		AF5218161DACD7330072FA26 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		AF5218191DACD7330072FA26 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		AF52181B1DACD7330072FA26 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AF52181E1DACD7330072FA26 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		AF5218201DACD7330072FA26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D14FB0C6AA59D4C698F6F07E /* Pods-patchwork-demo-osx.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork-demo-osx.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-patchwork-demo-osx/Pods-patchwork-demo-osx.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AF52180F1DACD7330072FA26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35CC199BE018AB4D1539ECE7 /* libPods-patchwork-demo-osx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A9E4285F181FC15189E5FD6B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A162AE812617ACF4074EEE34 /* Pods-patchwork-demo-osx.debug.xcconfig */,
+				D14FB0C6AA59D4C698F6F07E /* Pods-patchwork-demo-osx.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		AF5218091DACD7330072FA26 = {
+			isa = PBXGroup;
+			children = (
+				AF5218141DACD7330072FA26 /* patchwork-demo-osx */,
+				AF5218131DACD7330072FA26 /* Products */,
+				A9E4285F181FC15189E5FD6B /* Pods */,
+				BBEB85E561BA3EBAD69D51F4 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		AF5218131DACD7330072FA26 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AF5218121DACD7330072FA26 /* patchwork-demo-osx.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AF5218141DACD7330072FA26 /* patchwork-demo-osx */ = {
+			isa = PBXGroup;
+			children = (
+				AF5218151DACD7330072FA26 /* AppDelegate.h */,
+				AF5218161DACD7330072FA26 /* AppDelegate.m */,
+				AF52181B1DACD7330072FA26 /* Assets.xcassets */,
+				AF52181D1DACD7330072FA26 /* MainMenu.xib */,
+				AF5218201DACD7330072FA26 /* Info.plist */,
+				AF5218181DACD7330072FA26 /* Supporting Files */,
+			);
+			path = "patchwork-demo-osx";
+			sourceTree = "<group>";
+		};
+		AF5218181DACD7330072FA26 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AF5218191DACD7330072FA26 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BBEB85E561BA3EBAD69D51F4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7F7A147BA79957F736D9AE26 /* libPods-patchwork-demo-osx.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AF5218111DACD7330072FA26 /* patchwork-demo-osx */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AF5218231DACD7330072FA26 /* Build configuration list for PBXNativeTarget "patchwork-demo-osx" */;
+			buildPhases = (
+				CC9BEE78B716E2DF0D2B03F0 /* [CP] Check Pods Manifest.lock */,
+				AF52180E1DACD7330072FA26 /* Sources */,
+				AF52180F1DACD7330072FA26 /* Frameworks */,
+				AF5218101DACD7330072FA26 /* Resources */,
+				0B8445574E35329EE7FD511C /* [CP] Embed Pods Frameworks */,
+				DCB9773595D18F15CF152EDF /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "patchwork-demo-osx";
+			productName = "patchwork-demo-osx";
+			productReference = AF5218121DACD7330072FA26 /* patchwork-demo-osx.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AF52180A1DACD7330072FA26 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = me.alexlee002;
+				TargetAttributes = {
+					AF5218111DACD7330072FA26 = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 5C49FL46KW;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = AF52180D1DACD7330072FA26 /* Build configuration list for PBXProject "patchwork-demo-osx" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AF5218091DACD7330072FA26;
+			productRefGroup = AF5218131DACD7330072FA26 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AF5218111DACD7330072FA26 /* patchwork-demo-osx */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AF5218101DACD7330072FA26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF52181C1DACD7330072FA26 /* Assets.xcassets in Resources */,
+				AF52181F1DACD7330072FA26 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0B8445574E35329EE7FD511C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../../Pods/Target Support Files/Pods-patchwork-demo-osx/Pods-patchwork-demo-osx-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CC9BEE78B716E2DF0D2B03F0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		DCB9773595D18F15CF152EDF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../../Pods/Target Support Files/Pods-patchwork-demo-osx/Pods-patchwork-demo-osx-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AF52180E1DACD7330072FA26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF52181A1DACD7330072FA26 /* main.m in Sources */,
+				AF5218171DACD7330072FA26 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		AF52181D1DACD7330072FA26 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AF52181E1DACD7330072FA26 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		AF5218211DACD7330072FA26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		AF5218221DACD7330072FA26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		AF5218241DACD7330072FA26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A162AE812617ACF4074EEE34 /* Pods-patchwork-demo-osx.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5C49FL46KW;
+				INFOPLIST_FILE = "patchwork-demo-osx/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-demo-osx";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AF5218251DACD7330072FA26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D14FB0C6AA59D4C698F6F07E /* Pods-patchwork-demo-osx.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5C49FL46KW;
+				INFOPLIST_FILE = "patchwork-demo-osx/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-demo-osx";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AF52180D1DACD7330072FA26 /* Build configuration list for PBXProject "patchwork-demo-osx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF5218211DACD7330072FA26 /* Debug */,
+				AF5218221DACD7330072FA26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AF5218231DACD7330072FA26 /* Build configuration list for PBXNativeTarget "patchwork-demo-osx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF5218241DACD7330072FA26 /* Debug */,
+				AF5218251DACD7330072FA26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AF52180A1DACD7330072FA26 /* Project object */;
+}

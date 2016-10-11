@@ -2,41 +2,11 @@
 //  patchworkTests.m
 //  patchworkTests
 //
-//  Created by Alex Lee on 2/18/16.
-//  Copyright © 2016 Alex Lee. All rights reserved.
+//  Created by 吴晓龙 on 16/10/11.
+//  Copyright © 2016年 Alex Lee. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
-#import "NSString+Helper.h"
-#import "NSObject+JSONTransform.h"
-#import "NSArray+ArrayExtensions.h"
-#import "MD5.h"
-#import "DES.h"
-#import "ALSQLSelectCommand.h"
-#import "SafeBlocksChain.h"
-#import <objc/runtime.h>
-
-@interface NSObject (NilTest)
-
-@property(readonly) void (^BlockTest)(void);
-@property(readonly) NSString *propTest;
-
-@end
-
-@implementation NSObject(NilTest)
-
-- (void (^)(void))BlockTest {
-    return ^{
-        NSLog(@"Block test");
-    };
-}
-
-- (NSString *)propTest {
-    return @"Property test";
-}
-
-@end
-
 
 @interface patchworkTests : XCTestCase
 
@@ -49,130 +19,21 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
-- (void)testStringHelper {
-    
-    NSObject *obj = nil;
-    NSLog(@"=== %@", obj.propTest);
-    //obj.BlockTest();
-    
-    
-    
-    NSArray *arr = @[ @1, @"2", @(3.1)];
-    XCTAssertEqualObjects([arr JSONString] , @"[1,\"2\",3.1]" );
-    XCTAssertEqualObjects([[NSOrderedSet orderedSetWithArray:arr] JSONString] , @"[1,\"2\",3.1]" );
-    
-    XCTAssertEqualObjects(@" \"xctassert_equal_objects", [@" \"XCTAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"m3u8download_request", [@"M3U8DownloadRequest" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"xctassert_equal_objects", [@"XCTAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"xct_assert_eqs_objects", [@"XctAssertEQsObjects" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"xct123assert4eqs5objects6", [@"Xct123Assert4EQs5Objects6" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"xctassert_equal_objects_", [@"XCTAssert_Equal_Objects_" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"_xctassert_equal_objects_", [@"_XCTAssert_Equal_Objects_" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"12xctassert_equal_objects", [@"12XCTAssert_Equal_Objects" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"**", [@"**" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@" ** xctassert_equal__objects &&%^abc ", [@" ** xctassert_equal__objects &&%^abc " stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@" ** xcassert_equal_objects &&%^abc", [@" ** XCAssertEqual_Objects &&%^abc" stringByConvertingCamelCaseToUnderscore]);
-    XCTAssertEqualObjects(@"xct_assert_equal_objects", [@"xctAssertEqualObjects" stringByConvertingCamelCaseToUnderscore]);
+- (void)tearDown {
+    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    [super tearDown];
 }
 
-- (void)testArray {
-    NSArray *arr = @[];
-    XCTAssertNil([arr objectAtIndexSafely:-1]);
+- (void)testExample {
+    // This is an example of a functional test case.
+    // Use XCTAssert and related functions to verify your tests produce the correct results.
 }
 
-
-- (void)testFileMD5 {
-    NSString *tmpfile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"Charles.dmg"];
-    NSLog(@"file: %@", tmpfile);
-    
-    if (![[NSFileManager defaultManager] fileExistsAtPath:tmpfile]) {
-        return;
-    }
-    
-    NSString *md5 = fileMD5Hash(tmpfile);
-    XCTAssertEqualObjects(@"7a30a08d8e0d896dacd2631169f8116f", md5);
-    
-    NSDictionary *fileAttrs = [[NSFileManager defaultManager] attributesOfItemAtPath:tmpfile error:nil];
-    NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:tmpfile];
-    uint32_t offset = arc4random() % (fileAttrs.fileSize / 2);
-    uint32_t length = (uint32_t)MIN(fileAttrs.fileSize - offset, 2 * 1024 * 1024);
-    [fh seekToFileOffset:offset];
-    NSData *data = [fh readDataOfLength:length];
-    [fh closeFile];
-    
-    md5 = partialFileMD5Hash(tmpfile, NSMakeRange(offset, length));
-    XCTAssertEqualObjects([data MD5], md5);
-}
-
-
-- (void)testDES {
-    NSData *key = [@"patchwork" dataUsingEncoding:NSUTF8StringEncoding];
-    NSString *string = @"NSString *tmpfile = [NSTemporaryDirectory() stringByAppendingPathComponent:@\"Charles.dmg\"];";
-    
-    NSData *encData = [[string dataUsingEncoding:NSUTF8StringEncoding] dataByDESEncryptingWithKey:key];
-    NSData *decData = [encData dataByDESDecryptingWithKey:key];
-    NSString *decString = [[NSString alloc] initWithData:decData encoding:NSUTF8StringEncoding];
-    XCTAssertEqualObjects(decString, string);
-}
-
-#define TestObj(obj) do { \
-    id v = object_getClass((obj));\
-    if (v) {\
-        if (class_isMetaClass(v)) {\
-            NSLog(@"%s is Class", #obj);\
-        } else {\
-            NSLog(@"%s is instance", #obj);\
-        }\
-    } else {\
-        NSLog(@"%s is unknown type", #obj);\
-    }\
-}while(0)
-
-#define TestType(t) do {\
-    id v = objc_getClass(#t);\
-    if (v) {\
-        NSLog(@"%s is ObjectType", #t);\
-    } else {\
-        NSLog(@"%s is NOT ObjectType", #t);\
-    }\
-}while(0)
-
-
-#define ChainExp(obj)
-
-- (void)testNilBlockProperty {
-    XCTAssert(SafeBlocksChainObj(nil, ALSQLSelectCommand).SELECT(@[@"*"]).end() == nil);
-}
-
-- (void)testSizeFormat {
-    NSInteger index = 0;
-    NSInteger value = 1UL << 5;
-    while ((value = value >> 1) > 0) {
-        NSLog(@"    >>> value: %lu; index: %ld", value, index);
-        index ++;
-    }
-    XCTAssertEqual(index, 5);
-    
-    NSInteger maxUnits = NSByteCountFormatterUseGB;
-    NSArray<NSString *> *unitNames = @[@"B", @"KB", @"MB", @"GB", @"TB", @"PB", @"EB", @"ZB", @"YB"];
-    NSInteger unitsIndex = 0;
-    while ((maxUnits = maxUnits >> 1) > 0 && unitsIndex < unitNames.count) {
-        unitsIndex ++;
-    }
-    XCTAssertEqualObjects(@"GB", unitNames[unitsIndex]);
-    
-    unsigned long long size = 2.385485492829 * 1024 * 1024 * 1024;
-    NSString *sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseDefault decimalPlaces:2];
-    XCTAssertEqualObjects(@"2.39 GB", sizeStr);
-    
-    sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseDefault decimalPlaces:4];
-    XCTAssertEqualObjects(@"2.3855 GB", sizeStr);
-    
-    sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseMB decimalPlaces:3];
-    XCTAssertEqualObjects(@"2442.737 MB", sizeStr);
-    
-    sizeStr = [NSString stringByFormattingSize:size maxUnits:NSByteCountFormatterUseZB decimalPlaces:3];
-    XCTAssertEqualObjects(@"2.385 GB", sizeStr);
+- (void)testPerformanceExample {
+    // This is an example of a performance test case.
+    [self measureBlock:^{
+        // Put the code you want to measure the time of here.
+    }];
 }
 
 @end

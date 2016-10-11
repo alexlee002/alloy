@@ -1,0 +1,299 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AF5217F41DACD6920072FA26 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5217F31DACD6920072FA26 /* main.m */; };
+		AF5217F71DACD6920072FA26 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5217F61DACD6920072FA26 /* AppDelegate.m */; };
+		AF5217F91DACD6920072FA26 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF5217F81DACD6920072FA26 /* Assets.xcassets */; };
+		AF5217FC1DACD6920072FA26 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AF5217FA1DACD6920072FA26 /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AF5217EF1DACD6920072FA26 /* patchwork-demo-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "patchwork-demo-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF5217F31DACD6920072FA26 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		AF5217F51DACD6920072FA26 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		AF5217F61DACD6920072FA26 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		AF5217F81DACD6920072FA26 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AF5217FB1DACD6920072FA26 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		AF5217FD1DACD6920072FA26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AF5217EC1DACD6920072FA26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AF5217E61DACD6920072FA26 = {
+			isa = PBXGroup;
+			children = (
+				AF5217F11DACD6920072FA26 /* patchwork-demo-ios */,
+				AF5217F01DACD6920072FA26 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AF5217F01DACD6920072FA26 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AF5217EF1DACD6920072FA26 /* patchwork-demo-ios.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AF5217F11DACD6920072FA26 /* patchwork-demo-ios */ = {
+			isa = PBXGroup;
+			children = (
+				AF5217F51DACD6920072FA26 /* AppDelegate.h */,
+				AF5217F61DACD6920072FA26 /* AppDelegate.m */,
+				AF5217F81DACD6920072FA26 /* Assets.xcassets */,
+				AF5217FA1DACD6920072FA26 /* LaunchScreen.storyboard */,
+				AF5217FD1DACD6920072FA26 /* Info.plist */,
+				AF5217F21DACD6920072FA26 /* Supporting Files */,
+			);
+			path = "patchwork-demo-ios";
+			sourceTree = "<group>";
+		};
+		AF5217F21DACD6920072FA26 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AF5217F31DACD6920072FA26 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AF5217EE1DACD6920072FA26 /* patchwork-demo-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AF5218001DACD6920072FA26 /* Build configuration list for PBXNativeTarget "patchwork-demo-ios" */;
+			buildPhases = (
+				AF5217EB1DACD6920072FA26 /* Sources */,
+				AF5217EC1DACD6920072FA26 /* Frameworks */,
+				AF5217ED1DACD6920072FA26 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "patchwork-demo-ios";
+			productName = "patchwork-demo-ios";
+			productReference = AF5217EF1DACD6920072FA26 /* patchwork-demo-ios.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AF5217E71DACD6920072FA26 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = me.alexlee002;
+				TargetAttributes = {
+					AF5217EE1DACD6920072FA26 = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 5C49FL46KW;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = AF5217EA1DACD6920072FA26 /* Build configuration list for PBXProject "patchwork-demo-ios" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AF5217E61DACD6920072FA26;
+			productRefGroup = AF5217F01DACD6920072FA26 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AF5217EE1DACD6920072FA26 /* patchwork-demo-ios */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AF5217ED1DACD6920072FA26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF5217F91DACD6920072FA26 /* Assets.xcassets in Resources */,
+				AF5217FC1DACD6920072FA26 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AF5217EB1DACD6920072FA26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF5217F71DACD6920072FA26 /* AppDelegate.m in Sources */,
+				AF5217F41DACD6920072FA26 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		AF5217FA1DACD6920072FA26 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AF5217FB1DACD6920072FA26 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		AF5217FE1DACD6920072FA26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		AF5217FF1DACD6920072FA26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AF5218011DACD6920072FA26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5C49FL46KW;
+				INFOPLIST_FILE = "patchwork-demo-ios/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-demo-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AF5218021DACD6920072FA26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5C49FL46KW;
+				INFOPLIST_FILE = "patchwork-demo-ios/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "me.alexlee002.patchwork-demo-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AF5217EA1DACD6920072FA26 /* Build configuration list for PBXProject "patchwork-demo-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF5217FE1DACD6920072FA26 /* Debug */,
+				AF5217FF1DACD6920072FA26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AF5218001DACD6920072FA26 /* Build configuration list for PBXNativeTarget "patchwork-demo-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF5218011DACD6920072FA26 /* Debug */,
+				AF5218021DACD6920072FA26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AF5217E71DACD6920072FA26 /* Project object */;
+}

@@ -1,9 +1,9 @@
 //
 //  main.m
-//  patchwork-Demo-iOS
+//  patchwork-demo-ios
 //
-//  Created by Alex Lee on 2/23/16.
-//  Copyright © 2016 Alex Lee. All rights reserved.
+//  Created by 吴晓龙 on 16/10/11.
+//  Copyright © 2016年 me.alexlee002. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

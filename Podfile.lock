@@ -2,38 +2,29 @@ PODS:
   - ASIHTTPRequest/Core (1.8.2):
     - Reachability
   - BlocksKit/Core (2.2.5)
-  - FMDB (2.6):
-    - FMDB/standard (= 2.6)
-  - FMDB/standard (2.6)
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
   - ObjcAssociatedObjectHelpers/Core (2.0.1)
-  - patchwork-demo (0.0.1):
-    - ASIHTTPRequest/Core (~> 1.8.2)
-    - BlocksKit/Core (~> 2.2.5)
-    - FMDB (~> 2.6)
-    - YYModel (~> 1.0.1)
   - Reachability (3.2)
-  - YYModel (1.0.2)
+  - YYModel (1.0.4)
 
 DEPENDENCIES:
   - ASIHTTPRequest/Core
   - BlocksKit/Core
   - FMDB
   - ObjcAssociatedObjectHelpers/Core
-  - patchwork-demo (from `.`)
   - Reachability
   - YYModel
-
-EXTERNAL SOURCES:
-  patchwork-demo:
-    :path: .
 
 SPEC CHECKSUMS:
   ASIHTTPRequest: ec013992946676b7978dcbde6396d57312d21db4
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
-  FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   ObjcAssociatedObjectHelpers: 686c291f292c26a49b9b1fa7d58130a8d35d59d2
-  patchwork-demo: 470da16fd3746c17410425201e0c4fb998d52fd1
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  YYModel: 7a467eff45ae3641c33efb136c262d33b6f48c1a
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: af845e90ca026d951d65ecf28b426f5843a3adfa
+
+COCOAPODS: 1.0.1

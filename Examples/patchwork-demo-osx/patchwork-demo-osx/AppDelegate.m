@@ -1,13 +1,12 @@
 //
 //  AppDelegate.m
-//  patchwork-Demo-OSX
+//  patchwork-demo-osx
 //
-//  Created by Alex Lee on 3/17/16.
-//  Copyright © 2016 me.alexlee002. All rights reserved.
+//  Created by 吴晓龙 on 16/10/11.
+//  Copyright © 2016年 me.alexlee002. All rights reserved.
 //
 
 #import "AppDelegate.h"
-#import <patchwork.h>
 
 @interface AppDelegate ()
 
@@ -18,14 +17,12 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
-    
-    [HHTimer scheduledTimerWithTimeInterval:3 dispatchQueue:dispatch_get_main_queue() block:^{
-        NSLog(@"====== HHTimer test ======");
-    } userInfo:nil repeats:NO];
 }
+
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
 }
+
 
 @end
