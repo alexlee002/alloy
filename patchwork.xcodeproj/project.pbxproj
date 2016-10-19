@@ -9,9 +9,15 @@
 /* Begin PBXBuildFile section */
 		4259D15534EBEB0BF4048C2E /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A01B7FF7CDD3A1EF9FE9235E /* libPods-patchwork.a */; };
 		9FCCCEC77D2EBC73571F6BBF /* libPods-patchworkTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03AC31F45871F15AC7A1C657 /* libPods-patchworkTests.a */; };
+		AF07FF801DADE4E600C7D0D4 /* ALDatabaseManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF07FF7F1DADE4E600C7D0D4 /* ALDatabaseManagerTests.m */; };
+		AF07FF831DAE30BA00C7D0D4 /* ALSQLClause.h in Headers */ = {isa = PBXBuildFile; fileRef = AF07FF811DAE30BA00C7D0D4 /* ALSQLClause.h */; };
+		AF07FF841DAE30BA00C7D0D4 /* ALSQLClause.m in Sources */ = {isa = PBXBuildFile; fileRef = AF07FF821DAE30BA00C7D0D4 /* ALSQLClause.m */; };
+		AF34CDE61DAF72FC006215CD /* ALSQLClauseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF34CDE51DAF72FC006215CD /* ALSQLClauseTests.m */; };
 		AF52183A1DACD8390072FA26 /* patchwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF5218301DACD8390072FA26 /* patchwork.framework */; };
 		AF52183F1DACD8390072FA26 /* patchworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF52183E1DACD8390072FA26 /* patchworkTests.m */; };
 		AF5218411DACD8390072FA26 /* patchwork.h in Headers */ = {isa = PBXBuildFile; fileRef = AF5218331DACD8390072FA26 /* patchwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AF6662A91DAF426D00FE3042 /* ALSQLClause+SQLOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = AF6662A71DAF426D00FE3042 /* ALSQLClause+SQLOperation.h */; };
+		AF6662AA1DAF426D00FE3042 /* ALSQLClause+SQLOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AF6662A81DAF426D00FE3042 /* ALSQLClause+SQLOperation.m */; };
 		AF7162661DACD9E40015F006 /* ALDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162151DACD9E40015F006 /* ALDatabase.h */; };
 		AF7162671DACD9E40015F006 /* ALDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162161DACD9E40015F006 /* ALDatabase.m */; };
 		AF7162681DACD9E40015F006 /* ALDBColumnInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162171DACD9E40015F006 /* ALDBColumnInfo.h */; };
@@ -88,6 +94,9 @@
 		AF7162AF1DACD9E40015F006 /* ASIHTTPRequestQueueAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162631DACD9E40015F006 /* ASIHTTPRequestQueueAdaptor.m */; };
 		AF7162B01DACD9E40015F006 /* NSURLSessionAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162641DACD9E40015F006 /* NSURLSessionAdaptor.h */; };
 		AF7162B11DACD9E40015F006 /* NSURLSessionAdaptor.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162651DACD9E40015F006 /* NSURLSessionAdaptor.m */; };
+		AF7162B31DACE7AC0015F006 /* ALDBConnectionProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162B21DACE7AC0015F006 /* ALDBConnectionProtocol.h */; };
+		AF8EC3A31DB648E700DE46CF /* ALSQLClause+SQLFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = AF8EC3A11DB648E700DE46CF /* ALSQLClause+SQLFunctions.h */; };
+		AF8EC3A41DB648E700DE46CF /* ALSQLClause+SQLFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = AF8EC3A21DB648E700DE46CF /* ALSQLClause+SQLFunctions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,12 +116,18 @@
 		911BB3FEE61B0EEBC38ACC93 /* Pods-patchworkTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.release.xcconfig"; sourceTree = "<group>"; };
 		936BE6B5B3DA981EB35F497E /* Pods-patchwork.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.debug.xcconfig"; sourceTree = "<group>"; };
 		A01B7FF7CDD3A1EF9FE9235E /* libPods-patchwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchwork.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF07FF7F1DADE4E600C7D0D4 /* ALDatabaseManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatabaseManagerTests.m; sourceTree = "<group>"; };
+		AF07FF811DAE30BA00C7D0D4 /* ALSQLClause.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLClause.h; sourceTree = "<group>"; };
+		AF07FF821DAE30BA00C7D0D4 /* ALSQLClause.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLClause.m; sourceTree = "<group>"; };
+		AF34CDE51DAF72FC006215CD /* ALSQLClauseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLClauseTests.m; sourceTree = "<group>"; };
 		AF5218301DACD8390072FA26 /* patchwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = patchwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF5218331DACD8390072FA26 /* patchwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = patchwork.h; sourceTree = "<group>"; };
 		AF5218341DACD8390072FA26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AF5218391DACD8390072FA26 /* patchworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = patchworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF52183E1DACD8390072FA26 /* patchworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = patchworkTests.m; sourceTree = "<group>"; };
 		AF5218401DACD8390072FA26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AF6662A71DAF426D00FE3042 /* ALSQLClause+SQLOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLClause+SQLOperation.h"; sourceTree = "<group>"; };
+		AF6662A81DAF426D00FE3042 /* ALSQLClause+SQLOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLOperation.m"; sourceTree = "<group>"; };
 		AF7162151DACD9E40015F006 /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatabase.h; sourceTree = "<group>"; };
 		AF7162161DACD9E40015F006 /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatabase.m; sourceTree = "<group>"; };
 		AF7162171DACD9E40015F006 /* ALDBColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBColumnInfo.h; sourceTree = "<group>"; };
@@ -189,6 +204,9 @@
 		AF7162631DACD9E40015F006 /* ASIHTTPRequestQueueAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIHTTPRequestQueueAdaptor.m; sourceTree = "<group>"; };
 		AF7162641DACD9E40015F006 /* NSURLSessionAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionAdaptor.h; sourceTree = "<group>"; };
 		AF7162651DACD9E40015F006 /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
+		AF7162B21DACE7AC0015F006 /* ALDBConnectionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBConnectionProtocol.h; sourceTree = "<group>"; };
+		AF8EC3A11DB648E700DE46CF /* ALSQLClause+SQLFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLClause+SQLFunctions.h"; sourceTree = "<group>"; };
+		AF8EC3A21DB648E700DE46CF /* ALSQLClause+SQLFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLFunctions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,6 +289,8 @@
 			children = (
 				AF52183E1DACD8390072FA26 /* patchworkTests.m */,
 				AF5218401DACD8390072FA26 /* Info.plist */,
+				AF07FF7F1DADE4E600C7D0D4 /* ALDatabaseManagerTests.m */,
+				AF34CDE51DAF72FC006215CD /* ALSQLClauseTests.m */,
 			);
 			path = patchworkTests;
 			sourceTree = "<group>";
@@ -280,9 +300,10 @@
 			children = (
 				AF7162151DACD9E40015F006 /* ALDatabase.h */,
 				AF7162161DACD9E40015F006 /* ALDatabase.m */,
+				AF7162191DACD9E40015F006 /* ALDBMigrationProtocol.h */,
+				AF7162B21DACE7AC0015F006 /* ALDBConnectionProtocol.h */,
 				AF7162171DACD9E40015F006 /* ALDBColumnInfo.h */,
 				AF7162181DACD9E40015F006 /* ALDBColumnInfo.m */,
-				AF7162191DACD9E40015F006 /* ALDBMigrationProtocol.h */,
 				AF71621A1DACD9E40015F006 /* ALFMDatabaseQueue.h */,
 				AF71621B1DACD9E40015F006 /* ALFMDatabaseQueue.m */,
 				AF71621C1DACD9E40015F006 /* ALSQLCondition.h */,
@@ -290,6 +311,12 @@
 				AF71621E1DACD9E40015F006 /* ALSQLExpression.h */,
 				AF71621F1DACD9E40015F006 /* ALSQLExpression.m */,
 				AF7162201DACD9E40015F006 /* SqlCommands */,
+				AF07FF811DAE30BA00C7D0D4 /* ALSQLClause.h */,
+				AF07FF821DAE30BA00C7D0D4 /* ALSQLClause.m */,
+				AF6662A71DAF426D00FE3042 /* ALSQLClause+SQLOperation.h */,
+				AF6662A81DAF426D00FE3042 /* ALSQLClause+SQLOperation.m */,
+				AF8EC3A11DB648E700DE46CF /* ALSQLClause+SQLFunctions.h */,
+				AF8EC3A21DB648E700DE46CF /* ALSQLClause+SQLFunctions.m */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -411,9 +438,11 @@
 				AF7162971DACD9E40015F006 /* RC4.h in Headers */,
 				AF71628F1DACD9E40015F006 /* DES.h in Headers */,
 				AF7162831DACD9E40015F006 /* NSString+Helper.h in Headers */,
+				AF6662A91DAF426D00FE3042 /* ALSQLClause+SQLOperation.h in Headers */,
 				AF7162891DACD9E40015F006 /* ALOCRuntime.h in Headers */,
 				AF71628B1DACD9E40015F006 /* Base64.h in Headers */,
 				AF71626B1DACD9E40015F006 /* ALFMDatabaseQueue.h in Headers */,
+				AF07FF831DAE30BA00C7D0D4 /* ALSQLClause.h in Headers */,
 				AF7162811DACD9E40015F006 /* NSDate+ALExtensions.h in Headers */,
 				AF71626A1DACD9E40015F006 /* ALDBMigrationProtocol.h in Headers */,
 				AF7162751DACD9E40015F006 /* ALSQLInsertCommand.h in Headers */,
@@ -443,6 +472,8 @@
 				AF7162A61DACD9E40015F006 /* ALHTTPRequest+Helper.h in Headers */,
 				AF71626F1DACD9E40015F006 /* ALSQLExpression.h in Headers */,
 				AF71629B1DACD9E40015F006 /* SHA1.h in Headers */,
+				AF8EC3A31DB648E700DE46CF /* ALSQLClause+SQLFunctions.h in Headers */,
+				AF7162B31DACE7AC0015F006 /* ALDBConnectionProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,6 +666,7 @@
 				AF7162A71DACD9E40015F006 /* ALHTTPRequest+Helper.m in Sources */,
 				AF71626C1DACD9E40015F006 /* ALFMDatabaseQueue.m in Sources */,
 				AF71627E1DACD9E40015F006 /* NSArray+ArrayExtensions.m in Sources */,
+				AF07FF841DAE30BA00C7D0D4 /* ALSQLClause.m in Sources */,
 				AF7162901DACD9E40015F006 /* DES.m in Sources */,
 				AF7162961DACD9E40015F006 /* NSObject+JSONTransform.m in Sources */,
 				AF7162821DACD9E40015F006 /* NSDate+ALExtensions.m in Sources */,
@@ -643,6 +675,7 @@
 				AF7162691DACD9E40015F006 /* ALDBColumnInfo.m in Sources */,
 				AF7162741DACD9E40015F006 /* ALSQLDeleteCommand.m in Sources */,
 				AF7162A21DACD9E40015F006 /* ALModel+JSON.m in Sources */,
+				AF8EC3A41DB648E700DE46CF /* ALSQLClause+SQLFunctions.m in Sources */,
 				AF7162701DACD9E40015F006 /* ALSQLExpression.m in Sources */,
 				AF7162981DACD9E40015F006 /* RC4.m in Sources */,
 				AF7162941DACD9E40015F006 /* MD5.m in Sources */,
@@ -662,6 +695,7 @@
 				AF7162671DACD9E40015F006 /* ALDatabase.m in Sources */,
 				AF71628E1DACD9E40015F006 /* CRC.m in Sources */,
 				AF71626E1DACD9E40015F006 /* ALSQLCondition.m in Sources */,
+				AF6662AA1DAF426D00FE3042 /* ALSQLClause+SQLOperation.m in Sources */,
 				AF71627A1DACD9E40015F006 /* ALSQLUpdateCommand.m in Sources */,
 				AF7162721DACD9E40015F006 /* ALSQLCommand.m in Sources */,
 			);
@@ -672,6 +706,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AF52183F1DACD8390072FA26 /* patchworkTests.m in Sources */,
+				AF07FF801DADE4E600C7D0D4 /* ALDatabaseManagerTests.m in Sources */,
+				AF34CDE61DAF72FC006215CD /* ALSQLClauseTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

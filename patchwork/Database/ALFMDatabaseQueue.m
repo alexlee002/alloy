@@ -9,8 +9,25 @@
 #import "ALFMDatabaseQueue.h"
 #import "FMDB.h"
 #import "UtilitiesHeader.h"
+#import "ALOCRuntime.h"
 
 #import <sqlite3.h>
+
+#ifndef MAX_DB_BLOCK_EXECUTE_SEC
+#define MAX_DB_BLOCK_EXECUTE_SEC 5
+#endif
+
+#if defined(DEBUG) && DEBUG
+    #define OP_BLOCK(block) \
+        CFTimeInterval t = CFAbsoluteTimeGetCurrent();  \
+        block();                                        \
+        t = CFAbsoluteTimeGetCurrent() - t;             \
+        if (t > MAX_DB_BLOCK_EXECUTE_SEC) {             \
+            ALLogWarn(@"!!!database operation cost too much time:%fs!!!\nback trace stack:\n%@", t, backtraceStack(15));\
+        }
+#else
+    #define OP_BLOCK(block) block()
+#endif
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -110,11 +127,11 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 - (void)safelyRun:(void (^)(void))block {
     ALFMDatabaseQueue *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueSpecificKey);
     if (currentSyncQueue == self) {
-        ALLogWarn(@"!!! ALFMDatabaseQueue was called reentrantly on the same queue, which would lead to a deadlock.");
-        block();
+        ALLogWarn(@"!!! nested database operation blocks!");
+        OP_BLOCK(block);
     } else {
         dispatch_sync(_queue, ^{
-            block();
+            OP_BLOCK(block);
         });
     }
 }
@@ -128,13 +145,13 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
         block(db);
         
         if ([db hasOpenResultSets]) {
-            ALLogWarn(@"!!! there is at least one open result set around after performing [DatabaseExecuteQueue inDatabase:]");
+            ALLogWarn(@"!!! there is at least one open result set around after performing [ALFMDatabaseQueue inDatabase:]");
             
 #if defined(DEBUG) && DEBUG
             NSSet *openSetCopy = FMDBReturnAutoreleased([[db valueForKey:@"_openResultSets"] copy]);
             for (NSValue *rsInWrappedInATastyValueMeal in openSetCopy) {
                 FMResultSet *rs = (FMResultSet *)[rsInWrappedInATastyValueMeal pointerValue];
-                ALLogVerbose(@"query: '%@'", [rs query]);
+                ALLogVerbose(@"unexpected opening result set query: '%@'", [rs query]);
             }
 #endif
         }

@@ -10,7 +10,7 @@
 #import "UtilitiesHeader.h"
 #import <objc/runtime.h>
 #import "NSString+Helper.h"
-#import "ALOCRuntime.h"
+
 
 static NSString * const kFakeChainingObjectProtocolName = @"FakeChainingObjectProtocol";
 
@@ -62,6 +62,10 @@ BOOL isValidChainingObject(id obj) {
 
 
 @implementation NSObject(SafeBlocksChain)
+
+- (BOOL)isValidBlocksChainObject {
+    return [self conformsToProtocol:fakeProtocol()];
+}
 
 - (__kindof id (^)())end {
     return ^id {

@@ -9,6 +9,9 @@
 #ifndef UtilitiesHeader_h
 #define UtilitiesHeader_h
 
+// maximum time (seconds) a database queue operation (eg: inDatabase:) can execute.
+#define MAX_DB_BLOCK_EXECUTE_SEC   5
+
 #define FORCE_INLINE __inline__ __attribute__((always_inline))
 
 #if TARGET_OS_IPHONE
@@ -37,13 +40,20 @@
         (block)( __VA_ARGS__ );     \
     }
 
+#define safeInvokeBlockInMainThread(block, ...)         \
+    if ((block) != nil) {                               \
+        dispatch_async(dispatch_get_main_queue(), ^{    \
+            (block)( __VA_ARGS__ );                     \
+        });                                             \
+    }
+
 // CheckMemoryLeak
 #if DEBUG
 #define TrackMemoryLeak(willReleaseObject) __weak typeof(willReleaseObject) _weak_##willReleaseObject = willReleaseObject;
 
 #define CheckMemoryLeak(willReleaseObject)  \
     do {                                    \
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),      \
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),      \
                dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{          \
                     if (_weak_##willReleaseObject != nil) {                                  \
                         ALLogWarn(@"\n************************************************"      \
@@ -60,9 +70,9 @@
 
 //日志相关
 // 如果安装了 Xcode 的 MCLog插件， 支持彩色日志输出和日志分级， 如果没有安装此插件， 则把下边的宏定义注释即可
-#ifndef EnableColorLog
-#define EnableColorLog 1
-#endif
+//#ifndef EnableColorLog
+//#define EnableColorLog 1
+//#endif
 
 // clang-format off
 #define __PRETTY_FILE_NAME (__FILE__ ? [[NSString stringWithUTF8String:__FILE__] lastPathComponent] : @"")
@@ -124,9 +134,9 @@
 
 #define keypathForClass(CLASS, PATH) @(((void)(NO && ((void)[[CLASS alloc] init].PATH, NO)), # PATH))
 
-//检查版本号
-#define IOS_VERSION_NOT_BEFORE(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define IOS_VERSION_EQUAL_TO(v)    ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+////检查版本号
+//#define IOS_VERSION_NOT_BEFORE(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+//#define IOS_VERSION_EQUAL_TO(v)    ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 
 
 

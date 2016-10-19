@@ -11,10 +11,12 @@
 @class FMDatabase;
 @protocol ALDBMigrationProtocol <NSObject>
 
-- (BOOL)canMigrateDatabaseWithPath:(NSString *)path;
++ (BOOL)canMigrateDatabaseWithPath:(NSString *)path;
 - (NSInteger)currentVersion;
 
-- (BOOL)setupDatabase:(FMDatabase *)db;
 - (BOOL)migrateFromVersion:(NSInteger)fromVersion to:(NSInteger)toVersion databaseHandler:(FMDatabase *)db;
+
+@optional
+- (BOOL)setupDatabase:(FMDatabase *)db;
 
 @end

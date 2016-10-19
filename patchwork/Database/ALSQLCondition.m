@@ -69,7 +69,7 @@ va_end(args);       \
     }
 }
 
-- (nullable NSString *)stringify {
+- (NSString *)stringify {
     return self.sqlClause;
 }
 

@@ -17,7 +17,9 @@
 #import "ALSQLInsertCommand.h"
 #import "ALOCRuntime.h"
 #import "ALDBMigrationProtocol.h"
+#import "ALDBConnectionProtocol.h"
 #import "SafeBlocksChain.h"
+#import "NSCache+ALExtensions.h"
 
 #import <objc/runtime.h>
 
@@ -90,81 +92,113 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     return self;
 }
 
+- (nullable id<ALDBMigrationProtocol>)dbMigrationProcessor {
+    Class cls = [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBMigrationProtocol)] bk_select:^BOOL(Class cls){
+        return [cls canMigrateDatabaseWithPath:_queue.path];
+    }].anyObject;
+    return [[cls alloc] init];
+}
+
+- (nullable id<ALDBConnectionProtocol>)connectionHandler {
+    Class cls = [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBConnectionProtocol)] bk_select:^BOOL(Class cls){
+        return [cls canHandleDatabaseWithPath:_queue.path];
+    }].anyObject;
+    return [[cls alloc] init];
+}
+
+- (void)autoSetupDatabase:(FMDatabase *)db {
+    NSSet *objTables = [self modelClasses];
+    if (objTables.count == 0) {
+        ALLogWarn(@"*** Not found any object store in database:%@", _queue.path);
+        return;
+    }
+    
+    [objTables bk_each:^(Class cls) {
+        [db executeUpdate:[cls tableSchema]];
+        [[cls indexStatements] bk_each:^(NSString *sql) {
+            [db executeUpdate:sql];
+        }];
+    }];
+}
+
 - (BOOL)open {
     if (_queue == nil) {
         return NO;
     }
     
-    id<ALDBMigrationProtocol> migrationProcessor =
-    [[ALOCRuntime classConfirmsToProtocol:@protocol(ALDBMigrationProtocol)] bk_select:^BOOL(Class cls){
-        return [cls canMigrateDatabaseWithPath:_queue.path];
-    }].anyObject;
+    id<ALDBMigrationProtocol> migrationProcessor = [self dbMigrationProcessor];
+    id<ALDBConnectionProtocol> openHelper = [self connectionHandler];
     
     __block BOOL ret = YES;
     [_queue inDatabase:^(FMDatabase * _Nonnull db) {
         [db closeOpenResultSets];
         
+        // extension point: you can define some specified configs immediately after DB opened。
+        if ([openHelper respondsToSelector:@selector(databaseDidOpen:)]) {
+            [openHelper databaseDidOpen:db];
+        }
+        
+        // database migration
         if (migrationProcessor == nil) {
             ALLogWarn(@"*** Not found any migration processor for database:%@", _queue.path);
             
-            NSSet *objTables = [self modelClasses];
-            if (objTables.count == 0) {
-                ALLogWarn(@"*** Not found any object store in database:%@", _queue.path);
-                ret = YES;
-                return;
-            }
-            
-            [objTables bk_each:^(Class cls) {
-                [db executeUpdate:[cls tableSchema]];
-                [[cls indexStatements] bk_each:^(NSString *sql) {
-                    [db executeUpdate:sql];
-                }];
-            }];
+            [self autoSetupDatabase:db];
             ret = YES;
-            return;
-        }
+        } else {
         
-        // all the database version should begins from 1 (DO NOT begins from 0 !!!)
-        NSInteger newVersion = [migrationProcessor currentVersion];
-        if (!_dbFileExisted) { // create database directly
-            if ([migrationProcessor setupDatabase:db]) {
-                if (![self updateDatabaseVersion:newVersion handler:db]) {
-                    NSAssert(NO, @"update database veriosn failed!!!");
+            // all the database version should begins from 1 (DO NOT begins from 0 !!!)
+            NSInteger newVersion = [migrationProcessor currentVersion];
+            if (!_dbFileExisted) { // create database directly
+                BOOL created = NO;
+                if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
+                    created = [migrationProcessor setupDatabase:db];
+                } else {
+                    [self autoSetupDatabase:db];
+                    created = YES;
+                }
+                
+                if (created) {
+                    ret = [self updateDatabaseVersion:newVersion dbHandler:db assertIfFailed:YES];
+                } else {
+                    NSAssert(NO, @"Can not setup database: %@", _queue.path);
                     ret = NO;
                 }
             } else {
-                NSAssert(NO, @"Can not setup database: %@", _queue.path);
-                ret = NO;
+                NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
+                NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@", @(dbVersion),
+                         @(newVersion));
+                
+                if (dbVersion < newVersion) {
+                    if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
+                        ret = [self updateDatabaseVersion:newVersion dbHandler:db assertIfFailed:YES];
+                    } else {
+                        NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
+                                 _queue.path);
+                        ret = NO;
+                    }
+                }
             }
-            return;
         }
         
-        NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
-        NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@", @(dbVersion),
-                 @(newVersion));
-        
-        if (dbVersion < newVersion) {
-            if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
-                if (![self updateDatabaseVersion:newVersion handler:db]) {
-                    NSAssert(NO, @"update database veriosn failed!!!");
-                    ret = NO;
-                }
-            } else {
-                NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
-                         _queue.path);
-                ret = NO;
-            }
+        // extension point
+        if ([openHelper respondsToSelector:@selector(databaseDidSetup:)]) {
+            [openHelper databaseDidSetup:db];
         }
     }];
     
     return ret;
 }
 
-- (BOOL)updateDatabaseVersion:(NSInteger)version handler:(FMDatabase *)db {
-    BOOL ret = [db executeUpdate:@"PRAGMA user_version=?;", @(version)];
+- (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db assertIfFailed:(BOOL)throwAssert {
+    BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", version]];
     if (!ret) {
-        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
-                  [db lastError]);
+        if (throwAssert) {
+            NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
+                     [db lastError]);
+        } else {
+            ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
+                      [db lastError]);
+        }
     }
     return ret;
 }

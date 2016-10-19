@@ -8,6 +8,7 @@
 
 #import "NSString+Helper.h"
 #import "BlocksKit.h"
+#import <objc/message.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +19,18 @@ FORCE_INLINE id wrapNil(id _Nullable obj) {
 FORCE_INLINE id _Nullable unwrapNil(id _Nullable obj) {
     return obj == NSNull.null ? nil : obj;
 }
+
+FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
+    if ([obj isKindOfClass:NSString.class]) {
+        return (NSString *)obj;
+    } else if ([obj isKindOfClass:NSNumber.class]) {
+        return ((NSNumber *)obj).stringValue;
+    } else if ([obj respondsToSelector:@selector(stringValue)]) {
+        return ((NSString *(*)(id, SEL))(void *)objc_msgSend)((id)obj, @selector(stringValue));
+    }
+    return nil;
+}
+
 
 FORCE_INLINE NSString *stringOrEmpty(NSString *_Nullable string) {
     NSString *tmp = [string stringify];
@@ -55,14 +68,8 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 
 @implementation NSObject (StringHelper)
 
-- (nullable NSString *)stringify {
-    if ([self isKindOfClass:[NSString class]]) {
-        return (NSString *)self;
-    } else if ([self isKindOfClass:[NSNumber class]]) {
-        return ((NSNumber *)self).stringValue;
-    } else {
-        return [self description];
-    }
+- (NSString *)stringify {
+    return stringValue(self) ?: [self description];
 }
 
 @end
