@@ -64,7 +64,7 @@ BOOL isValidChainingObject(id obj) {
 @implementation NSObject(SafeBlocksChain)
 
 - (BOOL)isValidBlocksChainObject {
-    return [self conformsToProtocol:fakeProtocol()];
+    return ![self conformsToProtocol:fakeProtocol()];
 }
 
 - (__kindof id (^)())end {

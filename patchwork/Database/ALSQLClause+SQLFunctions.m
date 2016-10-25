@@ -9,7 +9,7 @@
 #import "ALSQLClause+SQLFunctions.h"
 #import "NSString+Helper.h"
 
-static FORCE_INLINE ALSQLClause *__sql_func(NSString *funcName, NSArray *args) {
+FORCE_INLINE ALSQLClause *sql_func1(NSString *funcName, NSArray *args) {
     NSMutableString *sql = [funcName.uppercaseString mutableCopy];
     NSMutableArray *sqlArgs = [NSMutableArray array];
     [sql appendString:@"("];
@@ -48,7 +48,7 @@ FORCE_INLINE ALSQLClause *NS_REQUIRES_NIL_TERMINATION sqlFunc(NSString *funcName
     }
     va_end(valist);
     
-    return __sql_func(funcName, args);
+    return sql_func1(funcName, args);
 }
 
 
@@ -68,20 +68,41 @@ FORCE_INLINE ALSQLClause *SQL_UPPER(id obj) {
     return sqlFunc(@"UPPER", obj, nil);
 }
 
-FORCE_INLINE ALSQLClause *SQL_MAX(NSArray *objs) {
-    return __sql_func(@"MAX", objs);
+FORCE_INLINE ALSQLClause *SQL_MAX(id objs) {
+    
+    if (![objs isKindOfClass:NSArray.class]) {
+        return sqlFunc(@"MAX", objs, nil);
+    } else {
+        return sql_func1(@"MAX", objs);
+    }
 }
 
-FORCE_INLINE ALSQLClause *SQL_MIN(NSArray *objs) {
-    return __sql_func(@"MIN", objs);
+FORCE_INLINE ALSQLClause *SQL_MIN(id objs) {
+    if (![objs isKindOfClass:NSArray.class]) {
+        return sqlFunc(@"MIN", objs, nil);
+    } else {
+        return sql_func1(@"MIN", objs);
+    }
 }
 
-FORCE_INLINE ALSQLClause *SQL_REPLACE (id src, id target, id replacement) {
+FORCE_INLINE ALSQLClause *SQL_REPLACE(id src, id target, id replacement) {
     return sqlFunc(@"REPLACE", target, replacement, nil);
 }
 
-FORCE_INLINE ALSQLClause *SQL_SUBSTR  (id src, NSInteger from, NSInteger len) {
+FORCE_INLINE ALSQLClause *SQL_SUBSTR(id src, NSInteger from, NSInteger len) {
     return sqlFunc(@"SUBSTR", @(from), @(len), nil);
+}
+
+FORCE_INLINE ALSQLClause *SQL_COUNT(id _Nullable obj) {
+    return sqlFunc(@"COUNT", obj ?: @"*", nil);
+}
+
+FORCE_INLINE ALSQLClause *SQL_SUM(id obj) {
+    return sqlFunc(@"SUM", obj, nil);
+}
+
+FORCE_INLINE ALSQLClause *SQL_AVG(id obj) {
+    return sqlFunc(@"AVG", obj, nil);
 }
 
 //@implementation ALSQLClause (SQLFunctions)

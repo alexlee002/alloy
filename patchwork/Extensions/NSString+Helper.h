@@ -58,5 +58,11 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
                        decimalPlaces:(uint)places;
 @end
 
+@interface NSString (ALRegularExpressions)
+
+- (nullable NSString *)stringByMatching:(NSString *)pattern captureRangeAt:(NSInteger)index;
+- (BOOL)matchesPatterh:(NSString *)pattern;
+@end
+
 
 NS_ASSUME_NONNULL_END

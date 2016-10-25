@@ -8,18 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import "ALFMDatabaseQueue.h"
-#import "ALSQLDeleteCommand.h"
-#import "ALSQLInsertCommand.h"
-#import "ALSQLSelectCommand.h"
-#import "ALSQLUpdateCommand.h"
+#import "ALSQLDeleteStatement.h"
+#import "ALSQLInsertStatement.h"
+#import "ALSQLSelectStatement.h"
+#import "ALSQLUpdateStatement.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 //typedef ALDatabase *_Nonnull (^ALDatabaseBlockStrArray)(NSArray<NSString *> *_Nullable strs);
-typedef ALSQLSelectCommand *_Nonnull (^ALSQLSelectBlock)(NSArray<NSString *> *_Nullable columns);
-typedef ALSQLUpdateCommand *_Nonnull (^ALSQLUpdateBlock)(NSString *_Nonnull table);
-typedef ALSQLInsertCommand *_Nonnull (^ALSQLInsertBlock)(NSString *_Nonnull table);
-typedef ALSQLDeleteCommand *_Nonnull (^ALSQLDeleteBlock)(NSString *_Nonnull table);
+typedef ALSQLSelectStatement *_Nonnull (^ALSQLSelectBlock)(NSArray<NSString *> *_Nullable columns);
+typedef ALSQLUpdateStatement *_Nonnull (^ALSQLUpdateBlock)(NSString *_Nonnull table);
+typedef ALSQLInsertStatement *_Nonnull (^ALSQLInsertBlock)(NSString *_Nonnull table);
+typedef ALSQLDeleteStatement *_Nonnull (^ALSQLDeleteBlock)(NSString *_Nonnull table);
 
 
 @interface ALDatabase : NSObject

@@ -7,9 +7,9 @@
 //
 
 #import "ALModel_Define.h"
-#import "ALSQLCondition.h"
+//#import "ALSQLCondition.h"
 #import "ALDatabase.h"
-
+@class ALSQLCondition;
 NS_ASSUME_NONNULL_BEGIN
 
 #define AS_COL(class_type, property) [class_type mappedColumnNameForProperty:keypathForClass(class_type, property)]
@@ -19,10 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const kRowIdColumnName;
 
-@interface ALSQLSelectCommand (ActiveRecord)
+@interface ALSQLSelectStatement (ActiveRecord)
 
 @property(readonly) NSArray<__kindof ALModel *> *_Nullable (^FETCH_MODELS)(void);
-@property(readonly) ALSQLSelectCommand *_Nonnull           (^APPLY_MODEL) (Class _Nonnull modelClass);
+@property(readonly) ALSQLSelectStatement *_Nonnull         (^APPLY_MODEL) (Class _Nonnull modelClass);
 
 @end
 
@@ -39,8 +39,8 @@ extern NSString * const kRowIdColumnName;
 + (NSDictionary<NSString *, ALDBColumnInfo *> *)columns;
 + (NSString *)mappedColumnNameForProperty:(NSString *)propertyName;
 + (nullable NSArray<__kindof ALModel *> *)modelsWithCondition:(nullable ALSQLCondition *)condition;
-+ (ALSQLSelectCommand *)fetcher;
-+ (ALSQLUpdateCommand *)updateExector;
++ (ALSQLSelectStatement *)fetcher;
++ (ALSQLUpdateStatement *)updateExector;
 
 - (BOOL)saveOrReplce:(BOOL)replaceExisted;
 - (BOOL)updateOrReplace:(BOOL)replaceExisted;

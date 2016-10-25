@@ -12,9 +12,9 @@
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
 #import "ALModel.h"
-#import "ALSQLSelectCommand.h"
-#import "ALSQLUpdateCommand.h"
-#import "ALSQLInsertCommand.h"
+#import "ALSQLSelectStatement.h"
+#import "ALSQLUpdateStatement.h"
+#import "ALSQLInsertStatement.h"
 #import "ALOCRuntime.h"
 #import "ALDBMigrationProtocol.h"
 #import "ALDBConnectionProtocol.h"
@@ -225,41 +225,41 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 }
 
 #pragma mark - database operations
-- (ALSQLSelectBlock)SELECT {
-    return ^ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
-        if (isValidChainingObject(self)) {
-            return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
-        }
-        return SafeBlocksChainObj(nil, ALSQLSelectCommand);
-    };
-}
-
-- (ALSQLUpdateBlock)UPDATE {
-    return ^ALSQLUpdateCommand *_Nonnull(NSString *_Nonnull table) {
-        if (isValidChainingObject(self)) {
-            return [ALSQLUpdateCommand commandWithDatabase:self].UPDATE(table);
-        }
-        return SafeBlocksChainObj(nil, ALSQLUpdateCommand);
-    };
-}
-
-- (ALSQLInsertBlock)INSERT {
-    return ^ALSQLInsertCommand *_Nonnull(NSString *_Nonnull table) {
-        if (isValidChainingObject(self)) {
-            return [ALSQLInsertCommand commandWithDatabase:self].INSERT(table);
-        }
-        return SafeBlocksChainObj(nil, ALSQLInsertCommand);
-    };
-}
-
-- (ALSQLDeleteBlock)DELETE_FROM {
-    return ^ALSQLDeleteCommand *_Nonnull(NSString *_Nonnull table) {
-        if (isValidChainingObject(self)) {
-            return [ALSQLDeleteCommand commandWithDatabase:self].DELETE_FROM(table);
-        }
-        return SafeBlocksChainObj(nil, ALSQLDeleteCommand);
-    };
-}
+//- (ALSQLSelectBlock)SELECT {
+//    return ^ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
+//        if (isValidChainingObject(self)) {
+//            return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
+//        }
+//        return SafeBlocksChainObj(nil, ALSQLSelectCommand);
+//    };
+//}
+//
+//- (ALSQLUpdateBlock)UPDATE {
+//    return ^ALSQLUpdateCommand *_Nonnull(NSString *_Nonnull table) {
+//        if (isValidChainingObject(self)) {
+//            return [ALSQLUpdateCommand commandWithDatabase:self].UPDATE(table);
+//        }
+//        return SafeBlocksChainObj(nil, ALSQLUpdateCommand);
+//    };
+//}
+//
+//- (ALSQLInsertBlock)INSERT {
+//    return ^ALSQLInsertCommand *_Nonnull(NSString *_Nonnull table) {
+//        if (isValidChainingObject(self)) {
+//            return [ALSQLInsertCommand commandWithDatabase:self].INSERT(table);
+//        }
+//        return SafeBlocksChainObj(nil, ALSQLInsertCommand);
+//    };
+//}
+//
+//- (ALSQLDeleteBlock)DELETE_FROM {
+//    return ^ALSQLDeleteCommand *_Nonnull(NSString *_Nonnull table) {
+//        if (isValidChainingObject(self)) {
+//            return [ALSQLDeleteCommand commandWithDatabase:self].DELETE_FROM(table);
+//        }
+//        return SafeBlocksChainObj(nil, ALSQLDeleteCommand);
+//    };
+//}
 
 @end
 

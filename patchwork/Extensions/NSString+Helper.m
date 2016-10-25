@@ -8,6 +8,8 @@
 
 #import "NSString+Helper.h"
 #import "BlocksKit.h"
+#import "NSCache+ALExtensions.h"
+#import "MD5.h"
 #import <objc/message.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -232,6 +234,44 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
     NSString *formatPattern = [NSString stringWithFormat:@"%%.%df %@", places, unitNames[unitsIndex]];
     return [NSString stringWithFormat:formatPattern, (double)value];
 }
+
+@end
+
+#pragma mark -
+@implementation NSString (ALRegularExpressions)
+
+- (nullable NSRegularExpression *)regularExpressionWithPattern:(NSString *)pattern {
+    NSString *cacheKey = [@"ALRegularExpressions_KEY$" stringByAppendingString:[pattern MD5]];
+    
+    NSRegularExpression *regex = [[NSCache sharedCache] objectForKey:cacheKey];
+    if (![regex isKindOfClass:[NSRegularExpression class]]) {
+        NSAssert(regex == nil, @"cached object key conflict: %@", regex);
+        NSError *error;
+        regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
+        if (regex != nil) {
+            [[NSCache sharedCache] setObject:regex forKey:cacheKey];
+        } else {
+            ALLogWarn(@"ERROR: %@", error);
+        }
+    }
+    return regex;
+}
+
+- (nullable NSString *)stringByMatching:(NSString *)pattern captureRangeAt:(NSInteger)index {
+    NSRegularExpression *regex = [self regularExpressionWithPattern:pattern];
+    NSTextCheckingResult *result = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
+    if (result.numberOfRanges > 1) {
+        return [self substringWithRangeSafety:[result rangeAtIndex:index]];
+    }
+    return nil;
+}
+
+- (BOOL)matchesPatterh:(NSString *)pattern {
+    NSRegularExpression *regex = [self regularExpressionWithPattern:pattern];
+    NSTextCheckingResult *result = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
+    return result.range.length == self.length;
+}
+
 
 @end
 

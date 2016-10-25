@@ -16,6 +16,10 @@ typedef NS_ENUM(NSInteger, ALOperatorPos) {
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern ALSQLClause *SQLMidOp  (ALSQLClause *target, NSString    *optor, ALSQLClause *other);
+extern ALSQLClause *SQLLeftOp (NSString    *optor,  ALSQLClause *target);
+extern ALSQLClause *SQLRightOp(ALSQLClause *target, NSString    *optor);
+
 @interface ALSQLClause (SQLOperation)
 
 - (void)operation:(NSString *)operatorName position:(ALOperatorPos)pos otherClause:(ALSQLClause *_Nullable)other;
@@ -49,6 +53,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, copy) ALSQLClause *(^THEN)(id obj);
 @property(readonly, copy) ALSQLClause *(^ELSE)(id obj);
 @property(readonly, copy) ALSQLClause *(^END)();
++(ALSQLClause *)SQLCase:(id _Nullable)obj;
+
+// ORDER BY
+@property(readonly, copy) ALSQLClause *(^ASC)();
+@property(readonly, copy) ALSQLClause *(^DESC)();
 
 @end
 

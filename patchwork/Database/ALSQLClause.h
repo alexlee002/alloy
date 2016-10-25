@@ -11,30 +11,32 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALSQLClause : NSObject
+@interface ALSQLClause : NSObject <NSCopying>
 
 @property(PROP_ATOMIC_DEF, copy, readonly, nullable) NSString *SQLString;
-@property(PROP_ATOMIC_DEF, copy, readonly, nullable) NSArray  *argValues;
+@property(PROP_ATOMIC_DEF, copy, nullable)           NSArray  *argValues;
 
 + (instancetype)SQLClauseWithString:(NSString *)sql, ...NS_REQUIRES_NIL_TERMINATION;
-+ (instancetype)SQLClauseWithString:(NSString *)sql argValuess:(NSArray *_Nullable)argValues;
++ (instancetype)SQLClauseWithString:(NSString *)sql argValues:(NSArray *_Nullable)argValues;
 
-- (void)setArgValues:(NSArray * _Nullable)argValues;
 - (void)appendArgValues:(NSArray *)argValues;
-
-- (void)append:(ALSQLClause *)other withSpace:(BOOL)withSpace;
-- (void)append:(NSString *)sql argValues:(NSArray *)argValues withSpace:(BOOL)withSpace;
-
 - (BOOL)isValid;
 
 @end
 
 // chain syntax support
 @interface ALSQLClause (ALBlocksChain)
-@property(readonly) ALSQLClause *(^APPEND)(ALSQLClause *other, BOOL withSpace);
+@property(readonly) ALSQLClause *(^APPEND)(ALSQLClause *other, NSString *_Nullable delimiter);
 @property(readonly) ALSQLClause *(^SET_ARG_VALUES)(NSArray * _Nullable values);
 @property(readonly) ALSQLClause *(^ADD_ARG_VALUES)(NSArray *values);
 @end
+
+
+@interface ALSQLClause (BaseOperations)
+- (void)append:(ALSQLClause *)other withDelimiter:(NSString *_Nullable)delimiter;
+- (void)append:(NSString *)sql argValues:(NSArray *_Nullable)argValues withDelimiter:(NSString *_Nullable)delimiter;
+@end
+
 
 @interface NSString (ALSQLClause)
 

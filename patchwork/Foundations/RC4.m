@@ -26,62 +26,6 @@ struct rc4_state {
 };
 
 
-//static FORCE_INLINE char find_pos(char ch) {
-//    char *ptr = (char *)strrchr(base, ch);  // the last position (the only) in base[]
-//    return (ptr - base);
-//}
-
-static FORCE_INLINE void swap_byte(unsigned char *x, unsigned char *y) {
-    *x = *x ^ *y;
-    *y = *x ^ *y;
-    *x = *x ^ *y;
-}
-
-static FORCE_INLINE void prepare_key(unsigned char *const key_data_ptr, int key_data_len, rc4_key *key) {
-    unsigned char index1;
-    unsigned char index2;
-    unsigned char *state;
-    short counter;
-    state = &key->state[0];
-    for (counter = 0; counter < 256; counter++) state[counter] = counter;
-    key->x = 0;
-    key->y = 0;
-    index1 = 0;
-    index2 = 0;
-    for (counter = 0; counter < 256; counter++) {
-        index2 = (key_data_ptr[index1] + state[counter] + index2) % 256;
-        swap_byte(&state[counter], &state[index2]);
-        index1 = (index1 + 1) % key_data_len;
-    }
-}
-
-static FORCE_INLINE void rc4(unsigned char *buffer_ptr, int buffer_len, rc4_key *key) {
-    //  unsigned char t;
-    unsigned char x;
-    unsigned char y;
-    unsigned char *state;
-    unsigned char xorIndex;
-    short counter;
-    x = key->x;
-    y = key->y;
-    state = &key->state[0];
-    for (counter = 0; counter < buffer_len; counter++) {
-        x = (x + 1) % 256;
-        y = (state[x] + y) % 256;
-        swap_byte(&state[x], &state[y]);
-        xorIndex = (state[x] + state[y]) % 256;
-        buffer_ptr[counter] ^= state[xorIndex];
-    }
-    key->x = x;
-    key->y = y;
-}
-
-//static FORCE_INLINE void rc4encode(char *rc4input, int rc4len) {
-//    struct rc4_key s;
-//    prepare_key((unsigned char *const)rc4key, 32, &s);
-//    rc4((unsigned char *)rc4input, rc4len, &s);
-//}
-
 static FORCE_INLINE void swap_bytes(u_char *a, u_char *b) {
     u_char temp;
     

@@ -12,9 +12,22 @@
 #import "SafeBlocksChain.h"
 #import <objc/runtime.h>
 
-@implementation ALSQLClause (SQLOperation)
+FORCE_INLINE ALSQLClause *SQLMidOp(ALSQLClause *target, NSString *optor, ALSQLClause *other) {
+    [target operation:optor position:ALOperatorPosMid otherClause:other];
+    return target;
+}
 
-//SYNTHESIZE_ASC_OBJ(setIsLowerOP, isLoverOP);
+FORCE_INLINE ALSQLClause *SQLLeftOp(NSString *optor, ALSQLClause *target) {
+    [target operation:optor position:ALOperatorPosLeft otherClause:nil];
+    return target;
+}
+
+FORCE_INLINE ALSQLClause *SQLRightOp(ALSQLClause *target, NSString *optor) {
+    [target operation:optor position:ALOperatorPosRight otherClause:nil];
+    return target;
+}
+
+@implementation ALSQLClause (SQLOperation)
 
 - (void)operation:(NSString *)operatorName position:(ALOperatorPos)pos otherClause:(ALSQLClause *)other {
     NSParameterAssert(!isEmptyString(operatorName));
@@ -27,7 +40,7 @@
         
         [self append:[NSString stringWithFormat:@"%@ %@", stringOrEmpty(operatorName), stringOrEmpty(other.SQLString)]
            argValues:other.argValues
-           withSpace:YES];
+       withDelimiter:isEmptyString(self.SQLString) ? nil : @" "];
     } else if (pos == ALOperatorPosRight) {
         [self setValue:[NSString stringWithFormat:@"%@ %@", stringOrEmpty(self.SQLString), stringOrEmpty(operatorName)]
                 forKey:keypath(self.SQLString)];
@@ -206,7 +219,9 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
         }
         
         if (other) {
-            [mine operation:@"IN" position:ALOperatorPosMid otherClause:other];
+            [mine append:[NSString stringWithFormat:@"IN (%@)", stringOrEmpty(other.SQLString)]
+               argValues:other.argValues
+           withDelimiter:isEmptyString(mine.SQLString) ? nil : @" "];
         } else {
             NSAssert(NO, @"unsupported type of argument 'obj'");
         }
@@ -256,18 +271,43 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
     return ^ALSQLClause *(id obj) {
         __verifySelf();
         
-        if (obj != nil) {
-            [mine operation:@"CASE" position:ALOperatorPosMid otherClause:[obj toSQL]];
-        } else {
-            [mine operation:@"CASE" position:ALOperatorPosRight otherClause:nil];
-        }
+        NSString *clause = mine.SQLString;
+        [mine append:[ALSQLClause SQLCase:obj]
+       withDelimiter:isEmptyString(clause) || [clause hasSuffix:@" "] ? nil : @" "];
         return mine;
     };
+}
+
++(ALSQLClause *)SQLCase:(id _Nullable)obj {
+    ALSQLClause *caseExp = [@"CASE" toSQL];
+    if ([obj isKindOfClass:NSString.class]) {
+        [caseExp append:(NSString *)obj argValues:nil withDelimiter:@" "];
+    }
+    else if ([obj isKindOfClass:ALSQLClause.class]) {
+        [caseExp append:(ALSQLClause *)obj withDelimiter:@" "];
+    }
+    else {
+        ALSQLClause *val = [obj toSQL];
+        if (val != nil) {
+            [caseExp append:val withDelimiter:@" "];
+        }
+        else {
+            NSString *str = stringValue(obj);
+            if (!isEmptyString(str)) {
+                [caseExp append:str argValues:nil withDelimiter:@" "];
+            }
+        }
+    }
+    return caseExp;
 }
 
 __SYNTHESIZE_MID_OP (WHEN, @"WHEN", YES);
 __SYNTHESIZE_MID_OP (THEN, @"THEN", YES);
 __SYNTHESIZE_MID_OP (ELSE, @"ELSE", YES);
 __SYNTHESIZE_SIDE_OP(END,  @"END",  ALOperatorPosRight);
+
+
+__SYNTHESIZE_SIDE_OP(ASC,  @"ASC",  ALOperatorPosRight);
+__SYNTHESIZE_SIDE_OP(DESC, @"DESC", ALOperatorPosRight);
 
 @end

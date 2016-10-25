@@ -40,6 +40,11 @@
     return self;
 }
 
+- (instancetype)copyWithZone:(NSZone *)zone {
+    return [self.class SQLClauseWithString:_SQLString argValues:_argValues];
+}
+
+
 - (NSString *)SQLString {
     return _SQLString;
 }
@@ -70,26 +75,13 @@
     [_argValues addObjectsFromArray:argValues];
 }
 
-- (void)append:(ALSQLClause *)other withSpace:(BOOL)withSpace {
-    [self append:other.SQLString argValues:other.argValues withSpace:withSpace];
-}
-
-- (void)append:(NSString *)sql argValues:(NSArray *)arguments withSpace:(BOOL)withSpace {
-    _SQLString = [stringOrEmpty(self.SQLString) stringByAppendingFormat:@"%@%@", (withSpace ? @" " : @""), sql];
-    
-    if (_argValues == nil && arguments.count > 0) {
-        _argValues = [NSMutableArray array];
-    }
-    [_argValues addObjectsFromArray:arguments];
-}
-
 @end
 
 @implementation ALSQLClause(ALBlocksChain)
 
-- (ALSQLClause *(^)(ALSQLClause *other, BOOL withSpace))APPEND {
-    return ^ALSQLClause *(ALSQLClause *other, BOOL withSpace) {
-        [self append:other withSpace:withSpace];
+- (ALSQLClause *(^)(ALSQLClause *other, NSString *delimiter))APPEND {
+    return ^ALSQLClause *(ALSQLClause *other, NSString *delimiter) {
+        [self append:other withDelimiter:delimiter];
         return self;
     };
 }
@@ -106,6 +98,27 @@
         [self appendArgValues:values];
         return self;
     };
+}
+
+@end
+
+@implementation ALSQLClause (BaseOperations)
+
+- (void)append:(ALSQLClause *)other withDelimiter:(NSString *_Nullable)delimiter{
+    [self append:other.SQLString argValues:other.argValues withDelimiter:delimiter];
+}
+
+- (void)append:(NSString *)sql argValues:(NSArray *)arguments withDelimiter:(NSString *_Nullable)delimiter {
+    _SQLString = [stringOrEmpty(self.SQLString)
+                  stringByAppendingFormat:@"%@%@", stringOrEmpty(castToTypeOrNil(delimiter, NSString)), sql];
+    
+    if (arguments.count > 0) {
+        if (_argValues == nil) {
+            _argValues = [NSMutableArray array];
+        }
+        [_argValues addObjectsFromArray:arguments];
+    }
+    
 }
 
 @end
