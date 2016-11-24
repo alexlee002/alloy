@@ -15,23 +15,29 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//typedef ALDatabase *_Nonnull (^ALDatabaseBlockStrArray)(NSArray<NSString *> *_Nullable strs);
-typedef ALSQLSelectStatement *_Nonnull (^ALSQLSelectBlock)(NSArray<NSString *> *_Nullable columns);
-typedef ALSQLUpdateStatement *_Nonnull (^ALSQLUpdateBlock)(NSString *_Nonnull table);
-typedef ALSQLInsertStatement *_Nonnull (^ALSQLInsertBlock)(NSString *_Nonnull table);
-typedef ALSQLDeleteStatement *_Nonnull (^ALSQLDeleteBlock)(NSString *_Nonnull table);
-
+extern NSString * const kALInMemoryDBPath;  // in-memory db
+extern NSString * const kALTempDBPath;      // temp db;
 
 @interface ALDatabase : NSObject
 
 @property(readonly) ALFMDatabaseQueue *queue;
 
-@property(readonly) ALSQLSelectBlock     SELECT;
-@property(readonly) ALSQLUpdateBlock     UPDATE;
-@property(readonly) ALSQLInsertBlock     INSERT;
-@property(readonly) ALSQLDeleteBlock     DELETE_FROM;
-
 + (nullable instancetype)databaseWithPath:(NSString *)path;
+
+@end
+
+@interface ALDatabase (ALDebug)
+@property(nonatomic) BOOL enableDebug;
+@end
+
+
+@interface ALDatabase (ALSQLStatment)
+
+@property(readonly, copy) ALSQLSelectStatement *(^SELECT)  (id _Nullable resultColumns);
+@property(readonly, copy) ALSQLInsertStatement *(^INSERT)  ();
+@property(readonly, copy) ALSQLInsertStatement *(^REPLACE) ();
+@property(readonly, copy) ALSQLDeleteStatement *(^DELETE)  ();
+@property(readonly, copy) ALSQLUpdateStatement *(^UPDATE)  (id qualifiedTableName);
 
 @end
 

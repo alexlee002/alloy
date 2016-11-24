@@ -26,4 +26,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface ALFMDatabaseQueue (SavePoint)
+
+//@see: FMDatabase
+- (BOOL)startSavePointNamed:(NSString *)name error:(NSError*_Nullable *)outErr;
+- (BOOL)releaseSavePointNamed:(NSString*)name error:(NSError*_Nullable*)outErr;
+- (BOOL)rollbackToSavePointNamed:(NSString*)name error:(NSError*_Nullable*)outErr;
+- (nullable NSError *)inSavePoint:(void (^)(FMDatabase *db, BOOL *rollback))block;
+
+@end
+
+@interface ALFMDatabaseQueue (ALDebug)
+@property(atomic, assign) BOOL shouldCacheStatements;
+@end
+
 NS_ASSUME_NONNULL_END

@@ -8,7 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		4259D15534EBEB0BF4048C2E /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A01B7FF7CDD3A1EF9FE9235E /* libPods-patchwork.a */; };
+		430477471DC33DB400CC2CA4 /* StringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 430477461DC33DB400CC2CA4 /* StringTests.m */; };
+		43132BA61DE294310045FBDA /* ALLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 43132BA41DE294310045FBDA /* ALLogger.h */; };
+		43132BA71DE294310045FBDA /* ALLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 43132BA51DE294310045FBDA /* ALLogger.m */; };
+		43748E311DE3262400186450 /* ALModel+ActiveRecord_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */; };
+		43748E321DE3262400186450 /* ALModel+ActiveRecord_private.m in Sources */ = {isa = PBXBuildFile; fileRef = 43748E301DE3262400186450 /* ALModel+ActiveRecord_private.m */; };
 		4390DF401DBF484700B10CF7 /* ALSQLStatementTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4390DF3F1DBF484700B10CF7 /* ALSQLStatementTests.m */; };
+		4390DF431DC197A100B10CF7 /* ALModel+ActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 4390DF411DC197A100B10CF7 /* ALModel+ActiveRecord.h */; };
+		4390DF441DC197A100B10CF7 /* ALModel+ActiveRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 4390DF421DC197A100B10CF7 /* ALModel+ActiveRecord.m */; };
+		4390DF471DC22A4200B10CF7 /* ALStringInflector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4390DF451DC22A4200B10CF7 /* ALStringInflector.h */; };
+		4390DF481DC22A4200B10CF7 /* ALStringInflector.m in Sources */ = {isa = PBXBuildFile; fileRef = 4390DF461DC22A4200B10CF7 /* ALStringInflector.m */; };
+		4390DF4B1DC2591A00B10CF7 /* ALOrderedMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4390DF491DC2591A00B10CF7 /* ALOrderedMap.h */; };
+		4390DF4C1DC2591A00B10CF7 /* ALOrderedMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 4390DF4A1DC2591A00B10CF7 /* ALOrderedMap.m */; };
+		43AA2E091DC6631800AD997A /* ActiveRecordTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43AA2E081DC6631800AD997A /* ActiveRecordTests.m */; };
 		9FCCCEC77D2EBC73571F6BBF /* libPods-patchworkTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03AC31F45871F15AC7A1C657 /* libPods-patchworkTests.a */; };
 		AF07FF801DADE4E600C7D0D4 /* ALDatabaseManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF07FF7F1DADE4E600C7D0D4 /* ALDatabaseManagerTests.m */; };
 		AF07FF831DAE30BA00C7D0D4 /* ALSQLClause.h in Headers */ = {isa = PBXBuildFile; fileRef = AF07FF811DAE30BA00C7D0D4 /* ALSQLClause.h */; };
@@ -107,7 +119,20 @@
 /* Begin PBXFileReference section */
 		03AC31F45871F15AC7A1C657 /* libPods-patchworkTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchworkTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		06C304076254F4A7F4C54403 /* Pods-patchworkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.debug.xcconfig"; sourceTree = "<group>"; };
+		430477461DC33DB400CC2CA4 /* StringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringTests.m; sourceTree = "<group>"; };
+		43132BA41DE294310045FBDA /* ALLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLogger.h; sourceTree = "<group>"; };
+		43132BA51DE294310045FBDA /* ALLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLogger.m; sourceTree = "<group>"; };
+		43748E2E1DE322DC00186450 /* ActiveRecordAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveRecordAdditions.h; sourceTree = "<group>"; };
+		43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+ActiveRecord_private.h"; sourceTree = "<group>"; };
+		43748E301DE3262400186450 /* ALModel+ActiveRecord_private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord_private.m"; sourceTree = "<group>"; };
 		4390DF3F1DBF484700B10CF7 /* ALSQLStatementTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLStatementTests.m; sourceTree = "<group>"; };
+		4390DF411DC197A100B10CF7 /* ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+ActiveRecord.h"; sourceTree = "<group>"; };
+		4390DF421DC197A100B10CF7 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
+		4390DF451DC22A4200B10CF7 /* ALStringInflector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALStringInflector.h; sourceTree = "<group>"; };
+		4390DF461DC22A4200B10CF7 /* ALStringInflector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALStringInflector.m; sourceTree = "<group>"; };
+		4390DF491DC2591A00B10CF7 /* ALOrderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOrderedMap.h; sourceTree = "<group>"; };
+		4390DF4A1DC2591A00B10CF7 /* ALOrderedMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOrderedMap.m; sourceTree = "<group>"; };
+		43AA2E081DC6631800AD997A /* ActiveRecordTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveRecordTests.m; sourceTree = "<group>"; };
 		73518ED275B45D216FDF6FDD /* Pods-patchwork.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.release.xcconfig"; sourceTree = "<group>"; };
 		911BB3FEE61B0EEBC38ACC93 /* Pods-patchworkTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.release.xcconfig"; sourceTree = "<group>"; };
 		936BE6B5B3DA981EB35F497E /* Pods-patchwork.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.debug.xcconfig"; sourceTree = "<group>"; };
@@ -283,6 +308,8 @@
 				AF07FF7F1DADE4E600C7D0D4 /* ALDatabaseManagerTests.m */,
 				AF34CDE51DAF72FC006215CD /* ALSQLClauseTests.m */,
 				4390DF3F1DBF484700B10CF7 /* ALSQLStatementTests.m */,
+				430477461DC33DB400CC2CA4 /* StringTests.m */,
+				43AA2E081DC6631800AD997A /* ActiveRecordTests.m */,
 			);
 			path = patchworkTests;
 			sourceTree = "<group>";
@@ -373,6 +400,12 @@
 				AF71624E1DACD9E40015F006 /* SHA1.m */,
 				AF71624F1DACD9E40015F006 /* Singleton_Template.h */,
 				AF7162501DACD9E40015F006 /* UtilitiesHeader.h */,
+				4390DF451DC22A4200B10CF7 /* ALStringInflector.h */,
+				4390DF461DC22A4200B10CF7 /* ALStringInflector.m */,
+				4390DF491DC2591A00B10CF7 /* ALOrderedMap.h */,
+				4390DF4A1DC2591A00B10CF7 /* ALOrderedMap.m */,
+				43132BA41DE294310045FBDA /* ALLogger.h */,
+				43132BA51DE294310045FBDA /* ALLogger.m */,
 			);
 			path = Foundations;
 			sourceTree = "<group>";
@@ -380,6 +413,11 @@
 		AF7162511DACD9E40015F006 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				43748E2E1DE322DC00186450 /* ActiveRecordAdditions.h */,
+				43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */,
+				43748E301DE3262400186450 /* ALModel+ActiveRecord_private.m */,
+				4390DF411DC197A100B10CF7 /* ALModel+ActiveRecord.h */,
+				4390DF421DC197A100B10CF7 /* ALModel+ActiveRecord.m */,
 				AF7162541DACD9E40015F006 /* ALModel+JSON.h */,
 				AF7162551DACD9E40015F006 /* ALModel+JSON.m */,
 				AF7162561DACD9E40015F006 /* ALModel.h */,
@@ -420,6 +458,7 @@
 				AF7162A81DACD9E40015F006 /* ALHTTPRequest.h in Headers */,
 				AF7162A41DACD9E40015F006 /* ALModel_Define.h in Headers */,
 				AF7162951DACD9E40015F006 /* NSObject+JSONTransform.h in Headers */,
+				43132BA61DE294310045FBDA /* ALLogger.h in Headers */,
 				AF7162711DACD9E40015F006 /* ALSQLStatement.h in Headers */,
 				AF7162991DACD9E40015F006 /* SafeBlocksChain.h in Headers */,
 				AF7162971DACD9E40015F006 /* RC4.h in Headers */,
@@ -432,6 +471,7 @@
 				AF07FF831DAE30BA00C7D0D4 /* ALSQLClause.h in Headers */,
 				AF7162811DACD9E40015F006 /* NSDate+ALExtensions.h in Headers */,
 				AF71626A1DACD9E40015F006 /* ALDBMigrationProtocol.h in Headers */,
+				43748E311DE3262400186450 /* ALModel+ActiveRecord_private.h in Headers */,
 				AF7162751DACD9E40015F006 /* ALSQLInsertStatement.h in Headers */,
 				AF7162771DACD9E40015F006 /* ALSQLSelectStatement.h in Headers */,
 				AF7162791DACD9E40015F006 /* ALSQLUpdateStatement.h in Headers */,
@@ -439,7 +479,9 @@
 				AF7162AC1DACD9E40015F006 /* ALNetwork_config.h in Headers */,
 				AF7162AE1DACD9E40015F006 /* ASIHTTPRequestQueueAdaptor.h in Headers */,
 				AF7162B01DACD9E40015F006 /* NSURLSessionAdaptor.h in Headers */,
+				4390DF431DC197A100B10CF7 /* ALModel+ActiveRecord.h in Headers */,
 				AF7162A11DACD9E40015F006 /* ALModel+JSON.h in Headers */,
+				4390DF471DC22A4200B10CF7 /* ALStringInflector.h in Headers */,
 				AF7162731DACD9E40015F006 /* ALSQLDeleteStatement.h in Headers */,
 				AF7162AD1DACD9E40015F006 /* ALURLRequestQueueAdaptorProtocol.h in Headers */,
 				AF7162A31DACD9E40015F006 /* ALModel.h in Headers */,
@@ -455,6 +497,7 @@
 				AF5218411DACD8390072FA26 /* patchwork.h in Headers */,
 				AF7162871DACD9E40015F006 /* ALDevice.h in Headers */,
 				AF7162A61DACD9E40015F006 /* ALHTTPRequest+Helper.h in Headers */,
+				4390DF4B1DC2591A00B10CF7 /* ALOrderedMap.h in Headers */,
 				AF71629B1DACD9E40015F006 /* SHA1.h in Headers */,
 				AF8EC3A31DB648E700DE46CF /* ALSQLClause+SQLFunctions.h in Headers */,
 				AF7162B31DACE7AC0015F006 /* ALDBConnectionProtocol.h in Headers */,
@@ -511,7 +554,7 @@
 		AF5218271DACD8390072FA26 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Alex Lee";
 				TargetAttributes = {
 					AF52182F1DACD8390072FA26 = {
@@ -574,7 +617,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		333076B676D9BF9775E8641B /* [CP] Check Pods Manifest.lock */ = {
@@ -589,7 +632,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		532686443FD88E4567F0C6D6 /* [CP] Copy Pods Resources */ = {
@@ -651,6 +694,7 @@
 				AF71626C1DACD9E40015F006 /* ALFMDatabaseQueue.m in Sources */,
 				AF71627E1DACD9E40015F006 /* NSArray+ArrayExtensions.m in Sources */,
 				AF07FF841DAE30BA00C7D0D4 /* ALSQLClause.m in Sources */,
+				43748E321DE3262400186450 /* ALModel+ActiveRecord_private.m in Sources */,
 				AF7162901DACD9E40015F006 /* DES.m in Sources */,
 				AF7162961DACD9E40015F006 /* NSObject+JSONTransform.m in Sources */,
 				AF7162821DACD9E40015F006 /* NSDate+ALExtensions.m in Sources */,
@@ -659,16 +703,20 @@
 				AF7162691DACD9E40015F006 /* ALDBColumnInfo.m in Sources */,
 				AF7162741DACD9E40015F006 /* ALSQLDeleteStatement.m in Sources */,
 				AF7162A21DACD9E40015F006 /* ALModel+JSON.m in Sources */,
+				4390DF4C1DC2591A00B10CF7 /* ALOrderedMap.m in Sources */,
 				AF8EC3A41DB648E700DE46CF /* ALSQLClause+SQLFunctions.m in Sources */,
+				43132BA71DE294310045FBDA /* ALLogger.m in Sources */,
 				AF7162981DACD9E40015F006 /* RC4.m in Sources */,
 				AF7162941DACD9E40015F006 /* MD5.m in Sources */,
 				AF7162AF1DACD9E40015F006 /* ASIHTTPRequestQueueAdaptor.m in Sources */,
 				AF71628C1DACD9E40015F006 /* Base64.m in Sources */,
+				4390DF481DC22A4200B10CF7 /* ALStringInflector.m in Sources */,
 				AF7162921DACD9E40015F006 /* HHTimer.m in Sources */,
 				AF7162AB1DACD9E40015F006 /* ALHTTPResponse.m in Sources */,
 				AF7162A51DACD9E40015F006 /* ALModel_Define.m in Sources */,
 				AF71628A1DACD9E40015F006 /* ALOCRuntime.m in Sources */,
 				AF71629A1DACD9E40015F006 /* SafeBlocksChain.m in Sources */,
+				4390DF441DC197A100B10CF7 /* ALModel+ActiveRecord.m in Sources */,
 				AF7162B11DACD9E40015F006 /* NSURLSessionAdaptor.m in Sources */,
 				AF7162861DACD9E40015F006 /* URLHelper.m in Sources */,
 				AF7162801DACD9E40015F006 /* NSCache+ALExtensions.m in Sources */,
@@ -688,7 +736,9 @@
 			files = (
 				AF52183F1DACD8390072FA26 /* patchworkTests.m in Sources */,
 				4390DF401DBF484700B10CF7 /* ALSQLStatementTests.m in Sources */,
+				43AA2E091DC6631800AD997A /* ActiveRecordTests.m in Sources */,
 				AF07FF801DADE4E600C7D0D4 /* ALDatabaseManagerTests.m in Sources */,
+				430477471DC33DB400CC2CA4 /* StringTests.m in Sources */,
 				AF34CDE61DAF72FC006215CD /* ALSQLClauseTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -722,6 +772,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -773,6 +824,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

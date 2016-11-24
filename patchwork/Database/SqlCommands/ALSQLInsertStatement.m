@@ -82,7 +82,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_POLICY(ALSQLInsertStatement, OR_ROLLBACK, @"OR
             [values enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
                 id val = obj;
                 if (![obj isKindOfClass:ALSQLClause.class]) {
-                    val = [obj SQLFromArgValue];
+                    val = [obj SQLClauseArgValue];
                 }
                 if (val != nil) {
                     [keys addObject:key];
@@ -121,7 +121,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_POLICY(ALSQLInsertStatement, OR_ROLLBACK, @"OR
                 if ([val isKindOfClass:ALSQLClause.class]) {
                     [clauses addObject:(ALSQLClause *)val];
                 } else {
-                    id tmpVal = [val SQLFromArgValue];
+                    id tmpVal = [val SQLClauseArgValue];
                     if (tmpVal != nil) {
                         [clauses addObject:tmpVal];
                     } else {
@@ -158,10 +158,10 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_POLICY(ALSQLInsertStatement, OR_ROLLBACK, @"OR
 }
 
 
-- (nullable ALSQLClause *)toSQL {
+- (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [(_isReplce ? @"REPLACE" : @"INSERT") toSQL];
+    ALSQLClause *sql = [(_isReplce ? @"REPLACE" : @"INSERT") SQLClause];
     
     if (!_isReplce && !isEmptyString(_policy)) {
         [sql append:_policy argValues:nil withDelimiter:@" "];

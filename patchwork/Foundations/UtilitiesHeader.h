@@ -59,7 +59,7 @@
                         ALLogWarn(@"\n************************************************"      \
                                   @"\n* Memory leaks may have occurred: %@ is not dealloced." \
                                   @"\n************************************************",     \
-                                  _weak_##willReleaseObject);                                \
+                                  [_weak_##willReleaseObject debugDescription]);             \
                     }                       \
                });                          \
     } while(0)
@@ -68,32 +68,6 @@
 #define CheckMemoryLeak(willReleaseObject) do{}while(0)
 #endif
 
-//日志相关
-// 如果安装了 Xcode 的 MCLog插件， 支持彩色日志输出和日志分级， 如果没有安装此插件， 则把下边的宏定义注释即可
-//#ifndef EnableColorLog
-//#define EnableColorLog 1
-//#endif
-
-// clang-format off
-#define __PRETTY_FILE_NAME (__FILE__ ? [[NSString stringWithUTF8String:__FILE__] lastPathComponent] : @"")
-#if DEBUG
-#   if EnableColorLog
-#       define __ALLog(LEVEL, fmt, ...)  \
-            NSLog((@"-" LEVEL @"\033[2;3;4m %s (%@:%d)\033[22;23;24m " fmt @"\033[0m"), __PRETTY_FUNCTION__, __PRETTY_FILE_NAME, \
-                    __LINE__, ##__VA_ARGS__)
-#   else
-#       define __ALLog(LEVEL, fmt, ...) \
-            NSLog((@"-" LEVEL @" %s (%@:%d) " fmt), __PRETTY_FUNCTION__, __PRETTY_FILE_NAME, __LINE__, ##__VA_ARGS__)
-#   endif
-#else
-#   define __ALLog(LEVEL, fmt, ...) do {} while (0)
-#endif
-
-#define ALLogVerbose(fmt, ...)  __ALLog(@"[VERBOSE]",   fmt, ##__VA_ARGS__)
-#define ALLogInfo(fmt, ...)     __ALLog(@"[INFO]",      fmt, ##__VA_ARGS__)
-#define ALLogWarn(fmt, ...)     __ALLog(@"[WARN]",      fmt, ##__VA_ARGS__)
-#define ALLogError(fmt, ...)    __ALLog(@"[ERROR]",     fmt, ##__VA_ARGS__)
-// clang-format on
 
 //-Warc-performSelector-leaks
 #define _AL_PRAGMA(msg) _Pragma(#msg)

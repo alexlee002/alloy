@@ -44,8 +44,10 @@ extern ALSQLClause *SQLRightOp(ALSQLClause *target, NSString    *optor);
 @property(readonly, copy) ALSQLClause *(^IS_NULL)();
 @property(readonly, copy) ALSQLClause *(^IS_NOT_NULL)();
 
-@property(readonly, copy) ALSQLClause *(^HAS_PREFIX)(id obj);
-@property(readonly, copy) ALSQLClause *(^HAS_SUBFIX)(id obj);
+// PREFIX_LIKE(xxx) => "LIKE xxx%"
+@property(readonly, copy) ALSQLClause *(^PREFIX_LIKE)(id obj);
+// SUBFIX_LIKE(xxx) => "LIKE %xxx"
+@property(readonly, copy) ALSQLClause *(^SUBFIX_LIKE)(id obj);
 
 // CASE a WHEN b THEN c ELSE d END
 @property(readonly, copy) ALSQLClause *(^CASE)(id _Nullable obj);
@@ -58,6 +60,8 @@ extern ALSQLClause *SQLRightOp(ALSQLClause *target, NSString    *optor);
 // ORDER BY
 @property(readonly, copy) ALSQLClause *(^ASC)();
 @property(readonly, copy) ALSQLClause *(^DESC)();
+
+@property(readonly, copy) ALSQLClause *(^AS)(NSString *alias);
 
 @end
 

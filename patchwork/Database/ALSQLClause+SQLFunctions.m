@@ -33,7 +33,7 @@ FORCE_INLINE ALSQLClause *sql_func1(NSString *funcName, NSArray *args) {
     
     [sql appendString:@")"];
     
-    return [sql toSQLWithArgValues:(sqlArgs.count > 0 ? sqlArgs : nil)];
+    return [sql SQLClauseWithArgValues:(sqlArgs.count > 0 ? sqlArgs : nil)];
 }
 
 FORCE_INLINE ALSQLClause *NS_REQUIRES_NIL_TERMINATION sqlFunc(NSString *funcName, id arg, ...) {

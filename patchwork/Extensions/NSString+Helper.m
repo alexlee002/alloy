@@ -11,6 +11,7 @@
 #import "NSCache+ALExtensions.h"
 #import "MD5.h"
 #import <objc/message.h>
+#import "ALLogger.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,12 +28,23 @@ FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
         return (NSString *)obj;
     } else if ([obj isKindOfClass:NSNumber.class]) {
         return ((NSNumber *)obj).stringValue;
+    } else if ([obj isKindOfClass:NSURL.class]) {
+        return ((NSURL *)obj).absoluteString;
     } else if ([obj respondsToSelector:@selector(stringValue)]) {
-        return ((NSString *(*)(id, SEL))(void *)objc_msgSend)((id)obj, @selector(stringValue));
+        return [obj stringValue];
     }
     return nil;
 }
 
+FORCE_INLINE BOOL stringEquals(NSString *_Nullable str1, NSString *_Nullable str2) {
+    if (castToTypeOrNil(str1, NSString) == nil) {
+        return NO;
+    }
+    if (castToTypeOrNil(str2, NSString) == nil) {
+        return NO;
+    }
+    return [str1 isEqualToString:str2];
+}
 
 FORCE_INLINE NSString *stringOrEmpty(NSString *_Nullable string) {
     NSString *tmp = [string stringify];
@@ -122,6 +134,22 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
     }
     
     return [output copy];
+}
+
+- (NSString *)stringByLowercaseFirst {
+    if (self.length == 0) {
+        return self;
+    }
+    return [self stringByReplacingCharactersInRange:NSMakeRange(0, 1)
+                                         withString:[[self substringToIndex:1] lowercaseString]];
+}
+
+- (NSString *)stringbyUppercaseFirst {
+    if (self.length == 0) {
+        return self;
+    }
+    return [self stringByReplacingCharactersInRange:NSMakeRange(0, 1)
+                                         withString:[[self substringToIndex:1] uppercaseString]];
 }
 
 - (nullable NSString *)substringToIndexSafety:(NSUInteger)to {
@@ -266,7 +294,7 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
     return nil;
 }
 
-- (BOOL)matchesPatterh:(NSString *)pattern {
+- (BOOL)matchesPattern:(NSString *)pattern {
     NSRegularExpression *regex = [self regularExpressionWithPattern:pattern];
     NSTextCheckingResult *result = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
     return result.range.length == self.length;
@@ -274,5 +302,35 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 
 
 @end
+
+@implementation NSData(StringHelper)
+
+- (NSString *)hexString {
+    return bytesToHexStr(self.bytes, self.length);
+}
+
+@end
+
+FORCE_INLINE NSString *bytesToHexStr(const char *bytes, size_t len) {
+    if (len == 0 || bytes == NULL) {
+#if DEBUG
+        assert(bytes != NULL);
+#endif
+        return @"";
+    }
+    
+    const char *hexChars = "0123456789abcdef";
+    char *result = malloc(sizeof(char) * (len* 2 + 1));
+    char *s = result;
+    for (NSInteger i = 0; i < len; ++i) {
+        (*s++) = hexChars[((*bytes & 0xF0) >> 4)];
+        (*s++) = hexChars[ (*bytes & 0x0F)];
+        bytes ++;
+    }
+    *s = '\0';
+    NSString *resultString = [NSString stringWithUTF8String:result];
+    free(result);
+    return resultString;
+}
 
 NS_ASSUME_NONNULL_END

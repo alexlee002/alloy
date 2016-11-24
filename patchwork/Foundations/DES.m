@@ -9,6 +9,7 @@
 #import "DES.h"
 #import <CommonCrypto/CommonCryptor.h>
 #import "UtilitiesHeader.h"
+#import "ALLogger.h"
 
 
 static FORCE_INLINE NSData *DES_Crypt(CCOperation op, NSData *input, NSData *key) {

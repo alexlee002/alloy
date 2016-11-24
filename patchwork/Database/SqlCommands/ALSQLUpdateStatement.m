@@ -63,7 +63,10 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLUpdateStatement, _offset);
             sql = [NSString stringWithFormat:@"(%@)", sql];
         }
         
-        ALSQLClause *subSet = [sql toSQL];
+        if (sql == nil) {
+            return;
+        }
+        ALSQLClause *subSet = [sql SQLClause];
         
         if ([obj isKindOfClass:ALSQLClause.class]) {
             [subSet append:(ALSQLClause *)obj withDelimiter:@" = "];
@@ -99,10 +102,10 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLUpdateStatement, _offset);
     };
 }
 
-- (nullable ALSQLClause *)toSQL {
+- (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [@"UPDATE" toSQL];
+    ALSQLClause *sql = [@"UPDATE" SQLClause];
     
     if (!isEmptyString(_policy)) {
         [sql append:_policy argValues:nil withDelimiter:@" "];

@@ -12,6 +12,8 @@
 
 + (instancetype)sharedCache;
 
+- (id)objectForKey:(id)key defaultValue:(id)dftVal cacheDefaultValue:(BOOL)cache;
+
 // util methods
 - (NSDateFormatter *)dateFormatterWithFormat:(NSString *)format;
 

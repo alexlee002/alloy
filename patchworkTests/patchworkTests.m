@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "ALLogger.h"
 
 @interface patchworkTests : XCTestCase
 
@@ -19,21 +20,12 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+- (void)testLog {
+    NSString *message = @"com.apple.locationd.Utility, category: Utility, enable_level: 0, persist_level: 0, default_ttl: 0, info_ttl: 0, debug_ttl: 0, generate_symptoms: 0, enable_oversize: 0, privacy_setting: 1, enable_private_data: 0";
+    ALLogVerbose(@"%@", message);
+    ALLogInfo(@"%@", message);
+    ALLogWarn(@"%@", message);
+    ALLogError(@"%@", message);
 }
 
 @end

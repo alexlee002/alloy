@@ -12,18 +12,19 @@
 #import "BlocksKit.h"
 #import "UtilitiesHeader.h"
 #import "ALModel.h"
-#import "ALSQLSelectStatement.h"
-#import "ALSQLUpdateStatement.h"
-#import "ALSQLInsertStatement.h"
 #import "ALOCRuntime.h"
 #import "ALDBMigrationProtocol.h"
 #import "ALDBConnectionProtocol.h"
 #import "SafeBlocksChain.h"
 #import "NSCache+ALExtensions.h"
+#import "ALLogger.h"
 
 #import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+NSString * const kALInMemoryDBPath = @":memory:";  // in-memory db
+NSString * const kALTempDBPath     = @"";          // temp db;
 
 static FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name);
 
@@ -32,44 +33,64 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 @implementation ALDatabase {
     NSSet<Class>      *_modelClasses;
     BOOL               _dbFileExisted;
+    BOOL               _enableDebug;
 }
 
 #pragma mark - database manager
 + (nullable instancetype)databaseWithPath:(NSString *)path {
-    path = [path stringify];
+    path = stringValue(path);
     if (path == nil) {
         return nil;
     }
     
-    static dispatch_semaphore_t lock;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        lock = dispatch_semaphore_create(1);
-    });
-    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+    // @see "+[FMDatabase databaseWithPath:]",  @"" => temp DB; nil => in-memory DB
+    NSString *dbFilePath = path;
+    if ([path isEqualToString:kALInMemoryDBPath]) {
+        dbFilePath = nil;
+    } else if ([path isEqualToString:kALTempDBPath]) {
+        dbFilePath = @"";
+    }
     
+    LocalDispatchSemaphoreLock_Wait();
     if (kDatabaseDict == nil) {
         kDatabaseDict = [NSMutableDictionary dictionary];
     }
     ALDatabase *db = kDatabaseDict[path];
     if (db == nil) {
-        if((db = [[self alloc] initWithPath:path]) != nil) {
+        if((db = [(ALDatabase *)[self alloc] initWithPath:dbFilePath]) != nil) {
             kDatabaseDict[path] = db;
         } else {
             db = nil;
         }
     }
-    dispatch_semaphore_signal(lock);
+    LocalDispatchSemaphoreLock_Signal();
     return db;
 }
 
 - (nullable instancetype)initWithPath:(nullable NSString *)path {
     self = [super init];
     if (self) {
-        // for compatible.
-        // if the original database existed and did not set the version information,
-        // we need to make a distinction between 'database not exists' and 'database version = 0'
-        _dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path];
+#if DEBUG
+        _enableDebug = YES;
+#else
+        _enableDebug = NO;
+#endif
+        
+        if (!isEmptyString(path)) {
+            // for compatible.
+            // if the original database existed and did not set the version information,
+            // we need to make a distinction between 'database not exists' and 'database version = 0'
+            _dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path];
+
+            NSError *tmpError = nil;
+            if (![[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent]
+                                           withIntermediateDirectories:YES
+                                                            attributes:nil
+                                                                 error:&tmpError]) {
+                ALLogError(@"Can not create database file:%@; %@", path, tmpError);
+                return nil;
+            }
+        }
         _queue = [[ALFMDatabaseQueue alloc] initWithPath:path];
         if (![self open]) {
             self = nil;
@@ -224,42 +245,52 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     return _modelClasses;
 }
 
-#pragma mark - database operations
-//- (ALSQLSelectBlock)SELECT {
-//    return ^ALSQLSelectCommand *_Nonnull (NSArray<NSString *> *_Nullable columns) {
-//        if (isValidChainingObject(self)) {
-//            return [ALSQLSelectCommand commandWithDatabase:self].SELECT(columns);
-//        }
-//        return SafeBlocksChainObj(nil, ALSQLSelectCommand);
-//    };
-//}
-//
-//- (ALSQLUpdateBlock)UPDATE {
-//    return ^ALSQLUpdateCommand *_Nonnull(NSString *_Nonnull table) {
-//        if (isValidChainingObject(self)) {
-//            return [ALSQLUpdateCommand commandWithDatabase:self].UPDATE(table);
-//        }
-//        return SafeBlocksChainObj(nil, ALSQLUpdateCommand);
-//    };
-//}
-//
-//- (ALSQLInsertBlock)INSERT {
-//    return ^ALSQLInsertCommand *_Nonnull(NSString *_Nonnull table) {
-//        if (isValidChainingObject(self)) {
-//            return [ALSQLInsertCommand commandWithDatabase:self].INSERT(table);
-//        }
-//        return SafeBlocksChainObj(nil, ALSQLInsertCommand);
-//    };
-//}
-//
-//- (ALSQLDeleteBlock)DELETE_FROM {
-//    return ^ALSQLDeleteCommand *_Nonnull(NSString *_Nonnull table) {
-//        if (isValidChainingObject(self)) {
-//            return [ALSQLDeleteCommand commandWithDatabase:self].DELETE_FROM(table);
-//        }
-//        return SafeBlocksChainObj(nil, ALSQLDeleteCommand);
-//    };
-//}
+@end
+
+#define __ALDB_STMT_INIT(stmt_class) \
+    stmt_class *stmt = nil;                                             \
+    if ([self isValidBlocksChainObject]) {                              \
+        stmt = [stmt_class statementWithDatabase:self];                 \
+    }
+
+#define __ALDB_STMT_BLOCK_ID_ARG(stmt_class, block_args, prop_name)         \
+- (stmt_class * (^)(id block_args))prop_name {                              \
+    return ^stmt_class *(id block_args) {                                   \
+        __ALDB_STMT_INIT(stmt_class);                                       \
+        return SafeBlocksChainObj(stmt, stmt_class).prop_name(block_args);  \
+    };                                                                      \
+}
+
+#define __ALDB_STMT_BLOCK(stmt_class, prop_name)                            \
+- (stmt_class * (^)())prop_name {                                           \
+    return ^stmt_class * {                                                  \
+        __ALDB_STMT_INIT(stmt_class);                                       \
+        return SafeBlocksChainObj(stmt, stmt_class).prop_name();            \
+    };                                                                      \
+}
+
+@implementation ALDatabase (ALSQLStatment)
+
+__ALDB_STMT_BLOCK_ID_ARG(ALSQLSelectStatement, columns, SELECT);
+
+__ALDB_STMT_BLOCK_ID_ARG(ALSQLUpdateStatement, tableName, UPDATE);
+
+__ALDB_STMT_BLOCK(ALSQLInsertStatement, INSERT);
+__ALDB_STMT_BLOCK(ALSQLInsertStatement, REPLACE);
+
+__ALDB_STMT_BLOCK(ALSQLDeleteStatement, DELETE);
+
+@end
+
+@implementation ALDatabase (ALDebug)
+
+- (void)setEnableDebug:(BOOL)enableDebug {
+    _enableDebug = enableDebug;
+}
+
+- (BOOL)enableDebug {
+    return _enableDebug;
+}
 
 @end
 

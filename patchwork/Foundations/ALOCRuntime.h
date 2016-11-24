@@ -17,7 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 #   define isClassObject(obj) class_isMetaClass(object_getClass((obj)))
 #endif
 
-extern NSArray<NSString *> *backtraceStack(int size);
+#ifndef primitiveSelectorResult
+    #define primitiveSelectorResult(ret_type, obj, sel, ...) \
+        ((ret_type (*)(id, SEL))(void *) objc_msgSend)((id)(obj), (sel), ##__VA_ARGS__)
+#endif
+
+extern NSArray<NSString *> *backtraceStack(int stackSize);
+extern BOOL debuggerFound();
+extern BOOL classIsSubClassOfClass(Class subCls, Class cls);
 
 @interface ALOCRuntime : NSObject
 

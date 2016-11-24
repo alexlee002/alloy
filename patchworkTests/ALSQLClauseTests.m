@@ -42,19 +42,19 @@
     XCTAssertEqualObjects(sql.SQLString, @"LENGTH(REPLACE(col_name, ?, ?))");
     XCTAssertEqualObjects(sql.argValues, values);
     
-    XCTAssertEqualObjects(sqlFunc(@"replace", @"col_name", [@5 SQLFromArgValue], [@3 SQLFromArgValue], nil).SQLString,
+    XCTAssertEqualObjects(sqlFunc(@"replace", @"col_name", [@5 SQLClauseArgValue], [@3 SQLClauseArgValue], nil).SQLString,
                           @"REPLACE(col_name, ?, ?)");
 }
 
 - (void)testSQLInnerFuncs {
     XCTAssertEqualObjects(SQL_MAX(@[ @"col1", @"col2", @"col3" ]).SQLString, @"MAX(col1, col2, col3)");
-    XCTAssertEqualObjects(SQL_MIN(@[ [@"?, ?, ?" toSQLWithArgValues:@[ @2, @1, @3 ]] ]).SQLString, @"MIN(?, ?, ?)");
-    XCTAssertEqualObjects(SQL_MIN(@[ [@1 SQLFromArgValue], [@3 SQLFromArgValue], [@2 SQLFromArgValue] ]).SQLString,
+    XCTAssertEqualObjects(SQL_MIN(@[ [@"?, ?, ?" SQLClauseWithArgValues:@[ @2, @1, @3 ]] ]).SQLString, @"MIN(?, ?, ?)");
+    XCTAssertEqualObjects(SQL_MIN(@[ [@1 SQLClauseArgValue], [@3 SQLClauseArgValue], [@2 SQLClauseArgValue] ]).SQLString,
                           @"MIN(?, ?, ?)");
 
     XCTAssertEqualObjects(SQL_ABS(@"col1").SQLString, @"ABS(col1)");
     XCTAssertEqualObjects(SQL_ABS(@1).SQLString, @"ABS(1)");
-    XCTAssertEqualObjects(SQL_ABS([@"col1" toSQL]).SQLString, @"ABS(col1)");
+    XCTAssertEqualObjects(SQL_ABS([@"col1" SQLClause]).SQLString, @"ABS(col1)");
 }
 
 
@@ -62,10 +62,10 @@
 
 #pragma mark - sql operation test
 - (void)testAND {
-    ALSQLClause *sql = [@"col1 = 1" toSQL].AND([@"col2 = '123'" toSQL]);
+    ALSQLClause *sql = [@"col1 = 1" SQLClause].AND([@"col2 = '123'" SQLClause]);
     XCTAssertEqualObjects(sql.SQLString, @"col1 = 1 AND col2 = '123'");
     
-    sql = @"col1".EQ(@1).AND(@"col2".HAS_PREFIX(@"abc"));
+    sql = @"col1".EQ(@1).AND(@"col2".PREFIX_LIKE(@"abc"));
     NSArray *values = @[@1, @"abc%"];
     XCTAssertEqualObjects(sql.SQLString, @"col1 = ? AND col2 LIKE ?");
     XCTAssertEqualObjects(sql.argValues, values);
@@ -81,13 +81,13 @@
 }
 
 - (void)testCaseWhen {
-    ALSQLClause *sql = [@"" toSQL]
+    ALSQLClause *sql = [@"" SQLClause]
                            .CASE(@"col1")
                            .WHEN(@0)
-                           .THEN([@"zero" SQLFromArgValue])
+                           .THEN([@"zero" SQLClauseArgValue])
                            .WHEN(@1)
-                           .THEN([@"one" SQLFromArgValue])
-                           .ELSE([@"others" SQLFromArgValue])
+                           .THEN([@"one" SQLClauseArgValue])
+                           .ELSE([@"others" SQLClauseArgValue])
                            .END();
     XCTAssertEqualObjects(sql.SQLString, @"CASE col1 WHEN ? THEN ? WHEN ? THEN ? ELSE ? END");
     

@@ -62,8 +62,8 @@ FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *ori
     NSMutableArray *appendingItems = [NSMutableArray arrayWithCapacity:addingItems.count];
     [addingItems bk_each:^(ALNSURLQueryItem *item) {
         addOrReplaceObjectInArray(appendingItems, item, ^BOOL(ALNSURLQueryItem *existedObject) {
-            return [castToTypeOrNil(item, ALNSURLQueryItem)
-                        .name isEqualToString:castToTypeOrNil(existedObject, ALNSURLQueryItem).name];
+            return stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
+                                castToTypeOrNil(existedObject, ALNSURLQueryItem).name);
         });
     }];
 
@@ -72,8 +72,8 @@ FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *ori
         while (YES) {
             NSUInteger index = [originalItems indexOfObjectPassingTest:^BOOL(ALNSURLQueryItem *_Nonnull resultItem,
                                                                              NSUInteger idx, BOOL *_Nonnull stop) {
-                BOOL found = [castToTypeOrNil(item, ALNSURLQueryItem)
-                                  .name isEqualToString:castToTypeOrNil(resultItem, ALNSURLQueryItem).name];
+                BOOL found = stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
+                                          castToTypeOrNil(resultItem, ALNSURLQueryItem).name);
                 if (lastFoundIndex != NSNotFound) {
                     found = found && (idx > lastFoundIndex);
                 }

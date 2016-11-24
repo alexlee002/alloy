@@ -16,10 +16,10 @@ extern NSString *URLParamStringify (id _Nullable value);
 // using 'ALNSURLQueryItem' to Compatible with the eailier OS
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0 || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_10
 @interface ALNSURLQueryItem : NSObject
-@property(readonly) NSString *name;
-@property(readonly) NSString *value;
+@property(readonly)           NSString *name;
+@property(readonly, nullable) NSString *value;
 
-+ (instancetype)queryItemWithName:(NSString *)name value:(nullable NSString *)value;
++ (nullable instancetype)queryItemWithName:(NSString *)name value:(nullable NSString *)value;
 
 /**
  *  initialize query item with given 'name' and 'value'

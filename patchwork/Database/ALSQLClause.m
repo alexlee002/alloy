@@ -126,7 +126,7 @@
 
 @implementation NSObject (ALSQLClause)
 
-- (ALSQLClause *)toSQL {
+- (ALSQLClause *)SQLClause {
     if ([self isKindOfClass:[NSString class]]) {
         return [ALSQLClause SQLClauseWithString:(NSString *)self argValues:nil];
     }
@@ -144,18 +144,18 @@
     return nil;
 }
 
-- (ALSQLClause *_Nullable)SQLFromArgValue {
+- (ALSQLClause *_Nullable)SQLClauseArgValue {
     if (stringValue(self) == nil) {
         return nil;
     }
-    return [@"?" toSQLWithArgValues:@[self]];
+    return [@"?" SQLClauseWithArgValues:@[self]];
 }
 
 @end
 
 @implementation NSString (ALSQLClause)
 
-- (ALSQLClause *)toSQLWithArgValues:(NSArray *)argValues {
+- (ALSQLClause *)SQLClauseWithArgValues:(NSArray *)argValues {
     return [ALSQLClause SQLClauseWithString:self argValues:argValues];
 }
 

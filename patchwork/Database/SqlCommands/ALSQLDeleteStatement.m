@@ -37,10 +37,10 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_BY(ALSQLDeleteStatement, _orderClause);
 __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_LIMIT   (ALSQLDeleteStatement, _limitClause);
 __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLDeleteStatement, _offsetClause);
 
-- (nullable ALSQLClause *)toSQL {
+- (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [@"DELETE" toSQL];
+    ALSQLClause *sql = [@"DELETE" SQLClause];
     
     if ([_qualifiedTableName isValid]) {
         [sql append:_qualifiedTableName withDelimiter:@" FROM "];

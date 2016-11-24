@@ -40,13 +40,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSString (ALSQLClause)
 
-- (ALSQLClause *)toSQLWithArgValues:(NSArray *)argValues;
+- (ALSQLClause *)SQLClauseWithArgValues:(NSArray *)argValues;
 
 @end
 
 @interface NSObject (ALSQLClause)
-- (ALSQLClause *_Nullable)toSQL;
-- (ALSQLClause *_Nullable)SQLFromArgValue;
+- (ALSQLClause *_Nullable)SQLClause;
+- (ALSQLClause *_Nullable)SQLClauseArgValue;
 @end
 
 NS_ASSUME_NONNULL_END

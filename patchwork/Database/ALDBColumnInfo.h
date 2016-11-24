@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ALDBColumnInfo: NSObject
 @property(PROP_ATOMIC_DEF, strong)            YYClassPropertyInfo *property;
 @property(PROP_ATOMIC_DEF, copy)              NSString            *name;
-@property(PROP_ATOMIC_DEF, copy)              NSString            *dataType;
-@property(PROP_ATOMIC_DEF, copy, nullable)    NSString            *extra;
+@property(PROP_ATOMIC_DEF, copy)              NSString            *type;
+@property(PROP_ATOMIC_DEF, copy, nullable)    NSString            *constraint;
 
 - (NSString *)columnDefine;
 

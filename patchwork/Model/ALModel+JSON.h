@@ -12,8 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//extern NSString * const kInternalObjectPrefix;
-typedef id _Nullable (^ModelCustomTransformToJSON)(NSString *_Nonnull propertyName, id _Nullable value);
+// custom transform model's property value to JSON value
+typedef id _Nullable (^ModelCustomTransformToJSON)(NSString *_Nonnull propertyName);
 
 @interface ALCustomTransformMethodInfo : NSObject {
     @package
@@ -26,36 +26,7 @@ typedef id _Nullable (^ModelCustomTransformToJSON)(NSString *_Nonnull propertyNa
 @interface ALModel (JSON) <YYModel>
 
 #pragma mark - model copy
-/**
- *  Create a new Model instance and copy properties from 'other'
- *  @see "-modelCopyProperties:fromModel:"
- */
-+ (nullable instancetype)modelCopyFromModel:(__kindof ALModel *)other;
 
-/**
- *  Create a new Model instance and copy specified properties from 'other'
- *  @see "-modelCopyProperties:fromModel:"
- */
-+ (nullable instancetype)modelCopyFromModel:(__kindof ALModel *)other withProperties:(NSArray<NSString *> *)properties;
-
-/**
- *  Create a new Model instance and copy properties from 'other', ignore the specified properties
- *  @see "-modelCopyProperties:fromModel:"
- */
-+ (nullable instancetype)modelCopyFromModel:(__kindof ALModel *)other
-                          excludeProperties:(NSArray<NSString *> *)properties;
-
-/**
- *  Copy properties' value from &lt; other &gt; model.
- *  Copy rules:
- *      find out the 'last common ancestor' class of the 'self' and 'other' model
- *      ignore the properties that specified by param 'properties' but not belongs to the 'last common ancestor' class
- *      copy properties values
- *
- *  @param properties properties to copy
- *  @param other      model that copy from
- */
-- (void)modelCopyProperties:(nullable NSArray<NSString *> *)properties fromModel:(__kindof ALModel *)other;
 
 #pragma mark JSON -> Model
 + (nullable instancetype)modelWithJSON:(id)json;
@@ -86,7 +57,6 @@ typedef id _Nullable (^ModelCustomTransformToJSON)(NSString *_Nonnull propertyNa
 
 #pragma mark - supper class method wrapper
 - (NSString *)modelDescription;
-//- (instancetype)copyModel;
 
 
 @end

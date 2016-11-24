@@ -11,6 +11,7 @@
 #import <BlocksKit.h>
 #import "SafeBlocksChain.h"
 #import <objc/runtime.h>
+#import "ALLogger.h"
 
 FORCE_INLINE ALSQLClause *SQLMidOp(ALSQLClause *target, NSString *optor, ALSQLClause *other) {
     [target operation:optor position:ALOperatorPosMid otherClause:other];
@@ -87,7 +88,7 @@ static void *kCurrentOPPriorityKey = &kCurrentOPPriorityKey;
         if ([obj isKindOfClass:ALSQLClause.class]) {
             other = (ALSQLClause *)obj;
         } else {
-            other = [obj SQLFromArgValue];
+            other = [obj SQLClauseArgValue];
         }
         
         NSString *opName = @"OR";
@@ -105,11 +106,11 @@ static void *kCurrentOPPriorityKey = &kCurrentOPPriorityKey;
         if ([obj isKindOfClass:ALSQLClause.class]) {
             other = (ALSQLClause *)obj;
         } else {
-            other = [obj SQLFromArgValue];
+            other = [obj SQLClauseArgValue];
         }
         
         if ([other isHigherPriorityOP:opName]) {
-            other = [[NSString stringWithFormat:@"(%@)", other.SQLString] toSQLWithArgValues:other.argValues];
+            other = [[NSString stringWithFormat:@"(%@)", other.SQLString] SQLClauseWithArgValues:other.argValues];
         }
         
         if ([self isHigherPriorityOP:opName]) {
@@ -127,7 +128,7 @@ static void *kCurrentOPPriorityKey = &kCurrentOPPriorityKey;
 @end
 
 #define __verifySelf()                              \
-    ALSQLClause *mine = [self toSQL];               \
+    ALSQLClause *mine = [self SQLClause];               \
     if (mine == nil) {                              \
         return SafeBlocksChainObj(nil, ALSQLClause);\
     }
@@ -136,19 +137,19 @@ static void *kCurrentOPPriorityKey = &kCurrentOPPriorityKey;
  *  use an operator with specified 'name' to join two expressions.
  *  @param  name    operation name
  *  @param  op      the operator
- *  @param  accept_raw_val  if NO, only ALSQLClause is accepted,
+ *  @param  accept_raw_val  if NO, only ALSQLClause is accepted, argument would be try to cast to ALSQLClause if it is not type of ALSQLClause,
  *                          otherwise, any object(normally should be ALSQLClause, NSString, NSNumber) are accepted.
  */
-#define __SYNTHESIZE_MID_OP(name, op, accept_raw_val)                           \
-- (ALSQLClause *(^)(id obj))name {                                              \
-    return ^ALSQLClause *(id obj) {                                             \
+#define __SYNTHESIZE_MID_OP(name, op, arg_type, accept_raw_val)                 \
+- (ALSQLClause *(^)(arg_type obj))name {                                        \
+    return ^ALSQLClause *(arg_type obj) {                                       \
         __verifySelf();                                                         \
-        if (/*!(accept_raw_val) ||*/ ([obj isKindOfClass:[ALSQLClause class]])) {   \
-            ALSQLClause *other = [obj toSQL];                                   \
+        if (!(accept_raw_val) ||([obj isKindOfClass:[ALSQLClause class]])) {    \
+            ALSQLClause *other = [obj SQLClause];                               \
             NSAssert(other != nil, @"unsupported type of argument 'obj'");      \
             [mine operation:(op) position:ALOperatorPosMid otherClause:other];  \
         } else {                                                                \
-            ALSQLClause *other = [@"?" toSQLWithArgValues:@[obj]];              \
+            ALSQLClause *other = [@"?" SQLClauseWithArgValues:@[obj]];          \
             [mine operation:(op) position:ALOperatorPosMid otherClause:other];  \
         }                                                                       \
         return mine;                                                            \
@@ -169,16 +170,16 @@ static void *kCurrentOPPriorityKey = &kCurrentOPPriorityKey;
 //__SYNTHESIZE_MID_OP(AND, @"AND", NO);
 //__SYNTHESIZE_MID_OP(OR,  @"OR",  NO);
 
-__SYNTHESIZE_MID_OP(EQ,  @"=",  YES);
-__SYNTHESIZE_MID_OP(NEQ, @"!=", YES);
+__SYNTHESIZE_MID_OP(EQ,  @"=",  id, YES);
+__SYNTHESIZE_MID_OP(NEQ, @"!=", id, YES);
 
-__SYNTHESIZE_MID_OP(LT,  @"<",  YES);
-__SYNTHESIZE_MID_OP(NLT, @">=", YES);
+__SYNTHESIZE_MID_OP(LT,  @"<",  id, YES);
+__SYNTHESIZE_MID_OP(NLT, @">=", id, YES);
 
-__SYNTHESIZE_MID_OP(GT,  @">",  YES);
-__SYNTHESIZE_MID_OP(NGT, @"<=", YES);
+__SYNTHESIZE_MID_OP(GT,  @">",  id, YES);
+__SYNTHESIZE_MID_OP(NGT, @"<=", id, YES);
 
-__SYNTHESIZE_MID_OP(LIKE, @"LIKE", YES);
+__SYNTHESIZE_MID_OP(LIKE, @"LIKE", id, YES);
 
 __SYNTHESIZE_SIDE_OP(NOT,           @"NOT",         ALOperatorPosLeft);
 __SYNTHESIZE_SIDE_OP(IS_NULL,       @"IS NULL",     ALOperatorPosRight);
@@ -211,11 +212,11 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
                 return @"?";
             }] componentsJoinedByString:@", "];
             
-            other = [placeholder toSQLWithArgValues:(NSArray *)obj];
+            other = [placeholder SQLClauseWithArgValues:(NSArray *)obj];
         } else if ([obj isKindOfClass:[ALSQLClause class]]) {
             other = obj;
         } else if ([obj isKindOfClass:[NSString class]]) {
-            other = [obj toSQL];
+            other = [obj SQLClause];
         }
         
         if (other) {
@@ -230,7 +231,7 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
     };
 }
 
-- (ALSQLClause *(^)(id obj))HAS_PREFIX {
+- (ALSQLClause *(^)(id obj))PREFIX_LIKE {
     return ^ALSQLClause *(id obj) {
         __verifySelf();
         
@@ -238,7 +239,7 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
     };
 }
 
-- (ALSQLClause *(^)(id obj))HAS_SUBFIX {
+- (ALSQLClause *(^)(id obj))SUBFIX_LIKE {
     return ^ALSQLClause *(id obj) {
         __verifySelf();
         
@@ -263,7 +264,7 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
         sql = @"?";
         values = @[value];
     }
-    return [sql toSQLWithArgValues:values];
+    return [sql SQLClauseWithArgValues:values];
 }
 
 
@@ -279,7 +280,7 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
 }
 
 +(ALSQLClause *)SQLCase:(id _Nullable)obj {
-    ALSQLClause *caseExp = [@"CASE" toSQL];
+    ALSQLClause *caseExp = [@"CASE" SQLClause];
     if ([obj isKindOfClass:NSString.class]) {
         [caseExp append:(NSString *)obj argValues:nil withDelimiter:@" "];
     }
@@ -287,7 +288,7 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
         [caseExp append:(ALSQLClause *)obj withDelimiter:@" "];
     }
     else {
-        ALSQLClause *val = [obj toSQL];
+        ALSQLClause *val = [obj SQLClause];
         if (val != nil) {
             [caseExp append:val withDelimiter:@" "];
         }
@@ -301,13 +302,15 @@ __SYNTHESIZE_SIDE_OP(IS_NOT_NULL,   @"IS NOT NULL", ALOperatorPosRight);
     return caseExp;
 }
 
-__SYNTHESIZE_MID_OP (WHEN, @"WHEN", YES);
-__SYNTHESIZE_MID_OP (THEN, @"THEN", YES);
-__SYNTHESIZE_MID_OP (ELSE, @"ELSE", YES);
+__SYNTHESIZE_MID_OP (WHEN, @"WHEN", id, YES);
+__SYNTHESIZE_MID_OP (THEN, @"THEN", id, YES);
+__SYNTHESIZE_MID_OP (ELSE, @"ELSE", id, YES);
 __SYNTHESIZE_SIDE_OP(END,  @"END",  ALOperatorPosRight);
 
 
 __SYNTHESIZE_SIDE_OP(ASC,  @"ASC",  ALOperatorPosRight);
 __SYNTHESIZE_SIDE_OP(DESC, @"DESC", ALOperatorPosRight);
+
+__SYNTHESIZE_MID_OP(AS, @"AS", NSString *, NO);
 
 @end

@@ -17,7 +17,7 @@
 #import "ALDatabase.h"
 
 @interface ALSQLStatementTests : XCTestCase
-
+@property(nonatomic, strong) ALDatabase *db;
 @end
 
 @implementation ALSQLStatementTests
@@ -25,52 +25,84 @@
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    _db = [ALDatabase databaseWithPath:kALInMemoryDBPath];
+
+    [_db.queue inDatabase:^(FMDatabase *_Nonnull db) {
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS students (_id INTEGER PRIMARY KEY, "
+                          @"name TEXT, "
+                          @"gender INTEGER, "
+                          @"age INTEGER, "
+                          @"address TEXT, "
+                          @"province TEXT"
+                          @")"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS courses (_id INTEGER PRIMARY KEY, "
+                          @"name TEXT, "
+                          @"teacher TEXT, "
+                          @"credit INTEGER, "
+                          @"hours INTEGER, "
+                          @"fee DOUBLE"
+                          @")"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS student_courses (_id INTEGER PRIMARY KEY, "
+                          @"sid INTEGER, "
+                          @"cid INTEGER, "
+                          @"update_time DATETIME"
+                          @")"];
+    }];
+}
+
+- (void)tearDown {
+    _db = nil;
 }
 
 - (void)testSelectStmt {
-    ALDatabase *db = [ALDatabase databaseWithPath:@""];
     
     // simple query
-    ALSQLSelectStatement *stmt = [ALSQLSelectStatement statementWithDatabase:db];
-    stmt.SELECT(nil).FROM(@"test").WHERE(@"name".EQ(@"alex"));
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM test WHERE name = ?");
+    ALSQLSelectStatement *stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+    stmt.SELECT(nil).FROM(@"students").WHERE(@"name".EQ(@"alex"));
+    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students WHERE name = ?");
     NSArray *values = @[@"alex"];
     XCTAssertEqualObjects(stmt.argValues, values);
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     // specify multi-column names
-    stmt = [ALSQLSelectStatement statementWithDatabase:db];
-    stmt.SELECT(@[@"rowid", @"*"]).FROM(@"test NOT INDEXED");
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT rowid, * FROM test NOT INDEXED");
+    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+    stmt.SELECT(@[@"rowid", @"*"]).FROM(@"students NOT INDEXED");
+    XCTAssertEqualObjects(stmt.SQLString, @"SELECT rowid, * FROM students NOT INDEXED");
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     // multi-table query
-    stmt = [ALSQLSelectStatement statementWithDatabase:db];
-    stmt.SELECT(nil).FROM(@[@"table1", @"table2"]).WHERE([@"table1.id = table2.id" toSQL]);
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM table1, table2 WHERE table1.id = table2.id");
+    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+    stmt.SELECT(nil).FROM(@[@"students", @"student_courses"]).WHERE([@"students._id = student_courses._id" SQLClause]);
+    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students, student_courses WHERE students._id = student_courses._id");
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     // JOIN query (raw string)
-    stmt = [ALSQLSelectStatement statementWithDatabase:db];
-    stmt.SELECT(nil).FROM(@"table1 LEFT JOIN table2 ON table1.id = table2.id");
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM table1 LEFT JOIN table2 ON table1.id = table2.id");
+    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+    stmt.SELECT(nil).FROM(@"students LEFT JOIN student_courses ON students._id = student_courses._id").WHERE(@"students._id IS NULL");
+    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students LEFT JOIN student_courses ON students._id = student_courses._id WHERE students._id IS NULL");
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     // JOIN query (using ALSQLClause)
-    stmt = [ALSQLSelectStatement statementWithDatabase:db];
-    stmt.SELECT(nil).FROM([@"table1 LEFT JOIN table2 ON table1.id = ? AND table2.id = ?" toSQLWithArgValues:@[@"abc", @"123"]]);
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM table1 LEFT JOIN table2 ON table1.id = ? AND table2.id = ?");
+    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+    stmt.SELECT(nil).FROM([@"students LEFT JOIN student_courses ON students._id = ? AND student_courses._id = ?" SQLClauseWithArgValues:@[@"1234", @"123"]]);
+    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students LEFT JOIN student_courses ON students._id = ? AND student_courses._id = ?");
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     
     // complete select-core statement
-    stmt = [ALSQLSelectStatement statementWithDatabase:db];
-    stmt.SELECT(@[@"COUNT(*) AS num", SQL_UPPER(@"province_code")])
-        .FROM(@"students_info")
-        .WHERE(SQL_LOWER(@"gender").EQ(@"female"))
+    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+    stmt.SELECT(@[@"COUNT(*) AS num", SQL_UPPER(@"province").AS(@"province")])
+        .FROM(@"students")
+        .WHERE(SQL_LOWER(@"gender").EQ(@"1"))
+        .GROUP_BY(@"province")
         .HAVING(@"age".GT(@18))
         .ORDER_BY(@"num".DESC())
-        .ORDER_BY(@"province_code")
+        .ORDER_BY(@"province")
         .LIMIT(@5)
         .OFFSET(@3);
-    NSLog(@"SQL: %@", stmt.SQLString);
     XCTAssertEqualObjects(stmt.SQLString,
-                          @"SELECT COUNT(*) AS num, UPPER(province_code) FROM students_info WHERE LOWER(gender) = ? HAVING age > ? ORDER BY num DESC, province_code LIMIT 5 OFFSET 3");
+                          @"SELECT COUNT(*) AS num, UPPER(province) AS province FROM students WHERE LOWER(gender) = ? GROUP BY province HAVING age > ? ORDER BY num DESC, province LIMIT 5 OFFSET 3");
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     
     
@@ -80,76 +112,79 @@
     stmt.SELECT(nil).FROM(@"test").WHERE(@"name".EQ(@"alex"));
     XCTAssertNil(stmt.SQLString);
     XCTAssertNil(stmt.argValues);
-    XCTAssertNil(stmt.toSQL);
+    XCTAssertNil(stmt.SQLClause);
 }
 
 - (void)testInsertStmt {
-    ALDatabase *db = [ALDatabase databaseWithPath:@""];
     
     // insert using values, we can repeat calling 'VALUES' multiple times to insert multiple rows
-    NSArray *u1 = @[@"alex", @30, @"male", @"BJ/CN"];
-    NSArray *u2 = @[@"Jim", @"18", @"male", @"SF/US"];
-    ALSQLInsertStatement *stmt = [ALSQLInsertStatement statementWithDatabase:db];
+    NSArray *u1 = @[@"alex", @30, @"1", @"BJ/CN"];
+    NSArray *u2 = @[@"Jim", @"18", @1, @"SF/US"];
+    ALSQLInsertStatement *stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
     stmt.INSERT()
         .OR_REPLACE(YES)
-        .INTO(@"users")
+        .INTO(@"students")
         .COLUMNS(@[@"name", @"age", @"gender", @"address"])
         .VALUES(u1)
         .VALUES(u2);
     XCTAssertEqualObjects(stmt.SQLString,
-                          @"INSERT OR REPLACE INTO users (name, age, gender, address) VALUES (?, ?, ?, ?), (?, ?, ?, ?)");
+                          @"INSERT OR REPLACE INTO students (name, age, gender, address) VALUES (?, ?, ?, ?), (?, ?, ?, ?)");
     NSArray *values = [u1 arrayByAddingObjectsFromArray:u2];
     XCTAssertEqualObjects(stmt.argValues, values);
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     // insert using values dictionary: insert only a row
-    stmt = [ALSQLInsertStatement statementWithDatabase:db];
-    NSDictionary *dict = @{@"name": @"Roger", @"age": @34, @"gender": @"male", @"address": @"AB/CA"};
-    stmt.INSERT().INTO(@"users").VALUES_DICT(dict);
+    stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
+    NSDictionary *dict = @{@"name": @"Roger", @"age": @34, @"gender": @"1", @"address": @"AB/CA"};
+    stmt.INSERT().INTO(@"students").VALUES_DICT(dict);
     NSArray *keys = dict.allKeys;
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO users (%@) VALUES (?, ?, ?, ?)",
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO students (%@) VALUES (?, ?, ?, ?)",
                      [keys componentsJoinedByString:@", "]];
     values = [dict objectsForKeys:keys notFoundMarker:NSNull.null];
     XCTAssertEqualObjects(stmt.SQLString, sql);
     XCTAssertEqualObjects(stmt.argValues, values);
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
     // insert using selection results
-    stmt = [ALSQLInsertStatement statementWithDatabase:db];
-    stmt.INSERT().INTO(@"users")
-        .SELECT_STMT([ALSQLSelectStatement statementWithDatabase:db].SELECT(nil)
-                        .FROM(@"tmp_users")
-                        .WHERE(@"status".NEQ(@0))
-                     .toSQL);
-    XCTAssertEqualObjects(stmt.SQLString, @"INSERT INTO users SELECT * FROM tmp_users WHERE status != ?");
+    stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
+    stmt.INSERT().INTO(@"students")
+        .SELECT_STMT([ALSQLSelectStatement statementWithDatabase:self.db].SELECT(nil)
+                        .FROM(@"students")
+                        .WHERE(@"age".NEQ(@0))
+                     .SQLClause);
+    XCTAssertEqualObjects(stmt.SQLString, @"INSERT INTO students SELECT * FROM students WHERE age != ?");
     values = @[@0];
     XCTAssertEqualObjects(stmt.argValues, values);
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
 }
 
 - (void)testUpdateStmt {
-    ALDatabase *db = [ALDatabase databaseWithPath:@""];
     
-    ALSQLUpdateStatement *stmt = [ALSQLUpdateStatement statementWithDatabase:db];
-    stmt.UPDATE(@"users")
+    ALSQLUpdateStatement *stmt = [ALSQLUpdateStatement statementWithDatabase:self.db];
+    stmt.UPDATE(@"students")
         .OR_REPLACE(YES)
         .SET(@{@"age": @30})    // NSDictionary
-        .SET(@"gender".EQ(@"female"))   // ALSQLClause
+        .SET(@"gender".EQ(@"2"))   // ALSQLClause
         .SET(@[@"name".EQ(@"sindy"), @"address".EQ(@"AB/CA")]) // NSArray<ALSQLClause *>
         .WHERE(@"name".EQ(@"Roger"));
-    XCTAssertEqualObjects(stmt.SQLString, @"UPDATE OR REPLACE users SET age = ?, gender = ?, name = ?, address = ? WHERE name = ?");
-    NSArray *values = @[@30, @"female", @"sindy", @"AB/CA", @"Roger"];
+    XCTAssertEqualObjects(stmt.SQLString, @"UPDATE OR REPLACE students SET age = ?, gender = ?, name = ?, address = ? WHERE name = ?");
+    NSArray *values = @[@30, @"2", @"sindy", @"AB/CA", @"Roger"];
     XCTAssertEqualObjects(stmt.argValues, values);
+    XCTAssertTrue([stmt validateWitherror:nil]);
 }
 
 - (void)testDeleteStmt {
-    ALDatabase *db = [ALDatabase databaseWithPath:@""];
     
-    ALSQLDeleteStatement *stmt = [ALSQLDeleteStatement statementWithDatabase:db];
-    stmt.DELETE().FROM(@"users").WHERE(@1);
-    XCTAssertEqualObjects(stmt.SQLString, @"DELETE FROM users WHERE 1");
+    ALSQLDeleteStatement *stmt = [ALSQLDeleteStatement statementWithDatabase:self.db];
+    stmt.DELETE().FROM(@"students").WHERE(@1);
+    XCTAssertEqualObjects(stmt.SQLString, @"DELETE FROM students WHERE 1");
+    XCTAssertTrue([stmt validateWitherror:nil]);
     
-    stmt = [ALSQLDeleteStatement statementWithDatabase:db];
-    stmt.DELETE().FROM(@"users").WHERE(@"name".HAS_SUBFIX(@"lee")).ORDER_BY(@"age".DESC()).LIMIT(@5);
-    XCTAssertEqualObjects(stmt.SQLString, @"DELETE FROM users WHERE name LIKE ? ORDER BY age DESC LIMIT 5");
+    stmt = [ALSQLDeleteStatement statementWithDatabase:self.db];
+    stmt.DELETE().FROM(@"students").WHERE(@"name".SUBFIX_LIKE(@"lee")).ORDER_BY(@"age".DESC()).LIMIT(@5);
+    XCTAssertEqualObjects(stmt.SQLString, @"DELETE FROM students WHERE name LIKE ? ORDER BY age DESC LIMIT 5");
+    XCTAssertTrue([stmt validateWitherror:nil]);
 }
 
 @end

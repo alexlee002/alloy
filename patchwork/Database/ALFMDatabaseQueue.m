@@ -10,7 +10,7 @@
 #import "FMDB.h"
 #import "UtilitiesHeader.h"
 #import "ALOCRuntime.h"
-
+#import "ALLogger.h"
 #import <sqlite3.h>
 
 #ifndef MAX_DB_BLOCK_EXECUTE_SEC
@@ -103,7 +103,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
     FMDBRelease(self);
 }
 
-- (FMDatabase*)database {
+- (nullable FMDatabase*)database {
     if (!_db) {
         _db = FMDBReturnRetained([FMDatabase databaseWithPath:_path]);
         
@@ -200,6 +200,84 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 
 - (void)inTransaction:(void (^)(FMDatabase *db, BOOL *rollback))block {
     [self beginTransaction:NO withBlock:block];
+}
+
+@end
+
+#if SQLITE_VERSION_NUMBER >= 3007000
+#define __verify_savepoint_support(returnBool) do {} while (0)
+#else
+#define __verify_savepoint_support(returnBool)                                                   \
+    NSString *errorMessage = NSLocalizedString(@"Save point functions require SQLite 3.7", nil); \
+    if (self.logsErrors) ALLogError(@"Error: %@", errorMessage);                                 \
+    return returnBool                                                                            \
+               ? NO                                                                              \
+               : [NSError errorWithDomain:@"FMDatabase" code:0 userInfo:@{NSLocalizedDescriptionKey : errorMessage}];
+#endif
+
+@implementation ALFMDatabaseQueue (SavePoint)
+
+- (BOOL)startSavePointNamed:(NSString *)name error:(NSError*_Nullable *)outErr {
+    __verify_savepoint_support(YES);
+    
+    FMDBRetain(self);
+    __block BOOL result = YES;
+    [self safelyRun:^{
+        result = [[self database] startSavePointWithName:name error:outErr];
+    }];
+    FMDBRelease(self);
+    return result;
+}
+
+- (BOOL)releaseSavePointNamed:(NSString*)name error:(NSError*_Nullable*)outErr {
+    __verify_savepoint_support(YES);
+    
+    FMDBRetain(self);
+    __block BOOL result = YES;
+    [self safelyRun:^{
+        result = [[self database] releaseSavePointWithName:name error:outErr];
+    }];
+    FMDBRelease(self);
+    return result;
+}
+
+- (BOOL)rollbackToSavePointNamed:(NSString*)name error:(NSError*_Nullable*)outErr {
+    __verify_savepoint_support(YES);
+    
+    FMDBRetain(self);
+    __block BOOL result = YES;
+    [self safelyRun:^{
+        result = [[self database] rollbackToSavePointWithName:name error:outErr];
+    }];
+    FMDBRelease(self);
+    return result;
+}
+
+- (nullable NSError *)inSavePoint:(void (^)(FMDatabase *db, BOOL *rollback))block {
+    __verify_savepoint_support(NO);
+    
+    static unsigned long savePointIdx = 0;
+    __block NSError *err = 0x00;
+    FMDBRetain(self);
+    [self safelyRun:^ {
+        
+        NSString *name = [NSString stringWithFormat:@"savePoint_%ld", savePointIdx++];
+        
+        BOOL shouldRollback = NO;
+        
+        if ([[self database] startSavePointWithName:name error:&err]) {
+            
+            block([self database], &shouldRollback);
+            
+            if (shouldRollback) {
+                // We need to rollback and release this savepoint to remove it
+                [[self database] rollbackToSavePointWithName:name error:&err];
+            }
+            [[self database] releaseSavePointWithName:name error:&err];
+        }
+    }];
+    FMDBRelease(self);
+    return err;
 }
 
 @end

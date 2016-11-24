@@ -12,8 +12,8 @@
 #import "ALDBConnectionProtocol.h"
 #import "ALDBMigrationProtocol.h"
 #import <FMDatabase.h>
-#import "UtilitiesHeader.h"
 #import "ALDatabase.h"
+#import "ALLogger.h"
 
 
 NSString *testDBPath() {

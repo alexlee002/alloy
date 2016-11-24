@@ -12,20 +12,17 @@
 
 @implementation ALDBColumnInfo
 
-@synthesize dataType = _dataType;
+@synthesize type = _type;
 
-- (void)setDataType:(NSString *)dataType {
-    _dataType = isEmptyString(dataType) ? @"BLOB" : dataType.uppercaseString;
+- (void)setType:(NSString *)dataType {
+    _type = isEmptyString(dataType) ? @"BLOB" : dataType.uppercaseString;
 }
 
-- (NSString *)dataType {
-    return _dataType;
-}
 
 - (NSString *)columnDefine {
     return [self.name stringByAppendingFormat:@" %@%@",
-            self.dataType,
-            (isEmptyString(self.extra) ? @"" : [@" " stringByAppendingString:self.extra])];
+            self.type,
+            (isEmptyString(self.constraint) ? @"" : [@" " stringByAppendingString:self.constraint])];
 }
 
 - (NSString *)description {

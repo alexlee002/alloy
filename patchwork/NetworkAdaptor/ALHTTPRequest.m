@@ -12,6 +12,7 @@
 #import "ALHTTPResponse.h"
 #import "NSObject+JSONTransform.h"
 #import "ALModel.h"
+#import "ALLogger.h"
 
 #define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
 
@@ -340,7 +341,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
     } else {
         result = [self.responseModelClass modelWithJSON:JSONObject];
     }
-    if (result == nil) {
+    if (result == nil && error != NULL) {
         *error = [NSError
             errorWithDomain:NSURLErrorDomain
                        code:NSURLErrorCannotParseResponse

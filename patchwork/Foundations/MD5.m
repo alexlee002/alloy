@@ -9,13 +9,14 @@
 #import "MD5.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "UtilitiesHeader.h"
+#import "NSString+Helper.h"
 
-static FORCE_INLINE NSString *MD5DigestToString(unsigned char digest[]) {
-    return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", digest[0],
-                                      digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7],
-                                      digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14],
-                                      digest[15]];
-}
+//static FORCE_INLINE NSString *MD5DigestToString(unsigned char digest[]) {
+//    return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", digest[0],
+//                                      digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7],
+//                                      digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14],
+//                                      digest[15]];
+//}
 
 @implementation NSData (ALExtension_MD5)
 
@@ -23,7 +24,7 @@ static FORCE_INLINE NSString *MD5DigestToString(unsigned char digest[]) {
     const char* cStr = [self bytes];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5(cStr, (CC_LONG)[self length], digest);
-    return MD5DigestToString(digest);
+    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
 @end
@@ -36,7 +37,7 @@ static FORCE_INLINE NSString *MD5DigestToString(unsigned char digest[]) {
 
     CC_MD5(cStr, (CC_LONG) strlen(cStr), digest);
 
-    return MD5DigestToString(digest);
+    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
 @end
@@ -59,7 +60,7 @@ FORCE_INLINE NSString *_Nullable fileMD5Hash(NSString *filepath) {
     
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5_Final(digest, &md5ctx);
-    return MD5DigestToString(digest);
+    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
 FORCE_INLINE NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRange range) {
@@ -88,5 +89,5 @@ FORCE_INLINE NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRange 
     
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5_Final(digest, &md5ctx);
-    return MD5DigestToString(digest);
+    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }

@@ -28,7 +28,7 @@
 - (stmt_class *(^)(id clause))prop_name {                   \
     return ^stmt_class *(id clause) {                       \
         __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();               \
-        _ivar_name = ([clause isKindOfClass:ALSQLClause.class]) ? [clause copy] : [clause toSQL];   \
+        _ivar_name = ([clause isKindOfClass:ALSQLClause.class]) ? [clause copy] : [clause SQLClause];   \
         _needReBuild = YES;                                 \
         return self;                                        \
     };                                                      \
@@ -57,7 +57,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_CLAUSE_ARG(stmt_class, _from_var, HAVING)
         if ([clause isKindOfClass:ALSQLClause.class]) {         \
             __tmpWhere = [(ALSQLClause *)clause copy];          \
         } else {                                                \
-            __tmpWhere = [clause toSQL];                        \
+            __tmpWhere = [clause SQLClause];                        \
         }                                                       \
         if (__tmpWhere != nil) {                                \
             if (_where_var == nil) {                            \
@@ -79,7 +79,7 @@ if ([expr_clause isKindOfClass:ALSQLClause.class]) {          \
     ALSQLClause *other = (ALSQLClause *)expr_clause;          \
     _ivar_name == nil ? (_ivar_name = [other copy]) : [_ivar_name append:other withDelimiter:@", "];    \
 } else if ([expr_clause isKindOfClass:NSString.class]) {                                                \
-    _ivar_name == nil ? (_ivar_name = [expr_clause toSQL])                                              \
+    _ivar_name == nil ? (_ivar_name = [expr_clause SQLClause])                                              \
                       : [_ivar_name append:(NSString *)expr_clause argValues:nil withDelimiter:@", "];  \
 }
 #endif
@@ -119,7 +119,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_GROUP_BY(stmt_class, _order_by_ivar, GRO
 - (stmt_class *(^)(id expr))OFFSET {                            \
     return ^stmt_class *(id expr) {                             \
         __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();                   \
-        _offset_var = [expr isKindOfClass:ALSQLClause.class] ? [((ALSQLClause *)expr) copy] : [expr toSQL]; \
+        _offset_var = [expr isKindOfClass:ALSQLClause.class] ? [((ALSQLClause *)expr) copy] : [expr SQLClause]; \
         _needReBuild = YES;                                     \
         return self;                                            \
     };                                                          \
@@ -132,7 +132,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_GROUP_BY(stmt_class, _order_by_ivar, GRO
 - (stmt_class *(^)(id expr))LIMIT {     \
     return ^stmt_class *(id expr) {     \
         __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();   \
-        _limit_var = [expr isKindOfClass:ALSQLClause.class] ? [((ALSQLClause *)expr) copy] : [expr toSQL];  \
+        _limit_var = [expr isKindOfClass:ALSQLClause.class] ? [((ALSQLClause *)expr) copy] : [expr SQLClause];  \
         _needReBuild = YES;             \
         return self;                    \
     };                                  \
@@ -142,13 +142,11 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_GROUP_BY(stmt_class, _order_by_ivar, GRO
 
 // safe blocks chain
 #ifndef __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY
-#define __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY()    \
-    if (![self isValidBlocksChainObject]) {     \
-        return self;                            \
-    }
+#define __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY() ValidBlocksChainObjectOrReturn(self, self)
+
 #endif
 
-// using in sqlstatment's toSQL
+// using in sqlstatment's SQLClause
 #ifndef __ALSQLSTMT_BUILD_SQL_VERIFY
 #define __ALSQLSTMT_BUILD_SQL_VERIFY()          \
     if (![self isValidBlocksChainObject]) {     \

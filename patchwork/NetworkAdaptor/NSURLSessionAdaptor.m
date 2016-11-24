@@ -12,12 +12,12 @@
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
 #import "URLHelper.h"
-#import "UtilitiesHeader.h"
 #import "BlocksKitExtension.h"
 #import <objc/runtime.h>
 #import "ObjcAssociatedObjectHelpers.h"
 #import "NSArray+ArrayExtensions.h"
 #import "UtilitiesHeader.h"
+#import "ALLogger.h"
 
 
 @interface NSURLSessionDataTaskALHTTPResponse : ALHTTPResponse {
@@ -399,8 +399,8 @@ didReceiveResponse:(NSURLResponse *)response
     [alResponse appendResponseData:data];
 
     [request requestDidReceiveBytes:data.length
-                 totalBytesReceived:alResponse->_totalRead
-        totalBytesExpectedToReceive:alResponse.expectedContentLength];
+                 totalBytesReceived:alResponse == nil ? 0 : alResponse->_totalRead
+        totalBytesExpectedToReceive:alResponse == nil ? 0 : alResponse.expectedContentLength];
 }
 
 - (void)URLSession:(NSURLSession *)session

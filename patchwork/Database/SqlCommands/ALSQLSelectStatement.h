@@ -41,4 +41,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface ALSQLSelectStatement (Helper)
+// expres: NSString or ALSQLClause
+@property(readonly, copy) NSInteger (^FETCH_COUNT)(id _Nullable expres);
+
+@property(readonly, copy) NSInteger           (^INT_RESULT)();
+@property(readonly, copy) BOOL                (^BOOL_RESULT)();
+@property(readonly, copy) long long           (^LONGLONG_RESULT)();
+@property(readonly, copy) double              (^DOUBLE_RESULT)();
+
+@property(readonly, copy) NSString *_Nullable (^STR_RESULT)();
+@property(readonly, copy) NSData   *_Nullable (^DATA_RESULT)();
+@property(readonly, copy) NSDate   *_Nullable (^DATE_RESULT)();
+
+
+@end
+
 NS_ASSUME_NONNULL_END

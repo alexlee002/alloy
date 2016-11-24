@@ -135,7 +135,7 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition
 @class ALModel;
 @interface ALHTTPRequest (ResponseEvents)
 - (void)requestDidStart;
-- (void)requestDidReceiveResponse:(NSInteger)statusCode headers:(NSDictionary *)headers;
+- (void)requestDidReceiveResponse:(NSInteger)statusCode headers:(nullable NSDictionary *)headers;
 
 - (void)requestDidReceiveBytes:(int64_t)bytes
             totalBytesReceived:(int64_t)totalBytesReceived

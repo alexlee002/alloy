@@ -9,7 +9,15 @@
 #import "ALSQLStatement.h"
 #import "ALDatabase.h"
 #import "SafeBlocksChain.h"
+#import "ALLogger.h"
 
+#define __STMT_EXEC_LOG(result)                                                                             \
+    if (self.db.enableDebug) {                                                                              \
+        ALLogVerbose(@"execute SQL: %@; %@\nSQL arguments:%@", self.SQLString, (result) ? @"✔" : @"🚫", \
+                     self.argumentsDescription);                                                            \
+    } else {                                                                                                \
+        ALLogVerbose(@"execute SQL: %@;  %@", self.SQLString, (result) ? @"✔" : @"🚫");                 \
+    }
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,77 +31,104 @@ NS_ASSUME_NONNULL_BEGIN
     return stmt;
 }
 
-- (nullable ALSQLClause *)toSQL {
+- (nullable ALSQLClause *)SQLClause {
     return nil;
 }
 
 - (nullable NSString *)SQLString {
-    return [self toSQL].SQLString;
+    return [self SQLClause].SQLString;
 }
 
 - (nullable NSArray *)argValues {
-    return [self toSQL].argValues;
+    return [self SQLClause].argValues;
 }
-
 
 @end;
 
-//NSString * const kALDBConflictPolicyRollback    = @"OR ROLLBACK";
-//NSString * const kALDBConflictPolicyAbort       = @"OR ABORT";
-//NSString * const kALDBConflictPolicyFail        = @"OR FAIL";
-//NSString * const kALDBConflictPolicyIgnore      = @"OR IGNORE";
-//NSString * const kALDBConflictPolicyReplace     = @"OR REPLACE";
-//
-//@implementation ALSQLCommand
-//
-//@synthesize db = _db;
-//
-//
-//+ (instancetype)commandWithDatabase:(ALDatabase *)db {
-//    ALSQLCommand *command = [[self alloc] init];
-//    command->_db = db;
-//    return command;
-//}
-//
-//- (nullable NSString *)sql {
-//    return nil;
-//}
-//
-//- (nullable NSArray  *)sqlArgs {
-//    return [_sqlArgs copy];
-//}
-//
-//- (ALSQLExecuteQueryBlock)EXECUTE_QUERY {
-//    return ^(void (^resultHandler)(FMResultSet *_Nullable rs)) {
-//        VerifyChainingObjAndReturnVoid(self);
-//        
-//        [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
-//            NSString *sql = [self sql];
-//            ALLogVerbose(@"sql: %@\nargs: %@", sql, _sqlArgs);
-//            FMResultSet *rs = [db executeQuery:sql withArgumentsInArray:_sqlArgs];
-//            if (resultHandler) {
-//                resultHandler(rs);
-//            }
-//            [rs close];
-//        }];
-//    };
-//}
-//
-//- (ALSQLExecuteUpdateBlock)EXECUTE_UPDATE {
-//    return ^BOOL(void) {
-//        VerifyChainingObjAndReturn(self, NO);
-//        
-//        __block BOOL rs = YES;
-//        [_db.queue inDatabase:^(FMDatabase * _Nonnull db) {
-//            NSString *sql = [self sql];
-//            ALLogVerbose(@"sql: %@\nargs: %@", sql, _sqlArgs);
-//            rs = [db executeUpdate:sql withArgumentsInArray:_sqlArgs];
-//        }];
-//        return rs;
-//    };
-//}
-//
-//
-//@end
+@implementation ALSQLStatement (SQLExecute)
+
+- (void (^)(void (^)(FMResultSet *)))EXECUTE_QUERY {
+    return ^(void (^resultHaldler)(FMResultSet *_Nullable rs)) {
+        if (![self isValidBlocksChainObject]) {
+            safeInvokeBlock(resultHaldler, nil);
+            return;
+        }
+        
+        if (self.db == nil) {
+            ALLogWarn(@"*** Invalid database handler");
+            safeInvokeBlock(resultHaldler, nil);
+            return;
+        }
+        
+        [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
+            FMResultSet *rs = [db executeQuery:self.SQLString withArgumentsInArray:self.argValues];
+            __STMT_EXEC_LOG(rs != nil);
+            safeInvokeBlock(resultHaldler, rs);
+            [rs close];
+        }];
+    };
+}
+
+- (BOOL (^)())EXECUTE_UPDATE {
+    return ^BOOL () {
+        if (![self isValidBlocksChainObject]) {
+            return NO;
+        }
+        
+        if (self.db == nil) {
+            ALLogWarn(@"*** Invalid database handler");
+            return NO;
+        }
+        
+        __block BOOL result = NO;
+        [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
+            result = [db executeUpdate:self.SQLString withArgumentsInArray:self.argValues];
+            __STMT_EXEC_LOG(result);
+        }];
+        
+        return result;
+    };
+}
+
+- (void)executeWithCompletion:(void (^)(BOOL))completion {
+    if (![self isValidBlocksChainObject]) {
+        safeInvokeBlock(completion, NO);
+        return;
+    }
+    
+    if (self.db == nil) {
+        ALLogWarn(@"*** Invalid database handler");
+        safeInvokeBlock(completion, NO);
+        return;
+    }
+    
+    [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
+        BOOL result = [db executeUpdate:self.SQLString withArgumentsInArray:self.argValues];
+        __STMT_EXEC_LOG(result);
+    }];
+}
+
+- (BOOL)validateWitherror:(NSError**)error {
+    __block BOOL result;
+    __block NSError *innerError;
+    [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
+        result = [db validateSQL:self.SQLString error:&innerError];
+    }];
+    if (error != nil) {
+        *error = innerError;
+    }
+    return result;
+}
+
+@end
+
+
+@implementation ALSQLStatement (ALDebug)
+
+- (nullable NSString *)argumentsDescription {
+    return self.argValues.description;
+}
+
+@end
 
 NS_ASSUME_NONNULL_END

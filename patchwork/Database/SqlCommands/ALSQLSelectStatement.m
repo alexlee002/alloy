@@ -11,6 +11,7 @@
 #import "UtilitiesHeader.h"
 #import "ALSQLStatementHelpers.h"
 #import "ALSQLClause+SQLOperation.h"
+#import "ALSQLClause+SQLFunctions.h"
 #import "SafeBlocksChain.h"
 
 #define __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ARRAY_CLAUSE(stmt_class, prop_name, _ivar_name)   \
@@ -19,7 +20,7 @@
         __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();                                               \
                                                                                             \
         if ([clauses isKindOfClass:NSString.class]) {                                       \
-            _ivar_name = @[[clauses toSQL]];                                                \
+            _ivar_name = @[[clauses SQLClause]];                                                \
         }                                                                                   \
         else if ([clauses isKindOfClass:ALSQLClause.class]) {                               \
             _ivar_name = @[(ALSQLClause *)clauses];                                         \
@@ -28,7 +29,7 @@
             NSMutableArray<ALSQLClause *> *cols = [NSMutableArray arrayWithCapacity:((NSArray *)clauses).count];    \
             [clauses enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {         \
                 if ([obj isKindOfClass:NSString.class]) {                                   \
-                    [cols addObject:[obj toSQL]];                                           \
+                    [cols addObject:[obj SQLClause]];                                           \
                 }                                                                           \
                 else if ([obj isKindOfClass:ALSQLClause.class]) {                           \
                     [cols addObject:(ALSQLClause *)obj];                                    \
@@ -79,10 +80,10 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET    (ALSQLSelectStatement, _offset);
 
 
 
-- (nullable ALSQLClause *)toSQL {
+- (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [@"SELECT " toSQL];
+    ALSQLClause *sql = [@"SELECT " SQLClause];
     
     if (_distinct) {
         [sql append:@"DISTINCT " argValues:nil withDelimiter:nil];
@@ -129,6 +130,49 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET    (ALSQLSelectStatement, _offset);
     return _SQLClause;
 }
 
+
+@end
+
+
+#define __ALSQL_SELECT_EXT_BLOCK_IMP(TYPE, BLOCK_NAME, RS_SEL)  \
+    - (TYPE (^)())BLOCK_NAME {                                  \
+        return ^TYPE {                                          \
+            ValidBlocksChainObjectOrReturn(self, (TYPE)(0x0));  \
+                                                                \
+            __block TYPE result = (TYPE)(0x0);                  \
+            self.EXECUTE_QUERY(^(FMResultSet *rs) {             \
+                if ([rs next]) {                                \
+                    result = [rs RS_SEL:0];                     \
+                }                                               \
+            });                                                 \
+            return result;                                      \
+        };                                                      \
+    }
+
+@implementation ALSQLSelectStatement (Helper)
+
+- (NSInteger (^)(id expres))FETCH_COUNT {
+    return ^NSInteger (id expres) {
+        ValidBlocksChainObjectOrReturn(self, 0);
+        
+        __block NSInteger count = 0;
+        self.SELECT(SQL_COUNT(expres)).EXECUTE_QUERY(^(FMResultSet *rs){
+            if ([rs next]) {
+                count = [rs intForColumnIndex:0];
+            }
+        });
+        return count;
+    };
+}
+
+__ALSQL_SELECT_EXT_BLOCK_IMP(NSInteger, INT_RESULT,      intForColumnIndex);
+__ALSQL_SELECT_EXT_BLOCK_IMP(BOOL,      BOOL_RESULT,     boolForColumnIndex);
+__ALSQL_SELECT_EXT_BLOCK_IMP(long long, LONGLONG_RESULT, longLongIntForColumnIndex);
+__ALSQL_SELECT_EXT_BLOCK_IMP(double,    DOUBLE_RESULT,   doubleForColumnIndex);
+
+__ALSQL_SELECT_EXT_BLOCK_IMP(NSString *_Nullable, STR_RESULT,  stringForColumnIndex);
+__ALSQL_SELECT_EXT_BLOCK_IMP(NSData *_Nullable,   DATA_RESULT, dataForColumnIndex);
+__ALSQL_SELECT_EXT_BLOCK_IMP(NSDate *_Nullable,   DATE_RESULT, dateForColumnIndex);
 
 @end
 

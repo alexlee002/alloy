@@ -10,6 +10,7 @@
 #import "UtilitiesHeader.h"
 #import <objc/runtime.h>
 #import "NSString+Helper.h"
+#import "ALLogger.h"
 
 
 static NSString * const kFakeChainingObjectProtocolName = @"FakeChainingObjectProtocol";
@@ -45,8 +46,10 @@ Class fakeClass(Class forClass) {
     
     LocalDispatchSemaphoreLock_Wait();
     fakeclass = objc_allocateClassPair(forClass, classname, 0);
-    class_addProtocol(fakeclass, fakeProtocol());
-    objc_registerClassPair(fakeclass);
+    if (fakeclass != Nil) {
+        class_addProtocol(fakeclass, fakeProtocol());
+        objc_registerClassPair(fakeclass);
+    }
     LocalDispatchSemaphoreLock_Signal();
     
     return fakeclass;

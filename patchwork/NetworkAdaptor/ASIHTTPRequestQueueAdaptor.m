@@ -18,6 +18,7 @@
 #import "NSArray+ArrayExtensions.h"
 #import "NSObject+JSONTransform.h"
 #import "NSObject+YYModel.h"
+#import "ALLogger.h"
 
 
 @interface ALHTTPResponse (ASIHTTPRequestAdaptor)
@@ -37,7 +38,21 @@
 
 @end
 
+#pragma mark -
+@interface ASIHTTPRequest (ALDebugging)
 
+@end
+
+@implementation ASIHTTPRequest (ALDebugging)
+
+- (NSString *)debugDescription {
+    return [NSString stringWithFormat:@"%@; tag:%ld", self.description, (long)self.tag];
+}
+
+@end
+
+
+#pragma mark -
 @interface ASIHTTPRequestQueueAdaptor() <ASIHTTPRequestDelegate, ASIProgressDelegate>
 
 @end
@@ -74,7 +89,7 @@
     [_requestDict.allValues bk_each:^(NSArray *pairs) {
         ASIHTTPRequest *request = [pairs objectAtIndexSafely:1];
         if ([request isKindOfClass:[ASIHTTPRequest class]]) {
-            [request clearDelegatesAndCancel];
+            [request cancel];
         }
     }];
 }
@@ -246,17 +261,26 @@
 
 #pragma mark - ASIHTTPRequest delegates
 - (void)requestStarted:(ASIHTTPRequest *)request {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+
     [srcReq requestDidStart];
 }
 
 - (void)request:(ASIHTTPRequest *)request didReceiveResponseHeaders:(NSDictionary *)responseHeaders {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [srcReq requestDidReceiveResponse:request.responseStatusCode headers:responseHeaders];
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [srcReq requestDidSucceedWithResponse:[ALHTTPResponse responseWithASIHttpRequest:request]];
 
     TrackMemoryLeak(request);
@@ -275,7 +299,10 @@
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)request {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [srcReq requestDidFailWithResponse:[ALHTTPResponse responseWithASIHttpRequest:request]
                                  error:[self NSURLErrorTransformingFromASIError:request.error]];
     
@@ -327,21 +354,30 @@
 #pragma mark - ASIProgressDelegate
 
 - (void)request:(ASIHTTPRequest *)request incrementDownloadSizeBy:(long long)newLength {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [srcReq requestDidReceiveBytes:0
                  totalBytesReceived:[request partialDownloadSize]
         totalBytesExpectedToReceive:newLength];
 }
 
 - (void)request:(ASIHTTPRequest *)request didReceiveBytes:(long long)bytes {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [srcReq requestDidReceiveBytes:bytes
                  totalBytesReceived:[request totalBytesRead]
         totalBytesExpectedToReceive:request.contentLength];
 }
 
 - (void)request:(ASIHTTPRequest *)request didSendBytes:(long long)bytes {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     [srcReq requestDidSendBytes:bytes
                   totalBytesSent:[request totalBytesSent]
         totalBytesExpectedToSend:[request postLength]];
@@ -349,7 +385,10 @@
 
 //----
 - (void)request:(ASIHTTPRequest *)request willRedirectToURL:(NSURL *)newURL {
+    dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     ALHTTPRequest *srcReq = sourceRequestOf(request);
+    dispatch_semaphore_signal(_requestDictLock);
+    
     ALLogVerbose(@"\nrequest: %@ will redirect to: %@", srcReq, newURL);
     [request redirectToURL:newURL];
     [srcReq setValue:newURL forKey:keypath(srcReq.currentURL)];

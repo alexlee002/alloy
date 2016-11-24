@@ -71,7 +71,9 @@
     if (!isEmptyString(self.MIMEType)) {
         CFStringRef uti =
             UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef) self.MIMEType, NULL);
-        return UTTypeConformsTo(uti, kUTTypeText);
+        BOOL result = UTTypeConformsTo(uti, kUTTypeText);
+        CFRelease(uti);
+        return result;
     }
     return NO; // unkwon mime type
 }

@@ -13,24 +13,30 @@ extern Class fakeClass             (Class forClass);
 
 #define SafeBlocksChainObj(obj, TYPE)      ((TYPE *)((obj) ?: [[fakeClass(TYPE.class) alloc]init]))
 
-//TODO: deprecated
-extern BOOL  isValidChainingObject (id obj);
+#define ValidBlocksChainObjectOrReturn(obj, returnExp)  \
+    if (![(obj) isValidBlocksChainObject]) {            \
+        return (returnExp);                             \
+    }
 
-//TODO: deprecated
-#define ReturnSafeObj(obj, TYPE)                \
-    if (!isValidChainingObject((obj))) {        \
-        return SafeBlocksChainObj((obj), TYPE); \
-    }
-//TODO: deprecated
-#define VerifyChainingObjAndReturn(obj, returnExp)  \
-    if (!isValidChainingObject((obj))) {            \
-        return (returnExp);                         \
-    }
-//TODO: deprecated
-#define VerifyChainingObjAndReturnVoid(obj) \
-    if (!isValidChainingObject((obj))) {    \
-        return;                             \
-    }
+
+////TODO: deprecated
+//extern BOOL  isValidChainingObject (id obj);
+//
+////TODO: deprecated
+//#define ReturnSafeObj(obj, TYPE)                \
+//    if (!isValidChainingObject((obj))) {        \
+//        return SafeBlocksChainObj((obj), TYPE); \
+//    }
+////TODO: deprecated
+//#define VerifyChainingObjAndReturn(obj, returnExp)  \
+//    if (!isValidChainingObject((obj))) {            \
+//        return (returnExp);                         \
+//    }
+////TODO: deprecated
+//#define VerifyChainingObjAndReturnVoid(obj) \
+//    if (!isValidChainingObject((obj))) {    \
+//        return;                             \
+//    }
 
 
 @interface NSObject (SafeBlocksChain)

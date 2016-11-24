@@ -24,6 +24,18 @@
 }
 
 
+- (id)objectForKey:(id)key defaultValue:(id)dftVal cacheDefaultValue:(BOOL)cache {
+    id obj = [self objectForKey:key];
+    if (obj == nil) {
+        obj = dftVal;
+        if (dftVal != nil && cache) {
+            [self setObject:dftVal forKey:key];
+        }
+    }
+    return obj;
+}
+
+
 - (NSDateFormatter *)dateFormatterWithFormat:(NSString *)format {
     if (isEmptyString(format)) {
         return nil;

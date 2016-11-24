@@ -21,6 +21,11 @@ extern id _Nullable unwrapNil(id _Nullable obj);
  */
 extern NSString *_Nullable stringValue(id _Nullable obj);
 
+/**
+ * return if str1 is equals to str2
+ * If str1 is nil or str2 is nil or not a NSString, return NO; others return [str1 isEqualToString:str2]
+ */
+extern BOOL             stringEquals       (NSString *_Nullable str1, NSString *_Nullable str2);
 extern NSString         *stringOrEmpty     (NSString *_Nullable string);
 extern BOOL             isEmptyString      (NSString *_Nullable string);
 extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName);
@@ -40,6 +45,9 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
 
 - (NSUInteger)occurrencesCountOfString:(NSString *)substring;
 - (NSString *)stringByConvertingCamelCaseToUnderscore;
+
+- (NSString *)stringByLowercaseFirst;
+- (NSString *)stringbyUppercaseFirst;
 
 - (nullable NSString *)substringToIndexSafety:(NSUInteger)to;
 - (nullable NSString *)substringFromIndexSafety:(NSUInteger)from;
@@ -61,8 +69,15 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
 @interface NSString (ALRegularExpressions)
 
 - (nullable NSString *)stringByMatching:(NSString *)pattern captureRangeAt:(NSInteger)index;
-- (BOOL)matchesPatterh:(NSString *)pattern;
+- (BOOL)matchesPattern:(NSString *)pattern;
 @end
 
+@interface NSData(StringHelper)
+// convert bytes to hexadecimal string(lowercase)
+- (NSString *)hexString;
+@end
+
+// convert bytes to hexadecimal string(lowercase)
+extern NSString *bytesToHexStr(const char *bytes, size_t len);
 
 NS_ASSUME_NONNULL_END
