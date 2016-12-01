@@ -1,0 +1,82 @@
+#!/bin/sh
+
+# build public headers file
+
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ -z $PROJ_NAME ]; then
+	PROJ_NAME="$( basename "${ROOT_DIR}" )"
+	if [ ! -d "${PROJ_NAME}.xcworkspace1" -a ! -d "${PROJ_NAME}.xcodeproj1" ]; then
+		fn="$( find -E "${ROOT_DIR}" -maxdepth 1  -type d -iregex '.*\.(xcodeproj|xcworkspace)' -print | awk 'NR>1{print $1}' )"
+		fn="$( basename "${fn}" )"
+		PROJ_NAME=${fn%.*}
+	fi
+fi
+#echo $PROJ_NAME
+SOURCE_ROOT="${ROOT_DIR}/${PROJ_NAME}"
+PUBLIC_HEADER_FILE="${ROOT_DIR}/${PROJ_NAME}/${PROJ_NAME}.h"
+
+headers="$( find -E "${SOURCE_ROOT}" -type f -iregex '.*\.h' -print | sort )"
+
+count=0
+source_dir="${SOURCE_ROOT}/"
+for path in ${headers[@]}; do
+	if [[ "${path}" == "${PUBLIC_HEADER_FILE}" ]]; then
+		continue
+	fi
+
+	fn="$( basename "${path}")"
+	private_subfix="_private"
+	lower_sfn="$( echo "${fn%.*}" | perl -ne 'print lc' )"
+	fn_subfix=${lower_sfn:$((${#lower_sfn}-${#private_subfix}))}
+	# {file_name}.lowercase().endsWith('_private')
+	if [[ "${fn_subfix}" == "${private_subfix}" ]]; then
+		continue
+	fi
+
+
+	if [ "${path:0:${#source_dir}}" == "${source_dir}" ]; then
+		sub_dir="$( dirname "${path:${#source_dir}}" )"
+	fi
+	if [ -z "$cur_sub_dir" -o "$cur_sub_dir" != "$sub_dir" ]; then
+		content+="\n// $sub_dir\n"
+		cur_sub_dir=$sub_dir
+	fi
+
+	content+="#import \"${fn}\"\n"
+	count=$(($count+1))
+done
+
+if [[ $count -eq 0 ]]; then
+	echo "Done!"
+	exit 0
+fi
+
+cat<<EOF > "${PUBLIC_HEADER_FILE}"
+//
+//  ${PROJ_NAME}.h
+//  ${PROJ_NAME}
+//
+//  Created by Alex Lee on 2/18/16.
+//  Copyright © $(date +%Y) Alex Lee. All rights reserved.
+//
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#endif
+
+#import <Foundation/Foundation.h>
+
+//! Project version number for patchwork.
+FOUNDATION_EXPORT double patchworkVersionNumber;
+
+//! Project version string for patchwork.
+FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <patchwork/patchwork.h>
+EOF
+
+echo $content >> "${PUBLIC_HEADER_FILE}"
+echo "Done!"
+
+

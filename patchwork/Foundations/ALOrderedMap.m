@@ -8,8 +8,15 @@
 
 #import "ALOrderedMap.h"
 #import "UtilitiesHeader.h"
+#import "ALLock.h"
 
-#define __AssertNotMatch()   NSAssert(NO, @"%@: keys are not match with values.", [super description]);
+
+#define __validateKeysAndObjs()                     \
+    if (self.keys.count != self.objects.count) {    \
+        NSAssert(NO, @"keys count[%ld] is not equal to values count:[%ld].",    \
+                 (long)self.keys.count, (long)self.objects.count);              \
+        return;                                     \
+    }
 
 
 @interface ALOrderedMap<__covariant KeyType, __covariant ObjectType> ()
@@ -21,6 +28,10 @@
 @end
 
 @implementation ALOrderedMap
+
++ (instancetype)orderedMap {
+    return [[self alloc] init];
+}
 
 - (instancetype)init {
     self = [super init];
@@ -41,43 +52,34 @@
         [self removeObjectForKey:key];
         return;
     }
-    dispatch_semaphore_wait(_keyLock, DISPATCH_TIME_FOREVER);
-    
-    if (self.keys.count != self.objects.count) {
-        dispatch_semaphore_signal(_keyLock);
-        __AssertNotMatch();
-        return;
-    }
-    
-    NSInteger index = [self.keys indexOfObject:key];
-    if (index == NSNotFound) {
-        [self.keys addObject:key];
-        [self.objects addObject:object];
-    } else {
-        [self.objects replaceObjectAtIndex:index withObject:object];
-    }
-    dispatch_semaphore_signal(_keyLock);
+
+    with_gcd_semaphore(_keyLock, DISPATCH_TIME_FOREVER, ^{
+        __validateKeysAndObjs();
+
+        NSInteger index = [self.keys indexOfObject:key];
+        if (index == NSNotFound) {
+            [self.keys addObject:key];
+            [self.objects addObject:object];
+        } else {
+            [self.objects replaceObjectAtIndex:index withObject:object];
+        }
+    });
 }
 
 - (id)__objectForKey:(id)key remove:(BOOL)remove {
-    dispatch_semaphore_wait(_keyLock, DISPATCH_TIME_FOREVER);
-    
-    if (self.keys.count != self.objects.count) {
-        dispatch_semaphore_signal(_keyLock);
-        __AssertNotMatch();
-        return nil;
-    }
-    
-    NSInteger index = [self.keys indexOfObject:key];
-    id obj = nil;
-    if (index != NSNotFound) {
-        obj = self.objects[index];
-        if (remove) {
-            [self.keys removeObjectAtIndex:index];
-            [self.objects removeObjectAtIndex:index];
+    __block id obj = nil;
+    with_gcd_semaphore(_keyLock, DISPATCH_TIME_FOREVER, ^{
+        __validateKeysAndObjs();
+        
+        NSInteger index = [self.keys indexOfObject:key];
+        if (index != NSNotFound) {
+            obj = self.objects[index];
+            if (remove) {
+                [self.keys removeObjectAtIndex:index];
+                [self.objects removeObjectAtIndex:index];
+            }
         }
-    }
-    dispatch_semaphore_signal(_keyLock);
+    });
     return obj;
 }
 
@@ -93,12 +95,40 @@
     return [self.keys containsObject:key];
 }
 
+- (BOOL)containsObject:(id)obj {
+    return [self.objects containsObject:obj];
+}
+
 - (NSArray *)orderedKeys {
     return self.keys.array;
 }
 
 - (NSArray *)orderedObjects {
     return [self.objects copy];
+}
+
+- (void)enumerateKeysAndObjectsUsingBlock:(void(NS_NOESCAPE ^)(id key, id obj, BOOL *stop))block {
+    if (block == nil) {
+        return;
+    }
+    with_gcd_semaphore(_keyLock, DISPATCH_TIME_FOREVER, ^{
+        [self.keys enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull innerStop) {
+            block(obj, self.objects[idx], innerStop);
+        }];
+    });
+}
+
+- (void)enumerateKeysAndObjectsWithOptions:(NSEnumerationOptions)opts
+                                usingBlock:(void(NS_NOESCAPE ^)(id key, id obj, BOOL *stop))block {
+    if (block == nil) {
+        return;
+    }
+    with_gcd_semaphore(_keyLock, DISPATCH_TIME_FOREVER, ^{
+        [self.keys enumerateObjectsWithOptions:opts
+                                    usingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull innerStop) {
+                                        block(obj, self.objects[idx], innerStop);
+                                    }];
+    });
 }
 
 @end

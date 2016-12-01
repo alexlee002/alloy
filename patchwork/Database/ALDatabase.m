@@ -18,6 +18,7 @@
 #import "SafeBlocksChain.h"
 #import "NSCache+ALExtensions.h"
 #import "ALLogger.h"
+#import "ALLock.h"
 
 #import <objc/runtime.h>
 
@@ -51,19 +52,22 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         dbFilePath = @"";
     }
     
-    LocalDispatchSemaphoreLock_Wait();
-    if (kDatabaseDict == nil) {
-        kDatabaseDict = [NSMutableDictionary dictionary];
-    }
-    ALDatabase *db = kDatabaseDict[path];
-    if (db == nil) {
-        if((db = [(ALDatabase *)[self alloc] initWithPath:dbFilePath]) != nil) {
-            kDatabaseDict[path] = db;
-        } else {
-            db = nil;
+    static_gcd_semaphore(localSem, 1);
+    __block ALDatabase *db = nil;
+    with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
+        if (kDatabaseDict == nil) {
+            kDatabaseDict = [NSMutableDictionary dictionary];
         }
-    }
-    LocalDispatchSemaphoreLock_Signal();
+        db = kDatabaseDict[path];
+        if (db == nil) {
+            if((db = [(ALDatabase *)[self alloc] initWithPath:dbFilePath]) != nil) {
+                kDatabaseDict[path] = db;
+            } else {
+                db = nil;
+            }
+        }
+    });
+    
     return db;
 }
 

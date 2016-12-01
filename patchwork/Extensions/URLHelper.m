@@ -11,6 +11,7 @@
 #import "NSArray+ArrayExtensions.h"
 #import "UtilitiesHeader.h"
 #import "NSString+Helper.h"
+#import "ALOrderedMap.h"
 
 
 FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
@@ -37,66 +38,81 @@ FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *ur
     }];
 }
 
-FORCE_INLINE void addOrReplaceObjectInArray(NSMutableArray *array, id object, BOOL (^matchBlock)(id existedObject)) {
-    NSUInteger index = [array indexOfObjectPassingTest:^BOOL(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-        BOOL found = NO;
-        if (matchBlock && matchBlock(obj)) {
-            found = YES;
-        }
-        *stop = found;
-        return found;
-    }];
-    if (index == NSNotFound) {
-        if (object != nil) {
-            [array addObject:object];
-        }
-    } else if (object == nil) {
-        [array removeObjectAtIndex:index];
-    } else {
-        [array replaceObjectAtIndex:index withObject:object];
-    }
-}
+//FORCE_INLINE void addOrReplaceObjectInArray(NSMutableArray *array, id object, BOOL (^matchBlock)(id existedObject)) {
+//    NSUInteger index = [array indexOfObjectPassingTest:^BOOL(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+//        BOOL found = NO;
+//        if (matchBlock && matchBlock(obj)) {
+//            found = YES;
+//        }
+//        *stop = found;
+//        return found;
+//    }];
+//    if (index == NSNotFound) {
+//        if (object != nil) {
+//            [array addObject:object];
+//        }
+//    } else if (object == nil) {
+//        [array removeObjectAtIndex:index];
+//    } else {
+//        [array replaceObjectAtIndex:index withObject:object];
+//    }
+//}
 
 FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *originalItems,
                                          NSArray<ALNSURLQueryItem *> *addingItems) {
-    NSMutableArray *appendingItems = [NSMutableArray arrayWithCapacity:addingItems.count];
-    [addingItems bk_each:^(ALNSURLQueryItem *item) {
-        addOrReplaceObjectInArray(appendingItems, item, ^BOOL(ALNSURLQueryItem *existedObject) {
-            return stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
-                                castToTypeOrNil(existedObject, ALNSURLQueryItem).name);
-        });
+    ALOrderedMap<NSString *, NSString *> *orderedMap = [ALOrderedMap orderedMap];
+    [[originalItems arrayByAddingObjectsFromArray:addingItems] bk_each:^(ALNSURLQueryItem *item) {
+        [orderedMap setObject:item.value forKey:item.name];
     }];
 
-    [appendingItems bk_each:^(ALNSURLQueryItem *item) {
-        NSUInteger lastFoundIndex = NSNotFound;
-        while (YES) {
-            NSUInteger index = [originalItems indexOfObjectPassingTest:^BOOL(ALNSURLQueryItem *_Nonnull resultItem,
-                                                                             NSUInteger idx, BOOL *_Nonnull stop) {
-                BOOL found = stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
-                                          castToTypeOrNil(resultItem, ALNSURLQueryItem).name);
-                if (lastFoundIndex != NSNotFound) {
-                    found = found && (idx > lastFoundIndex);
-                }
-
-                *stop = found;
-                return found;
-            }];
-
-            if (index == NSNotFound) {
-                if (lastFoundIndex == NSNotFound) {
-                    [originalItems addObject:item];
-                }
-                break;
-            } else {
-                if (lastFoundIndex == NSNotFound) {
-                    [originalItems replaceObjectAtIndex:index withObject:item];
-                } else {
-                    [originalItems removeObjectAtIndex:index];
-                }
-                lastFoundIndex = index;
-            }
-        }
-    }];
+    [originalItems removeAllObjects];
+    [orderedMap
+        enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
+            [originalItems addObject:[ALNSURLQueryItem queryItemWithName:key rawValue:obj]];
+        }];
+    //
+    //
+    //
+    //    NSMutableArray *appendingItems = [NSMutableArray arrayWithCapacity:addingItems.count];
+    //    [addingItems bk_each:^(ALNSURLQueryItem *item) {
+    //        addOrReplaceObjectInArray(appendingItems, item, ^BOOL(ALNSURLQueryItem *existedObject) {
+    //            return stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
+    //                                castToTypeOrNil(existedObject, ALNSURLQueryItem).name);
+    //        });
+    //    }];
+    //
+    //    [appendingItems bk_each:^(ALNSURLQueryItem *item) {
+    //        NSUInteger lastFoundIndex = NSNotFound;
+    //        while (YES) {
+    //            NSUInteger index = [originalItems indexOfObjectPassingTest:^BOOL(ALNSURLQueryItem *_Nonnull
+    //            resultItem,
+    //                                                                             NSUInteger idx, BOOL *_Nonnull stop)
+    //                                                                             {
+    //                BOOL found = stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
+    //                                          castToTypeOrNil(resultItem, ALNSURLQueryItem).name);
+    //                if (lastFoundIndex != NSNotFound) {
+    //                    found = found && (idx > lastFoundIndex);
+    //                }
+    //
+    //                *stop = found;
+    //                return found;
+    //            }];
+    //
+    //            if (index == NSNotFound) {
+    //                if (lastFoundIndex == NSNotFound) {
+    //                    [originalItems addObject:item];
+    //                }
+    //                break;
+    //            } else {
+    //                if (lastFoundIndex == NSNotFound) {
+    //                    [originalItems replaceObjectAtIndex:index withObject:item];
+    //                } else {
+    //                    [originalItems removeObjectAtIndex:index];
+    //                }
+    //                lastFoundIndex = index;
+    //            }
+    //        }
+    //    }];
 }
 
 FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *items) {
@@ -187,6 +203,16 @@ FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *it
     comps.queryItems = queryItems;
 #endif
     return comps.URL;
+}
+
++ (NSString *)queryStringWithQueryItems:(NSArray<ALNSURLQueryItem *> *)queryItems {
+    return queryStringFromQueryItems(queryItems);
+}
+
++ (NSString *)queryStringWithQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemsDict {
+     return queryStringFromQueryItems([itemsDict.allKeys bk_map:^ALNSURLQueryItem *(NSString *name) {
+         return [ALNSURLQueryItem queryItemWithName:name rawValue:itemsDict[name]];
+     }]);
 }
 
 @end
@@ -292,6 +318,7 @@ FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *it
     }
     return [resultUrl copy];
 }
+
 
 - (NSString *)stringByURLEncoding {
     NSString *resultStr = self;

@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		4259D15534EBEB0BF4048C2E /* libPods-patchwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A01B7FF7CDD3A1EF9FE9235E /* libPods-patchwork.a */; };
 		430477471DC33DB400CC2CA4 /* StringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 430477461DC33DB400CC2CA4 /* StringTests.m */; };
+		430EAFB41DE726FD00A5AE48 /* ALLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 430EAFB21DE726FD00A5AE48 /* ALLock.h */; };
+		430EAFB51DE726FD00A5AE48 /* ALLock.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EAFB31DE726FD00A5AE48 /* ALLock.m */; };
+		430EAFBA1DE73E0D00A5AE48 /* FoundationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EAFB91DE73E0D00A5AE48 /* FoundationsTests.m */; };
 		43132BA61DE294310045FBDA /* ALLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 43132BA41DE294310045FBDA /* ALLogger.h */; };
 		43132BA71DE294310045FBDA /* ALLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 43132BA51DE294310045FBDA /* ALLogger.m */; };
 		43748E311DE3262400186450 /* ALModel+ActiveRecord_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */; };
@@ -120,6 +123,9 @@
 		03AC31F45871F15AC7A1C657 /* libPods-patchworkTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-patchworkTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		06C304076254F4A7F4C54403 /* Pods-patchworkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.debug.xcconfig"; sourceTree = "<group>"; };
 		430477461DC33DB400CC2CA4 /* StringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringTests.m; sourceTree = "<group>"; };
+		430EAFB21DE726FD00A5AE48 /* ALLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLock.h; sourceTree = "<group>"; };
+		430EAFB31DE726FD00A5AE48 /* ALLock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLock.m; sourceTree = "<group>"; };
+		430EAFB91DE73E0D00A5AE48 /* FoundationsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoundationsTests.m; sourceTree = "<group>"; };
 		43132BA41DE294310045FBDA /* ALLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLogger.h; sourceTree = "<group>"; };
 		43132BA51DE294310045FBDA /* ALLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLogger.m; sourceTree = "<group>"; };
 		43748E2E1DE322DC00186450 /* ActiveRecordAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveRecordAdditions.h; sourceTree = "<group>"; };
@@ -310,6 +316,7 @@
 				4390DF3F1DBF484700B10CF7 /* ALSQLStatementTests.m */,
 				430477461DC33DB400CC2CA4 /* StringTests.m */,
 				43AA2E081DC6631800AD997A /* ActiveRecordTests.m */,
+				430EAFB91DE73E0D00A5AE48 /* FoundationsTests.m */,
 			);
 			path = patchworkTests;
 			sourceTree = "<group>";
@@ -406,6 +413,8 @@
 				4390DF4A1DC2591A00B10CF7 /* ALOrderedMap.m */,
 				43132BA41DE294310045FBDA /* ALLogger.h */,
 				43132BA51DE294310045FBDA /* ALLogger.m */,
+				430EAFB21DE726FD00A5AE48 /* ALLock.h */,
+				430EAFB31DE726FD00A5AE48 /* ALLock.m */,
 			);
 			path = Foundations;
 			sourceTree = "<group>";
@@ -476,6 +485,7 @@
 				AF7162771DACD9E40015F006 /* ALSQLSelectStatement.h in Headers */,
 				AF7162791DACD9E40015F006 /* ALSQLUpdateStatement.h in Headers */,
 				AF7162AA1DACD9E40015F006 /* ALHTTPResponse.h in Headers */,
+				430EAFB41DE726FD00A5AE48 /* ALLock.h in Headers */,
 				AF7162AC1DACD9E40015F006 /* ALNetwork_config.h in Headers */,
 				AF7162AE1DACD9E40015F006 /* ASIHTTPRequestQueueAdaptor.h in Headers */,
 				AF7162B01DACD9E40015F006 /* NSURLSessionAdaptor.h in Headers */,
@@ -699,6 +709,7 @@
 				AF7162961DACD9E40015F006 /* NSObject+JSONTransform.m in Sources */,
 				AF7162821DACD9E40015F006 /* NSDate+ALExtensions.m in Sources */,
 				AF7162781DACD9E40015F006 /* ALSQLSelectStatement.m in Sources */,
+				430EAFB51DE726FD00A5AE48 /* ALLock.m in Sources */,
 				AF7162841DACD9E40015F006 /* NSString+Helper.m in Sources */,
 				AF7162691DACD9E40015F006 /* ALDBColumnInfo.m in Sources */,
 				AF7162741DACD9E40015F006 /* ALSQLDeleteStatement.m in Sources */,
@@ -736,6 +747,7 @@
 			files = (
 				AF52183F1DACD8390072FA26 /* patchworkTests.m in Sources */,
 				4390DF401DBF484700B10CF7 /* ALSQLStatementTests.m in Sources */,
+				430EAFBA1DE73E0D00A5AE48 /* FoundationsTests.m in Sources */,
 				43AA2E091DC6631800AD997A /* ActiveRecordTests.m in Sources */,
 				AF07FF801DADE4E600C7D0D4 /* ALDatabaseManagerTests.m in Sources */,
 				430477471DC33DB400CC2CA4 /* StringTests.m in Sources */,

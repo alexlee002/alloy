@@ -21,15 +21,23 @@
 #endif
 
 // local static lock
-#define LocalDispatchSemaphoreLock_Wait()    \
-    static dispatch_semaphore_t lock;        \
-    static dispatch_once_t onceToken;        \
-    dispatch_once(&onceToken, ^{             \
-        lock = dispatch_semaphore_create(1); \
-    });                                      \
-    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER)
+#define static_gcd_semaphore(sem_name, sem_val)         \
+    static dispatch_semaphore_t sem_name;               \
+    static dispatch_once_t once_##sem_name;             \
+    dispatch_once(&once_##sem_name, ^{                  \
+        sem_name = dispatch_semaphore_create(sem_val);  \
+    });
 
-#define LocalDispatchSemaphoreLock_Signal() dispatch_semaphore_signal(lock)
+
+//#define LocalDispatchSemaphoreLock_Wait()    \
+//    static dispatch_semaphore_t lock;        \
+//    static dispatch_once_t onceToken;        \
+//    dispatch_once(&onceToken, ^{             \
+//        lock = dispatch_semaphore_create(1); \
+//    });                                      \
+//    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER)
+//
+//#define LocalDispatchSemaphoreLock_Signal() dispatch_semaphore_signal(lock)
 
 // cast "obj" to "type", or return nil if failed
 #define castToTypeOrNil(obj, type) ([(obj) isKindOfClass:[type class]] ? (type *)(obj) : nil)

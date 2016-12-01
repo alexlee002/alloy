@@ -63,8 +63,10 @@ extern NSString *URLParamStringify (id _Nullable value);
  *  @return new instance of URL with URLEncoded query string
  */
 - (NSURL *)URLByAppendingQueryItems:(NSArray<ALNSURLQueryItem *> *)queryItems replace:(BOOL)replace;
-
 - (NSURL *)URLBySettingQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict;
+
++ (NSString *)queryStringWithQueryItems:(NSArray<ALNSURLQueryItem *> *)queryItems;
++ (NSString *)queryStringWithQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict;
 
 @end
 

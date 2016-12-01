@@ -10,6 +10,7 @@
 #import "UtilitiesHeader.h"
 #import "NSString+Helper.h"
 #import "ALLogger.h"
+#import "ALLock.h"
 
 
 @implementation NSString (ALStringInflector)
@@ -72,11 +73,12 @@
 
 + (instancetype)defaultInflector {
     static ALStringInflector *instance = nil;
-    LocalDispatchSemaphoreLock_Wait();
-    if (instance == nil) {
-        instance = [[self alloc] init];
-    }
-    LocalDispatchSemaphoreLock_Signal();
+    static_gcd_semaphore(sem, 1)
+    with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
+        if (instance == nil) {
+            instance = [[self alloc] init];
+        }
+    });
     return instance;
 }
 

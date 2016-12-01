@@ -26,7 +26,7 @@
 #import "ActiveRecordAdditions.h"
 #import "MD5.h"
 #import "NSObject+JSONTransform.h"
-
+#import "ALLock.h"
 
 NSString * const kRowIdColumnName = @"rowid";
 
@@ -197,38 +197,40 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     // modelsColumnsDict: @{ClassName: @{propertyName: columnInfo}}
     static NSMutableDictionary<NSString *, NSDictionary<NSString *, ALDBColumnInfo *> *> *modelsColumnsDict = nil;
     static dispatch_once_t onceToken1;
+    static dispatch_semaphore_t localSema;
     dispatch_once(&onceToken1, ^{
         modelsColumnsDict = [NSMutableDictionary dictionary];
+        localSema = dispatch_semaphore_create(1);
     });
     
     NSString *className = NSStringFromClass(self);
-    
-    LocalDispatchSemaphoreLock_Wait();
-    NSDictionary *columns = modelsColumnsDict[className];
-    if (columns == nil) {
-        __verify_rowid_alias_type(self);
-        
-        NSArray *list    = nil;
-        NSSet *blacklist = (list = [self recordPropertyBlacklist]) ? [NSSet setWithArray:list] : nil;
-        NSSet *whitelist = (list = [self recordPropertyWhitelist]) ? [NSSet setWithArray:list] : nil;
-        columns = [[[self allModelProperties] bk_select:^BOOL(NSString *key, YYClassPropertyInfo *p) {
-            if (![self withoutRowId] && [key isEqualToString:keypathForClass(ALModel, rowid)]) {
-                return YES;
-            }
-            if ([blacklist containsObject:key]) { return NO; }
-            return whitelist == nil || [whitelist containsObject:key];
-        }] bk_map:^ALDBColumnInfo *(NSString *key, YYClassPropertyInfo *p) {
-            ALDBColumnInfo *colum = [[ALDBColumnInfo alloc] init];
-            colum.property        = p;
-            colum.name            = [self mappedColumnNameForProperty:key];
-            colum.type            = suggestedSqliteDataType(p) ?: @"BLOB";
-            [self customColumnDefine:colum forProperty:p];
-            [self bindCustomPropertyValueTransformerForColumn:colum];
-            return colum;
-        }];
-        modelsColumnsDict[className] = columns;
-    }
-    LocalDispatchSemaphoreLock_Signal();
+    __block NSDictionary *columns = nil;
+    with_gcd_semaphore(localSema, DISPATCH_TIME_FOREVER, ^{
+        columns = modelsColumnsDict[className];
+        if (columns == nil) {
+            __verify_rowid_alias_type(self);
+            
+            NSArray *list    = nil;
+            NSSet *blacklist = (list = [self recordPropertyBlacklist]) ? [NSSet setWithArray:list] : nil;
+            NSSet *whitelist = (list = [self recordPropertyWhitelist]) ? [NSSet setWithArray:list] : nil;
+            columns = [[[self allModelProperties] bk_select:^BOOL(NSString *key, YYClassPropertyInfo *p) {
+                if (![self withoutRowId] && [key isEqualToString:keypathForClass(ALModel, rowid)]) {
+                    return YES;
+                }
+                if ([blacklist containsObject:key]) { return NO; }
+                return whitelist == nil || [whitelist containsObject:key];
+            }] bk_map:^ALDBColumnInfo *(NSString *key, YYClassPropertyInfo *p) {
+                ALDBColumnInfo *colum = [[ALDBColumnInfo alloc] init];
+                colum.property        = p;
+                colum.name            = [self mappedColumnNameForProperty:key];
+                colum.type            = suggestedSqliteDataType(p) ?: @"BLOB";
+                [self customColumnDefine:colum forProperty:p];
+                [self bindCustomPropertyValueTransformerForColumn:colum];
+                return colum;
+            }];
+            modelsColumnsDict[className] = columns;
+        }
+    });
     return columns;
 }
 

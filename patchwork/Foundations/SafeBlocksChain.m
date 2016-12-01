@@ -11,6 +11,7 @@
 #import <objc/runtime.h>
 #import "NSString+Helper.h"
 #import "ALLogger.h"
+#import "ALLock.h"
 
 
 static NSString * const kFakeChainingObjectProtocolName = @"FakeChainingObjectProtocol";
@@ -18,17 +19,19 @@ static NSString * const kFakeChainingObjectProtocolName = @"FakeChainingObjectPr
 Protocol *fakeProtocol() {
     const char *protochlCName = [kFakeChainingObjectProtocolName UTF8String];
     
-    Protocol *protocol = objc_getProtocol(protochlCName);
+    __block Protocol *protocol = objc_getProtocol(protochlCName);
     if (protocol != NULL) {
         return protocol;
     }
     
-    LocalDispatchSemaphoreLock_Wait();
-    protocol = objc_allocateProtocol(protochlCName);
-    if (protocol) {
-        objc_registerProtocol(protocol);
-    }
-    LocalDispatchSemaphoreLock_Signal();
+    static_gcd_semaphore(sem, 1);
+    with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
+        protocol = objc_allocateProtocol(protochlCName);
+        if (protocol) {
+            objc_registerProtocol(protocol);
+        }
+    });
+    
     return protocol;
 }
 
@@ -38,20 +41,20 @@ Class fakeClass(Class forClass) {
         return nil;
     }
     const char *classname = [[NSStringFromClass(forClass) stringByAppendingString:@"_ALFakeChainingObject"] UTF8String];
-    Class fakeclass = objc_getClass(classname);
-    
+   
+    __block Class fakeclass = objc_getClass(classname);
     if (fakeclass != nil) {
         return fakeclass;
     }
     
-    LocalDispatchSemaphoreLock_Wait();
-    fakeclass = objc_allocateClassPair(forClass, classname, 0);
-    if (fakeclass != Nil) {
-        class_addProtocol(fakeclass, fakeProtocol());
-        objc_registerClassPair(fakeclass);
-    }
-    LocalDispatchSemaphoreLock_Signal();
-    
+    static_gcd_semaphore(sem, 1);
+    with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
+        fakeclass = objc_allocateClassPair(forClass, classname, 0);
+        if (fakeclass != Nil) {
+            class_addProtocol(fakeclass, fakeProtocol());
+            objc_registerClassPair(fakeclass);
+        }
+    });
     return fakeclass;
 }
 
