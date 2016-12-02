@@ -29,8 +29,6 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "ALSQLClause+SQLFunctions.h"
 #import "ALSQLClause+SQLOperation.h"
 #import "ALSQLClause.h"
-#import "ALSQLCondition.h"
-#import "ALSQLExpression.h"
 
 // Database/SqlCommands
 #import "ALSQLDeleteStatement.h"
