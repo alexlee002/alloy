@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "patchwork"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "Patchwork is a simple toolkit that makes your iOS / OS X development more easier."
   s.description  = <<-DESC
   Features are going to support:
@@ -32,6 +32,6 @@ Pod::Spec.new do |s|
   s.dependency  "YYModel",          "~> 1.0"
   s.dependency  "BlocksKit/Core",   "~> 2.2"
   s.dependency  "ASIHTTPRequest/Core", "~> 1.8"
-  s.dependency  "ObjcAssociatedObjectHelpers/Core", "~2.0"
+  s.dependency  "ObjcAssociatedObjectHelpers/Core", "~> 2.0"
 end
 

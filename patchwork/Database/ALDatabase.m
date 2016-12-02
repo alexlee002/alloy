@@ -215,7 +215,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 }
 
 - (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db assertIfFailed:(BOOL)throwAssert {
-    BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", version]];
+    BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", (long)version]];
     if (!ret) {
         if (throwAssert) {
             NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
