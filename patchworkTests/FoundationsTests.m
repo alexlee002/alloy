@@ -9,11 +9,38 @@
 #import <XCTest/XCTest.h>
 #import "URLHelper.h"
 #import "ALLogger.h"
+#import "ALAssociatedWeakObject.h"
+#import "ALOCRuntime.h"
 
-@interface FoundationsTests : XCTestCase
+@interface SwizzleCls : NSObject
+@end
+@implementation SwizzleCls
+
+- (NSString *)instance_sel {
+    NSLog(@"I'm original INSTANCE method");
+    return @"instance_sel";
+}
+
++ (NSString *)class_sel {
+    NSLog(@"I'm original CLASS method");
+    return @"class_sel";
+}
+
+- (NSString *)instance_sel_swizzled {
+    NSLog(@"SWIZZLED  INSTANCE method");
+    return @"instance_swizzled";
+}
+
++ (NSString *)class_sel_swizzled {
+    NSLog(@"SWIZZLED  CLASS method");
+    return @"class_swizzled";
+}
+
 
 @end
 
+@interface FoundationsTests : XCTestCase
+@end
 @implementation FoundationsTests
 
 - (void)setUp {
@@ -41,6 +68,28 @@
     XCTAssertEqualObjects(url, @"https://www.google.com.hk/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8&q=goo&q=ios&ie=GBK&o=json");
     
     ALLogVerbose(@"%@", url);
+}
+
+- (void)testRunAtDealloc {
+    NSArray *array = @[@"array"];
+    __block int flag = 1;
+    [array runAtDealloc:^{
+        ALLogInfo(@"~~ DEALLOC~~");
+        flag = 0;
+    }];
+}
+
+- (void)testSwizzle {
+    SwizzleCls *test = [[SwizzleCls alloc] init];
+    
+    swizzle_method(test.class, YES, @selector(class_sel), @selector(class_sel_swizzled));
+    swizzle_method(test.class, NO, @selector(instance_sel), @selector(instance_sel_swizzled));
+    
+    XCTAssertEqualObjects([test instance_sel], @"instance_swizzled");
+    XCTAssertEqualObjects([SwizzleCls class_sel], @"class_swizzled");
+    
+    XCTAssertEqualObjects([test instance_sel_swizzled], @"instance_sel");
+    XCTAssertEqualObjects([SwizzleCls class_sel_swizzled], @"class_sel");
 }
 
 @end

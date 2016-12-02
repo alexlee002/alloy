@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
         ((ret_type (*)(id, SEL))(void *) objc_msgSend)((id)(obj), (sel), ##__VA_ARGS__)
 #endif
 
+extern BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL);
+
 extern NSArray<NSString *> *backtraceStack(int stackSize);
 extern BOOL debuggerFound();
 extern BOOL classIsSubClassOfClass(Class subCls, Class cls);

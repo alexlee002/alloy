@@ -12,6 +12,8 @@
 		430EAFB41DE726FD00A5AE48 /* ALLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 430EAFB21DE726FD00A5AE48 /* ALLock.h */; };
 		430EAFB51DE726FD00A5AE48 /* ALLock.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EAFB31DE726FD00A5AE48 /* ALLock.m */; };
 		430EAFBA1DE73E0D00A5AE48 /* FoundationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EAFB91DE73E0D00A5AE48 /* FoundationsTests.m */; };
+		430EB06D1DF099E800A5AE48 /* ALAssociatedWeakObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 430EB06B1DF099E800A5AE48 /* ALAssociatedWeakObject.h */; };
+		430EB06E1DF099E800A5AE48 /* ALAssociatedWeakObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EB06C1DF099E800A5AE48 /* ALAssociatedWeakObject.m */; };
 		43132BA61DE294310045FBDA /* ALLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 43132BA41DE294310045FBDA /* ALLogger.h */; };
 		43132BA71DE294310045FBDA /* ALLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 43132BA51DE294310045FBDA /* ALLogger.m */; };
 		43748E311DE3262400186450 /* ALModel+ActiveRecord_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */; };
@@ -126,6 +128,8 @@
 		430EAFB21DE726FD00A5AE48 /* ALLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLock.h; sourceTree = "<group>"; };
 		430EAFB31DE726FD00A5AE48 /* ALLock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLock.m; sourceTree = "<group>"; };
 		430EAFB91DE73E0D00A5AE48 /* FoundationsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoundationsTests.m; sourceTree = "<group>"; };
+		430EB06B1DF099E800A5AE48 /* ALAssociatedWeakObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAssociatedWeakObject.h; sourceTree = "<group>"; };
+		430EB06C1DF099E800A5AE48 /* ALAssociatedWeakObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALAssociatedWeakObject.m; sourceTree = "<group>"; };
 		43132BA41DE294310045FBDA /* ALLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLogger.h; sourceTree = "<group>"; };
 		43132BA51DE294310045FBDA /* ALLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLogger.m; sourceTree = "<group>"; };
 		43748E2E1DE322DC00186450 /* ActiveRecordAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveRecordAdditions.h; sourceTree = "<group>"; };
@@ -383,6 +387,8 @@
 		AF7162381DACD9E40015F006 /* Foundations */ = {
 			isa = PBXGroup;
 			children = (
+				430EB06B1DF099E800A5AE48 /* ALAssociatedWeakObject.h */,
+				430EB06C1DF099E800A5AE48 /* ALAssociatedWeakObject.m */,
 				AF7162391DACD9E40015F006 /* ALDevice.h */,
 				AF71623A1DACD9E40015F006 /* ALDevice.m */,
 				AF71623B1DACD9E40015F006 /* ALOCRuntime.h */,
@@ -502,6 +508,7 @@
 				AF7162931DACD9E40015F006 /* MD5.h in Headers */,
 				AF7162681DACD9E40015F006 /* ALDBColumnInfo.h in Headers */,
 				AF7162661DACD9E40015F006 /* ALDatabase.h in Headers */,
+				430EB06D1DF099E800A5AE48 /* ALAssociatedWeakObject.h in Headers */,
 				AF7162851DACD9E40015F006 /* URLHelper.h in Headers */,
 				AF71627F1DACD9E40015F006 /* NSCache+ALExtensions.h in Headers */,
 				AF5218411DACD8390072FA26 /* patchwork.h in Headers */,
@@ -708,6 +715,7 @@
 				AF7162901DACD9E40015F006 /* DES.m in Sources */,
 				AF7162961DACD9E40015F006 /* NSObject+JSONTransform.m in Sources */,
 				AF7162821DACD9E40015F006 /* NSDate+ALExtensions.m in Sources */,
+				430EB06E1DF099E800A5AE48 /* ALAssociatedWeakObject.m in Sources */,
 				AF7162781DACD9E40015F006 /* ALSQLSelectStatement.m in Sources */,
 				430EAFB51DE726FD00A5AE48 /* ALLock.m in Sources */,
 				AF7162841DACD9E40015F006 /* NSString+Helper.m in Sources */,

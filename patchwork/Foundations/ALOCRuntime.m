@@ -13,8 +13,37 @@
 #import "UtilitiesHeader.h"
 #include <execinfo.h>
 #include <sys/sysctl.h>
+#import "ALLogger.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+FORCE_INLINE BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL) {
+    Method originalMethod = isClassMethod ? class_getClassMethod(cls, originalSEL) : class_getInstanceMethod(cls, originalSEL);
+    Method swizzledMethod = isClassMethod ? class_getClassMethod(cls, swizzledSEL) : class_getInstanceMethod(cls, swizzledSEL);
+    
+    if (originalMethod == NULL) {
+        ALLogError(@"class %@, selector:%@; method not found!", cls, NSStringFromSelector(originalSEL));
+        return NO;
+    }
+    if (swizzledMethod == NULL) {
+        ALLogError(@"class %@, selector:%@; method not found!", cls, NSStringFromSelector(swizzledSEL));
+        return NO;
+    }
+    
+    if (isClassMethod) {
+        cls = object_getClass(cls);
+    }
+    
+    BOOL methodDidAdd = class_addMethod(cls, originalSEL, method_getImplementation(swizzledMethod),
+                                        method_getTypeEncoding(swizzledMethod));
+    if (methodDidAdd) {
+        class_replaceMethod(cls, swizzledSEL, method_getImplementation(originalMethod),
+                            method_getTypeEncoding(originalMethod));
+    } else {
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+    }
+    return YES;
+}
 
 FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls)) {
     NSMutableSet *set = [NSMutableSet set];
