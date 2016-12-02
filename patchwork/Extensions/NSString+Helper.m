@@ -15,15 +15,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-FORCE_INLINE id wrapNil(id _Nullable obj) {
+AL_FORCE_INLINE id wrapNil(id _Nullable obj) {
     return obj == nil ? NSNull.null : obj;
 }
 
-FORCE_INLINE id _Nullable unwrapNil(id _Nullable obj) {
+AL_FORCE_INLINE id _Nullable unwrapNil(id _Nullable obj) {
     return obj == NSNull.null ? nil : obj;
 }
 
-FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
+AL_FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
     if ([obj isKindOfClass:NSString.class]) {
         return (NSString *)obj;
     } else if ([obj isKindOfClass:NSNumber.class]) {
@@ -36,7 +36,7 @@ FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
     return nil;
 }
 
-FORCE_INLINE BOOL stringEquals(NSString *_Nullable str1, NSString *_Nullable str2) {
+AL_FORCE_INLINE BOOL stringEquals(NSString *_Nullable str1, NSString *_Nullable str2) {
     if (castToTypeOrNil(str1, NSString) == nil) {
         return NO;
     }
@@ -46,12 +46,12 @@ FORCE_INLINE BOOL stringEquals(NSString *_Nullable str1, NSString *_Nullable str
     return [str1 isEqualToString:str2];
 }
 
-FORCE_INLINE NSString *stringOrEmpty(NSString *_Nullable string) {
+AL_FORCE_INLINE NSString *stringOrEmpty(NSString *_Nullable string) {
     NSString *tmp = [string stringify];
     return tmp == nil ? @"" : tmp;
 }
 
-FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
+AL_FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
     if ([string isKindOfClass:[NSString class]]) {
         if (string.length == 0) {
             return YES;
@@ -64,7 +64,7 @@ FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
     return YES;
 }
 
-FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName) {
+AL_FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName) {
     CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) encodingName);
     if (cfEncoding != kCFStringEncodingInvalidId) {
         return CFStringConvertEncodingToNSStringEncoding(cfEncoding);
@@ -74,7 +74,7 @@ FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encod
     return NSUTF8StringEncoding;
 }
 
-FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1, NSString *str2, NSString *localeName) {
+AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1, NSString *str2, NSString *localeName) {
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeName];
     NSComparisonResult result = [str1 compare:str2 options:0 range:NSMakeRange(0, [str1 length]) locale:locale];
     return result;
@@ -311,7 +311,7 @@ FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *str1,
 
 @end
 
-FORCE_INLINE NSString *bytesToHexStr(const char *bytes, size_t len) {
+AL_FORCE_INLINE NSString *bytesToHexStr(const char *bytes, size_t len) {
     if (len == 0 || bytes == NULL) {
 #if DEBUG
         assert(bytes != NULL);

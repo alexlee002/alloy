@@ -26,7 +26,7 @@ struct rc4_state {
 };
 
 
-static FORCE_INLINE void swap_bytes(u_char *a, u_char *b) {
+static AL_FORCE_INLINE void swap_bytes(u_char *a, u_char *b) {
     u_char temp;
     
     temp = *a;
@@ -38,7 +38,7 @@ static FORCE_INLINE void swap_bytes(u_char *a, u_char *b) {
  * Initialize an RC4 state buffer using the supplied key,
  * which can have arbitrary length.
  */
-static FORCE_INLINE void rc4_init(struct rc4_state *const state, const u_char *key, int keylen) {
+static AL_FORCE_INLINE void rc4_init(struct rc4_state *const state, const u_char *key, int keylen) {
     u_char j;
     int i, k;
     
@@ -61,7 +61,7 @@ static FORCE_INLINE void rc4_init(struct rc4_state *const state, const u_char *k
  * Since RC4 is a stream cypher, this function is used
  * for both encryption and decryption.
  */
-static FORCE_INLINE void rc4_crypt(struct rc4_state *const state, const u_char *inbuf, u_char *outbuf, int buflen) {
+static AL_FORCE_INLINE void rc4_crypt(struct rc4_state *const state, const u_char *inbuf, u_char *outbuf, int buflen) {
     int i;
     u_char j;
     

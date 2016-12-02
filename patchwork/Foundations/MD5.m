@@ -11,7 +11,7 @@
 #import "UtilitiesHeader.h"
 #import "NSString+Helper.h"
 
-//static FORCE_INLINE NSString *MD5DigestToString(unsigned char digest[]) {
+//static AL_FORCE_INLINE NSString *MD5DigestToString(unsigned char digest[]) {
 //    return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", digest[0],
 //                                      digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7],
 //                                      digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14],
@@ -43,7 +43,7 @@
 @end
 
 static uint32_t MD5bufSize = 1024 * 1024;
-FORCE_INLINE NSString *_Nullable fileMD5Hash(NSString *filepath) {
+AL_FORCE_INLINE NSString *_Nullable fileMD5Hash(NSString *filepath) {
     NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:filepath];
     if (fh == nil) {
         return nil;
@@ -63,7 +63,7 @@ FORCE_INLINE NSString *_Nullable fileMD5Hash(NSString *filepath) {
     return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
-FORCE_INLINE NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRange range) {
+AL_FORCE_INLINE NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRange range) {
     NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:filepath];
     if (fh == nil) {
         return nil;

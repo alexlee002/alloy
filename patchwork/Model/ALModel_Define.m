@@ -26,7 +26,7 @@ NSString * const kModelRowidDidChangeNotification = @"ModelRowidDidChangeNotific
  *  @param copyingProperties     specified properties to copied
  *
  */
-static FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
+static AL_FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
                                         NSDictionary<NSString *, YYClassPropertyInfo *> *copyingProperties);
 
 
@@ -171,7 +171,7 @@ static FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
 
 @end
 
-static FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
+static AL_FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
                                         NSDictionary<NSString *, YYClassPropertyInfo *> *copyingProperties) {
     if (from == nil || to == nil || copyingProperties.count == 0) {
         return;

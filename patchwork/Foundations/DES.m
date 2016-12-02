@@ -12,7 +12,7 @@
 #import "ALLogger.h"
 
 
-static FORCE_INLINE NSData *DES_Crypt(CCOperation op, NSData *input, NSData *key) {
+static AL_FORCE_INLINE NSData *DES_Crypt(CCOperation op, NSData *input, NSData *key) {
     char keyPtr[kCCBlockSizeDES + 1];
     bzero(keyPtr, sizeof(keyPtr));
     memcpy(keyPtr, [key bytes], MIN(key.length, kCCBlockSizeDES));

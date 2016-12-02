@@ -13,17 +13,17 @@
 #import <objc/runtime.h>
 #import "ALLogger.h"
 
-FORCE_INLINE ALSQLClause *SQLMidOp(ALSQLClause *target, NSString *optor, ALSQLClause *other) {
+AL_FORCE_INLINE ALSQLClause *SQLMidOp(ALSQLClause *target, NSString *optor, ALSQLClause *other) {
     [target operation:optor position:ALOperatorPosMid otherClause:other];
     return target;
 }
 
-FORCE_INLINE ALSQLClause *SQLLeftOp(NSString *optor, ALSQLClause *target) {
+AL_FORCE_INLINE ALSQLClause *SQLLeftOp(NSString *optor, ALSQLClause *target) {
     [target operation:optor position:ALOperatorPosLeft otherClause:nil];
     return target;
 }
 
-FORCE_INLINE ALSQLClause *SQLRightOp(ALSQLClause *target, NSString *optor) {
+AL_FORCE_INLINE ALSQLClause *SQLRightOp(ALSQLClause *target, NSString *optor) {
     [target operation:optor position:ALOperatorPosRight otherClause:nil];
     return target;
 }

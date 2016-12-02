@@ -137,7 +137,7 @@
 		43748E301DE3262400186450 /* ALModel+ActiveRecord_private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord_private.m"; sourceTree = "<group>"; };
 		4390DF3F1DBF484700B10CF7 /* ALSQLStatementTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLStatementTests.m; sourceTree = "<group>"; };
 		4390DF411DC197A100B10CF7 /* ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+ActiveRecord.h"; sourceTree = "<group>"; };
-		4390DF421DC197A100B10CF7 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
+		4390DF421DC197A100B10CF7 /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		4390DF451DC22A4200B10CF7 /* ALStringInflector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALStringInflector.h; sourceTree = "<group>"; };
 		4390DF461DC22A4200B10CF7 /* ALStringInflector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALStringInflector.m; sourceTree = "<group>"; };
 		4390DF491DC2591A00B10CF7 /* ALOrderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOrderedMap.h; sourceTree = "<group>"; };
@@ -158,9 +158,9 @@
 		AF52183E1DACD8390072FA26 /* patchworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = patchworkTests.m; sourceTree = "<group>"; };
 		AF5218401DACD8390072FA26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AF6662A71DAF426D00FE3042 /* ALSQLClause+SQLOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLClause+SQLOperation.h"; sourceTree = "<group>"; };
-		AF6662A81DAF426D00FE3042 /* ALSQLClause+SQLOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLOperation.m"; sourceTree = "<group>"; };
+		AF6662A81DAF426D00FE3042 /* ALSQLClause+SQLOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "ALSQLClause+SQLOperation.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF7162151DACD9E40015F006 /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatabase.h; sourceTree = "<group>"; };
-		AF7162161DACD9E40015F006 /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatabase.m; sourceTree = "<group>"; };
+		AF7162161DACD9E40015F006 /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALDatabase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF7162171DACD9E40015F006 /* ALDBColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBColumnInfo.h; sourceTree = "<group>"; };
 		AF7162181DACD9E40015F006 /* ALDBColumnInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDBColumnInfo.m; sourceTree = "<group>"; };
 		AF7162191DACD9E40015F006 /* ALDBMigrationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBMigrationProtocol.h; sourceTree = "<group>"; };
@@ -187,11 +187,11 @@
 		AF7162341DACD9E40015F006 /* NSString+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Helper.h"; sourceTree = "<group>"; };
 		AF7162351DACD9E40015F006 /* NSString+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Helper.m"; sourceTree = "<group>"; };
 		AF7162361DACD9E40015F006 /* URLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHelper.h; sourceTree = "<group>"; };
-		AF7162371DACD9E40015F006 /* URLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLHelper.m; sourceTree = "<group>"; };
+		AF7162371DACD9E40015F006 /* URLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = URLHelper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF7162391DACD9E40015F006 /* ALDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDevice.h; sourceTree = "<group>"; };
 		AF71623A1DACD9E40015F006 /* ALDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDevice.m; sourceTree = "<group>"; };
 		AF71623B1DACD9E40015F006 /* ALOCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOCRuntime.h; sourceTree = "<group>"; };
-		AF71623C1DACD9E40015F006 /* ALOCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOCRuntime.m; sourceTree = "<group>"; };
+		AF71623C1DACD9E40015F006 /* ALOCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALOCRuntime.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF71623D1DACD9E40015F006 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		AF71623E1DACD9E40015F006 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		AF71623F1DACD9E40015F006 /* CRC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRC.h; sourceTree = "<group>"; };
@@ -201,11 +201,11 @@
 		AF7162431DACD9E40015F006 /* HHTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HHTimer.h; sourceTree = "<group>"; };
 		AF7162441DACD9E40015F006 /* HHTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHTimer.m; sourceTree = "<group>"; };
 		AF7162451DACD9E40015F006 /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
-		AF7162461DACD9E40015F006 /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		AF7162461DACD9E40015F006 /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MD5.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF7162471DACD9E40015F006 /* NSObject+JSONTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+JSONTransform.h"; sourceTree = "<group>"; };
 		AF7162481DACD9E40015F006 /* NSObject+JSONTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+JSONTransform.m"; sourceTree = "<group>"; };
 		AF7162491DACD9E40015F006 /* RC4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RC4.h; sourceTree = "<group>"; };
-		AF71624A1DACD9E40015F006 /* RC4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RC4.m; sourceTree = "<group>"; };
+		AF71624A1DACD9E40015F006 /* RC4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RC4.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF71624B1DACD9E40015F006 /* SafeBlocksChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBlocksChain.h; sourceTree = "<group>"; };
 		AF71624C1DACD9E40015F006 /* SafeBlocksChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SafeBlocksChain.m; sourceTree = "<group>"; };
 		AF71624D1DACD9E40015F006 /* SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
@@ -216,7 +216,7 @@
 		AF7162551DACD9E40015F006 /* ALModel+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+JSON.m"; sourceTree = "<group>"; };
 		AF7162561DACD9E40015F006 /* ALModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel.h; sourceTree = "<group>"; };
 		AF7162571DACD9E40015F006 /* ALModel_Define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel_Define.h; sourceTree = "<group>"; };
-		AF7162581DACD9E40015F006 /* ALModel_Define.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALModel_Define.m; sourceTree = "<group>"; };
+		AF7162581DACD9E40015F006 /* ALModel_Define.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ALModel_Define.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF71625A1DACD9E40015F006 /* ALHTTPRequest+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALHTTPRequest+Helper.h"; sourceTree = "<group>"; };
 		AF71625B1DACD9E40015F006 /* ALHTTPRequest+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALHTTPRequest+Helper.m"; sourceTree = "<group>"; };
 		AF71625C1DACD9E40015F006 /* ALHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPRequest.h; sourceTree = "<group>"; };

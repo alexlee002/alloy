@@ -14,7 +14,7 @@
 #import "ALOrderedMap.h"
 
 
-FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
+AL_FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
     NSString *canonicalString = nil;
     if ([value isKindOfClass:[NSString class]]) {
         canonicalString = (NSString *)value;
@@ -28,7 +28,7 @@ FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
     return stringOrEmpty(canonicalString);
 }
 
-FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *urlencodedQuery) {
+AL_FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *urlencodedQuery) {
     return [[[urlencodedQuery componentsSeparatedByString:@"&"] bk_select:^BOOL(NSString *itemString) {
         return castToTypeOrNil(itemString, NSString).length > 0;
     }] bk_map:^ALNSURLQueryItem *(NSString *itemString) {
@@ -38,7 +38,7 @@ FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *ur
     }];
 }
 
-//FORCE_INLINE void addOrReplaceObjectInArray(NSMutableArray *array, id object, BOOL (^matchBlock)(id existedObject)) {
+//AL_FORCE_INLINE void addOrReplaceObjectInArray(NSMutableArray *array, id object, BOOL (^matchBlock)(id existedObject)) {
 //    NSUInteger index = [array indexOfObjectPassingTest:^BOOL(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
 //        BOOL found = NO;
 //        if (matchBlock && matchBlock(obj)) {
@@ -58,7 +58,7 @@ FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *ur
 //    }
 //}
 
-FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *originalItems,
+AL_FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *originalItems,
                                          NSArray<ALNSURLQueryItem *> *addingItems) {
     ALOrderedMap<NSString *, NSString *> *orderedMap = [ALOrderedMap orderedMap];
     [[originalItems arrayByAddingObjectsFromArray:addingItems] bk_each:^(ALNSURLQueryItem *item) {
@@ -115,7 +115,7 @@ FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *ori
     //    }];
 }
 
-FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *items) {
+AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *items) {
     return [[items bk_map:^NSString *(ALNSURLQueryItem *item) {
         NSString *string = [item.name stringByURLEncoding];
         if (item.value != nil) {

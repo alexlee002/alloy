@@ -11,6 +11,11 @@
 #import "ALLogger.h"
 #import "ALAssociatedWeakObject.h"
 #import "ALOCRuntime.h"
+#import "UtilitiesHeader.h"
+
+void setAge(int age) AL_C_PARAM_ASSERT(age >= 0 && age < 150, "Oh! you're the God!") {
+    printf("I'm %d years old", age);
+}
 
 @interface SwizzleCls : NSObject
 @end
@@ -45,6 +50,11 @@
 
 - (void)setUp {
     [super setUp];
+    
+//    setAge(-1);
+//    setAge(151);
+//    setAge(5);
+    
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 

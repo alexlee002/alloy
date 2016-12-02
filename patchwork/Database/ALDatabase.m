@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 NSString * const kALInMemoryDBPath = @":memory:";  // in-memory db
 NSString * const kALTempDBPath     = @"";          // temp db;
 
-static FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name);
+static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name);
 
 static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 
@@ -299,7 +299,7 @@ __ALDB_STMT_BLOCK(ALSQLDeleteStatement, DELETE);
 @end
 
 
-FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
+AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     BOOL found = NO;
     unsigned int methodCount = 0;
     Method *methods = class_copyMethodList(cls, &methodCount);

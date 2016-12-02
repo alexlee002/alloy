@@ -12,7 +12,25 @@
 // maximum time (seconds) a database queue operation (eg: inDatabase:) can execute.
 #define MAX_DB_BLOCK_EXECUTE_SEC   5
 
-#define FORCE_INLINE __inline__ __attribute__((always_inline))
+//clang attributes
+#define AL_FORCE_INLINE __inline__ __attribute__((always_inline))
+// accept 0 or 1 param with int type. the param value should >= 100
+#define AL_CONSTRACTOR(...)   __attribute__((constructor(__VA_ARGS__)))
+#define AL_DESTRUCTOR(...)    __attribute__((destructor(__VA_ARGS__)))
+/**
+ * only work for C functions and C params type
+ * Example:
+ *   void setAge(int age) AL_C_PARAM_ASSERT(age >= 0 && age < 150, "Oh! you're the God!") {
+ *       printf("I'm %d years old", age);
+ *   }
+ *   setAge(-1);    // ✘ compile Error
+ *   setAge(151);   // ✘ compile Error
+ *   setAge(5);     // ✔
+ */
+#define AL_C_PARAM_ASSERT(cond, ...) __attribute__((enable_if(cond, __VA_ARGS__)))
+// only work for C functions
+#define AL_C_OVERLOADABLE   __attribute__((overloadable))
+
 
 #if TARGET_OS_IPHONE
 #   define PROP_ATOMIC_DEF nonatomic

@@ -17,7 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-FORCE_INLINE BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL) {
+AL_FORCE_INLINE BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL) {
     Method originalMethod = isClassMethod ? class_getClassMethod(cls, originalSEL) : class_getInstanceMethod(cls, originalSEL);
     Method swizzledMethod = isClassMethod ? class_getClassMethod(cls, swizzledSEL) : class_getInstanceMethod(cls, swizzledSEL);
     
@@ -45,7 +45,7 @@ FORCE_INLINE BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL,
     return YES;
 }
 
-FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls)) {
+AL_FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls)) {
     NSMutableSet *set = [NSMutableSet set];
     unsigned int classesCount = 0;
     Class *classes = objc_copyClassList( &classesCount );
@@ -72,7 +72,7 @@ FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls
     return set;
 }
 
-FORCE_INLINE BOOL classIsSubClassOfClass(Class subCls, Class cls) {
+AL_FORCE_INLINE BOOL classIsSubClassOfClass(Class subCls, Class cls) {
     while ((subCls = class_getSuperclass(subCls)) != nil) {
         if (cls == subCls) {
             return YES;
@@ -81,7 +81,7 @@ FORCE_INLINE BOOL classIsSubClassOfClass(Class subCls, Class cls) {
     return NO;
 }
 
-FORCE_INLINE NSArray<NSString *> *backtraceStack(int size) {
+AL_FORCE_INLINE NSArray<NSString *> *backtraceStack(int size) {
     size = size > 0 ? size : 128;
     void* callstack[size];
     int frames = backtrace(callstack, size);
@@ -103,7 +103,7 @@ FORCE_INLINE NSArray<NSString *> *backtraceStack(int size) {
 }
 
 // @see http://stackoverflow.com/questions/4744826/detecting-if-ios-app-is-run-in-debugger
-FORCE_INLINE BOOL debuggerFound() {
+AL_FORCE_INLINE BOOL debuggerFound() {
     // Initialize the flags so that, if sysctl fails for some bizarre
     // reason, we get a predictable result.
     struct kinfo_proc info;

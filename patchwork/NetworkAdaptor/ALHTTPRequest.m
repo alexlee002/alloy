@@ -16,7 +16,7 @@
 
 #define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
 
-static FORCE_INLINE NSString *ObjectDescription(id obj);
+static AL_FORCE_INLINE NSString *ObjectDescription(id obj);
 
 const NSInteger ALRequestTypeNotInitialized = -1;
 
@@ -356,7 +356,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 @end
 
 static const NSUInteger kMaxDescriptionLength = 100;
-static FORCE_INLINE NSString *ObjectDescription(id obj) {
+static AL_FORCE_INLINE NSString *ObjectDescription(id obj) {
     if ([obj isKindOfClass:[NSString class]]) {
         return ((NSString *) obj).length <= kMaxDescriptionLength
                    ? obj

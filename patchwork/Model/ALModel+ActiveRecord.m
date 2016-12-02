@@ -31,20 +31,20 @@
 NSString * const kRowIdColumnName = @"rowid";
 
 #pragma mark - utilities functions
-static FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *property);
+static AL_FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *property);
 
-static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,
+static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,
                                                             int             columnIndex,
                                                             ALModel        *model,
                                                             ALDBColumnInfo *colinfo);
 
-static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(FMResultSet *rs, Class modelClass);
-static FORCE_INLINE NSDictionary<NSString * /*colname*/, NSArray<ALDBColumnInfo *> *> *modelColumnPropertyMapper(
+static AL_FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(FMResultSet *rs, Class modelClass);
+static AL_FORCE_INLINE NSDictionary<NSString * /*colname*/, NSArray<ALDBColumnInfo *> *> *modelColumnPropertyMapper(
                     FMResultSet *rs, Class modelClass);
-static FORCE_INLINE void setModelPropertyValueWithResultSet(FMResultSet *rs, ALModel *oneModel,
+static AL_FORCE_INLINE void setModelPropertyValueWithResultSet(FMResultSet *rs, ALModel *oneModel,
                                                             NSDictionary * columnPropertyMapper);
 // column value saving to DB
-static FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, ALDBColumnInfo *_Nonnull colInfo);
+static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, ALDBColumnInfo *_Nonnull colInfo);
 
 
 #pragma mark -
@@ -694,7 +694,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
 /**
  * @see https://www.sqlite.org/datatype3.html
  */
-static FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *property) {
+static AL_FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *property) {
     
     switch (property.type & YYEncodingTypeMask) {
         case YYEncodingTypeBool:
@@ -735,7 +735,7 @@ static FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *prop
 }
 
 // the value that saving to DB
-static FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, ALDBColumnInfo *_Nonnull colInfo) {
+static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, ALDBColumnInfo *_Nonnull colInfo) {
     NSString *propertyName = colInfo.property.name;
     if (unwrapNil(propertyName) == nil ||
         [propertyName isEqualToString:[model.class rowidAliasPropertyName]] ||
@@ -813,7 +813,7 @@ static FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, ALDBC
 }
 
 
-static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,
+static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,
                                                             int             columnIndex,
                                                             ALModel        *model,
                                                             ALDBColumnInfo *colinfo) {
@@ -919,7 +919,7 @@ static FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,
     }
 }
 
-static FORCE_INLINE NSDictionary<NSString * /*colname*/, NSArray<ALDBColumnInfo *> *> *modelColumnPropertyMapper(
+static AL_FORCE_INLINE NSDictionary<NSString * /*colname*/, NSArray<ALDBColumnInfo *> *> *modelColumnPropertyMapper(
     FMResultSet *rs, Class modelClass) {
     
     NSMutableSet *resultColumnNames = [NSMutableSet setWithCapacity:rs.columnCount];
@@ -949,7 +949,7 @@ static FORCE_INLINE NSDictionary<NSString * /*colname*/, NSArray<ALDBColumnInfo 
     return columnPropertyMapper;
 }
 
-static FORCE_INLINE void setModelPropertyValueWithResultSet(FMResultSet *rs, ALModel *oneModel,
+static AL_FORCE_INLINE void setModelPropertyValueWithResultSet(FMResultSet *rs, ALModel *oneModel,
                                                             NSDictionary * columnPropertyMapper) {
     [oneModel markModelFromDB:YES];
     [columnPropertyMapper bk_each:^(NSString *colName, NSArray<ALDBColumnInfo *> *objs) {
@@ -965,7 +965,7 @@ static FORCE_INLINE void setModelPropertyValueWithResultSet(FMResultSet *rs, ALM
 }
 
 
-static FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(FMResultSet *rs, Class modelClass) {
+static AL_FORCE_INLINE NSArray<__kindof ALModel *> *_Nullable modelsFromResultSet(FMResultSet *rs, Class modelClass) {
     if (rs == nil || ![modelClass isSubclassOfClass:[ALModel class]] || rs.columnCount == 0) {
         [rs close];
         return nil;
