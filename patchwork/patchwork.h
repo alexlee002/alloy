@@ -49,6 +49,7 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "URLHelper.h"
 
 // Foundations
+#import "ALAssociatedWeakObject.h"
 #import "ALDevice.h"
 #import "ALLock.h"
 #import "ALLogger.h"
