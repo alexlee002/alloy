@@ -12,8 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
-#if DEBUG
+AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+                                           NSString *fmt, va_list vaList) {
     static BOOL hasDebugger = NO;
     static NSDateFormatter *dateFormatter = nil;
     static dispatch_once_t onceToken;
@@ -21,7 +21,7 @@ void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel 
         hasDebugger = debuggerFound();
         if (hasDebugger) {
             dateFormatter = [[NSDateFormatter alloc] init];
-            dateFormatter.dateFormat = @"yyyy-MM-dd hh:mm:ss.SSS";
+            dateFormatter.dateFormat = @"hh:mm:ss.SSS";
         }
     });
     
@@ -29,19 +29,19 @@ void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel 
     NSString *message = nil;
     switch (level) {
         case ALLogLevelVerbose:
-            levelStr = CFSTR("-[VERBOSE]");
+            levelStr = CFSTR("-[V]");
             message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"🐔" stringByAppendingString:fmt] : fmt);
             break;
         case ALLogLevelInfo:
-            levelStr = CFSTR("-[INFO]");
+            levelStr = CFSTR("-[I]");
             message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"✅" stringByAppendingString:fmt] : fmt);
             break;
         case ALLogLevelWarn:
-            levelStr = CFSTR("-[WARN]");
+            levelStr = CFSTR("-[W]");
             message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"⚠️" stringByAppendingString:fmt] : fmt);
             break;
         case ALLogLevelError:
-            levelStr = CFSTR("-[ERROR]");
+            levelStr = CFSTR("-[E]");
             message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"❌" stringByAppendingString:fmt] : fmt);
             break;
             
@@ -50,18 +50,13 @@ void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel 
     }
     
     CFMutableStringRef str = CFStringCreateMutable(NULL, 0);
-    if (hasDebugger) {
-        CFStringAppend(str, (__bridge CFStringRef)[dateFormatter stringFromDate:[NSDate date]]);
-        CFStringAppend(str, CFSTR(" "));
-    }
-   
     if (levelStr != NULL) {
         CFStringAppend(str, levelStr);
         CFStringAppend(str, CFSTR(" "));
     }
     
     if (!isEmptyString(tag)) {
-        CFStringAppendFormat(str, NULL, CFSTR("[%@]"), tag);
+        CFStringAppendFormat(str, NULL, CFSTR("🚩[%@]"), tag);
         CFStringAppend(str, CFSTR(" "));
     }
     
@@ -86,20 +81,30 @@ void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel 
         CFStringAppend(str, (__bridge CFStringRef)message);
     }
     
-    va_list args;
-    va_start(args, fmt);
-    NSString *logtext = [[NSString alloc] initWithFormat:(__bridge NSString *)str arguments:args];
-    va_end(args);
+    NSString *logtext = [[NSString alloc] initWithFormat:(__bridge NSString *)str arguments:vaList];
     
     if (hasDebugger) {
-        printf("%s\n", [logtext UTF8String]);
+        printf("%s %s\n", [[dateFormatter stringFromDate:[NSDate date]]UTF8String], [logtext UTF8String]);
     } else {
         NSLog(@"%@", logtext);
     }
     CFRelease(str);
-    
-#endif
 }
 
+void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    _ALLogInternal(file, line, func, tag, level, fmt, args);
+    va_end(args);
+}
+
+void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
+#if DEBUG
+    va_list args;
+    va_start(args, fmt);
+    _ALLogInternal(file, line, func, tag, level, fmt, args);
+    va_end(args);
+#endif
+}
 
 NS_ASSUME_NONNULL_END

@@ -17,6 +17,7 @@ typedef NS_ENUM(NSInteger, ALLogLevel) {
 };
 
 extern void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
+extern void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
 
 #define __ALLog(level, fmt, ...)                                \
     ALLog(  (__bridge NSString *)CFSTR(__FILE__),               \
