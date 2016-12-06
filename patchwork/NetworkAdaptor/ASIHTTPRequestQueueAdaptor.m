@@ -127,9 +127,14 @@
         [self buildDownloadRequest:&asiRequest with:request];
     } else if (request.method == ALHTTPMethodPost) {
         asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:request.url]];
-        [request.params bk_each:^(NSString *key, id value) {
-            [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
-        }];
+        NSData *postBody = castToTypeOrNil([request postBody], NSData);
+        if (postBody != nil) {
+            asiRequest.postBody = [postBody mutableCopy];
+        } else {
+            [request.params bk_each:^(NSString *key, id value) {
+                [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
+            }];
+        }
     } else {
         NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
         asiRequest = [ASIHTTPRequest requestWithURL:url];

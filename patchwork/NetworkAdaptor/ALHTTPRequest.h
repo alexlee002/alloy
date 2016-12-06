@@ -107,14 +107,17 @@ typedef __kindof ALHTTPRequest *_Nonnull (^ALHTTPRequestBlockBKV)(BOOL condition
 // obj = nil then reamove the value for specified key.
 - (void)setParam:(nullable id)obj forKey:(NSString *)key;
 - (void)setParams:(NSDictionary<NSString *, id> *)params;
-- (NSDictionary<NSString *, id>  *)params;
+- (nullable NSDictionary<NSString *, id>  *)params;
 
 // support multipart upload
 - (void)setUploadParam:(nullable id)obj forKey:(NSString *)key;
-- (NSDictionary<NSString *, id> *)uploadParams;
+- (nullable NSDictionary<NSString *, id> *)uploadParams;
 
 - (void)setHeader:(nullable id)header forKey:(NSString *)key;
 - (NSDictionary<NSString *, id> *)headers;
+
+- (void)setPostBody:(nullable NSData *)data;
+- (nullable NSData *)postBody;
 
 - (ALRequestType)autoDetectRequestType;
 

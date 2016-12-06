@@ -24,6 +24,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
     NSMutableDictionary<NSString *, id>         *_params;
     NSMutableDictionary<NSString *, id>         *_uploadParams;
     NSMutableDictionary<NSString *, id>         *_headers;
+    NSData                                      *_rawPostBody;
 }
 
 @synthesize identifier                      = _identifier;
@@ -211,6 +212,14 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 
 - (NSDictionary<NSString *, id> *)uploadParams {
     return [_uploadParams copy];
+}
+
+- (void)setPostBody:(NSData *)data {
+    _rawPostBody = [data copy];
+}
+
+- (NSData *)postBody {
+    return _rawPostBody;
 }
 
 - (void)setHeader:(id)header forKey:(NSString *)key {
