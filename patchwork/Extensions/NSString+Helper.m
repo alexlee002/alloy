@@ -309,6 +309,26 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     return bytesToHexStr(self.bytes, self.length);
 }
 
+- (NSString *)al_debugDescription {
+    NSMutableString *dump = [NSMutableString string];
+    NSInteger index = 0;
+    while (index < MIN(16, self.length)) {
+        [dump appendFormat:@"%@%@", [[self subdataWithRange:NSMakeRange(index, MIN(4, self.length - 4))] hexString],
+                           (index + 4 < self.length ? @" " : @"")];
+        index += 4;
+    }
+    if (self.length > index + 16) {
+        [dump appendString:@"..."];
+    }
+    index = MAX(index, self.length - 16);
+    while (index < self.length) {
+        [dump appendFormat:@" %@", [[self subdataWithRange:NSMakeRange(index, MIN(4, self.length - 4))] hexString]];
+        index += 4;
+    }
+    
+    return [NSString stringWithFormat:@"<%@, %p; size=%ld, bytes:%@>", [self class], self, self.length, dump];
+}
+
 @end
 
 AL_FORCE_INLINE NSString *bytesToHexStr(const char *bytes, size_t len) {

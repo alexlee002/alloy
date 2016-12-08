@@ -11,13 +11,11 @@
 #import "SafeBlocksChain.h"
 #import "ALLogger.h"
 
-#define __STMT_EXEC_LOG(result)                                                                             \
-    if (self.db.enableDebug) {                                                                              \
-        ALLogVerbose(@"execute SQL: %@; %@\nSQL arguments:%@", self.SQLString, (result) ? @"✔" : @"🚫", \
-                     self.argumentsDescription);                                                            \
-    } else {                                                                                                \
-        ALLogVerbose(@"execute SQL: %@;  %@", self.SQLString, (result) ? @"✔" : @"🚫");                 \
-    }
+#define __STMT_EXEC_LOG(result)     {                                               \
+    ALSQLClause *clause = [self.SQLString SQLClauseWithArgValues:self.argValues];   \
+    ALLogVerbose(@"execute SQL: %@;  %@", self.db.enableDebug ? [clause debugDescription] : [clause description], \
+                                          (result) ? @"✔" : @"🚫");                 \
+}
 
 NS_ASSUME_NONNULL_BEGIN
 

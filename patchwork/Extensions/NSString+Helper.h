@@ -75,6 +75,9 @@ extern NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingNam
 @interface NSData(StringHelper)
 // convert bytes to hexadecimal string(lowercase)
 - (NSString *)hexString;
+
+- (NSString *)al_debugDescription;
+
 @end
 
 // convert bytes to hexadecimal string(lowercase)

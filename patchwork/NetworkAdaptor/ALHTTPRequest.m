@@ -375,11 +375,12 @@ static AL_FORCE_INLINE NSString *ObjectDescription(id obj) {
         return [obj description];
     }
     if ([obj isKindOfClass:[NSData class]]) {
-        if (((NSData *)obj).length <= kMaxDescriptionLength) {
-            return [obj description];
-        }
-        return [[[((NSData *) obj) subdataWithRange:NSMakeRange(0, kMaxDescriptionLength - 3)] description]
-            stringByAppendingString:@"..."];
+        return [(NSData *)obj al_debugDescription];
+//        if (((NSData *)obj).length <= kMaxDescriptionLength) {
+//            return [obj description];
+//        }
+//        return [[[((NSData *) obj) subdataWithRange:NSMakeRange(0, kMaxDescriptionLength - 3)] description]
+//            stringByAppendingString:@"..."];
     }
     if ([obj isKindOfClass:[NSURL class]]) {
         return ObjectDescription(((NSURL *)obj).absoluteString);

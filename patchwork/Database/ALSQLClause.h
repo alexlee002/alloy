@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSObject (ALSQLClause)
 - (ALSQLClause *_Nullable)SQLClause;
 - (ALSQLClause *_Nullable)SQLClauseArgValue;
+- (BOOL)isAcceptableSQLArgClassType;
 @end
 
 NS_ASSUME_NONNULL_END

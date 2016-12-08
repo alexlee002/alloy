@@ -598,7 +598,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
             idxName          = [NSString stringWithFormat:@"%@_%@_%@", (unique ? @"uniq" : @"idx"), tableName, idxName];
             NSString *idxVal = [cols componentsJoinedByString:@", "];
 
-            return [NSString stringWithFormat:@"CREATE %@INDEX IF NOT EXISTS %@ ON %@(%@)", (unique ? @"UNIQUE" : @""),
+            return [NSString stringWithFormat:@"CREATE %@ INDEX IF NOT EXISTS %@ ON %@(%@)", (unique ? @"UNIQUE" : @""),
                                               idxName, tableName, idxVal];
         }];
     }
@@ -734,6 +734,20 @@ static AL_FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *p
     
 }
 
+
+static AL_FORCE_INLINE NSData *dataByArchivingObject(id obj) {
+    NSData *value = nil;
+    if (obj != nil) {
+        @try {
+            value = [NSKeyedArchiver archivedDataWithRootObject:obj];
+        } @catch (NSException *exception) {
+            ALLogWarn(@"Exception: %@", exception);
+        }
+    }
+    return value;
+}
+
+
 // the value that saving to DB
 static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, ALDBColumnInfo *_Nonnull colInfo) {
     NSString *propertyName = colInfo.property.name;
@@ -742,9 +756,11 @@ static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, AL
         [propertyName isEqualToString:keypath(model.rowid)]) {
         return nil;
     }
-    SEL transformer   = colInfo.customPropertyToColumnValueTransformer ?: colInfo.property.getter;
-
-    switch (colInfo.property.type & YYEncodingTypeMask) {
+    SEL transformer = colInfo.customPropertyToColumnValueTransformer ?: colInfo.property.getter;
+    Method method = class_getInstanceMethod(model.class, transformer);
+    YYEncodingType retType = YYEncodingGetType(method_copyReturnType(method));
+    
+    switch (retType & YYEncodingTypeMask) {
         case YYEncodingTypeBool: {
             bool num = ((bool (*)(id, SEL))(void *) objc_msgSend)((id) model, transformer);
             return @(num);
@@ -782,23 +798,34 @@ static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, AL
             return @((double) num);
         } break;
             
-        case YYEncodingTypeObject:
+        case YYEncodingTypeObject: {
+            id value = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, transformer);
+            // if value isKindOf NSString, NSNumber, NSData, do not need transform
+            if ([value isKindOfClass:[NSURL class]]) {
+                value = [((NSURL *)value) absoluteString];
+            }
+            else if (![value isAcceptableSQLArgClassType]) {
+                value = dataByArchivingObject(value);
+            }
+            return value;
+        } break;
+            
         case YYEncodingTypeClass:
         case YYEncodingTypeBlock: {
             id value = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, transformer);
-            return value;
+            return dataByArchivingObject(value);
         } break;
         case YYEncodingTypeSEL:
         case YYEncodingTypePointer:
         case YYEncodingTypeCString: {
             size_t value = ((size_t(*)(id, SEL))(void *) objc_msgSend)((id) model, transformer);
-            return [NSValue valueWithPointer:*((SEL *) value)];
+            return dataByArchivingObject([NSValue valueWithPointer:*((SEL *) value)]);
         } break;
         case YYEncodingTypeStruct:
         case YYEncodingTypeUnion: {
             @try {
                 NSValue *value = [model valueForKey:NSStringFromSelector(transformer)];
-                return value;
+                return dataByArchivingObject(value);
             } @catch (NSException *exception) {
                 ALLogWarn(@"%@", exception);
             }
@@ -811,6 +838,7 @@ static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, AL
     }
     return nil;
 }
+
 
 
 static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,

@@ -19,9 +19,11 @@ static NSString * kTmpDBPath3 = @"patchwork/testcase.activerecord3.db";
 @interface Student : ALModel
 @property(nonatomic, assign)    NSInteger    sid;
 @property(nonatomic, copy)      NSString    *name;
-@property(nonatomic, assign)    NSInteger    age;
+@property(nonatomic, strong)    NSNumber    *age;
 @property(nonatomic, assign)    NSInteger    gender;
 @property(nonatomic, copy)      NSString    *province;
+@property(nonatomic, strong)    NSDate      *birthday;
+@property(nonatomic, strong)    UIImage     *icon;
 
 @end
 
@@ -100,15 +102,17 @@ SYNTHESIZE_ROWID_ALIAS(cid);
 - (void)testActiveRecord {    
     Student *student = [[Student alloc] init];
     student.name = @"Alex Lee";
-    student.age  = 19;
+    student.age  = @(19);
     student.gender   = 1;
     student.province = @"GD/HS";
+    student.birthday = [NSDate date];
+    student.icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://emojipedia-us.s3.amazonaws.com/cache/aa/06/aa06fe241df5cb986d121e4e7aaee5a3.png"]]];
     XCTAssertGreaterThan([student saveOrReplce:YES], 0);
     XCTAssertEqual([Student fetcher].FETCH_COUNT(nil), 1);
     
-    student.age ++;
+    student.age = @(student.age.integerValue + 1);
     [student updateOrReplace:YES];
-    XCTAssertEqual([[Student modelWithId:student.rowid] age], 20);
+    XCTAssertEqual([[Student modelWithId:student.rowid] age].integerValue, 20);
     
     [student deleteRecord];
     XCTAssertEqual([Student fetcher].FETCH_COUNT(nil), 0);
@@ -126,7 +130,7 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     
     Student *student = [[Student alloc] init];
     student.name = @"Alex Lee";
-    student.age  = 19;
+    student.age  = @(19);
     student.gender   = 1;
     student.province = @"GD/HS";
     XCTAssertGreaterThan([student saveOrReplce:YES], 0);
@@ -172,7 +176,7 @@ SYNTHESIZE_ROWID_ALIAS(cid);
 - (void)testActiveRecord2 {
     Student *s1 = [[Student alloc] init];
     s1.name = @"Alex Lee";
-    s1.age  = 35;
+    s1.age  = @(35);
     s1.gender   = 1;
     s1.province = @"BJ/BJ";
     [s1 saveOrReplce:YES];

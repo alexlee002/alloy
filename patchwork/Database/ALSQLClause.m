@@ -8,6 +8,9 @@
 
 #import "ALSQLClause.h"
 #import "NSString+Helper.h"
+#import "ALLogger.h"
+#import <sqlite3.h>
+#import <BlocksKit.h>
 
 @implementation ALSQLClause {
     NSString        *_SQLString;
@@ -58,8 +61,30 @@
 }
 
 - (NSString *)debugDescription {
-    return [[super debugDescription] stringByAppendingFormat:@"\nsql string: %@\narguments: %@", self.SQLString,
-            self.argValues];
+    NSArray *args = self.argValues;
+    NSInteger argCount = args.count;
+    
+    NSMutableString *sql = [self.SQLString mutableCopy];
+    NSInteger index = 0;
+
+    NSRange range = NSMakeRange(0, sql.length);
+    while ((range = [sql rangeOfString:@"?" options:0 range:range]).location != NSNotFound && index < argCount) {
+        id argVal = args[index];
+        if ([argVal isKindOfClass:NSData.class]) {
+            argVal = [(NSData *)argVal al_debugDescription];
+        }
+        NSString *valStr = [NSString stringWithFormat:@"<%@>", argVal];
+        [sql replaceCharactersInRange:range withString:valStr];
+        index ++;
+        range.location = range.location + valStr.length;
+        range.length = sql.length - range.location;
+    }
+    if (index != argCount) {
+        ALLogWarn(@"arguments count is not expected.\nsql: %@; arguments count:%ld", self.SQLString, (long)argCount);
+        return [NSString stringWithFormat:@"sql: %@\nargs: %@", self.SQLString, args];
+    }
+    
+    return sql;
 }
 
 #pragma mark -
@@ -145,10 +170,28 @@
 }
 
 - (ALSQLClause *_Nullable)SQLClauseArgValue {
-    if (stringValue(self) == nil) {
-        return nil;
+    id value = [self transformToAcceptableArgValue];
+    if (value != nil) {
+        return [@"?" SQLClauseWithArgValues:@[value]];
     }
-    return [@"?" SQLClauseWithArgValues:@[self]];
+    return nil;
+}
+
+- (BOOL)isAcceptableSQLArgClassType {
+    return [self isKindOfClass:[NSString class]] || [self isKindOfClass:[NSNumber class]] ||
+           [self isKindOfClass:[NSData class]]   || [self isKindOfClass:[NSDate class]];
+}
+
+- (nullable id)transformToAcceptableArgValue {
+    id value = self;
+    if (![self isAcceptableSQLArgClassType]) {
+        value = stringValue(self);
+        if (value == nil) {
+            ALLogWarn(@"object of type:%@ can not be accepted as SQL Clause argument", self.class);
+            return nil;
+        }
+    }
+    return value;
 }
 
 @end
