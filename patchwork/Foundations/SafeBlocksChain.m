@@ -14,18 +14,17 @@
 #import "ALLock.h"
 
 
-static NSString * const kFakeChainingObjectProtocolName = @"FakeChainingObjectProtocol";
+static NSString * const kFakeChainingObjectProtocolName = @"__AL_BlocksChainFakeObjectProtocol";
 
-Protocol *fakeProtocol() {
+static Protocol *fakeBlocksChainProtocol() {
     const char *protochlCName = [kFakeChainingObjectProtocolName UTF8String];
     
-    __block Protocol *protocol = objc_getProtocol(protochlCName);
-    if (protocol != NULL) {
-        return protocol;
-    }
-    
+    __block Protocol *protocol = nil;
     static_gcd_semaphore(sem, 1);
     with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
+        if ((protocol = objc_getProtocol(protochlCName)) != nil) {
+            return;
+        }
         protocol = objc_allocateProtocol(protochlCName);
         if (protocol) {
             objc_registerProtocol(protocol);
@@ -36,62 +35,44 @@ Protocol *fakeProtocol() {
 }
 
 
-Class fakeClass(Class forClass) {
+Class fakeBlocksChainClass(Class forClass) {
     if (forClass == nil) {
         return nil;
     }
-    const char *classname = [[NSStringFromClass(forClass) stringByAppendingString:@"_ALFakeChainingObject"] UTF8String];
-   
-    __block Class fakeclass = objc_getClass(classname);
-    if (fakeclass != nil) {
-        return fakeclass;
+    
+    Protocol *fakeProtocol = fakeBlocksChainProtocol();
+    if (class_conformsToProtocol(forClass, fakeProtocol)) {
+        return forClass;
     }
     
+    const char *classname = [[NSStringFromClass(forClass) stringByAppendingString:@"_ALFakeBlocksChainClass"] UTF8String];
+   
+    __block Class fakeclass = nil;
     static_gcd_semaphore(sem, 1);
     with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
+        if ((fakeclass = objc_getClass(classname)) != nil) {
+            return;
+        }
+        
         fakeclass = objc_allocateClassPair(forClass, classname, 0);
         if (fakeclass != Nil) {
-            class_addProtocol(fakeclass, fakeProtocol());
+            class_addProtocol(fakeclass, fakeProtocol);
             objc_registerClassPair(fakeclass);
         }
     });
     return fakeclass;
 }
 
-BOOL isValidChainingObject(id obj) {
-    if ([obj conformsToProtocol:fakeProtocol()]) {
-        ALLogWarn(@"*** nil value found in chaining expression!!!\nback trace stack:\n%@", backtraceStack(5));
-        return NO;
-    }
-    return obj != nil;
-}
-
 
 @implementation NSObject(SafeBlocksChain)
 
 - (BOOL)isValidBlocksChainObject {
-    return ![self conformsToProtocol:fakeProtocol()];
+    return ![self conformsToProtocol:fakeBlocksChainProtocol()];
 }
 
-- (__kindof id (^)())end {
+- (__kindof id (^)())BLOCKS_CHAIN_END {
     return ^id {
-        if (!isValidChainingObject(self)) {
-            return nil;
-        }
-        return self;
-    };
-}
-
-- (__kindof NSObject *(^)())consoleLog {
-    return ^id {
-        if (isValidChainingObject(self)) {
-            NSString *desc = isEmptyString(self.debugDescription) ? self.description : self.debugDescription;
-            ALLogVerbose(@"%@", desc);
-        } else {
-            ALLogVerbose(@"Chaining method object is nil, and it should be of type:[%@]", self.superclass);
-        }
-        
-        return self; //SafeChainingObj(self, typeof(self))
+        return [self isValidBlocksChainObject] ? self : nil;
     };
 }
 

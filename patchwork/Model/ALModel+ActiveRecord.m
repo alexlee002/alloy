@@ -114,7 +114,12 @@ SYNTHESIZE_ASC_OBJ(modelClass, setModelClass);
     #define __verify_rowid_alias_type     do{}while(0)
 #endif
 
-#define __SafeDB() SafeBlocksChainObj([self DB], ALDatabase)
+static ALDatabase *SafeDB(ALDatabase *db) {
+    db = SafeBlocksChainObj(db, ALDatabase);
+    NSCAssert(db != nil, @"*** db is nil!!!");
+    return db;
+}
+
 @implementation ALModel (ActiveRecord)
 
 @dynamic rowid;
@@ -265,11 +270,11 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
 
 
 + (ALSQLSelectStatement *)fetcher {
-    return __SafeDB().SELECT(@[kRowIdColumnName, @"*"]).FROM([self tableName]).APPLY_MODEL(self.class);
+    return SafeDB([self DB]).SELECT(@[kRowIdColumnName, @"*"]).FROM([self tableName]).APPLY_MODEL(self.class);
 }
 
 + (ALSQLUpdateStatement *)updateExector {
-    return __SafeDB().UPDATE([self tableName]);
+    return SafeDB([self DB]).UPDATE([self tableName]);
 }
 
 
@@ -312,7 +317,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     }
     
     __block NSArray *models = nil;
-    __SafeDB().SELECT(selectingColumns).FROM([self tableName]).WHERE(conditions).EXECUTE_QUERY(^(FMResultSet *rs) {
+    SafeDB([self DB]).SELECT(selectingColumns).FROM([self tableName]).WHERE(conditions).EXECUTE_QUERY(^(FMResultSet *rs) {
         if (rs != nil) {
             models = modelsFromResultSet(rs, self);
         }
@@ -336,7 +341,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     };
     
     // 1, try query using rowid
-    __SafeDB()
+    SafeDB([self DB])
         .SELECT(@[ kRowIdColumnName, @"*" ])
         .FROM([self tableName])
         .WHERE(AS_COL(ALModel, rowid).EQ(@(self.rowid)))
@@ -351,7 +356,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
         // if validate failed, return NO;
         validatePropertyColumnMappings(self.class, primaryKeys, NO);
         
-        __SafeDB()
+        SafeDB([self DB])
             .SELECT(@[ kRowIdColumnName, @"*" ])
             .FROM([self tableName])
             .WHERE([primaryKeys bk_reduce:nil withBlock:^ALSQLClause *(ALSQLClause *sum, NSString *p) {
@@ -382,7 +387,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     __block NSInteger lastInsertRowid = 0;
     NSInteger oldRowid = self.rowid;
     [self.DB.queue inDatabase:^(FMDatabase *_Nonnull db) {
-        BOOL result = __SafeDB()
+        BOOL result = SafeDB([self DB])
                      .INSERT()
                      .OR_REPLACE(replaceExisted)
                      .INTO([self tableName])
@@ -411,7 +416,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     NSMutableDictionary *rowIdsDict = [NSMutableDictionary dictionaryWithCapacity:models.count];
     [self.DB.queue inTransaction:^(FMDatabase *_Nonnull db, BOOL *_Nonnull rollback) {
         [models enumerateObjectsUsingBlock:^(ALModel *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-            BOOL result = __SafeDB()
+            BOOL result = SafeDB([self DB])
                               .INSERT()
                               .OR_REPLACE(replaceExisted)
                               .INTO([self tableName])
@@ -480,7 +485,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
         return NO;
     }
 
-    return __SafeDB()
+    return SafeDB([self DB])
         .UPDATE([self tableName])
         .OR_REPLACE(replaceExisted)
         .SET(contentsDict)
@@ -489,7 +494,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
 }
 
 - (BOOL)deleteRecord {
-    return __SafeDB().DELETE().FROM([self tableName]).WHERE([self defaultModelUpdateCondition]).EXECUTE_UPDATE();
+    return SafeDB([self DB]).DELETE().FROM([self tableName]).WHERE([self defaultModelUpdateCondition]).EXECUTE_UPDATE();
 }
 
 + (BOOL)updateRecords:(NSArray<ALModel *> *)models replace:(BOOL)replaceExisted {
@@ -514,7 +519,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
         updateValues[[self mappedColumnNameForProperty:propertyName]] = value;
     }];
 
-    return __SafeDB()
+    return SafeDB([self DB])
         .UPDATE([self tableName])
         .OR_REPLACE(replaceExisted)
         .SET(updateValues)
@@ -527,7 +532,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
         ALLogWarn(@"condition is nil, DELETE ALL records");
     }
     
-    return __SafeDB().DELETE().FROM([self tableName]).WHERE(condition).EXECUTE_UPDATE();
+    return SafeDB([self DB]).DELETE().FROM([self tableName]).WHERE(condition).EXECUTE_UPDATE();
 }
 
 + (nullable NSString *)tableSchema {
