@@ -26,23 +26,18 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
     });
     
     CFStringRef levelStr = NULL;
-    NSString *message = nil;
     switch (level) {
         case ALLogLevelVerbose:
-            levelStr = CFSTR("-[V]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"🐔" stringByAppendingString:fmt] : fmt);
+            levelStr = hasDebugger ? CFSTR("🐔-[V]") : CFSTR("-[V]");
             break;
         case ALLogLevelInfo:
-            levelStr = CFSTR("-[I]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"✅" stringByAppendingString:fmt] : fmt);
+            levelStr = hasDebugger ? CFSTR("✅-[I]") : CFSTR("-[I]");
             break;
         case ALLogLevelWarn:
-            levelStr = CFSTR("-[W]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"⚠️" stringByAppendingString:fmt] : fmt);
+            levelStr = hasDebugger ? CFSTR("⚠️-[W]") : CFSTR("-[W]");
             break;
         case ALLogLevelError:
-            levelStr = CFSTR("-[E]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"❌" stringByAppendingString:fmt] : fmt);
+            levelStr = hasDebugger ? CFSTR("❌-[E]") : CFSTR("-[E]");
             break;
             
         default:
@@ -56,18 +51,19 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
     }
     
     if (!isEmptyString(tag)) {
-        CFStringAppendFormat(str, NULL, CFSTR("🚩[%@]"), tag);
-        CFStringAppend(str, CFSTR(" "));
+        CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("🎐[%@] ") : CFSTR("[%@] "), tag);
     }
     
     BOOL located = NO;
     if (!isEmptyString(func)) {
         located = YES;
-        CFStringAppendFormat(str, NULL, CFSTR("📍%@"), func);
+        CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("📌%@") : CFSTR("%@"), func);
     }
     if (!isEmptyString(file)) {
         if (!located) {
-            CFStringAppend(str, CFSTR("📍"));
+            if (hasDebugger) {
+                CFStringAppend(str, CFSTR("📌"));
+            }
             located = YES;
         }
         CFStringAppendFormat(str, NULL, CFSTR(" (%@:%ld)"), [file lastPathComponent], (long)line);
@@ -77,8 +73,7 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
     }
     
     if (!isEmptyString(fmt)) {
-        //CFStringAppendFormat(str, NULL, CFSTR("ℹ️%@"), fmt);
-        CFStringAppend(str, (__bridge CFStringRef)message);
+        CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("ℹ️%@") : CFSTR("%@"), fmt);
     }
     
     NSString *logtext = [[NSString alloc] initWithFormat:(__bridge NSString *)str arguments:vaList];
@@ -105,6 +100,15 @@ void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogL
     _ALLogInternal(file, line, func, tag, level, fmt, args);
     va_end(args);
 #endif
+}
+
+
+void ALLogV1(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *message) {
+    ALLog(file, line, func, tag, level, message);
+}
+
+void ALLogDebugV1(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *message) {
+    ALLogDebug(file, line, func, tag, level, message);
 }
 
 NS_ASSUME_NONNULL_END

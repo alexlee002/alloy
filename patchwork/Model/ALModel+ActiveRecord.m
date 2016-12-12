@@ -33,7 +33,7 @@ NSString * const kRowIdColumnName = @"rowid";
 #pragma mark - utilities functions
 static AL_FORCE_INLINE NSString * suggestedSqliteDataType(YYClassPropertyInfo *property);
 
-static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *rs,
+static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet *rs,
                                                             int             columnIndex,
                                                             ALModel        *model,
                                                             ALDBColumnInfo *colinfo);
