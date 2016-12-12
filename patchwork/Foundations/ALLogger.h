@@ -28,21 +28,26 @@ extern void ALLogDebugV1(NSString *file, int line, NSString *func, NSString * ta
 
 
 #if DEBUG
-    #define __ALLog(level, fmt, ...)                                \
-        ALLog(  (__bridge NSString *)CFSTR(__FILE__),               \
-                __LINE__,                                           \
-                [NSString stringWithUTF8String:__PRETTY_FUNCTION__],\
-                nil,                                                \
-                level,                                              \
-                fmt,                                                \
-                ##__VA_ARGS__)
+#define __ALLog(level, tag, fmt, ...)                           \
+ALLog(  (__bridge NSString *)CFSTR(__FILE__),               \
+__LINE__,                                           \
+[NSString stringWithUTF8String:__PRETTY_FUNCTION__],\
+tag,                                                \
+level,                                              \
+fmt,                                                \
+##__VA_ARGS__)
 #else
-    #define __ALLog(level, fmt, ...) do{}while(0)
+#define __ALLog(level, tag, fmt, ...) do{}while(0)
 #endif
 
 
-#define ALLogVerbose(fmt, ...)  __ALLog(ALLogLevelVerbose, fmt, ##__VA_ARGS__)
-#define ALLogInfo(fmt, ...)     __ALLog(ALLogLevelInfo,    fmt, ##__VA_ARGS__)
-#define ALLogWarn(fmt, ...)     __ALLog(ALLogLevelWarn,    fmt, ##__VA_ARGS__)
-#define ALLogError(fmt, ...)    __ALLog(ALLogLevelError,   fmt, ##__VA_ARGS__)
+#define ALLogVerbose(fmt, ...)  __ALLog(ALLogLevelVerbose, nil, fmt, ##__VA_ARGS__)
+#define ALLogInfo(fmt, ...)     __ALLog(ALLogLevelInfo,    nil, fmt, ##__VA_ARGS__)
+#define ALLogWarn(fmt, ...)     __ALLog(ALLogLevelWarn,    nil, fmt, ##__VA_ARGS__)
+#define ALLogError(fmt, ...)    __ALLog(ALLogLevelError,   nil, fmt, ##__VA_ARGS__)
+
+#define ALLogVerboseTag(tag, fmt, ...)  __ALLog(ALLogLevelVerbose, tag, fmt, ##__VA_ARGS__)
+#define ALLogInfoTag(tag, fmt, ...)     __ALLog(ALLogLevelInfo,    tag, fmt, ##__VA_ARGS__)
+#define ALLogWarnTag(tag, fmt, ...)     __ALLog(ALLogLevelWarn,    tag, fmt, ##__VA_ARGS__)
+#define ALLogErrorTag(tag, fmt, ...)    __ALLog(ALLogLevelError,   tag, fmt, ##__VA_ARGS__)
 
