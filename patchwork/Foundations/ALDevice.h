@@ -8,27 +8,31 @@
 
 #import <Foundation/Foundation.h>
 
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+NS_ASSUME_NONNULL_BEGIN
 
+#if (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
+@import UIKit;
 @compatibility_alias ALDevice UIDevice;
 
 #elif TARGET_OS_MAC
-
-NS_ASSUME_NONNULL_BEGIN
 @interface ALDevice : NSObject
 
-+ (ALDevice *)currentDevice;
++ (instancetype)currentDevice;
+// keep the same name with iOS
+@property(nonatomic,readonly,strong) NSString    *name;              // e.g. "My iPhone" or "Alex's MacBook Pro"
+@property(nonatomic,readonly,strong) NSString    *model;             // e.g. @"iPhone", @"iPod touch", "MacBookPro11,1"
+//@property(nonatomic,readonly,strong) NSString    *localizedModel;    // localized version of model
+@property(nonatomic,readonly,strong) NSString    *systemName;        // e.g. @"iOS" or "Mac OS X"
+@property(nonatomic,readonly,strong) NSString    *systemVersion;     // e.g. @"4.0" or "10.12.1"
 
-@property(readonly, nullable) NSString *modelName;
-@property(readonly, nullable) NSString *modelIdentifier;
-@property(readonly, nullable) NSString *systemVersion;
-@property(readonly, nullable) NSString *systemName;
-@property(readonly, nullable) NSString *name;
-@property(readonly, nullable) NSString *userName;
+// only OS X
+//@property(readonly, nullable) NSString *userName;
 @property(readonly, nullable) NSString *hardwareUUID;
 @property(readonly, nullable) NSString *serialNumber;
+@property(readonly)           NSString *systemVersionString; //eg: "10.12.1 (Build 16B2555)"
 
 @end
 
-NS_ASSUME_NONNULL_END
 #endif
+
+NS_ASSUME_NONNULL_END

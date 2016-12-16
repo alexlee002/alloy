@@ -2,11 +2,13 @@
 //  AppDelegate.m
 //  patchwork-demo-osx
 //
-//  Created by 吴晓龙 on 16/10/11.
+//  Created by Alex Lee on 16/10/11.
 //  Copyright © 2016年 me.alexlee002. All rights reserved.
 //
 
 #import "AppDelegate.h"
+#import "patchwork.h"
+
 
 @interface AppDelegate ()
 
@@ -17,6 +19,19 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
+    
+    ALLogInfo(@"infoDict: %@", [[NSBundle mainBundle] infoDictionary]);
+    ALLogInfo(@"version: %@", [NSBundle mainBundle].version);
+    ALLogInfo(@"build version: %@", [NSBundle mainBundle].buildVersion);
+    ALLogInfo(@"name: %@", [NSBundle mainBundle].name);
+    ALLogInfo(@"display name: %@", [NSBundle mainBundle].displayName);
+    
+    ALLogInfo(@"device name: %@", [ALDevice currentDevice].name);
+    ALLogInfo(@"device model: %@", [ALDevice currentDevice].model);
+    ALLogInfo(@"OS name: %@", [ALDevice currentDevice].systemName);
+    ALLogInfo(@"OS ver: %@", [ALDevice currentDevice].systemVersion);
+    ALLogInfo(@"device uuid: %@", [ALDevice currentDevice].hardwareUUID);
+    ALLogInfo(@"device searial: %@", [ALDevice currentDevice].serialNumber);
 }
 
 

@@ -69,6 +69,26 @@ SYNTHESIZE_SINGLETON
 }
 @end
 
+@interface SingletonChildSubClass : SingletonSubClass
+
+@end
+
+@implementation SingletonChildSubClass
+- (NSString *)whoAmI {
+    return @"SingletonChildSubClass";
+}
+@end
+
+@interface SingletonSubClass1 : SingletonTestBase
+
+@end
+
+@implementation SingletonSubClass1
+- (NSString *)whoAmI {
+    return @"SingletonSubClass1";
+}
+@end
+
 ///////////////////////////////////////////////////////
 @interface FoundationsTests : XCTestCase
 @end
@@ -132,6 +152,7 @@ SYNTHESIZE_SINGLETON
     SingletonTestBase *base = [SingletonTestBase sharedInstance];
     XCTAssertEqualObjects(base, [[SingletonTestBase alloc] init]);
     XCTAssertEqualObjects(base, [base copy]);
+    XCTAssertEqualObjects(base, [SingletonTestBase new]);
     
     XCTAssertEqualObjects(base, [base copyWithZone:NULL]);
     
@@ -150,6 +171,12 @@ SYNTHESIZE_SINGLETON
     
     //XCTAssertEqualObjects(child, [SingletonTestBase sharedInstance]); ✘
     XCTAssertNotEqualObjects(child, [SingletonTestBase sharedInstance]);
+    
+    
+    XCTAssertNotEqualObjects([SingletonChildSubClass sharedInstance], [SingletonTestBase sharedInstance]);
+    XCTAssertNotEqualObjects([SingletonChildSubClass sharedInstance], [SingletonSubClass sharedInstance]);
+    XCTAssertNotEqualObjects([SingletonChildSubClass sharedInstance], [SingletonSubClass1 sharedInstance]);
+    XCTAssertNotEqualObjects([SingletonSubClass sharedInstance], [SingletonSubClass1 sharedInstance]);
 }
 
 - (void)testSingleton2 {

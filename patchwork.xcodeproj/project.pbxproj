@@ -16,6 +16,8 @@
 		430EB06E1DF099E800A5AE48 /* ALAssociatedWeakObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EB06C1DF099E800A5AE48 /* ALAssociatedWeakObject.m */; };
 		43132BA61DE294310045FBDA /* ALLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 43132BA41DE294310045FBDA /* ALLogger.h */; };
 		43132BA71DE294310045FBDA /* ALLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 43132BA51DE294310045FBDA /* ALLogger.m */; };
+		433194411E0384C80001A01E /* NSBundle+BundleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4331943F1E0384C80001A01E /* NSBundle+BundleInfo.h */; };
+		433194421E0384C80001A01E /* NSBundle+BundleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 433194401E0384C80001A01E /* NSBundle+BundleInfo.m */; };
 		43748E311DE3262400186450 /* ALModel+ActiveRecord_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */; };
 		43748E321DE3262400186450 /* ALModel+ActiveRecord_private.m in Sources */ = {isa = PBXBuildFile; fileRef = 43748E301DE3262400186450 /* ALModel+ActiveRecord_private.m */; };
 		4390DF401DBF484700B10CF7 /* ALSQLStatementTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4390DF3F1DBF484700B10CF7 /* ALSQLStatementTests.m */; };
@@ -132,6 +134,8 @@
 		430EB06C1DF099E800A5AE48 /* ALAssociatedWeakObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALAssociatedWeakObject.m; sourceTree = "<group>"; };
 		43132BA41DE294310045FBDA /* ALLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLogger.h; sourceTree = "<group>"; };
 		43132BA51DE294310045FBDA /* ALLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLogger.m; sourceTree = "<group>"; };
+		4331943F1E0384C80001A01E /* NSBundle+BundleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+BundleInfo.h"; sourceTree = "<group>"; };
+		433194401E0384C80001A01E /* NSBundle+BundleInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+BundleInfo.m"; sourceTree = "<group>"; };
 		43748E2E1DE322DC00186450 /* ActiveRecordAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveRecordAdditions.h; sourceTree = "<group>"; };
 		43748E2F1DE3262400186450 /* ALModel+ActiveRecord_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+ActiveRecord_private.h"; sourceTree = "<group>"; };
 		43748E301DE3262400186450 /* ALModel+ActiveRecord_private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord_private.m"; sourceTree = "<group>"; };
@@ -380,6 +384,8 @@
 				AF7162351DACD9E40015F006 /* NSString+Helper.m */,
 				AF7162361DACD9E40015F006 /* URLHelper.h */,
 				AF7162371DACD9E40015F006 /* URLHelper.m */,
+				4331943F1E0384C80001A01E /* NSBundle+BundleInfo.h */,
+				433194401E0384C80001A01E /* NSBundle+BundleInfo.m */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -479,6 +485,7 @@
 				AF7162971DACD9E40015F006 /* RC4.h in Headers */,
 				AF71628F1DACD9E40015F006 /* DES.h in Headers */,
 				AF7162831DACD9E40015F006 /* NSString+Helper.h in Headers */,
+				433194411E0384C80001A01E /* NSBundle+BundleInfo.h in Headers */,
 				AF6662A91DAF426D00FE3042 /* ALSQLClause+SQLOperation.h in Headers */,
 				AF7162891DACD9E40015F006 /* ALOCRuntime.h in Headers */,
 				AF71628B1DACD9E40015F006 /* Base64.h in Headers */,
@@ -745,6 +752,7 @@
 				AF71628E1DACD9E40015F006 /* CRC.m in Sources */,
 				AF6662AA1DAF426D00FE3042 /* ALSQLClause+SQLOperation.m in Sources */,
 				AF71627A1DACD9E40015F006 /* ALSQLUpdateStatement.m in Sources */,
+				433194421E0384C80001A01E /* NSBundle+BundleInfo.m in Sources */,
 				AF7162721DACD9E40015F006 /* ALSQLStatement.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

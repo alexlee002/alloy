@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "patchwork"
+  s.name         = "patchwork-demo"
   s.version      = "0.0.2"
   s.summary      = "Patchwork is a simple toolkit that makes your iOS / OS X development more easier."
   s.description  = <<-DESC
@@ -16,11 +16,11 @@ Pod::Spec.new do |s|
 
   #  When using multiple platforms
   s.ios.deployment_target = "7.0"
-  s.osx.deployment_target = "10.9"
+  s.osx.deployment_target = "10.10"
 
 
   #s.source       = { :git => "https://github.com/alexlee002/patchwork.git", :tag => s.version.to_s }
-  s.source        = { :git => "https://github.com/alexlee002/patchwork.git" }
+  s.source        = { :path =>  "patchwork" }
   s.source_files  = "patchwork", "patchwork/**/*.{h,m}"
   #s.exclude_files = "Classes/Exclude"
   s.public_header_files = "patchwork/**/*.h"
