@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ALLogger.h"
 
 // private utilities tools for ALSQLStatment
 
@@ -57,7 +58,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_CLAUSE_ARG(stmt_class, _from_var, HAVING)
         if ([clause isKindOfClass:ALSQLClause.class]) {         \
             __tmpWhere = [(ALSQLClause *)clause copy];          \
         } else {                                                \
-            __tmpWhere = [clause SQLClause];                        \
+            __tmpWhere = [clause SQLClause];                    \
         }                                                       \
         if (__tmpWhere != nil) {                                \
             if (_where_var == nil) {                            \
@@ -150,6 +151,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_GROUP_BY(stmt_class, _order_by_ivar, GRO
 #ifndef __ALSQLSTMT_BUILD_SQL_VERIFY
 #define __ALSQLSTMT_BUILD_SQL_VERIFY()          \
     if (![self isValidBlocksChainObject]) {     \
+        ALLogError(@"%@", (self));              \
         return nil;                             \
     }                                           \
                                                 \

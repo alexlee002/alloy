@@ -253,7 +253,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 
 #define __ALDB_STMT_INIT(stmt_class) \
     stmt_class *stmt = nil;                                             \
-    if ([self isValidBlocksChainObject]) {                              \
+    if (ObjIsValidBlocksChainObject(self)) {                            \
         stmt = [stmt_class statementWithDatabase:self];                 \
     }
 

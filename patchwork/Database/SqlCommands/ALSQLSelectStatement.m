@@ -20,19 +20,25 @@
         __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();                                               \
                                                                                             \
         if ([clauses isKindOfClass:NSString.class]) {                                       \
-            _ivar_name = @[[clauses SQLClause]];                                                \
+            _ivar_name = @[[clauses SQLClause]];                                            \
         }                                                                                   \
         else if ([clauses isKindOfClass:ALSQLClause.class]) {                               \
             _ivar_name = @[(ALSQLClause *)clauses];                                         \
+        }                                                                                   \
+        else if ([clauses isKindOfClass:ALSQLSelectStatement.class]) {                      \
+            _ivar_name = @[ [(ALSQLSelectStatement *)clauses asSubQuery] ];                 \
         }                                                                                   \
         else if ([clauses isKindOfClass:NSArray.class]) {                                   \
             NSMutableArray<ALSQLClause *> *cols = [NSMutableArray arrayWithCapacity:((NSArray *)clauses).count];    \
             [clauses enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {         \
                 if ([obj isKindOfClass:NSString.class]) {                                   \
-                    [cols addObject:[obj SQLClause]];                                           \
+                    [cols addObject:[obj SQLClause]];                                       \
                 }                                                                           \
                 else if ([obj isKindOfClass:ALSQLClause.class]) {                           \
                     [cols addObject:(ALSQLClause *)obj];                                    \
+                }                                                                           \
+                else if ([obj isKindOfClass:ALSQLSelectStatement.class]) {                  \
+                    [cols addObject:[(ALSQLSelectStatement *)obj asSubQuery]];              \
                 }                                                                           \
             }];                                                                             \
             _ivar_name = cols;                                                              \
@@ -173,6 +179,11 @@ __ALSQL_SELECT_EXT_BLOCK_IMP(double,    DOUBLE_RESULT,   doubleForColumnIndex);
 __ALSQL_SELECT_EXT_BLOCK_IMP(NSString *_Nullable, STR_RESULT,  stringForColumnIndex);
 __ALSQL_SELECT_EXT_BLOCK_IMP(NSData *_Nullable,   DATA_RESULT, dataForColumnIndex);
 __ALSQL_SELECT_EXT_BLOCK_IMP(NSDate *_Nullable,   DATE_RESULT, dateForColumnIndex);
+
+
+- (ALSQLClause *)asSubQuery {
+    return [[NSString stringWithFormat:@"(%@)", self.SQLString] SQLClauseWithArgValues:self.argValues];
+}
 
 @end
 

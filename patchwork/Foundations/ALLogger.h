@@ -29,15 +29,15 @@ extern void ALLogDebugV1(NSString *file, int line, NSString *func, NSString * ta
 
 #if DEBUG
 #define __ALLog(level, tag, fmt, ...)                           \
-ALLog(  (__bridge NSString *)CFSTR(__FILE__),               \
-__LINE__,                                           \
-[NSString stringWithUTF8String:__PRETTY_FUNCTION__],\
-tag,                                                \
-level,                                              \
-fmt,                                                \
-##__VA_ARGS__)
+    ALLog(  (__bridge NSString *)CFSTR(__FILE__),               \
+            __LINE__,                                           \
+            [NSString stringWithUTF8String:__PRETTY_FUNCTION__],\
+            tag,                                                \
+            level,                                              \
+            fmt,                                                \
+            ##__VA_ARGS__)
 #else
-#define __ALLog(level, tag, fmt, ...) do{}while(0)
+    #define __ALLog(level, tag, fmt, ...) do{}while(0)
 #endif
 
 

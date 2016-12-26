@@ -15,6 +15,7 @@
 #import "ALSQLClause+SQLFunctions.h"
 #import "SafeBlocksChain.h"
 #import "ALDatabase.h"
+#import "ALLogger.h"
 
 @interface ALSQLStatementTests : XCTestCase
 @property(nonatomic, strong) ALDatabase *db;
@@ -55,108 +56,170 @@
 }
 
 - (void)testSelectStmt {
-    
-    // simple query
-    ALSQLSelectStatement *stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
-    stmt.SELECT(nil).FROM(@"students").WHERE(@"name".EQ(@"alex"));
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students WHERE name = ?");
-    NSArray *values = @[@"alex"];
-    XCTAssertEqualObjects(stmt.argValues, values);
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    // specify multi-column names
-    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
-    stmt.SELECT(@[@"rowid", @"*"]).FROM(@"students NOT INDEXED");
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT rowid, * FROM students NOT INDEXED");
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    // multi-table query
-    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
-    stmt.SELECT(nil).FROM(@[@"students", @"student_courses"]).WHERE([@"students._id = student_courses._id" SQLClause]);
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students, student_courses WHERE students._id = student_courses._id");
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    // JOIN query (raw string)
-    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
-    stmt.SELECT(nil).FROM(@"students LEFT JOIN student_courses ON students._id = student_courses._id").WHERE(@"students._id IS NULL");
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students LEFT JOIN student_courses ON students._id = student_courses._id WHERE students._id IS NULL");
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    // JOIN query (using ALSQLClause)
-    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
-    stmt.SELECT(nil).FROM([@"students LEFT JOIN student_courses ON students._id = ? AND student_courses._id = ?" SQLClauseWithArgValues:@[@"1234", @"123"]]);
-    XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students LEFT JOIN student_courses ON students._id = ? AND student_courses._id = ?");
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    
-    // complete select-core statement
-    stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
-    stmt.SELECT(@[@"COUNT(*) AS num", SQL_UPPER(@"province").AS(@"province")])
-        .FROM(@"students")
-        .WHERE(SQL_LOWER(@"gender").EQ(@"1"))
-        .GROUP_BY(@"province")
-        .HAVING(@"age".GT(@18))
-        .ORDER_BY(@"num".DESC())
-        .ORDER_BY(@"province")
-        .LIMIT(@5)
-        .OFFSET(@3);
-    XCTAssertEqualObjects(stmt.SQLString,
-                          @"SELECT COUNT(*) AS num, UPPER(province) AS province FROM students WHERE LOWER(gender) = ? GROUP BY province HAVING age > ? ORDER BY num DESC, province LIMIT 5 OFFSET 3");
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    
-    
-    // test nil-object-blocks-chain
-    // RECOMMEND: using 'SafeBlocksChainObj' macro to wrapper the first object that invoking a block;
-    stmt = SafeBlocksChainObj(nil, ALSQLSelectStatement);
-    stmt.SELECT(nil).FROM(@"test").WHERE(@"name".EQ(@"alex"));
-    XCTAssertNil(stmt.SQLString);
-    XCTAssertNil(stmt.argValues);
-    XCTAssertNil(stmt.SQLClause);
+    ALSQLSelectStatement *stmt    = nil;
+    ALSQLSelectStatement *subStmt = nil;
+    NSArray *values               = nil;
+
+    {
+        // simple query
+        stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(nil).FROM(@"students").WHERE(@"name".EQ(@"alex"));
+        XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students WHERE name = ?");
+        values = @[ @"alex" ];
+        XCTAssertEqualObjects(stmt.argValues, values);
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // specify multi-column names
+        stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(@[ @"rowid", @"*" ]).FROM(@"students NOT INDEXED");
+        XCTAssertEqualObjects(stmt.SQLString, @"SELECT rowid, * FROM students NOT INDEXED");
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // multi-table query
+        stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(nil)
+            .FROM(@[ @"students", @"student_courses" ])
+            .WHERE([@"students._id = student_courses._id" SQLClause]);
+        XCTAssertEqualObjects(stmt.SQLString,
+                              @"SELECT * FROM students, student_courses WHERE students._id = student_courses._id");
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // JOIN query (raw string)
+        stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(nil)
+            .FROM(@"students LEFT JOIN student_courses ON students._id = student_courses._id")
+            .WHERE(@"students._id IS NULL");
+        XCTAssertEqualObjects(stmt.SQLString, @"SELECT * FROM students LEFT JOIN student_courses ON students._id = "
+                                              @"student_courses._id WHERE students._id IS NULL");
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // JOIN query (using ALSQLClause)
+        stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(nil).FROM([@"students LEFT JOIN student_courses ON students._id = ? AND student_courses._id = ?"
+            SQLClauseWithArgValues:@[ @"1234", @"123" ]]);
+        XCTAssertEqualObjects(
+            stmt.SQLString,
+            @"SELECT * FROM students LEFT JOIN student_courses ON students._id = ? AND student_courses._id = ?");
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // SubQuery
+        stmt    = [ALSQLSelectStatement statementWithDatabase:self.db];
+        subStmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(SQL_COUNT(@"*"))
+            .FROM(subStmt.SELECT(@[ @"name", @"age" ]).FROM(@"students").WHERE(@"name".PREFIX_LIKE(@"alex")))
+            .WHERE(@"age".GT(@(30)));
+        ALLogInfo(@"%@", stmt.SQLString);
+        XCTAssertEqualObjects(stmt.SQLString,
+                              @"SELECT COUNT(*) FROM (SELECT name, age FROM students WHERE name LIKE ?) WHERE age > ?");
+    }
+
+    {
+        // SubQuery (add alias)
+        stmt    = [ALSQLSelectStatement statementWithDatabase:self.db];
+        subStmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(SQL_COUNT(@"*"))
+            .FROM(subStmt.SELECT(@[ @"name", @"age" ])
+                      .FROM(@"students")
+                      .WHERE(@"name".PREFIX_LIKE(@"alex"))
+                      .AS(@"sub_tbl"))
+            .WHERE(@"age".GT(@(30)));
+        ALLogInfo(@"%@", stmt.SQLString);
+        XCTAssertEqualObjects(
+            stmt.SQLString,
+            @"SELECT COUNT(*) FROM (SELECT name, age FROM students WHERE name LIKE ?) AS sub_tbl WHERE age > ?");
+    }
+
+    {
+        // complete select-core statement
+        stmt = [ALSQLSelectStatement statementWithDatabase:self.db];
+        stmt.SELECT(@[ @"COUNT(*) AS num", SQL_UPPER(@"province").AS(@"province") ])
+            .FROM(@"students")
+            .WHERE(SQL_LOWER(@"gender").EQ(@"1"))
+            .GROUP_BY(@"province")
+            .HAVING(@"age".GT(@18))
+            .ORDER_BY(@"num".DESC())
+            .ORDER_BY(@"province")
+            .LIMIT(@5)
+            .OFFSET(@3);
+        XCTAssertEqualObjects(stmt.SQLString, @"SELECT COUNT(*) AS num, UPPER(province) AS province FROM students "
+                                              @"WHERE LOWER(gender) = ? GROUP BY province HAVING age > ? ORDER BY num "
+                                              @"DESC, province LIMIT 5 OFFSET 3");
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // test nil-object-blocks-chain
+        // RECOMMEND: using 'SafeBlocksChainObj' macro to wrapper the first object that invoking a block;
+        stmt = SafeBlocksChainObj(nil, ALSQLSelectStatement);
+        stmt.SELECT(nil).FROM(@"test").WHERE(@"name".EQ(@"alex"));
+        XCTAssertNil(stmt.SQLString);
+        XCTAssertNil(stmt.argValues);
+        XCTAssertNil(stmt.SQLClause);
+    }
 }
 
 - (void)testInsertStmt {
-    
-    // insert using values, we can repeat calling 'VALUES' multiple times to insert multiple rows
-    NSArray *u1 = @[@"alex", @30, @"1", @"BJ/CN"];
-    NSArray *u2 = @[@"Jim", @"18", @1, @"SF/US"];
-    ALSQLInsertStatement *stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
-    stmt.INSERT()
-        .OR_REPLACE(YES)
-        .INTO(@"students")
-        .COLUMNS(@[@"name", @"age", @"gender", @"address"])
-        .VALUES(u1)
-        .VALUES(u2);
-    XCTAssertEqualObjects(stmt.SQLString,
-                          @"INSERT OR REPLACE INTO students (name, age, gender, address) VALUES (?, ?, ?, ?), (?, ?, ?, ?)");
-    NSArray *values = [u1 arrayByAddingObjectsFromArray:u2];
-    XCTAssertEqualObjects(stmt.argValues, values);
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    // insert using values dictionary: insert only a row
-    stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
-    NSDictionary *dict = @{@"name": @"Roger", @"age": @34, @"gender": @"1", @"address": @"AB/CA"};
-    stmt.INSERT().INTO(@"students").VALUES_DICT(dict);
-    NSArray *keys = dict.allKeys;
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO students (%@) VALUES (?, ?, ?, ?)",
-                     [keys componentsJoinedByString:@", "]];
-    values = [dict objectsForKeys:keys notFoundMarker:NSNull.null];
-    XCTAssertEqualObjects(stmt.SQLString, sql);
-    XCTAssertEqualObjects(stmt.argValues, values);
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
-    // insert using selection results
-    stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
-    stmt.INSERT().INTO(@"students")
-        .SELECT_STMT([ALSQLSelectStatement statementWithDatabase:self.db].SELECT(nil)
-                        .FROM(@"students")
-                        .WHERE(@"age".NEQ(@0))
-                     .SQLClause);
-    XCTAssertEqualObjects(stmt.SQLString, @"INSERT INTO students SELECT * FROM students WHERE age != ?");
-    values = @[@0];
-    XCTAssertEqualObjects(stmt.argValues, values);
-    XCTAssertTrue([stmt validateWitherror:nil]);
-    
+    ALSQLInsertStatement *stmt = nil;
+    NSArray *values = nil;
+
+    {
+        // insert using values, we can repeat calling 'VALUES' multiple times to insert multiple rows
+        NSArray *u1 = @[ @"alex", @30, @"1", @"BJ/CN" ];
+        NSArray *u2 = @[ @"Jim", @"18", @1, @"SF/US" ];
+        stmt        = [ALSQLInsertStatement statementWithDatabase:self.db];
+        stmt.INSERT()
+            .OR_REPLACE(YES)
+            .INTO(@"students")
+            .COLUMNS(@[ @"name", @"age", @"gender", @"address" ])
+            .VALUES(u1)
+            .VALUES(u2);
+        XCTAssertEqualObjects(
+            stmt.SQLString,
+            @"INSERT OR REPLACE INTO students (name, age, gender, address) VALUES (?, ?, ?, ?), (?, ?, ?, ?)");
+        values = [u1 arrayByAddingObjectsFromArray:u2];
+        XCTAssertEqualObjects(stmt.argValues, values);
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // insert using values dictionary: insert only a row
+        stmt               = [ALSQLInsertStatement statementWithDatabase:self.db];
+        NSDictionary *dict = @{ @"name" : @"Roger", @"age" : @34, @"gender" : @"1", @"address" : @"AB/CA" };
+        stmt.INSERT().INTO(@"students").VALUES_DICT(dict);
+        NSArray *keys = dict.allKeys;
+        NSString *sql = [NSString
+            stringWithFormat:@"INSERT INTO students (%@) VALUES (?, ?, ?, ?)", [keys componentsJoinedByString:@", "]];
+        values = [dict objectsForKeys:keys notFoundMarker:NSNull.null];
+        XCTAssertEqualObjects(stmt.SQLString, sql);
+        XCTAssertEqualObjects(stmt.argValues, values);
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
+
+    {
+        // insert using selection results
+        stmt = [ALSQLInsertStatement statementWithDatabase:self.db];
+        stmt.INSERT()
+            .INTO(@"students")
+            .SELECT_STMT([ALSQLSelectStatement statementWithDatabase:self.db]
+                             .SELECT(nil)
+                             .FROM(@"students")
+                             .WHERE(@"age".NEQ(@0))
+                             .SQLClause);
+        XCTAssertEqualObjects(stmt.SQLString, @"INSERT INTO students SELECT * FROM students WHERE age != ?");
+        values = @[ @0 ];
+        XCTAssertEqualObjects(stmt.argValues, values);
+        XCTAssertTrue([stmt validateWitherror:nil]);
+    }
 }
 
 - (void)testUpdateStmt {

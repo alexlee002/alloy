@@ -129,6 +129,49 @@ AL_FORCE_INLINE BOOL debuggerFound() {
     return ( (info.kp_proc.p_flag & P_TRACED) != 0 );
 }
 
+
+// @see http://blog.sunnyxx.com/2015/09/13/class-ivar-layout/
+// @see -[FoundationsTests testFakeClass]
+AL_FORCE_INLINE void fixup_class_arc(Class class) {
+    struct {
+        Class isa;
+        Class superclass;
+        struct {
+            void *_buckets;
+#if __LP64__
+            uint32_t _mask;
+            uint32_t _occupied;
+#else
+            uint16_t _mask;
+            uint16_t _occupied;
+#endif
+        } cache;
+        uintptr_t bits;
+    } *objcClass = (__bridge typeof(objcClass))class;
+#if !__LP64__
+#define FAST_DATA_MASK 0xfffffffcUL
+#else
+#define FAST_DATA_MASK 0x00007ffffffffff8UL
+#endif
+    struct {
+        uint32_t flags;
+        uint32_t version;
+        struct {
+            uint32_t flags;
+        } *ro;
+    } *objcRWClass = (typeof(objcRWClass))(objcClass->bits & FAST_DATA_MASK);
+#define RO_IS_ARR 1<<7
+    objcRWClass->ro->flags |= RO_IS_ARR;
+}
+
+void registerArcClassPair(Class cls) {
+    if (cls != NULL) {
+        objc_registerClassPair(cls);
+        fixup_class_arc(cls);
+    }
+}
+
+
 @implementation ALOCRuntime
 
 + (NSSet<Class> *)classConfirmsToProtocol:(Protocol *)protocol {

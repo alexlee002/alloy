@@ -13,6 +13,8 @@
 #import "ALOCRuntime.h"
 #import "UtilitiesHeader.h"
 #import "Singleton_Template.h"
+#import "ALSQLSelectStatement.h"
+#import "SafeBlocksChain.h"
 
 void setAge(int age) AL_C_PARAM_ASSERT(age >= 0 && age < 150, "Oh! you're the God!") {
     printf("I'm %d years old", age);
@@ -90,6 +92,20 @@ SYNTHESIZE_SINGLETON
 @end
 
 ///////////////////////////////////////////////////////
+@interface FakeClassTest : NSObject
+
+@end
+
+@implementation FakeClassTest
+
+- (BOOL)isKindOfClass:(Class)aClass {return YES;}
+
+@end
+
+
+///////////////////////////////////////////////////////
+
+
 @interface FoundationsTests : XCTestCase
 @end
 @implementation FoundationsTests
@@ -198,6 +214,78 @@ SYNTHESIZE_SINGLETON
     
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:3]];
     XCTAssertEqual(set.count, 1);
+}
+
+- (void)testAutoCreateClass {
+//    Class cls = objc_allocateClassPair(NSObject.class, "HelloAlexBad", 0);
+//    class_addIvar(cls, "_obj", sizeof(id), log2(sizeof(id)), @encode(id));
+//    class_addIvar(cls, "_arr", sizeof(NSArray *), log2(_Alignof(NSArray *)), @encode(NSArray *));
+//    uint8_t layout[2] = {0x02, 0x00};
+//    class_setIvarLayout(cls, layout);
+//    uint8_t layout1[2] = {0x20, 0x00};
+//    class_setWeakIvarLayout(cls, layout1);
+//    objc_registerClassPair(cls);
+//    fixup_class_arc(cls);
+//    
+//    ALLogInfo(@"%s", class_getIvarLayout(cls));
+//    ALLogInfo(@"%s", class_getWeakIvarLayout(cls));
+    
+//    Method deallocM = class_getInstanceMethod(cls, NSSelectorFromString(@"release"));
+//    IMP origDeallocIMP = NULL;
+//    
+//    origDeallocIMP = method_setImplementation(deallocM, imp_implementationWithBlock(^(id obj) {
+//        [obj setValue:nil forKey:@"obj"];
+//        [obj setValue:nil forKey:@"arr"];
+//        
+//        if (origDeallocIMP != NULL) {
+//            origDeallocIMP();
+//        }
+//    }));
+    
+//    // __weak id weakObj = nil;
+//    __weak id weakArr = nil;
+//    {
+//        id ins = [[cls alloc] init];
+//        [ins setValue:[[NSArray alloc] initWithObjects:@"aa", @"bb", nil] forKey:@"arr"];
+////        [ins setValue:[[NSObject alloc] init] forKey:@"obj"];
+////weakObj = [ins valueForKey:@"obj"];
+//        weakArr = [ins valueForKey:@"arr"];
+//        //XCTAssertNotNil(weakObj);
+//        XCTAssertNotNil(weakArr);
+//    }
+//    //XCTAssertNil(weakObj); // WARNING: weakRef is not nil! memory leak!
+//    XCTAssertNil(weakArr);
+//    
+//    
+//    cls = objc_allocateClassPair(NSObject.class, "HelloAlexGood", 0);
+//    class_addIvar(cls, "_obj", sizeof(id), log2(sizeof(id)), @encode(id));
+//    class_addIvar(cls, "_arr", sizeof(id), log2(sizeof(id)), @encode(id));
+//    objc_registerClassPair(cls);
+//    fixup_class_arc(cls);
+//    
+//    __weak id weakObj1 = nil;
+//    __weak id weakArr1 = nil;
+//    {
+//        id ins = [[cls alloc] init];
+//        [ins setValue:[[NSArray alloc] initWithObjects:@"aa", @"bb", nil] forKey:@"arr"];
+//        [ins setValue:[[NSObject alloc] init] forKey:@"obj"];
+//        weakObj1 = [ins valueForKey:@"obj"];
+//        weakArr1 = [ins valueForKey:@"arr"];
+//        XCTAssertNotNil(weakObj1);
+//        XCTAssertNotNil(weakArr1);
+//    }
+//    XCTAssertNil(weakObj1); // OK
+//    XCTAssertNil(weakArr1);
+}
+
+- (void)testSafeBlocksChain {
+    SafeBlocksChainObj(nil, ALSQLSelectStatement)
+        .SELECT(@"*")
+        .FROM(@"table")
+        .WHERE(@"colval = 1")
+        .EXECUTE_QUERY(^(FMResultSet *rs) {
+            XCTAssertNil(rs);
+        });  // ✔
 }
 
 @end

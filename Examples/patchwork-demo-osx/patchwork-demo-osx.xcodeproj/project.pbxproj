@@ -60,7 +60,7 @@
 
 /* Begin PBXFileReference section */
 		433194451E0398D80001A01E /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatabase.h; sourceTree = "<group>"; };
-		433194461E0398D80001A01E /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatabase.m; sourceTree = "<group>"; };
+		433194461E0398D80001A01E /* ALDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatabase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		433194471E0398D80001A01E /* ALDBColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBColumnInfo.h; sourceTree = "<group>"; };
 		433194481E0398D80001A01E /* ALDBColumnInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDBColumnInfo.m; sourceTree = "<group>"; };
 		433194491E0398D80001A01E /* ALDBConnectionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBConnectionProtocol.h; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 		4331944D1E0398D80001A01E /* ALSQLClause+SQLFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLClause+SQLFunctions.h"; sourceTree = "<group>"; };
 		4331944E1E0398D80001A01E /* ALSQLClause+SQLFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLFunctions.m"; sourceTree = "<group>"; };
 		4331944F1E0398D80001A01E /* ALSQLClause+SQLOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLClause+SQLOperation.h"; sourceTree = "<group>"; };
-		433194501E0398D80001A01E /* ALSQLClause+SQLOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLOperation.m"; sourceTree = "<group>"; };
+		433194501E0398D80001A01E /* ALSQLClause+SQLOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLOperation.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		433194511E0398D80001A01E /* ALSQLClause.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLClause.h; sourceTree = "<group>"; };
 		433194521E0398D80001A01E /* ALSQLClause.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSQLClause.m; sourceTree = "<group>"; };
 		433194541E0398D80001A01E /* ALSQLDeleteStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLDeleteStatement.h; sourceTree = "<group>"; };
@@ -107,7 +107,7 @@
 		433194751E0398D80001A01E /* ALLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLogger.h; sourceTree = "<group>"; };
 		433194761E0398D80001A01E /* ALLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLogger.m; sourceTree = "<group>"; };
 		433194771E0398D80001A01E /* ALOCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOCRuntime.h; sourceTree = "<group>"; };
-		433194781E0398D80001A01E /* ALOCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOCRuntime.m; sourceTree = "<group>"; };
+		433194781E0398D80001A01E /* ALOCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOCRuntime.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		433194791E0398D80001A01E /* ALOrderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOrderedMap.h; sourceTree = "<group>"; };
 		4331947A1E0398D80001A01E /* ALOrderedMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOrderedMap.m; sourceTree = "<group>"; };
 		4331947B1E0398D80001A01E /* ALStringInflector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALStringInflector.h; sourceTree = "<group>"; };
@@ -135,7 +135,7 @@
 		433194911E0398D80001A01E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		433194931E0398D80001A01E /* ActiveRecordAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveRecordAdditions.h; sourceTree = "<group>"; };
 		433194941E0398D80001A01E /* ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+ActiveRecord.h"; sourceTree = "<group>"; };
-		433194951E0398D80001A01E /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; };
+		433194951E0398D80001A01E /* ALModel+ActiveRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		433194961E0398D80001A01E /* ALModel+ActiveRecord_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+ActiveRecord_private.h"; sourceTree = "<group>"; };
 		433194971E0398D80001A01E /* ALModel+ActiveRecord_private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+ActiveRecord_private.m"; sourceTree = "<group>"; };
 		433194981E0398D80001A01E /* ALModel+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALModel+JSON.h"; sourceTree = "<group>"; };

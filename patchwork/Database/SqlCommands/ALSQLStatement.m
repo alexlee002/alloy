@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void (^)(void (^)(FMResultSet *)))EXECUTE_QUERY {
     return ^(void (^resultHaldler)(FMResultSet *_Nullable rs)) {
-        if (![self isValidBlocksChainObject]) {
+        if (!ObjIsValidBlocksChainObject(self)) {
             safeInvokeBlock(resultHaldler, nil);
             return;
         }
@@ -68,8 +68,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL (^)())EXECUTE_UPDATE {
+    weakify(self);
     return ^BOOL () {
-        if (![self isValidBlocksChainObject]) {
+        strongify(self);
+        if (!ObjIsValidBlocksChainObject(self)) {
             return NO;
         }
         
@@ -89,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)executeWithCompletion:(void (^)(BOOL))completion {
-    if (![self isValidBlocksChainObject]) {
+    if (!ObjIsValidBlocksChainObject(self)) {
         safeInvokeBlock(completion, NO);
         return;
     }

@@ -106,7 +106,7 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     student.gender   = 1;
     student.province = @"GD/HS";
     student.birthday = [NSDate date];
-    student.icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://emojipedia-us.s3.amazonaws.com/cache/aa/06/aa06fe241df5cb986d121e4e7aaee5a3.png"]]];
+    student.icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://baidu.com/favicon.ico"]]];
     XCTAssertGreaterThan([student saveOrReplce:YES], 0);
     XCTAssertEqual([Student fetcher].FETCH_COUNT(nil), 1);
     

@@ -12,6 +12,7 @@
 #import "SafeBlocksChain.h"
 #import <objc/runtime.h>
 #import "ALLogger.h"
+#import "ALSQLSelectStatement.h"
 
 AL_FORCE_INLINE ALSQLClause *SQLMidOp(ALSQLClause *target, NSString *optor, ALSQLClause *other) {
     [target operation:optor position:ALOperatorPosMid otherClause:other];
@@ -127,10 +128,15 @@ static void *kCurrentOPPriorityKey = &kCurrentOPPriorityKey;
 
 @end
 
-#define __verifySelf()                              \
-    ALSQLClause *mine = [self SQLClause];               \
-    if (mine == nil) {                              \
-        return SafeBlocksChainObj(nil, ALSQLClause);\
+#define __verifySelf()                                          \
+    ALSQLClause *mine = nil;                                    \
+    if ([self isKindOfClass:ALSQLSelectStatement.class]) {      \
+        mine = [(ALSQLSelectStatement *)self asSubQuery];       \
+    } else {                                                    \
+        mine = [self SQLClause];                                \
+    }                                                           \
+    if (mine == nil) {                                          \
+        return SafeBlocksChainObj(nil, ALSQLClause);            \
     }
 
 /**

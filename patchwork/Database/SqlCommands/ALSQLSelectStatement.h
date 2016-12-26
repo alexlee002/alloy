@@ -21,7 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, copy) ALSQLSelectStatement *(^SELECT)(id _Nullable resultColumns);
 @property(readonly, copy) ALSQLSelectStatement *(^DISTINCT)(BOOL distinct);
 /**
- *  tables: tables or subqueries; NSString / ALSQLClause or array of NSString / ALSQLClause
+ *  tablesOrSubqueries: tables or subqueries;
+ *          Accepted type: NSString / ALSQLClause / ALSQLSelectStatement
+ *          or: NSArray<NSString *> / NSArray<ALSQLClause *> / NSArray<ALSQLSelectStatement *>
  */
 @property(readonly, copy) ALSQLSelectStatement *(^FROM)(id tablesOrSubqueries);
 
@@ -54,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, copy) NSData   *_Nullable (^DATA_RESULT)();
 @property(readonly, copy) NSDate   *_Nullable (^DATE_RESULT)();
 
+- (ALSQLClause *)asSubQuery;
 
 @end
 

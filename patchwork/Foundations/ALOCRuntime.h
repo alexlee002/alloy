@@ -27,6 +27,8 @@ extern BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL s
 extern NSArray<NSString *> *backtraceStack(int stackSize);
 extern BOOL debuggerFound();
 extern BOOL classIsSubClassOfClass(Class subCls, Class cls);
+extern void fixup_class_arc(Class cls);
+extern void registerArcClassPair(Class cls);
 
 @interface ALOCRuntime : NSObject
 

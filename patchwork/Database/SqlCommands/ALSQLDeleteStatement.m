@@ -12,7 +12,6 @@
 #import "ALSQLStatementHelpers.h"
 #import "SafeBlocksChain.h"
 
-
 @implementation ALSQLDeleteStatement {
     ALSQLClause *_qualifiedTableName;
     ALSQLClause *_whereClause;
