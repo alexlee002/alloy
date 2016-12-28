@@ -13,86 +13,94 @@
 NS_ASSUME_NONNULL_BEGIN
 
 AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
-                                           NSString *fmt, va_list vaList) {
+                                           NSString *message) {
     static BOOL hasDebugger = NO;
     static NSDateFormatter *dateFormatter = nil;
     static dispatch_once_t onceToken;
+    static dispatch_queue_t writeLogQueue;
     dispatch_once(&onceToken, ^{
         hasDebugger = debuggerFound();
         if (hasDebugger) {
             dateFormatter = [[NSDateFormatter alloc] init];
             dateFormatter.dateFormat = @"hh:mm:ss.SSS";
         }
+        writeLogQueue = dispatch_queue_create("me.alexlee002.patchwork.loggerQueue", DISPATCH_QUEUE_SERIAL);
     });
     
-    CFStringRef levelStr = NULL;
-    NSString *message = fmt;
-    switch (level) {
-        case ALLogLevelVerbose:
-            levelStr = hasDebugger ? CFSTR("🎐-[V]") : CFSTR("-[V]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"🎐" stringByAppendingString:fmt] : fmt);
-            break;
-        case ALLogLevelInfo:
-            levelStr = hasDebugger ? CFSTR("✅-[I]") : CFSTR("-[I]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"✅" stringByAppendingString:fmt] : fmt);
-            break;
-        case ALLogLevelWarn:
-            levelStr = hasDebugger ? CFSTR("⚠️-[W]") : CFSTR("-[W]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"⚠️" stringByAppendingString:fmt] : fmt);
-            break;
-        case ALLogLevelError:
-            levelStr = hasDebugger ? CFSTR("❌-[E]") : CFSTR("-[E]");
-            message = isEmptyString(fmt) ? nil : (hasDebugger ? [@"❌" stringByAppendingString:fmt] : fmt);
-            break;
+    dispatch_async(writeLogQueue, ^{
+        @autoreleasepool {
+            CFStringRef levelStr = NULL;
+            NSString *logmsg     = message;
+            switch (level) {
+                case ALLogLevelVerbose:
+                    levelStr = hasDebugger ? CFSTR("🎐-[V]") : CFSTR("-[V]");
+                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"🎐" stringByAppendingString:message] : message);
+                    break;
+                case ALLogLevelInfo:
+                    levelStr = hasDebugger ? CFSTR("✅-[I]") : CFSTR("-[I]");
+                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"✅" stringByAppendingString:message] : message);
+                    break;
+                case ALLogLevelWarn:
+                    levelStr = hasDebugger ? CFSTR("⚠️-[W]") : CFSTR("-[W]");
+                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"⚠️" stringByAppendingString:message] : message);
+                    break;
+                case ALLogLevelError:
+                    levelStr = hasDebugger ? CFSTR("❌-[E]") : CFSTR("-[E]");
+                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"❌" stringByAppendingString:message] : message);
+                    break;
+                    
+                default:
+                    break;
+            }
             
-        default:
-            break;
-    }
-    
-    CFMutableStringRef str = CFStringCreateMutable(NULL, 0);
-    if (levelStr != NULL) {
-        CFStringAppend(str, levelStr);
-        CFStringAppend(str, CFSTR(" "));
-    }
-    
-    if (!isEmptyString(tag)) {
-        CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("⚓[%@] ") : CFSTR("[%@] "), tag);
-    }
-    
-    if (!isEmptyString(func)) {
-        CFStringAppendFormat(str, NULL, CFSTR("%@ "), func);
-    }
-    if (!isEmptyString(file)) {
-        CFStringAppendFormat(str, NULL, CFSTR("(%@:%ld) "), [file lastPathComponent], (long)line);
-    }
-    
-    if (!isEmptyString(message)) {
-        CFStringAppend(str, (__bridge CFStringRef)message);
-    }
-    
-    NSString *logtext = [[NSString alloc] initWithFormat:(__bridge NSString *)str arguments:vaList];
-    
-    if (hasDebugger) {
-        printf("%s %s\n", [[dateFormatter stringFromDate:[NSDate date]]UTF8String], [logtext UTF8String]);
-    } else {
-        NSLog(@"%@", logtext);
-    }
-    CFRelease(str);
+            CFMutableStringRef str = CFStringCreateMutable(NULL, 0);
+            if (levelStr != NULL) {
+                CFStringAppend(str, levelStr);
+                CFStringAppend(str, CFSTR(" "));
+            }
+            
+            if (!isEmptyString(tag)) {
+                CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("⚓[%@] ") : CFSTR("[%@] "), tag);
+            }
+            
+            if (!isEmptyString(func)) {
+                CFStringAppendFormat(str, NULL, CFSTR("%@ "), func);
+            }
+            if (!isEmptyString(file)) {
+                CFStringAppendFormat(str, NULL, CFSTR("(%@:%ld) "), [file lastPathComponent], (long) line);
+            }
+            
+            if (!isEmptyString(logmsg)) {
+                CFStringAppend(str, (__bridge CFStringRef) logmsg);
+            }
+            
+            if (hasDebugger) {
+                printf("%s %s\n", [[dateFormatter stringFromDate:[NSDate date]] UTF8String],
+                       [(__bridge NSString *)str UTF8String]);
+            } else {
+                NSLog(@"%@", (__bridge NSString *)str);
+            }
+            
+            CFRelease(str);
+        }
+    });
 }
 
 void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    _ALLogInternal(file, line, func, tag, level, fmt, args);
+    NSString *msg = [[NSString alloc] initWithFormat:fmt arguments:args];
     va_end(args);
+    _ALLogInternal(file, line, func, tag, level, msg);
 }
 
 void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
 #if DEBUG
     va_list args;
     va_start(args, fmt);
-    _ALLogInternal(file, line, func, tag, level, fmt, args);
+    NSString *msg = [[NSString alloc] initWithFormat:fmt arguments:args];
     va_end(args);
+    _ALLogInternal(file, line, func, tag, level, msg);
 #endif
 }
 
