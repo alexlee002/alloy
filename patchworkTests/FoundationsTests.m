@@ -49,6 +49,7 @@ void setAge(int age) AL_C_PARAM_ASSERT(age >= 0 && age < 150, "Oh! you're the Go
 
 ///////////////////////////////////////////////////////
 #pragma mark - singleton test
+
 @interface SingletonTestBase : NSObject
 AS_SINGLETON
 @end
