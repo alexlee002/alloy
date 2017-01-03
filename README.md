@@ -1,5 +1,8 @@
 # patchwork
-An easy, simple base kit for iOS app.
+
+![badge-pod] ![badge-languages] ![badge-pms] ![badge-platforms] ![badge-apache2]
+
+Patchwork is a simple toolkit that makes your iOS / OS X apps development more easier.
 
 [中文文档](./Patchwork 开发文档.md) | English Document
 
