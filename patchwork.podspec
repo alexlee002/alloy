@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
   s.name         = "patchwork"
   
-  `xcodebuild -project patchwork.xcodeproj -showBuildSettings` =~ /CFBundleShortVersionString = ((\d\.)+\d)/
-  abort("No version detected") if $1.nil?
-  s.version = $1
+  ver = `/usr/libexec/PlistBuddy -c 'print CFBundleShortVersionString' patchwork/Info.plist`
+  abort("No version detected") if ver.nil?
+  s.version = ver
 
   s.summary      = "Patchwork is a simple toolkit that makes your iOS / OS X development more easier."
   s.description  = <<-DESC
