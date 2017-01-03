@@ -3,7 +3,7 @@
 //  patchwork
 //
 //  Created by Alex Lee on 2/18/16.
-//  Copyright © 2016 Alex Lee. All rights reserved.
+//  Copyright © 2017 Alex Lee. All rights reserved.
 //
 
 #if TARGET_OS_IPHONE
@@ -35,7 +35,6 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "ALSQLInsertStatement.h"
 #import "ALSQLSelectStatement.h"
 #import "ALSQLStatement.h"
-#import "ALSQLStatementHelpers.h"
 #import "ALSQLUpdateStatement.h"
 
 // Extensions
