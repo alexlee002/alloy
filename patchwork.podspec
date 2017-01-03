@@ -1,11 +1,15 @@
 Pod::Spec.new do |s|
   s.name         = "patchwork"
-  s.version      = "0.0.2"
+  
+  `xcodebuild -project PromiseKit.xcodeproj -showBuildSettings` =~ /CURRENT_PROJECT_VERSION = ((\d\.)+\d)/
+  abort("No version detected") if $1.nil?
+  s.version = $1
+
   s.summary      = "Patchwork is a simple toolkit that makes your iOS / OS X development more easier."
   s.description  = <<-DESC
   Features are going to support:
     * model and json mappings: using YYModel, [supported]
-    * model and database mappings: [supported]
+    * model and database mappings: Active-Record, [supported]
     * network layer wrapper: ASIHTTPRequest [supported] and NSURLSession [developing...],
                    DESC
   s.homepage     = "https://github.com/alexlee002/patchwork"

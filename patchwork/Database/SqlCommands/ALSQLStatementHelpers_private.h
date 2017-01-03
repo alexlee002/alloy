@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ALLogger.h"
+#import "ALDBLog_private.h"
 
 // private utilities tools for ALSQLStatment
 

@@ -19,7 +19,7 @@
 #import <sqlite3.h>
 #import <objc/message.h>
 #import "SafeBlocksChain.h"
-#import "ALSQLStatementHelpers.h"
+#import "ALSQLStatementHelpers_private.h"
 #import "ALSQLClause+SQLOperation.h"
 #import <ObjcAssociatedObjectHelpers.h>
 #import "ALLogger.h"

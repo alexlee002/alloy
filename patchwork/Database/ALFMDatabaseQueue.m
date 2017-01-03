@@ -10,7 +10,7 @@
 #import "FMDB.h"
 #import "UtilitiesHeader.h"
 #import "ALOCRuntime.h"
-#import "ALLogger.h"
+#import "ALDBLog_private.h"
 #import <sqlite3.h>
 
 #ifndef MAX_DB_BLOCK_EXECUTE_SEC
@@ -18,13 +18,14 @@
 #endif
 
 #if defined(DEBUG) && DEBUG
-    #define OP_BLOCK(block) \
-        CFTimeInterval t = CFAbsoluteTimeGetCurrent();  \
-        block();                                        \
-        t = CFAbsoluteTimeGetCurrent() - t;             \
-        if (t > MAX_DB_BLOCK_EXECUTE_SEC) {             \
-            ALLogWarn(@"!!!database operation cost too much time:%fs!!!\nback trace stack:\n%@", t, backtraceStack(15));\
-        }
+    #define OP_BLOCK(block) ({                              \
+            CFTimeInterval t = CFAbsoluteTimeGetCurrent();  \
+            block();                                        \
+            t = CFAbsoluteTimeGetCurrent() - t;             \
+            if (t > MAX_DB_BLOCK_EXECUTE_SEC) {             \
+                ALLogWarn(@"!!!database operation time is too long:%.2fs!!!\nBacktrace Stack:\n%@", t, backtraceStack(15));\
+            }                                               \
+        })
 #else
     #define OP_BLOCK(block) block()
 #endif
@@ -113,7 +114,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
         BOOL success = [_db open];
 #endif
         if (!success) {
-            NSLog(@"FMDatabaseQueue could not reopen database for path %@", _path);
+            ALLogError(@"ALFMDatabaseQueue could not reopen database for path %@", _path);
             FMDBRelease(_db);
             _db  = 0x00;
             return 0x00;
@@ -127,7 +128,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 - (void)safelyRun:(void (^)(void))block {
     ALFMDatabaseQueue *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueSpecificKey);
     if (currentSyncQueue == self) {
-        ALLogWarn(@"!!! nested database operation blocks!");
+        ALLogError(@"!!! Nested database operation blocks!");
         OP_BLOCK(block);
     } else {
         dispatch_sync(_queue, ^{
@@ -151,7 +152,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
             NSSet *openSetCopy = FMDBReturnAutoreleased([[db valueForKey:@"_openResultSets"] copy]);
             for (NSValue *rsInWrappedInATastyValueMeal in openSetCopy) {
                 FMResultSet *rs = (FMResultSet *)[rsInWrappedInATastyValueMeal pointerValue];
-                ALLogVerbose(@"unexpected opening result set query: '%@'", [rs query]);
+                ALLogWarn(@"unexpected opening result set query: '%@'", [rs query]);
             }
 #endif
         }
@@ -209,7 +210,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 #else
 #define __verify_savepoint_support(returnBool)                                                   \
     NSString *errorMessage = NSLocalizedString(@"Save point functions require SQLite 3.7", nil); \
-    if (self.logsErrors) ALLogError(@"Error: %@", errorMessage);                                 \
+    if (self.logsErrors) _ALDBLogE(@"Error: %@", errorMessage);                                  \
     return returnBool                                                                            \
                ? NO                                                                              \
                : [NSError errorWithDomain:@"FMDatabase" code:0 userInfo:@{NSLocalizedDescriptionKey : errorMessage}];

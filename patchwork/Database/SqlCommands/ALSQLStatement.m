@@ -9,12 +9,15 @@
 #import "ALSQLStatement.h"
 #import "ALDatabase.h"
 #import "SafeBlocksChain.h"
-#import "ALLogger.h"
+#import "ALDBLog_private.h"
 
 #define __STMT_EXEC_LOG(result)     {                                               \
     ALSQLClause *clause = [self.SQLString SQLClauseWithArgValues:self.argValues];   \
-    ALLogVerbose(@"execute SQL: %@;  %@", self.db.enableDebug ? [clause debugDescription] : [clause description], \
-                                          (result) ? @"✔" : @"🚫");                 \
+    if (result) {                                                                   \
+        _ALDBLog(@"execute SQL: %@; ✔", self.db.enableDebug ? [clause debugDescription] : [clause description]);   \
+    } else {                                                                        \
+        ALLogError(@"execute SQL: %@; ✘", self.db.enableDebug ? [clause debugDescription] : [clause description]);     \
+    }                                                                               \
 }
 
 NS_ASSUME_NONNULL_BEGIN

@@ -73,7 +73,7 @@
         if ([argVal isKindOfClass:NSData.class]) {
             argVal = [(NSData *)argVal al_debugDescription];
         }
-        NSString *valStr = [NSString stringWithFormat:@"<%@>", argVal];
+        NSString *valStr = [NSString stringWithFormat:@"{%@}", argVal];
         [sql replaceCharactersInRange:range withString:valStr];
         index ++;
         range.location = range.location + valStr.length;

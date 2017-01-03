@@ -9,6 +9,7 @@
 #import "ALLogger.h"
 #import "ALOCRuntime.h"
 #import "NSString+Helper.h"
+#import <pthread.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,6 +27,11 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
         }
         writeLogQueue = dispatch_queue_create("me.alexlee002.patchwork.loggerQueue", DISPATCH_QUEUE_SERIAL);
     });
+    
+    NSDate *logtime = [NSDate date];
+    __uint64_t threadID;
+    pthread_threadid_np(NULL, &threadID);
+    BOOL isMainThread = [NSThread isMainThread];
     
     dispatch_async(writeLogQueue, ^{
         @autoreleasepool {
@@ -54,10 +60,13 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
             }
             
             CFMutableStringRef str = CFStringCreateMutable(NULL, 0);
+            
             if (levelStr != NULL) {
                 CFStringAppend(str, levelStr);
                 CFStringAppend(str, CFSTR(" "));
             }
+            
+            CFStringAppendFormat(str, NULL, CFSTR("[%llu%s] "), threadID, isMainThread ? " (main)" : "");
             
             if (!isEmptyString(tag)) {
                 CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("⚓[%@] ") : CFSTR("[%@] "), tag);
@@ -75,7 +84,7 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
             }
             
             if (hasDebugger) {
-                printf("%s %s\n", [[dateFormatter stringFromDate:[NSDate date]] UTF8String],
+                printf("%s %s\n", [[dateFormatter stringFromDate:logtime] UTF8String],
                        [(__bridge NSString *)str UTF8String]);
             } else {
                 NSLog(@"%@", (__bridge NSString *)str);

@@ -17,7 +17,7 @@
 #import "ALDBConnectionProtocol.h"
 #import "SafeBlocksChain.h"
 #import "NSCache+ALExtensions.h"
-#import "ALLogger.h"
+#import "ALDBLog_private.h"
 #import "ALLock.h"
 
 #import <objc/runtime.h>
@@ -183,19 +183,19 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
                 }
                 
                 if (created) {
-                    ret = [self updateDatabaseVersion:newVersion dbHandler:db assertIfFailed:YES];
+                    ret = [self updateDatabaseVersion:newVersion dbHandler:db];
                 } else {
                     NSAssert(NO, @"Can not setup database: %@", _queue.path);
                     ret = NO;
                 }
             } else {
                 NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
-                NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@", @(dbVersion),
-                         @(newVersion));
-                
+                NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@",
+                         @(dbVersion), @(newVersion));
+
                 if (dbVersion < newVersion) {
                     if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
-                        ret = [self updateDatabaseVersion:newVersion dbHandler:db assertIfFailed:YES];
+                        ret = [self updateDatabaseVersion:newVersion dbHandler:db];
                     } else {
                         NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
                                  _queue.path);
@@ -214,16 +214,15 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     return ret;
 }
 
-- (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db assertIfFailed:(BOOL)throwAssert {
+- (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db {
     BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", (long)version]];
     if (!ret) {
-        if (throwAssert) {
-            NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
+#if DEBUG
+        NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
                      [db lastError]);
-        } else {
-            ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
+#endif
+        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
                       [db lastError]);
-        }
     }
     return ret;
 }

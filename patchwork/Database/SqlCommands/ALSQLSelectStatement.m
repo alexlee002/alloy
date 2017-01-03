@@ -9,7 +9,7 @@
 #import "ALSQLSelectStatement.h"
 #import "NSString+Helper.h"
 #import "UtilitiesHeader.h"
-#import "ALSQLStatementHelpers.h"
+#import "ALSQLStatementHelpers_private.h"
 #import "ALSQLClause+SQLOperation.h"
 #import "ALSQLClause+SQLFunctions.h"
 #import "SafeBlocksChain.h"

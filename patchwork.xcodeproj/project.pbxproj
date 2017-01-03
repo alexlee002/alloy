@@ -147,6 +147,7 @@
 		4390DF491DC2591A00B10CF7 /* ALOrderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOrderedMap.h; sourceTree = "<group>"; };
 		4390DF4A1DC2591A00B10CF7 /* ALOrderedMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALOrderedMap.m; sourceTree = "<group>"; };
 		43AA2E081DC6631800AD997A /* ActiveRecordTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveRecordTests.m; sourceTree = "<group>"; };
+		43FBB38E1E1B732200BA9B33 /* ALDBLog_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALDBLog_private.h; sourceTree = "<group>"; };
 		73518ED275B45D216FDF6FDD /* Pods-patchwork.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.release.xcconfig"; sourceTree = "<group>"; };
 		911BB3FEE61B0EEBC38ACC93 /* Pods-patchworkTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchworkTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-patchworkTests/Pods-patchworkTests.release.xcconfig"; sourceTree = "<group>"; };
 		936BE6B5B3DA981EB35F497E /* Pods-patchwork.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-patchwork.debug.xcconfig"; path = "Pods/Target Support Files/Pods-patchwork/Pods-patchwork.debug.xcconfig"; sourceTree = "<group>"; };
@@ -234,7 +235,7 @@
 		AF7162641DACD9E40015F006 /* NSURLSessionAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionAdaptor.h; sourceTree = "<group>"; };
 		AF7162651DACD9E40015F006 /* NSURLSessionAdaptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionAdaptor.m; sourceTree = "<group>"; };
 		AF7162B21DACE7AC0015F006 /* ALDBConnectionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBConnectionProtocol.h; sourceTree = "<group>"; };
-		AF8968AB1DBA47F800763973 /* ALSQLStatementHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSQLStatementHelpers.h; sourceTree = "<group>"; };
+		AF8968AB1DBA47F800763973 /* ALSQLStatementHelpers_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSQLStatementHelpers_private.h; sourceTree = "<group>"; };
 		AF8EC3A11DB648E700DE46CF /* ALSQLClause+SQLFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLClause+SQLFunctions.h"; sourceTree = "<group>"; };
 		AF8EC3A21DB648E700DE46CF /* ALSQLClause+SQLFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALSQLClause+SQLFunctions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -347,6 +348,7 @@
 				AF6662A81DAF426D00FE3042 /* ALSQLClause+SQLOperation.m */,
 				AF8EC3A11DB648E700DE46CF /* ALSQLClause+SQLFunctions.h */,
 				AF8EC3A21DB648E700DE46CF /* ALSQLClause+SQLFunctions.m */,
+				43FBB38E1E1B732200BA9B33 /* ALDBLog_private.h */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -364,7 +366,7 @@
 				AF7162281DACD9E40015F006 /* ALSQLSelectStatement.m */,
 				AF7162291DACD9E40015F006 /* ALSQLUpdateStatement.h */,
 				AF71622A1DACD9E40015F006 /* ALSQLUpdateStatement.m */,
-				AF8968AB1DBA47F800763973 /* ALSQLStatementHelpers.h */,
+				AF8968AB1DBA47F800763973 /* ALSQLStatementHelpers_private.h */,
 			);
 			path = SqlCommands;
 			sourceTree = "<group>";

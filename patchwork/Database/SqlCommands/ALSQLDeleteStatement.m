@@ -9,7 +9,7 @@
 #import "ALSQLDeleteStatement.h"
 #import "NSString+Helper.h"
 #import "ALSQLClause+SQLOperation.h"
-#import "ALSQLStatementHelpers.h"
+#import "ALSQLStatementHelpers_private.h"
 #import "SafeBlocksChain.h"
 
 @implementation ALSQLDeleteStatement {

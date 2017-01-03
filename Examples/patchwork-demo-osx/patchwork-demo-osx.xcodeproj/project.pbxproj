@@ -142,7 +142,7 @@
 		433194991E0398D80001A01E /* ALModel+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALModel+JSON.m"; sourceTree = "<group>"; };
 		4331949A1E0398D80001A01E /* ALModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel.h; sourceTree = "<group>"; };
 		4331949B1E0398D80001A01E /* ALModel_Define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModel_Define.h; sourceTree = "<group>"; };
-		4331949C1E0398D80001A01E /* ALModel_Define.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALModel_Define.m; sourceTree = "<group>"; };
+		4331949C1E0398D80001A01E /* ALModel_Define.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALModel_Define.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		4331949E1E0398D80001A01E /* ALHTTPRequest+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALHTTPRequest+Helper.h"; sourceTree = "<group>"; };
 		4331949F1E0398D80001A01E /* ALHTTPRequest+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALHTTPRequest+Helper.m"; sourceTree = "<group>"; };
 		433194A01E0398D80001A01E /* ALHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALHTTPRequest.h; sourceTree = "<group>"; };
