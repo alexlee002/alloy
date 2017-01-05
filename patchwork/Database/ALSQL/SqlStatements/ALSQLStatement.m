@@ -16,7 +16,7 @@
     if ((result)) {                                                                     \
         _ALDBLog(@"Execute SQL: %@; ✔", self.db.enableDebug ? [clause debugDescription] : [clause description]);   \
     } else {                                                                            \
-        ALLogError(@"Execute SQL: %@; ✘ ERROR: %@", self.db.enableDebug ? [clause debugDescription] : [clause description], [db lastError]);     \
+        ALLogError(@"Execute SQL: %@; ⛔ ERROR: %@", self.db.enableDebug ? [clause debugDescription] : [clause description], [db lastError]);     \
     }                                                                                   \
 }
 

@@ -35,7 +35,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
     if ([db executeUpdate:sql]) {
         return YES;
     }
-    ALLogError(@"Execute SQL: %@; ✘ ERROR: %@", sql, [db lastError]);
+    ALLogError(@"Execute SQL: %@; ⛔ ERROR: %@", sql, [db lastError]);
     return NO;
 }
 
@@ -92,7 +92,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
         NSAssert(NO, @"*** parameter 'table' is empty!");
         return nil;
     }
-    FMResultSet *rs = [db executeQuery:@"PRAGMA table_info(?)", table];
+    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"PRAGMA table_info('%@')", table]];
     if (rs == nil || rs.columnCount < 2) {
         return nil;
     }
@@ -205,11 +205,8 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
             NSOrderedSet *tblColumns = [self columnsForTable:modelTblName database:db];
             [[modelClass columns] bk_each:^(id key, ALDBColumnInfo *colinfo) {
                 if (![tblColumns containsObject:colinfo.name]) {// new column
-                    NSString *sql = [NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
-                                     [colinfo columnDefine]];
-                    if (![db executeUpdate:sql]) {
-                        ALLogError(@"Execute SQL: %@; ✘ ERROR: %@", sql, [db lastError]);
-                    }
+                    executeSQL([NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
+                                [colinfo columnDefine]], db);
                 }
             }];
             

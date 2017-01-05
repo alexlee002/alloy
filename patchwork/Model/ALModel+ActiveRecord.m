@@ -112,7 +112,7 @@ SYNTHESIZE_ASC_OBJ(modelClass, setModelClass);
         @"property '%@' should be type of NSInteger", aliasName);               \
     }
 #else
-    #define __verify_rowid_alias_type     do{}while(0)
+    #define __verify_rowid_alias_type(cls)     do{}while(0)
 #endif
 
 static ALDatabase *SafeDB(ALDatabase *db) {
