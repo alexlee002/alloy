@@ -221,7 +221,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
         return nil;
     }
 
-    return [NSString stringWithFormat:@"%@_%@_$_%@", (unique ? @"uniq_" : @"idx_"), table,
+    return [NSString stringWithFormat:@"%@_%@_$_%@", (unique ? @"uniq" : @"idx"), table,
                                       [columns componentsJoinedByString:@"_$_"]];
 }
 
