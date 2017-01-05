@@ -42,6 +42,86 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
 
 @implementation ALDBMigrationHelper
 
++ (void)setupDatabase:(FMDatabase *)db {
+    [[self modelClassesWithDatabasePath:db.databasePath] bk_each:^(Class cls) {
+        if ([self createTableForModel:cls database:db]) {
+            ALLogInfo(@"Table '%@' created!", [cls tableName]);
+        }
+    }];
+}
+
++ (void)autoMigrateDatabase:(FMDatabase *)db {
+    NSMutableSet *tables = [[self tablesInDatabase:db] mutableCopy];
+    
+    for (Class modelClass in [self modelClassesWithDatabasePath:db.databasePath]){
+        NSString *modelTblName = [modelClass tableName];
+        if ([tables containsObject:modelTblName]) {
+            
+            // migrate columns
+            NSOrderedSet *tblColumns = [self columnsForTable:modelTblName database:db];
+            [[modelClass columns] bk_each:^(id key, ALDBColumnInfo *colinfo) {
+                if (![tblColumns containsObject:colinfo.name]) {// new column
+                    ALLogInfo(@"Table: '%@', ADD new column: '%@'", modelTblName, colinfo.name);
+                    executeSQL([NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
+                                [colinfo columnDefine]], db);
+                }
+            }];
+            
+            // migrate indexes
+            NSMutableSet *tblIdxes = [[self indexesForTable:modelTblName database:db] mutableCopy];
+            [self migrateIndexes:[modelClass uniqueKeys]
+                         uniqued:YES
+                        forModel:modelClass
+                 withExistedKeys:tblIdxes
+                        database:db];
+            [self migrateIndexes:[modelClass indexKeys]
+                         uniqued:NO
+                        forModel:modelClass
+                 withExistedKeys:tblIdxes
+                        database:db];
+            
+            for (NSString *idxName in tblIdxes) {
+                ALLogInfo(@"Table: '%@', DROP index: '%@'", modelTblName, idxName);
+                executeSQL([NSString stringWithFormat:@"DROP INDEX IF EXISTS %@", idxName], db);
+            }
+            
+        } else {
+            if ([self createTableForModel:modelClass database:db]) {
+                ALLogInfo(@"Table '%@' created!", modelTblName);
+            }
+        }
+        
+        [tables removeObject:modelTblName];
+    }
+    
+    if (tables.count > 0) {
+        ALLogWarn(@"No model associated with these tables, manually drop them if confirmed useless: [%@]",
+                 [tables.allObjects componentsJoinedByString:@", "]);
+    }
+}
+
+// private
++ (void)migrateIndexes:(NSArray<NSArray<NSString *> *> *)keys
+               uniqued:(BOOL)uniqued
+              forModel:(Class)modelCls
+       withExistedKeys:(NSMutableSet *)tblIdxes
+              database:(FMDatabase *)db {
+    
+    [keys bk_each:^(NSArray<NSString *> *arr) {
+        arr = [arr bk_map:^NSString *(NSString *propName) {
+            return [modelCls mappedColumnNameForProperty:propName];
+        }];
+        
+        NSString *idxname = [self indexNameWithColumns:arr uniqued:uniqued];
+        if (![tblIdxes containsObject:idxname]) { // new index
+            if ([self createIndexForModel:modelCls withColumns:arr uniqued:uniqued database:db]) {
+                ALLogInfo(@"Table: '%@', ADD new index: '%@'", [modelCls tableName], idxname);
+            }
+        }
+        [tblIdxes removeObject:idxname];
+    }];
+}
+
 + (NSSet<Class> *)modelClassesWithDatabasePath:(NSString *)dbpath {
     return [[ALOCRuntime subClassesOf:[ALModel class]] bk_select:^BOOL(Class cls) {
         Class metacls = objc_getMetaClass(object_getClassName(cls));
@@ -54,6 +134,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
     FMResultSet *rs =
         [db executeQuery:@"SELECT tbl_name FROM sqlite_master WHERE type = ? AND name NOT LIKE ?", @"table", @"sqlite_%"];
     if (rs == nil) {
+        ALLogError(@"%@", [db lastError]);
         return nil;
     }
 
@@ -75,6 +156,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
     FMResultSet *rs =
     [db executeQuery:@"SELECT name FROM sqlite_master WHERE type = ? AND tbl_name = ?", @"index", table];
     if (rs == nil) {
+        ALLogError(@"%@", [db lastError]);
         return nil;
     }
     
@@ -92,8 +174,16 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
         NSAssert(NO, @"*** parameter 'table' is empty!");
         return nil;
     }
-    FMResultSet *rs = [db executeQuery:[NSString stringWithFormat:@"PRAGMA table_info('%@')", table]];
+    
+    NSString *sql = [NSString stringWithFormat:@"PRAGMA table_info('%@')", table];
+    FMResultSet *rs = [db executeQuery:sql];
     if (rs == nil || rs.columnCount < 2) {
+        if ([db hadError]) {
+            ALLogError(@"Execute SQL: %@; ⛔ ERROR: %@", sql, [db lastError]);
+        } else {
+            ALLogError(@"Incorrect result of SQL: %@", sql);
+        }
+        NSAssert(NO, @"Can not get table columns info");
         return nil;
     }
     
@@ -109,8 +199,17 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
 + (BOOL)createTableForModel:(Class)modelCls database:(FMDatabase *)db {
     BOOL result = executeSQL([self tableSchemaForModel:modelCls], db);
     if (result) {
-        [self migrateIndexes:[modelCls uniqueKeys] uniqued:YES forModel:modelCls withExistedKeys:nil database:db];
-        [self migrateIndexes:[modelCls indexKeys] uniqued:NO forModel:modelCls withExistedKeys:nil database:db];
+        [[modelCls uniqueKeys] bk_each:^(NSArray<NSString *> * keys) {
+            [self createIndexForModel:modelCls withColumns:[keys bk_map:^NSString *(NSString *propname) {
+                return [modelCls mappedColumnNameForProperty:propname];
+            }] uniqued:YES database:db];
+        }];
+        
+        [[modelCls indexKeys] bk_each:^(NSArray<NSString *> * keys) {
+            [self createIndexForModel:modelCls withColumns:[keys bk_map:^NSString *(NSString *propname) {
+                return [modelCls mappedColumnNameForProperty:propname];
+            }] uniqued:NO database:db];
+        }];
     }
     return result;
 }
@@ -121,7 +220,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
         return nil;
     }
 
-    return [(unique ? @"uniq_" : @"idx_") stringByAppendingString:[columns componentsJoinedByString:@"#"]];
+    return [(unique ? @"uniq_" : @"idx_") stringByAppendingString:[columns componentsJoinedByString:@"_$_"]];
 }
 
 + (BOOL)createIndexForModel:(Class)modelCls
@@ -173,72 +272,5 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
     
     return [sqlClause copy];
 }
-
-// private
-+ (void)migrateIndexes:(NSArray<NSArray<NSString *> *> *)keys
-               uniqued:(BOOL)uniqued
-              forModel:(Class)modelCls
-       withExistedKeys:(NSMutableSet *)tblIdxes
-              database:(FMDatabase *)db {
-    
-    [keys bk_each:^(NSArray<NSString *> *arr) {
-        arr = [arr bk_map:^NSString *(NSString *propName) {
-            return [modelCls mappedColumnNameForProperty:propName];
-        }];
-        
-        NSString *idxname = [self indexNameWithColumns:arr uniqued:uniqued];
-        if (![tblIdxes containsObject:idxname]) { // new index
-            [self createIndexForModel:modelCls withColumns:arr uniqued:uniqued database:db];
-        }
-        [tblIdxes removeObject:idxname];
-    }];
-}
-
-+ (void)autoMigrateDatabase:(FMDatabase *)db {
-    NSMutableSet *tables = [[self tablesInDatabase:db] mutableCopy];
-    
-    for (Class modelClass in [self modelClassesWithDatabasePath:db.databasePath]){
-        NSString *modelTblName = [modelClass tableName];
-        if ([tables containsObject:modelTblName]) {
-            
-            // migrate columns
-            NSOrderedSet *tblColumns = [self columnsForTable:modelTblName database:db];
-            [[modelClass columns] bk_each:^(id key, ALDBColumnInfo *colinfo) {
-                if (![tblColumns containsObject:colinfo.name]) {// new column
-                    executeSQL([NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
-                                [colinfo columnDefine]], db);
-                }
-            }];
-            
-            // migrate indexes
-            NSMutableSet *tblIdxes = [[self indexesForTable:modelTblName database:db] mutableCopy];
-            [self migrateIndexes:[modelClass uniqueKeys]
-                         uniqued:YES
-                        forModel:modelClass
-                 withExistedKeys:tblIdxes
-                        database:db];
-            [self migrateIndexes:[modelClass indexKeys]
-                         uniqued:NO
-                        forModel:modelClass
-                 withExistedKeys:tblIdxes
-                        database:db];
-            
-            for (NSString *idxName in tblIdxes) {
-                executeSQL([NSString stringWithFormat:@"DROP INDEX IF EXISTS %@", idxName], db);
-            }
-
-        } else {
-            [self createTableForModel:modelClass database:db];
-        }
-        
-        [tables removeObject:modelTblName];
-    }
-    
-    if (tables.count > 0) {
-        _ALDBLog(@"No model associated with these tables, manually drop them if confirmed useless: [%@]",
-                 [tables.allObjects componentsJoinedByString:@", "]);
-    }
-}
-
 
 @end

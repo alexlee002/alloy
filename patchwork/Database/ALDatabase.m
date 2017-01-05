@@ -132,7 +132,11 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         if (migrationProcessor == nil) {
             _ALDBLog(@"Not found database migration processor, try auto-migration. database path: %@", _queue.path);
             
-            [ALDBMigrationHelper autoMigrateDatabase:db];
+            if (!_dbFileExisted) {
+                [ALDBMigrationHelper setupDatabase:db];
+            } else {
+                [ALDBMigrationHelper autoMigrateDatabase:db];
+            }
             ret = YES;
         } else {
         
@@ -144,7 +148,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
                 if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
                     created = [migrationProcessor setupDatabase:db];
                 } else {
-                    [ALDBMigrationHelper autoMigrateDatabase:db];
+                    [ALDBMigrationHelper setupDatabase:db];
                     created = YES;
                 }
                 
@@ -161,8 +165,8 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
                     if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
                         ret = [self updateDatabaseVersion:newVersion dbHandler:db];
                     } else {
-                        NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
-                                 _queue.path);
+                        NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion),
+                                 @(newVersion), _queue.path);
                         ret = NO;
                     }
                 } else if (dbVersion > newVersion) {

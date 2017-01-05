@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ALDBMigrationHelper : NSObject
 
++ (void)setupDatabase:(FMDatabase *)db;
 + (void)autoMigrateDatabase:(FMDatabase *)db;
 
 + (nullable NSSet<Class> *)modelClassesWithDatabasePath:(NSString *)dbpath;
