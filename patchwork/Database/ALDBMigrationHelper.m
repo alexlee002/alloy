@@ -112,10 +112,11 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
             return [modelCls mappedColumnNameForProperty:propName];
         }];
         
-        NSString *idxname = [self indexNameWithColumns:arr uniqued:uniqued];
+        NSString *tblname = [modelCls tableName];
+        NSString *idxname = [self indexNameForTable:tblname columns:arr uniqued:uniqued];
         if (![tblIdxes containsObject:idxname]) { // new index
             if ([self createIndexForModel:modelCls withColumns:arr uniqued:uniqued database:db]) {
-                ALLogInfo(@"Table: '%@', ADD new index: '%@'", [modelCls tableName], idxname);
+                ALLogInfo(@"Table: '%@', ADD new index: '%@'", tblname, idxname);
             }
         }
         [tblIdxes removeObject:idxname];
@@ -214,13 +215,14 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
     return result;
 }
 
-+ (nullable NSString *)indexNameWithColumns:(NSArray<NSString *> *)columns uniqued:(BOOL)unique {
++ (nullable NSString *)indexNameForTable:(NSString *)table columns:(NSArray<NSString *> *)columns uniqued:(BOOL)unique {
     if (columns.count == 0) {
         NSAssert(NO, @"index columns is empty!");
         return nil;
     }
 
-    return [(unique ? @"uniq_" : @"idx_") stringByAppendingString:[columns componentsJoinedByString:@"_$_"]];
+    return [NSString stringWithFormat:@"%@_%@_$_%@", (unique ? @"uniq_" : @"idx_"), table,
+                                      [columns componentsJoinedByString:@"_$_"]];
 }
 
 + (BOOL)createIndexForModel:(Class)modelCls
@@ -228,10 +230,11 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
                     uniqued:(BOOL)uniqued
                    database:(FMDatabase *)db {
     
+    NSString *tblname = [modelCls tableName];
     NSString *sql = [NSString stringWithFormat:@"CREATE %@INDEX IF NOT EXISTS %@ ON %@(%@)",
                      (uniqued ? @"UNIQUE " : @""),
-                     [self indexNameWithColumns:colnames uniqued:uniqued],
-                     [modelCls tableName],
+                     [self indexNameForTable:tblname columns:colnames uniqued:uniqued],
+                     tblname,
                      [colnames componentsJoinedByString:@", "]];
     return executeSQL(sql, db);
 }

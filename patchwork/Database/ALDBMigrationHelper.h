@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSSet<NSString *> *)indexesForTable:(NSString *)table database:(FMDatabase *)db;
 + (nullable NSOrderedSet<NSString *> *)columnsForTable:(NSString *)table database:(FMDatabase *)db;
 
-+ (nullable NSString *)indexNameWithColumns:(NSArray<NSString *> *)columns uniqued:(BOOL)unique;
++ (nullable NSString *)indexNameForTable:(NSString *)table columns:(NSArray<NSString *> *)columns uniqued:(BOOL)unique;
 
 + (BOOL)createTableForModel:(Class)modelCls database:(FMDatabase *)db;
 + (BOOL)createIndexForModel:(Class)modelCls
