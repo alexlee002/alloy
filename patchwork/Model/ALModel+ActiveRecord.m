@@ -88,6 +88,7 @@ SYNTHESIZE_ASC_OBJ(modelClass, setModelClass);
         return models;
     };
 }
+
 @end
 
 
@@ -533,81 +534,6 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     }
     
     return SafeDB([self DB]).DELETE().FROM([self tableName]).WHERE(condition).EXECUTE_UPDATE();
-}
-
-+ (nullable NSString *)tableSchema {
-    NSString *tableName = castToTypeOrNil([self tableName], NSString);
-    if (tableName.length == 0) {
-        return nil;
-    }
-    
-    NSMutableString *sqlClause = [NSMutableString string];
-    
-    // CREATE TABLE
-    [sqlClause appendFormat:@"CREATE TABLE IF NOT EXISTS %@ (", tableName];
-    
-    // COLUMN DEF
-    [sqlClause appendString:[[[[[self columns] bk_reject:^BOOL(NSString *key, id obj) {
-        return [key isEqualToString:keypathForClass(ALModel, rowid)];
-    }].allValues sortedArrayUsingComparator:[self columnOrderComparator]]
-                              bk_map:^NSString *(ALDBColumnInfo *column) {
-                                  return [column columnDefine];
-                              }] componentsJoinedByString:@", "]];
-    
-    // PRIMARY KEY
-    NSArray *indexKeys = [[self primaryKeys] bk_map:^NSString *(NSString *propertyName) {
-        return [self mappedColumnNameForProperty:propertyName];
-    }];
-    if ([indexKeys count] > 0) {
-        [sqlClause appendFormat:@", PRIMARY KEY (%@)", [indexKeys componentsJoinedByString:@", "]];
-    }
-    
-    [sqlClause appendString:@")"];
-    
-    if ([self withoutRowId]) {
-        [sqlClause appendString:@"WITHOUT ROWID"];
-    }
-    
-    return [sqlClause copy];
-}
-
-+ (NSArray<NSString *> *)indexStatements {
-    NSMutableArray *stmts = [NSMutableArray array];
-    NSArray *array = [self indexeStatementWithKeys:[self uniqueKeys] unique:YES];
-    if (array.count > 0) {
-        [stmts addObjectsFromArray:array];
-    }
-    
-    array = [self indexeStatementWithKeys:[self indexKeys] unique:NO];
-    if (array.count > 0) {
-        [stmts addObjectsFromArray:array];
-    }
-    return stmts;
-}
-
-+ (nullable NSArray<NSString *> *)indexeStatementWithKeys:(nullable NSArray<NSArray<NSString *> *> *)indexKeys
-                                                   unique:(BOOL)unique {
-    if ([indexKeys count] > 0) {
-        NSString *tableName = castToTypeOrNil([self tableName], NSString);
-        if (tableName.length == 0) {
-            return nil;
-        }
-
-        return [[indexKeys bk_reject:^BOOL(NSArray<NSString *> *cols) {
-            return ![cols isKindOfClass:[NSArray class]] || cols.count == 0;
-        }] bk_map:^NSString *(NSArray<NSString *> *cols) {
-            cols = [cols bk_map:^NSString *(NSString *pn) {
-                return [self mappedColumnNameForProperty:pn];
-            }];
-            NSString *idxName = [cols componentsJoinedByString:@"_"];
-            idxName          = [NSString stringWithFormat:@"%@_%@_%@", (unique ? @"uniq" : @"idx"), tableName, idxName];
-            NSString *idxVal = [cols componentsJoinedByString:@", "];
-
-            return [NSString stringWithFormat:@"CREATE %@ INDEX IF NOT EXISTS %@ ON %@(%@)", (unique ? @"UNIQUE" : @""),
-                                              idxName, tableName, idxVal];
-        }];
-    }
-    return nil;
 }
 
 @end

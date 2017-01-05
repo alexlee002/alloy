@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class FMDatabase;
 @interface ALFMDatabaseQueue : NSObject
+
 @property(readonly, nullable) NSString *path;
 
 - (instancetype)initWithPath:(nullable NSString*)aPath;
@@ -36,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface ALFMDatabaseQueue (ALDebug)
+@interface ALFMDatabaseQueue (ALExtension)
 @property(atomic, assign) BOOL shouldCacheStatements;
 @end
 

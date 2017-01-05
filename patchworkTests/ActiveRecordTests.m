@@ -116,9 +116,6 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     
     [student deleteRecord];
     XCTAssertEqual([Student fetcher].FETCH_COUNT(nil), 0);
-    
-    ALLogInfo(@"%@", [Student tableSchema]);
-    ALLogInfo(@"%@", [Student indexStatements]);
 }
 
 - (void)testActiveRecord1 {

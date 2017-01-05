@@ -18,5 +18,5 @@
 - (void)databaseDidSetup:(FMDatabase *)db;
 
 - (void)databaseWillClose:(FMDatabase *)db;
-- (void)databaseDidClose:(FMDatabase *)db;
+- (void)databaseWithPathDidClose:(NSString *)dbpath;
 @end

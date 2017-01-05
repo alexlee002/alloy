@@ -10,24 +10,20 @@
 #import "NSString+Helper.h"
 #import "FMDB.h"
 #import "BlocksKit.h"
-#import "UtilitiesHeader.h"
-#import "ALModel.h"
 #import "ALOCRuntime.h"
 #import "ALDBMigrationProtocol.h"
 #import "ALDBConnectionProtocol.h"
 #import "SafeBlocksChain.h"
-#import "NSCache+ALExtensions.h"
-#import "ALDBLog_private.h"
+#import "PatchworkLog_private.h"
 #import "ALLock.h"
+#import "ALDBMigrationHelper.h"
 
-#import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSString * const kALInMemoryDBPath = @":memory:";  // in-memory db
 NSString * const kALTempDBPath     = @"";          // temp db;
 
-static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name);
 
 static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 
@@ -35,6 +31,7 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     NSSet<Class>      *_modelClasses;
     BOOL               _dbFileExisted;
     BOOL               _enableDebug;
+    id<ALDBConnectionProtocol> _openHelper;
 }
 
 #pragma mark - database manager
@@ -44,30 +41,31 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         return nil;
     }
     
-    // @see "+[FMDatabase databaseWithPath:]",  @"" => temp DB; nil => in-memory DB
-    NSString *dbFilePath = path;
-    if ([path isEqualToString:kALInMemoryDBPath]) {
-        dbFilePath = nil;
-    } else if ([path isEqualToString:kALTempDBPath]) {
-        dbFilePath = @"";
-    }
-    
-    static_gcd_semaphore(localSem, 1);
-    __block ALDatabase *db = nil;
-    with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
-        if (kDatabaseDict == nil) {
-            kDatabaseDict = [NSMutableDictionary dictionary];
-        }
-        db = kDatabaseDict[path];
-        if (db == nil) {
-            if((db = [(ALDatabase *)[self alloc] initWithPath:dbFilePath]) != nil) {
-                kDatabaseDict[path] = db;
-            } else {
-                db = nil;
+    __block ALDatabase *db = kDatabaseDict[path];
+    if (db == nil) {
+        static_gcd_semaphore(localSem, 1);
+        with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
+            if (kDatabaseDict == nil) {
+                kDatabaseDict = [NSMutableDictionary dictionary];
             }
-        }
-    });
-    
+            db = kDatabaseDict[path];
+            if (db == nil) {
+                // @see "+[FMDatabase databaseWithPath:]",  @"" => temp DB; nil => in-memory DB
+                NSString *dbFilePath = path;
+                if ([path isEqualToString:kALInMemoryDBPath]) {
+                    dbFilePath = nil;
+                } else if ([path isEqualToString:kALTempDBPath]) {
+                    dbFilePath = @"";
+                }
+                
+                if((db = [(ALDatabase *)[self alloc] initWithPath:dbFilePath]) != nil) {
+                    kDatabaseDict[path] = db;
+                } else {
+                    db = nil;
+                }
+            }
+        });
+    }
     return db;
 }
 
@@ -103,11 +101,118 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     return self;
 }
 
+- (void)dealloc {
+    [self close];
+}
+
 // To support chain expression syntax, we need to support default -init constructor that we can
 // create a "fake" object to avoid crash. -- Think about "nil();".
 //- (nullable instancetype)init {
 //    return nil;
 //}
+
+- (BOOL)open {
+    if (_queue == nil) {
+        return NO;
+    }
+    
+    id<ALDBMigrationProtocol> migrationProcessor = [self dbMigrationProcessor];
+    _openHelper = [self connectionHandler];
+    
+    __block BOOL ret = YES;
+    [_queue inDatabase:^(FMDatabase * _Nonnull db) {
+        [db closeOpenResultSets];
+        
+        // extension point: you can define some specified configs immediately after DB opened。
+        if ([_openHelper respondsToSelector:@selector(databaseDidOpen:)]) {
+            [_openHelper databaseDidOpen:db];
+        }
+        
+        // database migration
+        if (migrationProcessor == nil) {
+            _ALDBLog(@"Not found database migration processor, try auto-migration. database path: %@", _queue.path);
+            
+            [ALDBMigrationHelper autoMigrateDatabase:db];
+            ret = YES;
+        } else {
+        
+            // all the database version should begins from 1 (DO NOT begins from 0 !!!)
+            NSInteger newVersion = [migrationProcessor currentVersion];
+            
+            if (!_dbFileExisted) { // create database directly
+                BOOL created = NO;
+                if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
+                    created = [migrationProcessor setupDatabase:db];
+                } else {
+                    [ALDBMigrationHelper autoMigrateDatabase:db];
+                    created = YES;
+                }
+                
+                if (created) {
+                    ret = [self updateDatabaseVersion:newVersion dbHandler:db];
+                } else {
+                    NSAssert(NO, @"Can not setup database: %@", _queue.path);
+                    ret = NO;
+                }
+            } else {
+                NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
+
+                if (dbVersion < newVersion) {
+                    if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
+                        ret = [self updateDatabaseVersion:newVersion dbHandler:db];
+                    } else {
+                        NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
+                                 _queue.path);
+                        ret = NO;
+                    }
+                } else if (dbVersion > newVersion) {
+                    NSAssert(NO, @"Illegal database version. original:%@, new version:%@",
+                             @(dbVersion), @(newVersion));
+                    ret = NO;
+                }
+            }
+        }
+        
+        // extension point
+        if ([_openHelper respondsToSelector:@selector(databaseDidSetup:)]) {
+            [_openHelper databaseDidSetup:db];
+        }
+    }];
+    
+    return ret;
+}
+
+- (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db {
+    BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", (long)version]];
+    if (!ret) {
+#if DEBUG
+        NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
+                     [db lastError]);
+#endif
+        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
+                      [db lastError]);
+    }
+    return ret;
+}
+
+- (void)close {
+    // extension point
+    [_queue inDatabase:^(FMDatabase * _Nonnull db) {
+        if ([_openHelper respondsToSelector:@selector(databaseWillClose:)]) {
+            [_openHelper databaseWillClose:db];
+        }
+    }];
+    
+    NSString *path = _queue.path;
+    [kDatabaseDict removeObjectForKey:path];
+    [_queue close];
+    _queue = nil;
+    
+    // extension point
+    if ([_openHelper respondsToSelector:@selector(databaseWithPathDidClose:)]) {
+        [_openHelper databaseWithPathDidClose:path];
+    }
+}
 
 - (id)copy {
     return self;
@@ -129,123 +234,6 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         return [cls canHandleDatabaseWithPath:_queue.path];
     }].anyObject;
     return [[cls alloc] init];
-}
-
-- (void)autoSetupDatabase:(FMDatabase *)db {
-    NSSet *objTables = [self modelClasses];
-    if (objTables.count == 0) {
-        ALLogWarn(@"*** Not found any object store in database:%@", _queue.path);
-        return;
-    }
-    
-    [objTables bk_each:^(Class cls) {
-        [db executeUpdate:[cls tableSchema]];
-        [[cls indexStatements] bk_each:^(NSString *sql) {
-            [db executeUpdate:sql];
-        }];
-    }];
-}
-
-- (BOOL)open {
-    if (_queue == nil) {
-        return NO;
-    }
-    
-    id<ALDBMigrationProtocol> migrationProcessor = [self dbMigrationProcessor];
-    id<ALDBConnectionProtocol> openHelper = [self connectionHandler];
-    
-    __block BOOL ret = YES;
-    [_queue inDatabase:^(FMDatabase * _Nonnull db) {
-        [db closeOpenResultSets];
-        
-        // extension point: you can define some specified configs immediately after DB opened。
-        if ([openHelper respondsToSelector:@selector(databaseDidOpen:)]) {
-            [openHelper databaseDidOpen:db];
-        }
-        
-        // database migration
-        if (migrationProcessor == nil) {
-            ALLogWarn(@"*** Not found any migration processor for database:%@", _queue.path);
-            
-            [self autoSetupDatabase:db];
-            ret = YES;
-        } else {
-        
-            // all the database version should begins from 1 (DO NOT begins from 0 !!!)
-            NSInteger newVersion = [migrationProcessor currentVersion];
-            if (!_dbFileExisted) { // create database directly
-                BOOL created = NO;
-                if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
-                    created = [migrationProcessor setupDatabase:db];
-                } else {
-                    [self autoSetupDatabase:db];
-                    created = YES;
-                }
-                
-                if (created) {
-                    ret = [self updateDatabaseVersion:newVersion dbHandler:db];
-                } else {
-                    NSAssert(NO, @"Can not setup database: %@", _queue.path);
-                    ret = NO;
-                }
-            } else {
-                NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
-                NSAssert(dbVersion <= newVersion, @"Illegal database version. original:%@, new version:%@",
-                         @(dbVersion), @(newVersion));
-
-                if (dbVersion < newVersion) {
-                    if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
-                        ret = [self updateDatabaseVersion:newVersion dbHandler:db];
-                    } else {
-                        NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion), @(newVersion),
-                                 _queue.path);
-                        ret = NO;
-                    }
-                }
-            }
-        }
-        
-        // extension point
-        if ([openHelper respondsToSelector:@selector(databaseDidSetup:)]) {
-            [openHelper databaseDidSetup:db];
-        }
-    }];
-    
-    return ret;
-}
-
-- (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db {
-    BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", (long)version]];
-    if (!ret) {
-#if DEBUG
-        NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
-                     [db lastError]);
-#endif
-        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
-                      [db lastError]);
-    }
-    return ret;
-}
-
-- (void)close {
-    [kDatabaseDict removeObjectForKey:_queue.path];
-    [_queue close];
-}
-
-
-
-- (NSSet<Class> *)modelClasses {
-    if (_modelClasses != nil) {
-        return _modelClasses;
-    }
-    
-    _modelClasses = [[ALOCRuntime subClassesOf:[ALModel class]] bk_select:^BOOL(Class cls) {
-        Class metacls = objc_getMetaClass(object_getClassName(cls));
-        NSString *name = NSStringFromSelector(@selector(databaseIdentifier));
-        return hasClassMethod(metacls, name) && [[cls databaseIdentifier] isEqualToString:_queue.path];
-    }];
-    
-    return _modelClasses;
 }
 
 @end
@@ -297,23 +285,5 @@ __ALDB_STMT_BLOCK(ALSQLDeleteStatement, DELETE);
 
 @end
 
-
-AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
-    BOOL found = NO;
-    unsigned int methodCount = 0;
-    Method *methods = class_copyMethodList(cls, &methodCount);
-    if (methods) {
-        for (unsigned int i = 0; i < methodCount; i++) {
-            SEL sel = method_getName(methods[i]);
-            NSString *methodName = [NSString stringWithUTF8String:sel_getName(sel)];
-            if ([methodName isEqualToString:name]) {
-                found =  YES;
-                break;
-            }
-        }
-        free(methods);
-    }
-    return found;
-}
 
 NS_ASSUME_NONNULL_END

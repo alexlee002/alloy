@@ -12,10 +12,11 @@
 #import "ALLogger.h"
 
 // for Patchwork only
-#ifdef ALDB_DEBUG_LOG_OFF
-    #define _ALDBLog    do{}while(0)
+#if ALDB_DEBUG_LOG_OFF
+#define _ALDBLog(...)    do{}while(0)
 #else
-    #define _ALDBLog    ALLogVerbose
+#define _ALDBLog         ALLogVerbose
 #endif
+
 
 #endif /* ALDBLog_private_h */

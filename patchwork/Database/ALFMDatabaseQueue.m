@@ -10,7 +10,7 @@
 #import "FMDB.h"
 #import "UtilitiesHeader.h"
 #import "ALOCRuntime.h"
-#import "ALDBLog_private.h"
+#import "PatchworkLog_private.h"
 #import <sqlite3.h>
 
 #ifndef MAX_DB_BLOCK_EXECUTE_SEC
@@ -128,7 +128,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 - (void)safelyRun:(void (^)(void))block {
     ALFMDatabaseQueue *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueSpecificKey);
     if (currentSyncQueue == self) {
-        ALLogError(@"!!! Nested database operation blocks!");
+        ALLogWarn(@"!!! Nested database operation blocks!");
         OP_BLOCK(block);
     } else {
         dispatch_sync(_queue, ^{
@@ -279,6 +279,18 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
     }];
     FMDBRelease(self);
     return err;
+}
+
+@end
+
+@implementation ALFMDatabaseQueue (ALExtension)
+
+- (void)setShouldCacheStatements:(BOOL)shouldCacheStatements {
+    [self database].shouldCacheStatements = shouldCacheStatements;
+}
+
+- (BOOL)shouldCacheStatements {
+    return [self database].shouldCacheStatements;
 }
 
 @end

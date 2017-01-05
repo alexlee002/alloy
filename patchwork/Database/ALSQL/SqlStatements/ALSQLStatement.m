@@ -9,15 +9,15 @@
 #import "ALSQLStatement.h"
 #import "ALDatabase.h"
 #import "SafeBlocksChain.h"
-#import "ALDBLog_private.h"
+#import "PatchworkLog_private.h"
 
-#define __STMT_EXEC_LOG(result)     {                                               \
-    ALSQLClause *clause = [self.SQLString SQLClauseWithArgValues:self.argValues];   \
-    if (result) {                                                                   \
-        _ALDBLog(@"execute SQL: %@; ✔", self.db.enableDebug ? [clause debugDescription] : [clause description]);   \
-    } else {                                                                        \
-        ALLogError(@"execute SQL: %@; ✘", self.db.enableDebug ? [clause debugDescription] : [clause description]);     \
-    }                                                                               \
+#define __STMT_EXEC_LOG(result, db)     {                                               \
+    ALSQLClause *clause = [self.SQLString SQLClauseWithArgValues:self.argValues];       \
+    if ((result)) {                                                                     \
+        _ALDBLog(@"Execute SQL: %@; ✔", self.db.enableDebug ? [clause debugDescription] : [clause description]);   \
+    } else {                                                                            \
+        ALLogError(@"Execute SQL: %@; ✘ ERROR: %@", self.db.enableDebug ? [clause debugDescription] : [clause description], [db lastError]);     \
+    }                                                                                   \
 }
 
 NS_ASSUME_NONNULL_BEGIN
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
         
         [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
             FMResultSet *rs = [db executeQuery:self.SQLString withArgumentsInArray:self.argValues];
-            __STMT_EXEC_LOG(rs != nil);
+            __STMT_EXEC_LOG(rs != nil, db);
             safeInvokeBlock(resultHaldler, rs);
             [rs close];
         }];
@@ -86,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
         __block BOOL result = NO;
         [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
             result = [db executeUpdate:self.SQLString withArgumentsInArray:self.argValues];
-            __STMT_EXEC_LOG(result);
+            __STMT_EXEC_LOG(result, db);
         }];
         
         return result;
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
         BOOL result = [db executeUpdate:self.SQLString withArgumentsInArray:self.argValues];
-        __STMT_EXEC_LOG(result);
+        __STMT_EXEC_LOG(result, db);
     }];
 }
 

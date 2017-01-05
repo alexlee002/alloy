@@ -34,7 +34,7 @@ target 'patchwork-demo-osx' do
 	project 'Examples/patchwork-demo-osx/patchwork-demo-osx.xcodeproj'
 	platform :osx, '10.10'
 	shared_pods
-    #pod 'patchwork-demo', :podspec => 'patchwork-demo.podspec'
+    pod 'patchwork-demo', :path => '.'
 end
 
 

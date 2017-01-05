@@ -110,10 +110,6 @@ extern NSString * const kRowIdColumnName;
 + (BOOL)updateRecords:(NSArray<ALModel *> *)models replace:(BOOL)replaceExisted;
 + (BOOL)deleteRecordsWithCondition:(nullable ALSQLClause *)condition;
 
-// sql statments
-+ (nullable NSString *)tableSchema;
-+ (NSArray<NSString *> *)indexStatements;
-
 @end
 
 

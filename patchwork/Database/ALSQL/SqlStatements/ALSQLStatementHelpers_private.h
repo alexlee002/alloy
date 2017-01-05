@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ALDBLog_private.h"
+#import "PatchworkLog_private.h"
 
 // private utilities tools for ALSQLStatment
 
