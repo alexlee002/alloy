@@ -13,8 +13,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
-                                           NSString *message) {
+AL_FORCE_INLINE void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+                              NSString *message) {
     static BOOL hasDebugger = NO;
     static NSDateFormatter *dateFormatter = nil;
     static dispatch_once_t onceToken;
@@ -95,31 +95,26 @@ AL_FORCE_INLINE static void _ALLogInternal(NSString *file, int line, NSString *f
     });
 }
 
-void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    NSString *msg = [[NSString alloc] initWithFormat:fmt arguments:args];
-    va_end(args);
-    _ALLogInternal(file, line, func, tag, level, msg);
+#define __VariadicArgsImp()                                               \
+    if (fmt == nil) {                                                     \
+        return;                                                           \
+    }                                                                     \
+    va_list args;                                                         \
+    va_start(args, fmt);                                                  \
+    NSString *msg = [[NSString alloc] initWithFormat:fmt arguments:args]; \
+    va_end(args);                                                         \
+    ALLogImp(file, line, func, tag, level, msg);
+
+void ALLog(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level, NSString *fmt,
+                           ...) {
+    __VariadicArgsImp();
 }
 
-void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...) {
+void ALLogDebug(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+                                NSString *fmt, ...) {
 #if DEBUG
-    va_list args;
-    va_start(args, fmt);
-    NSString *msg = [[NSString alloc] initWithFormat:fmt arguments:args];
-    va_end(args);
-    _ALLogInternal(file, line, func, tag, level, msg);
+    __VariadicArgsImp();
 #endif
-}
-
-
-void ALLogV1(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *message) {
-    ALLog(file, line, func, tag, level, message);
-}
-
-void ALLogDebugV1(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *message) {
-    ALLogDebug(file, line, func, tag, level, message);
 }
 
 NS_ASSUME_NONNULL_END

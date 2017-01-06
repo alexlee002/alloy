@@ -16,15 +16,14 @@ typedef NS_ENUM(NSInteger, ALLogLevel) {
     ALLogLevelError,
 };
 
+extern void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+              NSString *message);
+
 //always log, much like NSLog
 extern void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
 
 // only log in DEBUG model
 extern void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
-
-// for swift, can not call variadic functions in swift.
-extern void ALLogV1(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *message);
-extern void ALLogDebugV1(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *message);
 
 
 #if DEBUG
