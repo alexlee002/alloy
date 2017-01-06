@@ -23,7 +23,7 @@ extern id _Nullable instanceOfFakeBlocksChainClass(Class srcClass, NSString *fil
     backtraceStack(10)) ))
 
 #define ValidBlocksChainObjectOrReturn(obj, returnExp)  \
-    if (![(obj) isValidBlocksChainObject]) {            \
+    if (!ObjIsValidBlocksChainObject((obj))) {          \
         return (returnExp);                             \
     }
 
