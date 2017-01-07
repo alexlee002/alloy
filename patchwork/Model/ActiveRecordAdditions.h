@@ -12,7 +12,7 @@
 
 
 #define validatePropertyColumnMappings(cls, propNames, retVal)  \
-    NSDictionary *columns = [(cls) columns];                    \
+    NSDictionary *columns = [(cls) tableColumns];               \
     for (NSString *name in (propNames)) {                       \
         if (columns[(name)] == nil) {                           \
             NSAssert(NO, @"*** [%@] no column mapped to property: [%@]",(cls), (name)); \

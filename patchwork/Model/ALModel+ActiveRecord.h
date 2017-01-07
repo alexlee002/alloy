@@ -77,7 +77,7 @@ extern NSString * const kRowIdColumnName;
 + (ALSQLSelectStatement *)fetcher;
 + (ALSQLUpdateStatement *)updateExector;
 
-+ (NSDictionary<NSString *, ALDBColumnInfo *> *)columns;
++ (NSDictionary<NSString *, ALDBColumnInfo *> *)tableColumns;
 + (NSString *)mappedColumnNameForProperty:(NSString *)propertyName;
 
 

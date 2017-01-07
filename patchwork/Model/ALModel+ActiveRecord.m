@@ -177,7 +177,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
 }
 
 - (NSString *)valuesHashWithProperties:(NSArray<NSString *> *)properties {
-    NSDictionary *columns = [self.class columns];
+    NSDictionary *columns = [self.class tableColumns];
     
     NSMutableDictionary *valDict = [NSMutableDictionary dictionaryWithCapacity:properties.count];
     [properties bk_each:^(NSString *name) {
@@ -199,7 +199,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     return [self.class tableName];
 }
 
-+ (NSDictionary<NSString *, ALDBColumnInfo *> *)columns {
++ (NSDictionary<NSString *, ALDBColumnInfo *> *)tableColumns {
     // modelsColumnsDict: @{ClassName: @{propertyName: columnInfo}}
     static NSMutableDictionary<NSString *, NSDictionary<NSString *, ALDBColumnInfo *> *> *modelsColumnsDict = nil;
     static dispatch_once_t onceToken1;
@@ -372,7 +372,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
 }
 
 - (nullable NSDictionary<NSString *, id> *)propertiesToSaved {
-    NSDictionary<NSString *, ALDBColumnInfo *> *columns = [self.class columns];
+    NSDictionary<NSString *, ALDBColumnInfo *> *columns = [self.class tableColumns];
     NSMutableDictionary *updateValues = [NSMutableDictionary dictionaryWithCapacity:columns.count];
     [columns.allValues bk_each:^(ALDBColumnInfo *colInfo) {
         NSString *colname = colInfo.name;
@@ -888,7 +888,7 @@ static AL_FORCE_INLINE NSDictionary<NSString * /*colname*/, NSArray<ALDBColumnIn
     // properties and columns are many to many mappings, not one to one.
     NSMutableDictionary<NSString *, NSArray<ALDBColumnInfo *> *> *columnPropertyMapper =
         [NSMutableDictionary dictionary];
-    [[modelClass columns] bk_each:^(NSString *propertyName, ALDBColumnInfo *colInfo) {
+    [[modelClass tableColumns] bk_each:^(NSString *propertyName, ALDBColumnInfo *colInfo) {
         NSString *mappedColName = [modelClass mappedColumnNameForProperty:propertyName];
         if (![resultColumnNames containsObject:mappedColName]) {
             return;

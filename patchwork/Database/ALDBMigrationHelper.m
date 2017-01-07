@@ -59,7 +59,10 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
             
             // migrate columns
             NSOrderedSet *tblColumns = [self columnsForTable:modelTblName database:db];
-            [[modelClass columns] bk_each:^(id key, ALDBColumnInfo *colinfo) {
+            [[modelClass tableColumns] bk_each:^(id key, ALDBColumnInfo *colinfo) {
+                if ([colinfo.name isEqualToString:kRowIdColumnName] && ![modelClass withoutRowId]) {
+                    return;
+                }
                 if (![tblColumns containsObject:colinfo.name]) {// new column
                     ALLogInfo(@"Table: '%@', ADD new column: '%@'", modelTblName, colinfo.name);
                     executeSQL([NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
@@ -252,8 +255,8 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
     [sqlClause appendFormat:@"CREATE TABLE IF NOT EXISTS %@ (", tableName];
     
     // COLUMN DEF
-    [sqlClause appendString:[[[[[modelCls columns] bk_reject:^BOOL(NSString *key, id obj) {
-        return [key isEqualToString:keypathForClass(ALModel, rowid)];
+    [sqlClause appendString:[[[[[modelCls tableColumns] bk_reject:^BOOL(NSString *key, id obj) {
+        return [key isEqualToString:keypathForClass(ALModel, rowid)] && ![modelCls withoutRowId];
     }].allValues sortedArrayUsingComparator:[modelCls columnOrderComparator]]
                               bk_map:^NSString *(ALDBColumnInfo *column) {
                                   return [column columnDefine];
