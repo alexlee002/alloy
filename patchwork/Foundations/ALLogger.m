@@ -13,8 +13,68 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-AL_FORCE_INLINE void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
-                              NSString *message) {
+AL_FORCE_INLINE static void ALInnerWriteLog(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+                                            NSString *message, BOOL hasDebugger, NSString *timeString,
+                                            uint64_t threadID, BOOL isMainThread) {
+    CFStringRef levelStr = NULL;
+    NSString *logmsg     = message;
+    switch (level) {
+        case ALLogLevelVerbose:
+            levelStr = hasDebugger ? CFSTR("🎐-[V]") : CFSTR("-[V]");
+            logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"🎐" stringByAppendingString:message] : message);
+            break;
+        case ALLogLevelInfo:
+            levelStr = hasDebugger ? CFSTR("✅-[I]") : CFSTR("-[I]");
+            logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"✅" stringByAppendingString:message] : message);
+            break;
+        case ALLogLevelWarn:
+            levelStr = hasDebugger ? CFSTR("⚠️-[W]") : CFSTR("-[W]");
+            logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"⚠️" stringByAppendingString:message] : message);
+            break;
+        case ALLogLevelError:
+            levelStr = hasDebugger ? CFSTR("❌-[E]") : CFSTR("-[E]");
+            logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"❌" stringByAppendingString:message] : message);
+            break;
+            
+        default:
+            break;
+    }
+    
+    CFMutableStringRef str = CFStringCreateMutable(NULL, 0);
+    
+    if (levelStr != NULL) {
+        CFStringAppend(str, levelStr);
+        CFStringAppend(str, CFSTR(" "));
+    }
+    
+    CFStringAppendFormat(str, NULL, CFSTR("[%llu%s] "), threadID, isMainThread ? "(main)" : "");
+    
+    if (!isEmptyString(tag)) {
+        CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("⚓[%@] ") : CFSTR("[%@] "), tag);
+    }
+    
+    if (!isEmptyString(func)) {
+        CFStringAppendFormat(str, NULL, CFSTR("%@ "), func);
+    }
+    if (!isEmptyString(file)) {
+        CFStringAppendFormat(str, NULL, CFSTR("(%@:%ld) "), [file lastPathComponent], (long) line);
+    }
+    
+    if (!isEmptyString(logmsg)) {
+        CFStringAppend(str, (__bridge CFStringRef) logmsg);
+    }
+    
+    if (hasDebugger) {
+        printf("%s %s\n", [timeString UTF8String], [(__bridge NSString *)str UTF8String]);
+    } else {
+        NSLog(@"%@", (__bridge NSString *)str);
+    }
+    
+    CFRelease(str);
+}
+
+void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+                              NSString *message, BOOL asyncMode) {
     static BOOL hasDebugger = NO;
     static NSDateFormatter *dateFormatter = nil;
     static dispatch_once_t onceToken;
@@ -28,71 +88,19 @@ AL_FORCE_INLINE void ALLogImp(NSString *file, int line, NSString *func, NSString
         writeLogQueue = dispatch_queue_create("me.alexlee002.patchwork.loggerQueue", DISPATCH_QUEUE_SERIAL);
     });
     
-    NSDate *logtime = [NSDate date];
+    
     __uint64_t threadID;
     pthread_threadid_np(NULL, &threadID);
-    BOOL isMainThread = [NSThread isMainThread];
+    BOOL isMainThread = pthread_main_np() != 0;
+    NSString *timestr = [dateFormatter stringFromDate:[NSDate date]];
     
-    dispatch_async(writeLogQueue, ^{
-        @autoreleasepool {
-            CFStringRef levelStr = NULL;
-            NSString *logmsg     = message;
-            switch (level) {
-                case ALLogLevelVerbose:
-                    levelStr = hasDebugger ? CFSTR("🎐-[V]") : CFSTR("-[V]");
-                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"🎐" stringByAppendingString:message] : message);
-                    break;
-                case ALLogLevelInfo:
-                    levelStr = hasDebugger ? CFSTR("✅-[I]") : CFSTR("-[I]");
-                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"✅" stringByAppendingString:message] : message);
-                    break;
-                case ALLogLevelWarn:
-                    levelStr = hasDebugger ? CFSTR("⚠️-[W]") : CFSTR("-[W]");
-                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"⚠️" stringByAppendingString:message] : message);
-                    break;
-                case ALLogLevelError:
-                    levelStr = hasDebugger ? CFSTR("❌-[E]") : CFSTR("-[E]");
-                    logmsg   = isEmptyString(message) ? nil : (hasDebugger ? [@"❌" stringByAppendingString:message] : message);
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            CFMutableStringRef str = CFStringCreateMutable(NULL, 0);
-            
-            if (levelStr != NULL) {
-                CFStringAppend(str, levelStr);
-                CFStringAppend(str, CFSTR(" "));
-            }
-            
-            CFStringAppendFormat(str, NULL, CFSTR("[%llu%s] "), threadID, isMainThread ? " (main)" : "");
-            
-            if (!isEmptyString(tag)) {
-                CFStringAppendFormat(str, NULL, hasDebugger ? CFSTR("⚓[%@] ") : CFSTR("[%@] "), tag);
-            }
-            
-            if (!isEmptyString(func)) {
-                CFStringAppendFormat(str, NULL, CFSTR("%@ "), func);
-            }
-            if (!isEmptyString(file)) {
-                CFStringAppendFormat(str, NULL, CFSTR("(%@:%ld) "), [file lastPathComponent], (long) line);
-            }
-            
-            if (!isEmptyString(logmsg)) {
-                CFStringAppend(str, (__bridge CFStringRef) logmsg);
-            }
-            
-            if (hasDebugger) {
-                printf("%s %s\n", [[dateFormatter stringFromDate:logtime] UTF8String],
-                       [(__bridge NSString *)str UTF8String]);
-            } else {
-                NSLog(@"%@", (__bridge NSString *)str);
-            }
-            
-            CFRelease(str);
-        }
-    });
+    if (asyncMode) {
+        dispatch_async(writeLogQueue, ^{
+            ALInnerWriteLog(file, line, func, tag, level, message, hasDebugger, timestr, threadID, isMainThread);
+        });
+    } else {
+        ALInnerWriteLog(file, line, func, tag, level, message, hasDebugger, timestr, threadID, isMainThread);
+    }
 }
 
 #define __VariadicArgsImp()                                               \
@@ -103,7 +111,7 @@ AL_FORCE_INLINE void ALLogImp(NSString *file, int line, NSString *func, NSString
     va_start(args, fmt);                                                  \
     NSString *msg = [[NSString alloc] initWithFormat:fmt arguments:args]; \
     va_end(args);                                                         \
-    ALLogImp(file, line, func, tag, level, msg);
+    ALLogImp(file, line, func, tag, level, msg, NO);
 
 void ALLog(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level, NSString *fmt,
                            ...) {

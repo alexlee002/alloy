@@ -41,9 +41,12 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
     int               _openFlags;
 }
 
-- (instancetype)initWithPath:(nullable NSString*)aPath {
-    self = [self initWithPath:aPath flags:SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE vfs:nil];
-    return self;
+- (nullable instancetype)initWithPath:(nullable NSString*)aPath {
+    return [self initWithPath:aPath flags:SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE vfs:nil];
+}
+
+- (nullable instancetype)initWithPath:(nullable NSString*)aPath flags:(int)openFlags {
+    return [self initWithPath:aPath flags:openFlags vfs:nil];
 }
 
 - (instancetype)initWithPath:(nullable NSString*)aPath flags:(int)openFlags vfs:(nullable NSString *)vfsName {

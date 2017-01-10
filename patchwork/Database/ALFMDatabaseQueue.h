@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(readonly, nullable) NSString *path;
 
-- (instancetype)initWithPath:(nullable NSString*)aPath;
+- (nullable instancetype)initWithPath:(nullable NSString*)aPath;
+- (nullable instancetype)initWithPath:(nullable NSString*)aPath flags:(int)openFlags;
 
 - (void)close;
 

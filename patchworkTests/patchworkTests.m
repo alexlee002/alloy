@@ -9,6 +9,17 @@
 #import <XCTest/XCTest.h>
 #import "ALLogger.h"
 
+@interface ThreadLocalObj : NSObject
+@end
+@implementation ThreadLocalObj
+
+- (void)dealloc {
+    ALLogInfo(@"~~~ DEALLOC %@ ~~~", self);
+}
+
+@end
+
+
 @interface patchworkTests : XCTestCase
 
 @end
@@ -26,6 +37,36 @@
     ALLogInfo(@"%@", message);
     ALLogWarn(@"%@", message);
     ALLogError(@"%@", message);
+}
+
+
+- (void)testThreadLocal {
+    __block __weak id objRef = nil;
+    
+    // NSThread
+    NSThread *th = [[NSThread alloc] initWithBlock:^{
+        id obj = [[ThreadLocalObj alloc] init];
+        th.threadDictionary[@"local-obj"] = obj;
+        objRef = obj;
+    }];
+    th.name = @"thread-local-test";
+    [th start];
+    
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:4]];
+    XCTAssertNil(objRef);
+    
+    
+    // GCD
+    dispatch_queue_t queue = dispatch_queue_create("thead local test", DISPATCH_QUEUE_SERIAL);
+    dispatch_async(queue, ^{
+        NSThread *th = [NSThread currentThread];
+        id obj = [[ThreadLocalObj alloc] init];
+        th.threadDictionary[@"local-obj"] = obj;
+        objRef = obj;
+    });
+    
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:4]];
+    XCTAssertNotNil(objRef); // GCD is a thread pool, so, the thread won't release.
 }
 
 @end

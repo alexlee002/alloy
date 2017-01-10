@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, ALLogLevel) {
 };
 
 extern void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
-              NSString *message);
+              NSString *message, BOOL asyncMode);
 
 //always log, much like NSLog
 extern void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);

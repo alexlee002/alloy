@@ -21,8 +21,21 @@ extern NSString * const kALTempDBPath;      // temp db;
 @interface ALDatabase : NSObject
 
 @property(readonly) ALFMDatabaseQueue *queue;
+@property(readonly, getter=isReadonly) BOOL               readonly; // Is databas opened in readonly mode?
 
+// The following methods open a database with specified path,
+// @see: http://www.sqlite.org/c3ref/open.html
+
+// database opened in default mode.
 + (nullable instancetype)databaseWithPath:(NSString *)path;
+
+// database opened in readonly mode. -- experimental
++ (nullable instancetype)readonlyDatabaseWithPath:(NSString *)path;
+
+// database opened in readonly mode, and bind to caller's thread local -- experimental
++ (nullable instancetype)threadLocalReadonlyDatabaseWithPath:(NSString *)path;
+
+- (void)close;
 
 @end
 

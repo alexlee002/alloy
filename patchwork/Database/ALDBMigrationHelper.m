@@ -31,16 +31,16 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     return found;
 }
 
-static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
+
+@implementation ALDBMigrationHelper
+
++ (BOOL)executeSQL:(NSString *)sql database:(FMDatabase *)db {
     if ([db executeUpdate:sql]) {
         return YES;
     }
     ALLogError(@"Execute SQL: %@; ⛔ ERROR: %@", sql, [db lastError]);
     return NO;
 }
-
-
-@implementation ALDBMigrationHelper
 
 + (void)setupDatabase:(FMDatabase *)db {
     [[self modelClassesWithDatabasePath:db.databasePath] bk_each:^(Class cls) {
@@ -65,8 +65,9 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
                 }
                 if (![tblColumns containsObject:colinfo.name]) {// new column
                     ALLogInfo(@"Table: '%@', ADD new column: '%@'", modelTblName, colinfo.name);
-                    executeSQL([NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
-                                [colinfo columnDefine]], db);
+                    [self executeSQL:[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN %@", modelTblName,
+                                                                [colinfo columnDefine]]
+                            database:db];
                 }
             }];
             
@@ -85,7 +86,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
             
             for (NSString *idxName in tblIdxes) {
                 ALLogInfo(@"Table: '%@', DROP index: '%@'", modelTblName, idxName);
-                executeSQL([NSString stringWithFormat:@"DROP INDEX IF EXISTS %@", idxName], db);
+                [self executeSQL: [NSString stringWithFormat:@"DROP INDEX IF EXISTS %@", idxName] database:db];
             }
             
         } else {
@@ -201,7 +202,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
 }
 
 + (BOOL)createTableForModel:(Class)modelCls database:(FMDatabase *)db {
-    BOOL result = executeSQL([self tableSchemaForModel:modelCls], db);
+    BOOL result = [self executeSQL:[self tableSchemaForModel:modelCls] database:db];
     if (result) {
         [[modelCls uniqueKeys] bk_each:^(NSArray<NSString *> * keys) {
             [self createIndexForModel:modelCls withColumns:[keys bk_map:^NSString *(NSString *propname) {
@@ -239,7 +240,7 @@ static AL_FORCE_INLINE BOOL executeSQL(NSString *sql, FMDatabase *db) {
                      [self indexNameForTable:tblname columns:colnames uniqued:uniqued],
                      tblname,
                      [colnames componentsJoinedByString:@", "]];
-    return executeSQL(sql, db);
+    return [self executeSQL:sql database:db];
 }
 
 + (nullable NSString *)tableSchemaForModel:(Class)modelCls {

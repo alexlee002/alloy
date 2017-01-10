@@ -17,21 +17,51 @@
 #import "PatchworkLog_private.h"
 #import "ALLock.h"
 #import "ALDBMigrationHelper.h"
+#import <sqlite3.h>
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSString * const kALInMemoryDBPath = @":memory:";  // in-memory db
-NSString * const kALTempDBPath     = @"";          // temp db;
+NSString * const kALTempDBPath     = @":temp:";    // temp db;
 
 
-static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
+static AL_FORCE_INLINE NSMutableDictionary<NSString *, ALDatabase *> *openingDatabaseDict() {
+    static NSMutableDictionary *dict = nil;
+
+    if (dict == nil) {
+        static_gcd_semaphore(localSem, 1);
+        with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
+            if (dict == nil) {
+                dict = [NSMutableDictionary dictionary];
+            }
+        });
+    }
+    return dict;
+}
+
+static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
+    static dispatch_semaphore_t sema = NULL;
+    
+    if (sema == NULL) {
+        static_gcd_semaphore(localSem, 1);
+        with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
+            if (sema == NULL) {
+                sema = dispatch_semaphore_create(1);
+            }
+        });
+    }
+    return sema;
+}
+
 
 @implementation ALDatabase {
-    NSSet<Class>      *_modelClasses;
     BOOL               _dbFileExisted;
-    BOOL               _enableDebug;
+    NSInteger          _openFlags;
     id<ALDBConnectionProtocol> _openHelper;
+    
+    BOOL               _enableDebug;
+    
 }
 
 #pragma mark - database manager
@@ -40,28 +70,19 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     if (path == nil) {
         return nil;
     }
-    
-    __block ALDatabase *db = kDatabaseDict[path];
+
+    NSString *cachedKey = [self cachedKeyWithPath:path readonly:NO];
+    NSMutableDictionary *cacheDict = openingDatabaseDict();
+    __block ALDatabase *db = cacheDict[cachedKey];
     if (db == nil) {
-        static_gcd_semaphore(localSem, 1);
-        with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
-            if (kDatabaseDict == nil) {
-                kDatabaseDict = [NSMutableDictionary dictionary];
-            }
-            db = kDatabaseDict[path];
+        with_gcd_semaphore(openingDBDictSemaphore(), DISPATCH_TIME_FOREVER, ^{
+            db = cacheDict[cachedKey];
             if (db == nil) {
                 // @see "+[FMDatabase databaseWithPath:]",  @"" => temp DB; nil => in-memory DB
-                NSString *dbFilePath = path;
-                if ([path isEqualToString:kALInMemoryDBPath]) {
-                    dbFilePath = nil;
-                } else if ([path isEqualToString:kALTempDBPath]) {
-                    dbFilePath = @"";
-                }
-                
-                if((db = [(ALDatabase *)[self alloc] initWithPath:dbFilePath]) != nil) {
-                    kDatabaseDict[path] = db;
-                } else {
-                    db = nil;
+                db = [(ALDatabase *) [self alloc] initWithPath:[self innerDBFilePathWithPath:path]
+                                                         flags:SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE];
+                if (db != nil) {
+                    cacheDict[cachedKey] = db;
                 }
             }
         });
@@ -69,7 +90,88 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
     return db;
 }
 
-- (nullable instancetype)initWithPath:(nullable NSString *)path {
+// database opened in readonly mode.
++ (nullable instancetype)readonlyDatabaseWithPath:(NSString *)path {
+    NSString *cachedKey = [self cachedKeyWithPath:path readonly:YES];
+    __block ALDatabase *readonlyDB = openingDatabaseDict()[cachedKey];
+    if (readonlyDB == nil) {
+        static_gcd_semaphore(localSema, 1);
+        with_gcd_semaphore(localSema, DISPATCH_TIME_FOREVER, ^{
+            readonlyDB = openingDatabaseDict()[cachedKey];
+            if (readonlyDB != nil) {
+                return;
+            }
+            
+            BOOL isDir = NO;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir] && !isDir) {
+                if ([self databaseWithPath:path]) { // make sure to create & migrate database
+                    readonlyDB = [(ALDatabase *)[self alloc] initWithPath:[self innerDBFilePathWithPath:path]
+                                                                    flags:SQLITE_OPEN_READONLY];
+                    if (readonlyDB != nil) {
+                        with_gcd_semaphore(openingDBDictSemaphore(), DISPATCH_TIME_FOREVER, ^{
+                            openingDatabaseDict()[cachedKey] = readonlyDB;
+                        });
+                    }
+                }
+            } else {
+                // database not yet created, ignore.
+                readonlyDB = nil;
+                return;
+            }
+        });
+    }
+    return readonlyDB;
+}
+
+// database opened in readonly mode, and bind to caller's thread local
++ (nullable instancetype)threadLocalReadonlyDatabaseWithPath:(NSString *)path {
+    NSMutableDictionary *dict = [NSThread currentThread].threadDictionary;
+    NSString *cachedKey = [self cachedKeyWithPath:path readonly:YES];
+    cachedKey = [@"ALDatabase:" stringByAppendingString:cachedKey];
+    __block ALDatabase *localReadonlyDB = dict[cachedKey];
+    if (localReadonlyDB == nil) {
+        static_gcd_semaphore(localSema, 1);
+        with_gcd_semaphore(localSema, DISPATCH_TIME_FOREVER, ^{
+            localReadonlyDB = dict[cachedKey];
+            if (localReadonlyDB != nil) {
+                return;
+            }
+            
+            BOOL isDir = NO;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir] && !isDir) {
+                if ([self databaseWithPath:path]) { // make sure to create & migrate database
+                    localReadonlyDB = [(ALDatabase *)[self alloc] initWithPath:[self innerDBFilePathWithPath:path]
+                                                                         flags:SQLITE_OPEN_READONLY];
+                    if (localReadonlyDB != nil) {
+                        dict[cachedKey] = localReadonlyDB;
+                    }
+                }
+            } else {
+                // database not yet created, ignore.
+                localReadonlyDB = nil;
+                return;
+            }
+        });
+    }
+    return localReadonlyDB;
+}
+
+// openFlag: SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE
+- (nullable instancetype)initWithPath:(nullable NSString *)path flags:(int)openFlags{
+    
+    if (!isEmptyString(path)) {
+
+        NSError *tmpError = nil;
+        if (![[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent]
+                                       withIntermediateDirectories:YES
+                                                        attributes:nil
+                                                             error:&tmpError]) {
+            ALLogError(@"Can not create database file:%@; %@", path, tmpError);
+            return nil;
+        }
+    }
+    
+    
     self = [super init];
     if (self) {
 #if DEBUG
@@ -77,26 +179,18 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 #else
         _enableDebug = NO;
 #endif
+        // for compatible.
+        // if the original database existed and did not set the version information,
+        // we need to make a distinction between 'database not exists' and 'database version = 0'
+        _dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path];
         
-        if (!isEmptyString(path)) {
-            // for compatible.
-            // if the original database existed and did not set the version information,
-            // we need to make a distinction between 'database not exists' and 'database version = 0'
-            _dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path];
-
-            NSError *tmpError = nil;
-            if (![[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent]
-                                           withIntermediateDirectories:YES
-                                                            attributes:nil
-                                                                 error:&tmpError]) {
-                ALLogError(@"Can not create database file:%@; %@", path, tmpError);
-                return nil;
-            }
-        }
-        _queue = [[ALFMDatabaseQueue alloc] initWithPath:path];
+        _queue = [[ALFMDatabaseQueue alloc] initWithPath:path flags:openFlags];
         if (![self open]) {
+            ALLogError(@"Open database error or migrate database failed. path: %@", path);
             self = nil;
         }
+        _openFlags = openFlags;
+        _openHelper = [self connectionHandler];
     }
     return self;
 }
@@ -111,13 +205,39 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
 //    return nil;
 //}
 
+
+- (BOOL)isReadonly {
+    return (_openFlags & SQLITE_OPEN_READONLY) == SQLITE_OPEN_READONLY;
+}
+
++ (NSString *)innerDBFilePathWithPath:(NSString *)path {
+    NSString *dbFilePath = path;
+    if ([path isEqualToString:kALInMemoryDBPath]) {
+        dbFilePath = nil;
+    } else if ([path isEqualToString:kALTempDBPath]) {
+        dbFilePath = @"";
+    }
+    return dbFilePath;
+}
+
++ (NSString *)cachedKeyWithPath:(NSString *)path readonly:(BOOL)readonly {
+    NSParameterAssert(path != nil);
+    
+    NSString *key = stringOrEmpty(path);
+    if (readonly) {
+        key = [key stringByAppendingString:@"#readonly"];
+    }
+    return key;
+}
+
+- (NSString *)cachedKey {
+    return [self.class cachedKeyWithPath:_queue.path readonly:self.readonly];
+}
+
 - (BOOL)open {
     if (_queue == nil) {
         return NO;
     }
-    
-    id<ALDBMigrationProtocol> migrationProcessor = [self dbMigrationProcessor];
-    _openHelper = [self connectionHandler];
     
     __block BOOL ret = YES;
     [_queue inDatabase:^(FMDatabase * _Nonnull db) {
@@ -129,93 +249,111 @@ static NSMutableDictionary<NSString *, ALDatabase *>   *kDatabaseDict = nil;
         }
         
         // database migration
-        if (migrationProcessor == nil) {
-            _ALDBLog(@"Not found database migration processor, try auto-migration. database path: %@", _queue.path);
-            
-            if (!_dbFileExisted) {
-                [ALDBMigrationHelper setupDatabase:db];
-            } else {
-                [ALDBMigrationHelper autoMigrateDatabase:db];
-            }
-            ret = YES;
-        } else {
-        
-            // all the database version should begins from 1 (DO NOT begins from 0 !!!)
-            NSInteger newVersion = [migrationProcessor currentVersion];
-            
-            if (!_dbFileExisted) { // create database directly
-                BOOL created = NO;
-                if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
-                    created = [migrationProcessor setupDatabase:db];
-                } else {
-                    [ALDBMigrationHelper setupDatabase:db];
-                    created = YES;
-                }
-                
-                if (created) {
-                    ret = [self updateDatabaseVersion:newVersion dbHandler:db];
-                } else {
-                    NSAssert(NO, @"Can not setup database: %@", _queue.path);
-                    ret = NO;
-                }
-            } else {
-                NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
-
-                if (dbVersion < newVersion) {
-                    if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
-                        ret = [self updateDatabaseVersion:newVersion dbHandler:db];
-                    } else {
-                        NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion),
-                                 @(newVersion), _queue.path);
-                        ret = NO;
-                    }
-                } else if (dbVersion > newVersion) {
-                    NSAssert(NO, @"Illegal database version. original:%@, new version:%@",
-                             @(dbVersion), @(newVersion));
-                    ret = NO;
-                }
-            }
+        if (![self isReadonly]) {
+            ret = [self migrateDatabase:db];
         }
         
         // extension point
-        if ([_openHelper respondsToSelector:@selector(databaseDidSetup:)]) {
-            [_openHelper databaseDidSetup:db];
+        if ([_openHelper respondsToSelector:@selector(databaseDidReady:)]) {
+            [_openHelper databaseDidReady:db];
         }
     }];
     
     return ret;
+}
+
+- (BOOL)migrateDatabase:(FMDatabase *)db {
+    id<ALDBMigrationProtocol> migrationProcessor = [self dbMigrationProcessor];
+    
+    if (migrationProcessor == nil) {
+        _ALDBLog(@"Not found database migration processor, try auto-migration. database path: %@", _queue.path);
+        
+        if (!_dbFileExisted) {
+            [ALDBMigrationHelper setupDatabase:db];
+        } else {
+            [ALDBMigrationHelper autoMigrateDatabase:db];
+        }
+        return YES;
+    } else {
+        
+        // all the database version should begins from 1 (DO NOT begins from 0 !!!)
+        NSInteger newVersion = [migrationProcessor currentVersion];
+        if (newVersion < 1) {
+            NSAssert(NO, @"*** Database version must be >= 1, but was %d", (int)newVersion);
+            return NO;
+        }
+        
+        if (!_dbFileExisted) { // create database directly
+            BOOL created = NO;
+            if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
+                created = [migrationProcessor setupDatabase:db];
+            } else {
+                [ALDBMigrationHelper setupDatabase:db];
+                created = YES;
+            }
+            
+            if (created) {
+                return [self updateDatabaseVersion:newVersion dbHandler:db];
+            } else {
+                NSAssert(NO, @"Can not setup database: %@", _queue.path);
+                return NO;
+            }
+        } else {
+            NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
+            
+            if (dbVersion < newVersion) {
+                if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
+                    return [self updateDatabaseVersion:newVersion dbHandler:db];
+                } else {
+                    NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion),
+                             @(newVersion), _queue.path);
+                    return NO;
+                }
+            } else if (dbVersion > newVersion) {
+                NSAssert(NO, @"Illegal database version. original:%@, new version:%@",
+                         @(dbVersion), @(newVersion));
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 
 - (BOOL)updateDatabaseVersion:(NSInteger)version dbHandler:(FMDatabase *)db {
-    BOOL ret = [db executeUpdate:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", (long)version]];
-    if (!ret) {
-#if DEBUG
-        NSAssert(NO, @"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
-                     [db lastError]);
-#endif
-        ALLogWarn(@"*** update database version to %@ failed\npath: %@\nerror:%@", @(version), _queue.path,
-                      [db lastError]);
-    }
-    return ret;
+    return [ALDBMigrationHelper executeSQL:[NSString stringWithFormat:@"PRAGMA user_version=%ld;", (long)version]
+                                  database:db];
 }
 
 - (void)close {
-    // extension point
-    [_queue inDatabase:^(FMDatabase * _Nonnull db) {
-        if ([_openHelper respondsToSelector:@selector(databaseWillClose:)]) {
-            [_openHelper databaseWillClose:db];
-        }
-    }];
-    
-    NSString *path = _queue.path;
-    [kDatabaseDict removeObjectForKey:path];
-    [_queue close];
-    _queue = nil;
-    
-    // extension point
-    if ([_openHelper respondsToSelector:@selector(databaseWithPathDidClose:)]) {
-        [_openHelper databaseWithPathDidClose:path];
+    if (_queue == nil) {
+        return;
     }
+    
+    with_gcd_semaphore(openingDBDictSemaphore(), DISPATCH_TIME_FOREVER, ^{
+        if (_queue == nil) {
+            return;
+        }
+        
+        // extension point
+        [_queue inDatabase:^(FMDatabase * _Nonnull db) {
+            if ([_openHelper respondsToSelector:@selector(databaseWillClose:)]) {
+                [_openHelper databaseWillClose:db];
+            }
+        }];
+        
+        NSString *key = [self cachedKey];
+        if (key != nil) {
+            [openingDatabaseDict() removeObjectForKey:key];
+        }
+        [_queue close];
+        
+        // extension point
+        if ([_openHelper respondsToSelector:@selector(databaseWithPathDidClose:)]) {
+            [_openHelper databaseWithPathDidClose:_queue.path];
+        }
+        
+        _queue = nil;
+    });
 }
 
 - (id)copy {

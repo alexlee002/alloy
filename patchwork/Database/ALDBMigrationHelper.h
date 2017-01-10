@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
                     uniqued:(BOOL)uniqued
                    database:(FMDatabase *)db;
 
+
+// utility
++ (BOOL)executeSQL:(NSString *)sql database:(FMDatabase *)db;
+
 @end
 
 NS_ASSUME_NONNULL_END
