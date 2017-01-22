@@ -116,6 +116,30 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     
     [student deleteRecord];
     XCTAssertEqual([Student fetcher].FETCH_COUNT(nil), 0);
+
+    student = [Student modelsWithCondition:AS_COL(Student, name)
+                                               .PREFIX_LIKE(@"Alex")
+                                               .AND(AS_COL(Student, age).NLT(@10))
+                                               .AND(AS_COL(Student, age).LT(@20))
+                                               .AND(AS_COL(Student, gender).EQ(@1))]
+                  .firstObject;
+    
+    student = [Student fetcher]
+                  .WHERE(AS_COL(Student, name).PREFIX_LIKE(@"Alex"))
+                  .ORDER_BY(AS_COL(Student, age).DESC())
+                  .LIMIT(@1)
+                  .OFFSET(@5)
+                  .FETCH_MODELS()
+                  .firstObject;
+    
+    [student updateProperties:@[keypath(student.age), keypath(student.province)] repleace:NO];
+
+    [Student updateProperties:@{
+        keypathForClass(Student, age) : @20,
+        keypathForClass(Student, gender) : @1
+    }
+                withCondition:AS_COL(Student, birthday).EQ([NSDate dateWithTimeIntervalSinceNow:-20 * 365 * 86400])
+                     repleace:NO];
 }
 
 - (void)testActiveRecord1 {
