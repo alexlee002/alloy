@@ -689,7 +689,7 @@ static AL_FORCE_INLINE id _Nullable modelColumnValue(ALModel *_Nonnull model, AL
     }
     SEL transformer = colInfo.customPropertyToColumnValueTransformer ?: colInfo.property.getter;
     Method method = class_getInstanceMethod(model.class, transformer);
-    const char *retTypeChar = method_copyReturnType(method);
+    char *retTypeChar = method_copyReturnType(method);
     YYEncodingType retType = YYEncodingGetType(retTypeChar);
     free(retTypeChar);
     
