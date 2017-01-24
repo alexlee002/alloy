@@ -22,14 +22,17 @@
 #endif
 
 #if defined(DEBUG) && DEBUG
-    #define OP_BLOCK(block) ({                              \
-            CFTimeInterval t = CFAbsoluteTimeGetCurrent();  \
-            block();                                        \
-            t = CFAbsoluteTimeGetCurrent() - t;             \
-            CFTimeInterval timeLimit = [NSThread mainThread] ? MAX_DB_BLOCK_EXECUTE_SEC_MAIN : MAX_DB_BLOCK_EXECUTE_SEC; \
-            if (t > timeLimit) {             \
-                ALLogWarn(@"!!!Database operation time exceeded! Expected:%.2fs, was: %.2fs.\nBacktrace Stack:\n%@", timeLimit, t, backtraceStack(15));\
-            }                                               \
+    #define OP_BLOCK(block)                                                                                          \
+        ({                                                                                                           \
+            CFTimeInterval t = CFAbsoluteTimeGetCurrent();                                                           \
+            block();                                                                                                 \
+            t = CFAbsoluteTimeGetCurrent() - t;                                                                      \
+            CFTimeInterval timeLimit =                                                                               \
+                [NSThread currentThread].isMainThread ? MAX_DB_BLOCK_EXECUTE_SEC_MAIN : MAX_DB_BLOCK_EXECUTE_SEC;    \
+            if (t > timeLimit) {                                                                                     \
+                ALLogWarn(@"!!!Database operation time exceeded! Expected:%.2fs, was: %.2fs.\nBacktrace Stack:\n%@", \
+                          timeLimit, t, backtraceStack(15));                                                         \
+            }                                                                                                        \
         })
 #else
     #define OP_BLOCK(block) block()
