@@ -333,14 +333,14 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
 
 AL_FORCE_INLINE NSString *bytesToHexStr(const char *bytes, size_t len) {
     if (len == 0 || bytes == NULL) {
-#if DEBUG
+#ifndef NS_BLOCK_ASSERTIONS
         assert(bytes != NULL);
 #endif
         return @"";
     }
     
     const char *hexChars = "0123456789abcdef";
-    char *result = malloc(sizeof(char) * (len* 2 + 1));
+    char *result = malloc(sizeof(char) * (len * 2 + 1));
     char *s = result;
     for (NSInteger i = 0; i < len; ++i) {
         (*s++) = hexChars[((*bytes & 0xF0) >> 4)];

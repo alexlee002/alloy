@@ -827,12 +827,17 @@ static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *r
             
         default: {
             id value = nil;
+            
             if ([property.cls isSubclassOfClass:[NSString class]]) {
                 value = [rs stringForColumnIndex:columnIndex];
-            } else if ([property.cls isSubclassOfClass:[NSMutableString class]]) {
-                value = [[rs stringForColumnIndex:columnIndex] mutableCopy];
+                
+                if ([property.cls isSubclassOfClass:[NSMutableString class]]) {
+                    value = [value mutableCopy];
+                }
+                
             } else if ([property.cls isSubclassOfClass:[NSURL class]]) {
-                value = [rs stringForColumnIndex:columnIndex];
+                value = [NSURL URLWithString:[rs stringForColumnIndex:columnIndex]];
+                
             } else if ([property.cls isSubclassOfClass:[NSNumber class]]) {
                 int columnType = sqlite3_column_type([rs.statement statement], columnIndex);
                 if (columnType == SQLITE_INTEGER) {
@@ -840,25 +845,16 @@ static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *r
                 } else {
                     value = @([rs doubleForColumnIndex:columnIndex]);
                 }
-            } else if ([property.cls isSubclassOfClass:[NSMutableData class]]) {
-                value = [[rs dataForColumnIndex:columnIndex] mutableCopy];
+                
             } else if ([property.cls isSubclassOfClass:[NSData class]]) {
                 value = [rs dataForColumnIndex:columnIndex];
-            } else if ([property.cls isSubclassOfClass:[NSDate class]]) {
-                value = [rs dateForColumnIndex:columnIndex];
-            } else if ([property.cls isSubclassOfClass:[NSMutableArray class]] ||
-                       [property.cls isSubclassOfClass:[NSMutableDictionary class]] ||
-                       [property.cls isSubclassOfClass:[NSMutableSet class]]) {
-                value = [rs dataForColumnIndex:columnIndex];
-                if (value != nil) {
-                    @try {
-                        value = [NSKeyedUnarchiver unarchiveObjectWithData:value];
-                    } @catch (NSException *exception) {
-                        ALLogWarn(@"Exception: %@", exception);
-                        value = nil;
-                    }
+                
+                if ([property.cls isSubclassOfClass:[NSMutableData class]]) {
                     value = [value mutableCopy];
                 }
+                
+            } else if ([property.cls isSubclassOfClass:[NSDate class]]) {
+                value = [rs dateForColumnIndex:columnIndex];
                 
             } else {
                 value = [rs dataForColumnIndex:columnIndex];
@@ -870,11 +866,16 @@ static AL_FORCE_INLINE void setModelPropertyValueFromResultSet(FMResultSet    *r
                         value = nil;
                     }
                 }
+                
+                if (value != nil) {
+                    if ([property.cls isSubclassOfClass:[NSMutableArray class]] ||
+                        [property.cls isSubclassOfClass:[NSMutableDictionary class]] ||
+                        [property.cls isSubclassOfClass:[NSMutableSet class]]) {
+                        value = [value mutableCopy];
+                    }
+                }
             }
             
-            if (value == NSNull.null) {
-                value = nil;
-            }
             ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, setter, value);
         } break;
     }

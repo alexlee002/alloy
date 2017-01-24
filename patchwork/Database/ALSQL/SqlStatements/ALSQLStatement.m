@@ -49,7 +49,10 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation ALSQLStatement (SQLExecute)
 
 - (void (^)(void (^)(FMResultSet *)))EXECUTE_QUERY {
+    weakify(self);
     return ^(void (^resultHaldler)(FMResultSet *_Nullable rs)) {
+        strongify(self);
+        
         if (!ObjIsValidBlocksChainObject(self)) {
             safeInvokeBlock(resultHaldler, nil);
             return;
@@ -74,6 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
     weakify(self);
     return ^BOOL () {
         strongify(self);
+        
         if (!ObjIsValidBlocksChainObject(self)) {
             return NO;
         }
