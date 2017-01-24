@@ -17,13 +17,18 @@
 #define MAX_DB_BLOCK_EXECUTE_SEC 5
 #endif
 
+#ifndef MAX_DB_BLOCK_EXECUTE_SEC_MAIN
+#define MAX_DB_BLOCK_EXECUTE_SEC_MAIN 0.5f
+#endif
+
 #if defined(DEBUG) && DEBUG
     #define OP_BLOCK(block) ({                              \
             CFTimeInterval t = CFAbsoluteTimeGetCurrent();  \
             block();                                        \
             t = CFAbsoluteTimeGetCurrent() - t;             \
-            if (t > MAX_DB_BLOCK_EXECUTE_SEC) {             \
-                ALLogWarn(@"!!!database operation time is too long:%.2fs!!!\nBacktrace Stack:\n%@", t, backtraceStack(15));\
+            CFTimeInterval timeLimit = [NSThread mainThread] ? MAX_DB_BLOCK_EXECUTE_SEC_MAIN : MAX_DB_BLOCK_EXECUTE_SEC; \
+            if (t > timeLimit) {             \
+                ALLogWarn(@"!!!Database operation time exceeded! Expected:%.2fs, was: %.2fs.\nBacktrace Stack:\n%@", timeLimit, t, backtraceStack(15));\
             }                                               \
         })
 #else
@@ -131,7 +136,7 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
 - (void)safelyRun:(void (^)(void))block {
     ALFMDatabaseQueue *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueSpecificKey);
     if (currentSyncQueue == self) {
-        ALLogWarn(@"!!! Nested database operation blocks!");
+        _ALDBLog(@"!!! Nested database operation blocks!");
         OP_BLOCK(block);
     } else {
         dispatch_sync(_queue, ^{
