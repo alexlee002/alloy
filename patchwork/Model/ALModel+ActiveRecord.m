@@ -147,7 +147,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
     }
 }
 
-
+#ifdef AL_ENABLE_ROWID_TRIGGER
 + (void)notifyModelsRowidDidChange:(NSArray<ALModel *> *)updatedModels {
     if (updatedModels.count == 0) {
         return;
@@ -175,6 +175,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
                                                         object:type
                                                       userInfo:dict];
 }
+#endif
 
 - (NSString *)valuesHashWithProperties:(NSArray<NSString *> *)properties {
     NSDictionary *columns = [self.class tableColumns];
@@ -386,7 +387,6 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
 
 - (NSInteger)saveOrReplce:(BOOL)replaceExisted {
     __block NSInteger lastInsertRowid = 0;
-    NSInteger oldRowid = self.rowid;
     [self.DB.queue inDatabase:^(FMDatabase *_Nonnull db) {
         BOOL result = SafeDB([self DB])
                      .INSERT()
@@ -400,9 +400,11 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
             [self markModelFromDB:YES];
         }
     }];
-    if (self.rowid != oldRowid) {
+#ifdef AL_ENABLE_ROWID_TRIGGER
+    if (lastInsertRowid != 0 && replaceExisted) {
         [self.class notifyModelsRowidDidChange:@[self]];
     }
+#endif
 
     return lastInsertRowid;
 }
@@ -437,6 +439,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
         }];
     }];
     // if transactions commit, update model's rowid
+#ifdef AL_ENABLE_ROWID_TRIGGER
     if (!hasError) {
         [models enumerateObjectsUsingBlock:^(ALModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             obj.rowid = [rowIdsDict[@(obj.rowid)] integerValue];
@@ -445,6 +448,7 @@ SYNTHESIZE_ASC_PRIMITIVE(rowid, setRowid, NSInteger);
         
         [self notifyModelsRowidDidChange:models];
     }
+#endif
     
     return !hasError;
 }

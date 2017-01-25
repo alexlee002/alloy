@@ -35,12 +35,14 @@ static AL_FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
 - (instancetype)init {
     self = [super init];
     if (self) {
+#ifdef AL_ENABLE_ROWID_TRIGGER
         // @see Active record category
         IgnoreClangDiagnostic("-Wundeclared-selector", [[NSNotificationCenter defaultCenter]
                                                            addObserver:self
                                                               selector:@selector(handleRecordConflictNotification:)
                                                                   name:kModelRowidDidChangeNotification
                                                                 object:nil];);
+#endif
     }
     return self;
 }

@@ -22,17 +22,23 @@
 #endif
 
 #if defined(DEBUG) && DEBUG
+
+#define check_op_time(t)                                                                                         \
+    ({                                                                                                           \
+        CFTimeInterval dt = (t);                                                                                 \
+        CFTimeInterval timeLimit =                                                                               \
+            [NSThread currentThread].isMainThread ? MAX_DB_BLOCK_EXECUTE_SEC_MAIN : MAX_DB_BLOCK_EXECUTE_SEC;    \
+        if (dt > timeLimit) {                                                                                    \
+            ALLogWarn(@"!!!Database operation time exceeded! Expected:%.2fs, was: %.2fs.\nBacktrace Stack:\n%@", \
+                      timeLimit, dt, backtraceStack(15));                                                        \
+        }                                                                                                        \
+    })
+
     #define OP_BLOCK(block)                                                                                          \
         ({                                                                                                           \
             CFTimeInterval t = CFAbsoluteTimeGetCurrent();                                                           \
             block();                                                                                                 \
-            t = CFAbsoluteTimeGetCurrent() - t;                                                                      \
-            CFTimeInterval timeLimit =                                                                               \
-                [NSThread currentThread].isMainThread ? MAX_DB_BLOCK_EXECUTE_SEC_MAIN : MAX_DB_BLOCK_EXECUTE_SEC;    \
-            if (t > timeLimit) {                                                                                     \
-                ALLogWarn(@"!!!Database operation time exceeded! Expected:%.2fs, was: %.2fs.\nBacktrace Stack:\n%@", \
-                          timeLimit, t, backtraceStack(15));                                                         \
-            }                                                                                                        \
+            check_op_time(CFAbsoluteTimeGetCurrent() - t);                                                           \
         })
 #else
     #define OP_BLOCK(block) block()
@@ -142,9 +148,15 @@ static const void * const kDispatchQueueSpecificKey = &kDispatchQueueSpecificKey
         _ALDBLog(@"!!! Nested database operation blocks!");
         OP_BLOCK(block);
     } else {
+#if defined(DEBUG) && DEBUG
+        CFTimeInterval st = CFAbsoluteTimeGetCurrent();
+#endif
         dispatch_sync(_queue, ^{
             OP_BLOCK(block);
         });
+#if defined(DEBUG) && DEBUG
+        check_op_time(CFAbsoluteTimeGetCurrent() - st);
+#endif
     }
 }
 

@@ -194,6 +194,7 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     XCTAssertEqual([StudentCourse fetcher].FETCH_COUNT(nil), 0);
 }
 
+#ifdef AL_ENABLE_ROWID_TRIGGER
 - (void)testActiveRecord2 {
     Student *s1 = [[Student alloc] init];
     s1.name = @"Alex Lee";
@@ -212,5 +213,6 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     XCTAssertEqual(s1.rowid, s2.rowid);
     XCTAssertNotEqual(s1.rowid, oldS1Id);
 }
+#endif
 
 @end
