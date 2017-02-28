@@ -135,6 +135,9 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
         // TODO: need to support multipart request.
         // if files information are set, using stream upload
         // else if datas are set, using data upload
+        
+        task = [_session uploadTaskWithRequest:urlRequest fromData:urlRequest.HTTPBody];
+        
     } else if (request.type == ALRequestTypeDownload) {
         task = [_session downloadTaskWithRequest:urlRequest];
     } else {
@@ -158,10 +161,14 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
         request.method = ALHTTPMethodPost;
     }
     
-    if (request.method == ALHTTPMethodPost) {
+    if (request.type == ALRequestTypeUpload) {
+        NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        urlRequest = [NSMutableURLRequest requestWithURL:url];
+        [self buildUploadRequest:urlRequest fromALRequest:request];
+    } else if (request.method == ALHTTPMethodPost) {
         urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:request.url]];
         [request.params bk_each:^(NSString *key, id value) {
-            [urlRequest setValue:value forHTTPHeaderField:key];
+            [urlRequest setValue:stringValue(value) forHTTPHeaderField:key];
         }];
     } else {
         NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
@@ -170,10 +177,50 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     urlRequest.HTTPMethod = [request methodName];
     
     [[request headers] bk_each:^(NSString *key, id value) {
-        [urlRequest setValue:value forHTTPHeaderField:key];
+        [urlRequest setValue:stringValue(value) forHTTPHeaderField:key];
     }];
     
     return urlRequest;
+}
+
+- (void)buildUploadRequest:(NSMutableURLRequest *)request fromALRequest:(ALHTTPRequest *)alRequest {
+    NSStringEncoding encoding = NSUTF8StringEncoding;
+    NSString *boundaryString  = [NSString stringWithFormat:@"0xKhTmLbOuNdArY-%@", [NSString UUIDString]];
+    NSString *charset =
+    (NSString *) CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(encoding));
+    
+    NSData *boundary = [[NSString stringWithFormat:@"--%@\r\n", boundaryString] dataUsingEncoding:encoding];
+    NSData *newLine  = [@"\r\n" dataUsingEncoding:encoding];
+    
+    NSMutableData *postData = [NSMutableData dataWithData:boundary];
+    
+    NSDictionary *dict = [alRequest.uploadParams bk_select:^BOOL(id key, id obj) {
+        return [obj isKindOfClass:NSData.class];
+    }];
+    
+    __block NSInteger idx = 0;
+    [dict bk_each:^(id key, id obj) {
+        if (idx > 0) {
+            [postData appendData:newLine];
+            [postData appendData:boundary];
+        }
+        idx ++;
+        
+        [postData appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", key, key] dataUsingEncoding:encoding]];
+        [postData appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", @"application/octet-stream"] dataUsingEncoding:encoding]];
+        [postData appendData:obj];
+    }];
+    
+    [postData appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundaryString]dataUsingEncoding:encoding]];
+    
+    request.HTTPBody = postData;
+    
+    [request setValue:[NSString
+                       stringWithFormat:@"multipart/form-data; charset=%@; boundary=%@", charset, boundaryString]
+   forHTTPHeaderField:@"Content-Type"];
+    
+    [request setValue:[NSString stringWithFormat:@"%llu", (unsigned long long)postData.length] forHTTPHeaderField:@"Content-Length"];
+    
 }
 
 #pragma mark -
