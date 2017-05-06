@@ -23,7 +23,7 @@ extern void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, AL
 extern void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
 
 // only log in DEBUG model
-extern void ALLogDebug(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
+extern void ALDebugLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
 
 
 #if DEBUG

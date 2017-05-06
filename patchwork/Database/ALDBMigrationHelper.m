@@ -10,7 +10,7 @@
 #import "ALOCRuntime.h"
 #import "NSString+Helper.h"
 #import <BlocksKit.h>
-#import "PatchworkLog_private.h"
+#import "__patchwork_config.h"
 
 
 static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
@@ -153,10 +153,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
 }
 
 + (NSSet<NSString *> *)indexesForTable:(NSString *)table database:(FMDatabase *)db {
-    if (isEmptyString(table)) {
-        NSAssert(NO, @"*** parameter 'table' is empty!");
-        return nil;
-    }
+    al_guard_or_return(!al_isEmptyString(table), nil);
     
     FMResultSet *rs =
     [db executeQuery:@"SELECT name FROM sqlite_master WHERE type = ? AND tbl_name = ?", @"index", table];
@@ -175,23 +172,14 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
 }
 
 + (NSOrderedSet<NSString *> *)columnsForTable:(NSString *)table database:(FMDatabase *)db {
-    if (isEmptyString(table)) {
-        NSAssert(NO, @"*** parameter 'table' is empty!");
-        return nil;
-    }
+    al_guard_or_return(!al_isEmptyString(table), nil);
     
     NSString *sql = [NSString stringWithFormat:@"PRAGMA table_info('%@')", table];
     FMResultSet *rs = [db executeQuery:sql];
-    if (rs == nil || rs.columnCount < 2) {
-        if ([db hadError]) {
-            ALLogError(@"Execute SQL: %@; ⛔ ERROR: %@", sql, [db lastError]);
-        } else {
-            ALLogError(@"Incorrect result of SQL: %@", sql);
-        }
-        NSAssert(NO, @"Can not get table columns info");
-        return nil;
-    }
     
+    al_guard_or_return1(rs != nil && rs.columnCount >= 2, nil,
+                        @"*** Can not get table columns info, SQL: %@, ERROR: %@", sql, [db lastError]);
+
     NSMutableOrderedSet *columns = [NSMutableOrderedSet orderedSet];
     while ([rs next]) {
         [columns addObject:[rs stringForColumnIndex:1]];
@@ -220,10 +208,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
 }
 
 + (nullable NSString *)indexNameForTable:(NSString *)table columns:(NSArray<NSString *> *)columns uniqued:(BOOL)unique {
-    if (columns.count == 0) {
-        NSAssert(NO, @"index columns is empty!");
-        return nil;
-    }
+    al_guard_or_return(columns.count > 0, nil);
 
     return [NSString stringWithFormat:@"%@_%@_$_%@", (unique ? @"uniq" : @"idx"), table,
                                       [columns componentsJoinedByString:@"_$_"]];
@@ -244,11 +229,8 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
 }
 
 + (nullable NSString *)tableSchemaForModel:(Class)modelCls {
-    NSString *tableName = castToTypeOrNil([modelCls tableName], NSString);
-    if (tableName.length == 0) {
-        NSAssert(NO, @"*** Table name for model: %@ is empty!", modelCls);
-        return nil;
-    }
+    NSString *tableName =ALCastToTypeOrNil([modelCls tableName], NSString);
+    al_guard_or_return1(!al_isEmptyString(tableName), nil, @"*** Table name for model: %@ is empty!", modelCls);
     
     NSMutableString *sqlClause = [NSMutableString string];
     
@@ -257,7 +239,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     
     // COLUMN DEF
     [sqlClause appendString:[[[[[modelCls tableColumns] bk_reject:^BOOL(NSString *key, id obj) {
-        return [key isEqualToString:keypathForClass(ALModel, rowid)] && ![modelCls withoutRowId];
+        return [key isEqualToString:al_keypathForClass(ALModel, rowid)] && ![modelCls withoutRowId];
     }].allValues sortedArrayUsingComparator:[modelCls columnOrderComparator]]
                               bk_map:^NSString *(ALDBColumnInfo *column) {
                                   return [column columnDefine];

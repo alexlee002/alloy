@@ -12,8 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern ALSQLClause *NS_REQUIRES_NIL_TERMINATION sqlFunc(NSString *funcName, id arg, ...);
-extern ALSQLClause *sql_func1(NSString *funcName, NSArray *args);
+extern ALSQLClause *SQLFunc(NSString *funcName, NSArray *args);
 
 extern ALSQLClause *SQL_LENGTH  (id obj);
 extern ALSQLClause *SQL_ABS     (id obj);
@@ -30,9 +29,6 @@ extern ALSQLClause *SQL_COUNT   (id _Nullable obj);
 extern ALSQLClause *SQL_SUM     (id obj);
 extern ALSQLClause *SQL_AVG     (id obj);
 
-
-//@interface ALSQLClause (SQLFunctions)
-//
-//@end
+extern ALSQLClause *SQL_NOT     (id obj);
 
 NS_ASSUME_NONNULL_END

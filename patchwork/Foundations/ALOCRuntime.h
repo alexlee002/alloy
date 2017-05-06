@@ -12,23 +12,23 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if __IPHONE_8_0 || __MAC_10_10
-#   define isClassObject(obj) object_isClass((obj))
+#   define al_isClassObject(obj) object_isClass((obj))
 #else
-#   define isClassObject(obj) class_isMetaClass(object_getClass((obj)))
+#   define al_isClassObject(obj) class_isMetaClass(object_getClass((obj)))
 #endif
 
-#ifndef primitiveSelectorResult
-    #define primitiveSelectorResult(ret_type, obj, sel, ...) \
-        ((ret_type (*)(id, SEL))(void *) objc_msgSend)((id)(obj), (sel), ##__VA_ARGS__)
-#endif
+//#ifndef al_performSelector
+//    #define al_performSelector(return_type, obj, sel, ...) \
+//        ((return_type (*)(id, SEL))(void *) objc_msgSend)((id)(obj), (sel), ##__VA_ARGS__)
+//#endif
 
-extern BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL);
+extern BOOL al_swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL);
 
-extern NSArray<NSString *> *backtraceStack(int stackSize);
-extern BOOL debuggerFound();
-extern BOOL classIsSubClassOfClass(Class subCls, Class cls);
-extern void fixup_class_arc(Class cls);
-extern void registerArcClassPair(Class cls);
+extern NSArray<NSString *> *al_backtraceStack(int stackSize);
+extern BOOL al_debuggerFound();
+extern BOOL al_classIsSubClassOfClass(Class subCls, Class cls);
+extern void al_fixup_class_arc(Class cls);
+extern void al_registerArcClassPair(Class cls);
 
 @interface ALOCRuntime : NSObject
 
@@ -42,14 +42,14 @@ extern void registerArcClassPair(Class cls);
 
 @interface NSObject (ClassMetasExtension)
 
-+ (Class)commonAncestorWithClass:(Class)other;
-+ (NSArray<Class> *)ancestorClasses;
++ (Class)al_commonAncestorWithClass:(Class)other;
++ (NSArray<Class> *)al_ancestorClasses;
 
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)allProperties;
-+ (NSDictionary<NSString *, YYClassIvarInfo *> *)allIvars;
-+ (NSDictionary<NSString *, YYClassMethodInfo *> *)allMethods;
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)al_allProperties;
++ (NSDictionary<NSString *, YYClassIvarInfo *> *)al_allIvars;
++ (NSDictionary<NSString *, YYClassMethodInfo *> *)al_allMethods;
 
-+ (BOOL)hasProperty:(NSString *)propertyName;
++ (BOOL)al_hasProperty:(NSString *)propertyName;
 
 - (__kindof NSObject *_Nonnull (^)(NSString *_Nonnull propertyName, id _Nullable propertyValue))SET_PROPERTY;
 @end

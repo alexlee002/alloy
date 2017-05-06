@@ -10,7 +10,7 @@
 #import "YYClassInfo.h"
 #import "ALOCRuntime.h"
 #import <BlocksKit.h>
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "NSString+Helper.h"
 #import <YYModel.h>
 #import <objc/message.h>
@@ -76,7 +76,7 @@ static AL_FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
     }
     ALModel *model = [[self alloc] init];
     
-    Class clazz = [self.class commonAncestorWithClass:other.class];
+    Class clazz = [self.class al_commonAncestorWithClass:other.class];
     if (clazz != self.class || ![clazz isSubclassOfClass:[ALModel class]]) {
         return nil;
     }
@@ -143,7 +143,7 @@ static AL_FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
     if (other == nil) {
         return;
     }
-    Class clazz = [self.class commonAncestorWithClass:other.class];
+    Class clazz = [self.class al_commonAncestorWithClass:other.class];
     NSDictionary<NSString *, YYClassPropertyInfo *> *modelProperties = [clazz allModelProperties];
     if (properties == nil) {
         NSSet *blacklist = [self.class respondsToSelector:@selector(modelPropertyBlacklist)]
@@ -186,7 +186,7 @@ static AL_FORCE_INLINE void copyProperties(ALModel *from, ALModel *to,
             return;
         }
         if (setter == nil || ![to respondsToSelector:setter]) {
-            if (!isEmptyString(p.ivarName)) {
+            if (!al_isEmptyString(p.ivarName)) {
                 id value = [from valueForKey:p.ivarName];
                 [to setValue:value forKey:p.ivarName];
             }

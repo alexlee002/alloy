@@ -10,13 +10,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSArray<T> (ArrayExtensions)
+@interface NSArray<T> (ALExtensions)
 
-- (nullable NSArray<T> *)subarrayFromIndex:(NSUInteger)index;
-- (nullable NSArray<T> *)subarrayToIndex:(NSUInteger)index;
+- (nullable NSArray<T> *)al_subarrayFromIndex:(NSUInteger)index;
+- (nullable NSArray<T> *)al_subarrayToIndex:(NSUInteger)index;
 
-- (nullable T)objectAtIndexSafely:(NSUInteger)index;
-- (nullable T)objectAtIndexedSubscriptSafely:(NSUInteger)idx;
+/**
+ * return a sub-array from an array
+ *
+ * @param   from    Refers to the position of the array to start cutting.
+                    A positive number : Start at the specified position in the array.
+                    A negative number : Start at a specified position from the end of the array.
+ *
+ * @param   length  Length of the string to cut from the array.
+                    A positive number : Start at the specified position in the array.
+                    A negative number : Start at a specified position from the end of the array.
+ *
+ */
+- (nullable NSArray<T> *)al_subarrayFromIndex:(NSInteger)from length:(NSInteger)length;
+
+- (nullable T)al_objectAtIndexSafely:(NSUInteger)index;
+- (nullable T)al_objectAtIndexedSubscriptSafely:(NSUInteger)idx; // useless?
 
 @end
 

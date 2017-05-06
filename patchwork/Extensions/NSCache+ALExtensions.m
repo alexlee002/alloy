@@ -11,7 +11,7 @@
 
 @implementation NSCache (ALExtensions)
 
-+ (instancetype)sharedCache {
++ (instancetype)al_sharedCache {
     static NSCache *kSharedCache = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -24,7 +24,7 @@
 }
 
 
-- (id)objectForKey:(id)key defaultValue:(id)dftVal cacheDefaultValue:(BOOL)cache {
+- (id)al_objectForKey:(id)key defaultValue:(id)dftVal cacheDefaultValue:(BOOL)cache {
     id obj = [self objectForKey:key];
     if (obj == nil) {
         obj = dftVal;
@@ -36,8 +36,8 @@
 }
 
 
-- (NSDateFormatter *)dateFormatterWithFormat:(NSString *)format {
-    if (isEmptyString(format)) {
+- (NSDateFormatter *)al_dateFormatterWithFormat:(NSString *)format {
+    if (al_isEmptyString(format)) {
         return nil;
     }
     NSString *key = [@"NSDateFormatter_$_" stringByAppendingString:format];
@@ -47,10 +47,8 @@
         df.dateFormat = format;
         [self setObject:df forKey:key];
     }
-    if (![df isKindOfClass:[NSDateFormatter class]]) {
-        NSAssert(NO, @"return value is not NSDateFormatter instance");
-        df = nil;
-    }
+    
+    al_guard_or_return([df isKindOfClass:[NSDateFormatter class]], nil);
     return df;
 }
 

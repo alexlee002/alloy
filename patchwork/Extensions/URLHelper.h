@@ -7,10 +7,26 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ALUtilitiesHeader.h"
+
+// @see RFC 1808: https://www.ietf.org/rfc/rfc1808.txt
+// URL Components: <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
+// <net_loc
+typedef NS_ENUM(NSInteger, ALURLComponent) {
+    ALURLComponentScheme,
+    ALURLComponentUser,
+    ALURLComponentPassword,
+    ALURLComponentHost,
+    ALURLComponentPort,
+    ALURLComponentPath,
+    ALURLComponentParam,
+    ALURLComponentQuery,
+    ALURLComponentFragment
+};
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *URLParamStringify (id _Nullable value);
+extern NSString *URLParamStringify (id _Nullable value) AL_DEPRECATED("implements it in your app");
 
 // As the same as NSURLQueryItem, but this class only available after iOS 8 / OSX 10.10
 // using 'ALNSURLQueryItem' to Compatible with the eailier OS
@@ -30,21 +46,21 @@ extern NSString *URLParamStringify (id _Nullable value);
  *
  *  @return ALNSURLQueryItem
  */
-+ (instancetype)queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
++ (instancetype)al_queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
 
 @end
 #else 
 
 @interface NSURLComponents(ALURLHelper)
 //@see ALNSURLQueryItem
-+ (instancetype)queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
++ (instancetype)al_queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
 @end
 
 @compatibility_alias ALNSURLQueryItem NSURLQueryItem;
 
 #endif
 
-#define queryItem(name, value) [ALNSURLQueryItem queryItemWithName:(name) rawValue:(value)]
+#define al_URLQueryItem(name, value) [ALNSURLQueryItem al_queryItemWithName:(name) rawValue:(value)]
 
 @interface NSURL (ALURLHelper)
 
@@ -89,17 +105,16 @@ extern NSString *URLParamStringify (id _Nullable value);
 
 - (NSRange)URLQueryStringRange;
 /**
- *  extract query items from 'string'.  'string' must be the 'query' part of a URL.
- *
- *  FIXME: if a string is the query string of the URL, [NSURLComponents componentsWithString:] will treat it as 'path' not 'query'. Anyone could help me to solve it?
+ *  extract query items from 'self'.
+ *  Try to extract query string from 'self', if fail, use 'self' as query string;  and then extract query items from query string.
  *
  *  @return array of query items
  */
-- (nullable NSArray<ALNSURLQueryItem *> *)queryItems;
-- (nullable NSDictionary<NSString *, NSString *> *)queryItemsDictionary;
+- (nullable NSArray<ALNSURLQueryItem *> *)URLQueryItems;
+- (nullable NSDictionary<NSString *, NSString *> *)URLQueryItemsDictionary;
 
-- (NSString *)stringByURLEncoding;
-- (NSString *)stringByURLDecoding;
+- (NSString *)al_stringByURLEncodingAs:(ALURLComponent)component;
+- (NSString *)al_stringByURLDecoding;
 @end
 
 

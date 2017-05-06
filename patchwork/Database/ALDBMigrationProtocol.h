@@ -14,7 +14,9 @@
 + (BOOL)canMigrateDatabaseWithPath:(NSString *)path;
 - (NSInteger)currentVersion;
 
-- (BOOL)migrateFromVersion:(NSInteger)fromVersion to:(NSInteger)toVersion databaseHandler:(FMDatabase *)db;
+- (BOOL)database:(FMDatabase *)dbHandler upgradeFromVersion:(NSInteger)fromVersion to:(NSInteger)toVersion;
+
+- (BOOL)database:(FMDatabase *)dbHandler downgradeFromVersion:(NSInteger)fromVersion to:(NSInteger)toVersion;
 
 @optional
 - (BOOL)setupDatabase:(FMDatabase *)db;

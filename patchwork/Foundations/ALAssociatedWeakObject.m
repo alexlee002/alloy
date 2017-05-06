@@ -8,7 +8,7 @@
 
 #import "ALAssociatedWeakObject.h"
 #import <objc/runtime.h>
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -61,9 +61,9 @@ typedef void (^deallocBlock)(void);
 
 - (void)setWeakAssociatedPropertyValue:(nullable NSObject *)value withAssociatedKey:(const void *)key {
     objc_setAssociatedObject(self, key, value, OBJC_ASSOCIATION_ASSIGN);
-    weakify(self);
+    al_weakify(self);
     [value runAtDealloc:^{
-        strongify(self);
+        al_strongify(self);
         objc_setAssociatedObject(self, key, nil, OBJC_ASSOCIATION_ASSIGN);
     }];
 }

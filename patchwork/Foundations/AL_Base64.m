@@ -6,25 +6,25 @@
 //
 //
 
-#import "Base64.h"
+#import "AL_Base64.h"
 
 
 @implementation NSString (ALExtension_Base64)
 
-- (NSString *)base64Encoding {
+- (NSString *)al_base64Encoding {
     return [[self dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0];
 }
 
-- (NSString *)base64Decoding {
-    NSData *decoded = [[self dataUsingEncoding:NSUTF8StringEncoding] base64Decoding];
+- (NSString *)al_base64Decoding {
+    NSData *decoded = [[self dataUsingEncoding:NSUTF8StringEncoding] al_base64Decoding];
     return [[NSString alloc] initWithData:decoded encoding:NSUTF8StringEncoding];
 }
 
-- (NSData *)dataByBase64Decoding {
+- (NSData *)al_dataByBase64Decoding {
     return [[NSData alloc] initWithBase64EncodedString:self options:NSDataBase64DecodingIgnoreUnknownCharacters];
 }
 
-- (NSData *)dataByBase64Eecoding {
+- (NSData *)al_dataByBase64Eecoding {
     return [[self dataUsingEncoding:NSUTF8StringEncoding] base64EncodedDataWithOptions:0];
 }
 
@@ -35,7 +35,7 @@
 //NSData's base64 encoding using the Apple's native API: "-base64EncodedDataWithOptions:"
 
 
-- (NSData *)base64Decoding {
+- (NSData *)al_base64Decoding {
     return [[NSData alloc] initWithBase64EncodedData:self options:NSDataBase64DecodingIgnoreUnknownCharacters];
 }
 

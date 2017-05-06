@@ -8,8 +8,9 @@
 
 #import "ALSQLInsertStatement.h"
 #import "NSString+Helper.h"
-#import "ALSQLStatementHelpers_private.h"
+#import "__ALSQLStatementHelpers.h"
 #import "SafeBlocksChain.h"
+#import "ALUtilitiesHeader.h"
 
 
 @implementation ALSQLInsertStatement {
@@ -81,17 +82,17 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_POLICY(ALSQLInsertStatement, OR_ROLLBACK, @"OR
             [values enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
                 id val = obj;
                 if (![obj isKindOfClass:ALSQLClause.class]) {
-                    val = [obj SQLClauseArgValue];
+                    val = [obj al_SQLClauseByUsingAsArgValue];
                 }
                 if (val != nil) {
                     [keys addObject:key];
                     [objs addObject:val];
                 } else {
-                    NSAssert(NO, @"*** Invalid column value: {%@: %@}", key, obj);
+                    ALAssert(NO, @"*** Invalid column value: {%@: %@}", key, obj);
                 }
             }];
             
-            NSAssert(keys.count == objs.count, @"*** columns not matches with values");
+            ALAssert(keys.count == objs.count, @"*** columns not matches with values");
             _columns = keys;
             [self addColumnValues:objs];
         }
@@ -120,11 +121,11 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_POLICY(ALSQLInsertStatement, OR_ROLLBACK, @"OR
                 if ([val isKindOfClass:ALSQLClause.class]) {
                     [clauses addObject:(ALSQLClause *)val];
                 } else {
-                    id tmpVal = [val SQLClauseArgValue];
+                    id tmpVal = [val al_SQLClauseByUsingAsArgValue];
                     if (tmpVal != nil) {
                         [clauses addObject:tmpVal];
                     } else {
-                        NSAssert(NO, @"*** invalid column value: %@", val);
+                        ALAssert(NO, @"*** invalid column value: %@", val);
                     }
                 }
             }
@@ -160,39 +161,39 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_POLICY(ALSQLInsertStatement, OR_ROLLBACK, @"OR
 - (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [(_isReplce ? @"REPLACE" : @"INSERT") SQLClause];
+    ALSQLClause *sql = [(_isReplce ? @"REPLACE" : @"INSERT") al_SQLClause];
     
-    if (!_isReplce && !isEmptyString(_policy)) {
-        [sql append:_policy argValues:nil withDelimiter:@" "];
+    if (!_isReplce && !al_isEmptyString(_policy)) {
+        [sql appendSQLString:_policy argValues:nil withDelimiter:@" "];
     }
     
-    if (!isEmptyString(_table)) {
-        [sql append:_table argValues:nil withDelimiter:@" INTO "];
+    if (!al_isEmptyString(_table)) {
+        [sql appendSQLString:_table argValues:nil withDelimiter:@" INTO "];
     } else {
-        NSAssert(NO, @"*** 'table-name' must be specified !!!");
+        ALAssert(NO, @"*** 'table-name' must be specified !!!");
     }
     
     if (_columns.count > 0) {
-        [sql append:[NSString stringWithFormat:@"(%@)", [_columns componentsJoinedByString:@", "]]
+        [sql appendSQLString:[NSString stringWithFormat:@"(%@)", [_columns componentsJoinedByString:@", "]]
           argValues:nil
       withDelimiter:@" "];
     }
     
     if (_values.count > 0) {
-        [sql append:@" VALUES " argValues:nil withDelimiter:nil];
+        [sql appendSQLString:@" VALUES " argValues:nil withDelimiter:nil];
         [_values enumerateObjectsUsingBlock:^(NSArray<ALSQLClause *> * _Nonnull rowValues, NSUInteger idx, BOOL * _Nonnull stop) {
             if (idx > 0) {
-                [sql append:@", " argValues:nil withDelimiter:nil];
+                [sql appendSQLString:@", " argValues:nil withDelimiter:nil];
             }
             
-            [sql append:@"(" argValues:nil withDelimiter:nil];
+            [sql appendSQLString:@"(" argValues:nil withDelimiter:nil];
             __ALSQLSTMT_JOIN_CLAUSE_ARRAY(sql, rowValues, @", ");
-            [sql append:@")" argValues:nil withDelimiter:nil];
+            [sql appendSQLString:@")" argValues:nil withDelimiter:nil];
         }];
     } else if ([_selectStatement isValid]) {
         [sql append:_selectStatement withDelimiter:@" "];
     } else if (_usingDefaultValues) {
-        [sql append:@" DEFAULT VALUES" argValues:nil withDelimiter:nil];
+        [sql appendSQLString:@" DEFAULT VALUES" argValues:nil withDelimiter:nil];
     }
     
     _SQLClause = sql;

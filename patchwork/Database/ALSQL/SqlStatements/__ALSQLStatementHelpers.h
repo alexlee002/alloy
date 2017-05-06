@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PatchworkLog_private.h"
+#import "__patchwork_config.h"
+#import "ALLogger.h"
+#import "ALUtilitiesHeader.h"
 
 // private utilities tools for ALSQLStatment
 
@@ -64,7 +66,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_CLAUSE_ARG(stmt_class, _from_var, HAVING)
             if (_where_var == nil) {                            \
                 _where_var = __tmpWhere;                        \
             } else {                                            \
-                _where_var.AND(__tmpWhere);                     \
+                _where_var.SQL_AND(__tmpWhere);                 \
             }                                                   \
         }                                                       \
         _needReBuild = YES;                                     \
@@ -78,10 +80,10 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_CLAUSE_ARG(stmt_class, _from_var, HAVING)
 #define __APPEND_ORDER_BY_CLAUSE(_ivar_name, expr_clause)     \
 if ([expr_clause isKindOfClass:ALSQLClause.class]) {          \
     ALSQLClause *other = (ALSQLClause *)expr_clause;          \
-    _ivar_name == nil ? (_ivar_name = [other copy]) : [_ivar_name append:other withDelimiter:@", "];    \
-} else if ([expr_clause isKindOfClass:NSString.class]) {                                                \
-    _ivar_name == nil ? (_ivar_name = [expr_clause SQLClause])                                              \
-                      : [_ivar_name append:(NSString *)expr_clause argValues:nil withDelimiter:@", "];  \
+    _ivar_name == nil ? (_ivar_name = [other copy]) : [_ivar_name append:other withDelimiter:@", "];            \
+} else if ([expr_clause isKindOfClass:NSString.class]) {                                                        \
+    _ivar_name == nil ? (_ivar_name = [expr_clause al_SQLClause])                                               \
+                      : [_ivar_name appendSQLString:(NSString *)expr_clause argValues:nil withDelimiter:@", "]; \
 }
 #endif
 
@@ -143,14 +145,14 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_GROUP_BY(stmt_class, _order_by_ivar, GRO
 
 // safe blocks chain
 #ifndef __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY
-#define __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY() ValidBlocksChainObjectOrReturn(self, self)
+#define __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY() al_isValidBlocksChainObjectOrReturn(self, self)
 
 #endif
 
 // using in sqlstatment's SQLClause
 #ifndef __ALSQLSTMT_BUILD_SQL_VERIFY
 #define __ALSQLSTMT_BUILD_SQL_VERIFY()          \
-    if (![self isValidBlocksChainObject]) {     \
+    if (![self al_isValidBlocksChainObject]) {     \
         ALLogError(@"%@", (self));              \
         return nil;                             \
     }                                           \
@@ -165,7 +167,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ORDER_GROUP_BY(stmt_class, _order_by_ivar, GRO
 #define __ALSQLSTMT_JOIN_CLAUSE_ARRAY(src, clause_array, delimiter)     \
 [(clause_array) enumerateObjectsUsingBlock:^(ALSQLClause * _Nonnull _innerEnumObj, NSUInteger _innerEnmuIdx, BOOL * _Nonnull _stop) {   \
     if (_innerEnmuIdx > 0) {                                            \
-        [(src) append:(delimiter) argValues:nil withDelimiter:nil];     \
+        [(src) appendSQLString:(delimiter) argValues:nil withDelimiter:nil];     \
     }                                                                   \
     [(src) append:_innerEnumObj withDelimiter:nil];                     \
 }];

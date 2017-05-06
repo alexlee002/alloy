@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "ALModel+ActiveRecord_private.h"
+#import "__ALModel+ActiveRecord.h"
 #import "ALModel+ActiveRecord.h"
 #import "NSString+Helper.h"
 #import <objc/message.h>

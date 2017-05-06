@@ -11,8 +11,8 @@
 
 @implementation NSDate (ALExtensions)
 
-- (NSString *)stringWithFormat:(NSString *)format {
-    NSDateFormatter *df = [[NSCache sharedCache] dateFormatterWithFormat:format];
+- (NSString *)al_stringWithFormat:(NSString *)format {
+    NSDateFormatter *df = [[NSCache al_sharedCache] al_dateFormatterWithFormat:format];
     return [df stringFromDate:self];
 }
 

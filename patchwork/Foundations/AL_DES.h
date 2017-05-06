@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSData (ALExtension_DES)
 
-- (nullable NSData *)dataByDESEncryptingWithKey:(NSData *)key;
-- (NSData *)dataByDESDecryptingWithKey:(NSData *)key;
+- (nullable NSData *)al_dataByDESEncryptingWithKey:(NSData *)key;
+- (NSData *)al_dataByDESDecryptingWithKey:(NSData *)key;
 
 @end
 NS_ASSUME_NONNULL_END

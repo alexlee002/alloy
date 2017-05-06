@@ -14,17 +14,15 @@
 #define validatePropertyColumnMappings(cls, propNames, retVal)  \
     NSDictionary *columns = [(cls) tableColumns];               \
     for (NSString *name in (propNames)) {                       \
-        if (columns[(name)] == nil) {                           \
-            NSAssert(NO, @"*** [%@] no column mapped to property: [%@]",(cls), (name)); \
-            return retVal;                                      \
-        }                                                       \
+        al_guard_or_return1(columns[(name)] != nil, retVal,     \
+                            @"*** [%@] no column mapped to property: [%@]",(cls), (name));\
     }
 
-#define validateModelRecordBinding(model, retVal)               \
-    if (![(model) isModelFromDB]) {                             \
-        NSAssert(NO, @"[%@] should be save to database first!", (model).class);         \
-        return retVal;                                          \
-    }
+//#define validateModelRecordBinding(model, retVal)               \
+//    if (![(model) isModelFromDB]) {                             \
+//        NSAssert(NO, @"[%@] should be save to database first!", (model).class);         \
+//        return retVal;                                          \
+//    }
 
 
 #pragma mark - model relationships

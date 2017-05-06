@@ -9,8 +9,9 @@
 #import "ALSQLDeleteStatement.h"
 #import "NSString+Helper.h"
 #import "ALSQLClause+SQLOperation.h"
-#import "ALSQLStatementHelpers_private.h"
+#import "__ALSQLStatementHelpers.h"
 #import "SafeBlocksChain.h"
+#import "ALUtilitiesHeader.h"
 
 @implementation ALSQLDeleteStatement {
     ALSQLClause *_qualifiedTableName;
@@ -39,12 +40,12 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLDeleteStatement, _offsetClause);
 - (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [@"DELETE" SQLClause];
+    ALSQLClause *sql = [@"DELETE" al_SQLClause];
     
     if ([_qualifiedTableName isValid]) {
         [sql append:_qualifiedTableName withDelimiter:@" FROM "];
     } else {
-        NSAssert(NO, @"*** 'qualified-table-name' must be specified !!!");
+        ALAssert(NO, @"*** 'qualified-table-name' must be specified !!!");
     }
     
     if ([_whereClause isValid]) {

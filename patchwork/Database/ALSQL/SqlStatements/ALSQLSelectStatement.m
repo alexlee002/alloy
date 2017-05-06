@@ -8,8 +8,8 @@
 
 #import "ALSQLSelectStatement.h"
 #import "NSString+Helper.h"
-#import "UtilitiesHeader.h"
-#import "ALSQLStatementHelpers_private.h"
+#import "ALUtilitiesHeader.h"
+#import "__ALSQLStatementHelpers.h"
 #import "ALSQLClause+SQLOperation.h"
 #import "ALSQLClause+SQLFunctions.h"
 #import "SafeBlocksChain.h"
@@ -89,20 +89,20 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET    (ALSQLSelectStatement, _offset);
 - (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [@"SELECT " SQLClause];
+    ALSQLClause *sql = [@"SELECT " al_SQLClause];
     
     if (_distinct) {
-        [sql append:@"DISTINCT " argValues:nil withDelimiter:nil];
+        [sql appendSQLString:@"DISTINCT " argValues:nil withDelimiter:nil];
     }
     
     if (_resultColumns.count > 0) {
         __ALSQLSTMT_JOIN_CLAUSE_ARRAY(sql, _resultColumns, @", ");
     } else {
-        [sql append:@"*" argValues:nil withDelimiter:nil];
+        [sql appendSQLString:@"*" argValues:nil withDelimiter:nil];
     }
     
     if (_tablesOrSubQueries.count > 0) {
-        [sql append:@" FROM " argValues:nil withDelimiter:nil];
+        [sql appendSQLString:@" FROM " argValues:nil withDelimiter:nil];
         __ALSQLSTMT_JOIN_CLAUSE_ARRAY(sql, _tablesOrSubQueries, @", ");
     }
 
@@ -143,7 +143,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET    (ALSQLSelectStatement, _offset);
 #define __ALSQL_SELECT_EXT_BLOCK_IMP(TYPE, BLOCK_NAME, RS_SEL)  \
     - (TYPE (^)())BLOCK_NAME {                                  \
         return ^TYPE {                                          \
-            ValidBlocksChainObjectOrReturn(self, (TYPE)(0x0));  \
+            al_isValidBlocksChainObjectOrReturn(self, (TYPE)(0x0));  \
                                                                 \
             __block TYPE result = (TYPE)(0x0);                  \
             self.EXECUTE_QUERY(^(FMResultSet *rs) {             \
@@ -159,7 +159,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET    (ALSQLSelectStatement, _offset);
 
 - (NSInteger (^)(id expres))FETCH_COUNT {
     return ^NSInteger (id expres) {
-        ValidBlocksChainObjectOrReturn(self, 0);
+        al_isValidBlocksChainObjectOrReturn(self, 0);
         
         __block NSInteger count = 0;
         self.SELECT(SQL_COUNT(expres)).EXECUTE_QUERY(^(FMResultSet *rs){
@@ -182,7 +182,7 @@ __ALSQL_SELECT_EXT_BLOCK_IMP(NSDate *_Nullable,   DATE_RESULT, dateForColumnInde
 
 
 - (ALSQLClause *)asSubQuery {
-    return [[NSString stringWithFormat:@"(%@)", self.SQLString] SQLClauseWithArgValues:self.argValues];
+    return [[NSString stringWithFormat:@"(%@)", self.SQLString] al_SQLClauseWithArgValues:self.argValues];
 }
 
 @end

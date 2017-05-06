@@ -8,8 +8,8 @@
 
 #import "ALSQLUpdateStatement.h"
 #import "NSString+Helper.h"
-#import "UtilitiesHeader.h"
-#import "ALSQLStatementHelpers_private.h"
+#import "ALUtilitiesHeader.h"
+#import "__ALSQLStatementHelpers.h"
 #import "ALSQLClause+SQLOperation.h"
 #import <BlocksKit.h>
 #import "SafeBlocksChain.h"
@@ -58,7 +58,7 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLUpdateStatement, _offset);
         }
         if ([key isKindOfClass:NSArray.class]) {
             sql = [[(NSArray *)key bk_select:^BOOL(id tmpKey) {
-                return stringValue(tmpKey) != nil;
+                return al_stringValue(tmpKey) != nil;
             }] componentsJoinedByString:@", "];
             sql = [NSString stringWithFormat:@"(%@)", sql];
         }
@@ -66,14 +66,14 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLUpdateStatement, _offset);
         if (sql == nil) {
             return;
         }
-        ALSQLClause *subSet = [sql SQLClause];
+        ALSQLClause *subSet = [sql al_SQLClause];
         
         if ([obj isKindOfClass:ALSQLClause.class]) {
             [subSet append:(ALSQLClause *)obj withDelimiter:@" = "];
         } else if (obj == NSNull.null) {
-            [subSet append:@"NULL" argValues:nil withDelimiter:@" = "];
+            [subSet appendSQLString:@"NULL" argValues:nil withDelimiter:@" = "];
         } else {
-            [subSet append:@"?" argValues:@[obj] withDelimiter:@" = "];
+            [subSet appendSQLString:@"?" argValues:@[obj] withDelimiter:@" = "];
         }
         
         [[self setClauses] addObject:subSet];
@@ -105,23 +105,23 @@ __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_OFFSET  (ALSQLUpdateStatement, _offset);
 - (nullable ALSQLClause *)SQLClause {
     __ALSQLSTMT_BUILD_SQL_VERIFY();
     
-    ALSQLClause *sql = [@"UPDATE" SQLClause];
+    ALSQLClause *sql = [@"UPDATE" al_SQLClause];
     
-    if (!isEmptyString(_policy)) {
-        [sql append:_policy argValues:nil withDelimiter:@" "];
+    if (!al_isEmptyString(_policy)) {
+        [sql appendSQLString:_policy argValues:nil withDelimiter:@" "];
     }
     
     if ([_qualifiedTableName isValid]) {
         [sql append:_qualifiedTableName withDelimiter:@" "];
     } else {
-        NSAssert(NO, @"*** 'qualified-table-name' must be specified !!!");
+        ALAssert(NO, @"*** 'qualified-table-name' must be specified !!!");
     }
     
     if (_setClauses.count > 0) {
-        [sql append:@" SET " argValues:nil withDelimiter:nil];
+        [sql appendSQLString:@" SET " argValues:nil withDelimiter:nil];
         __ALSQLSTMT_JOIN_CLAUSE_ARRAY(sql, _setClauses, @", ");
     } else {
-        NSAssert(NO, @"*** 'set clause' must be specified!!!");
+        ALAssert(NO, @"*** 'set clause' must be specified!!!");
     }
     
     if ([_where isValid]) {

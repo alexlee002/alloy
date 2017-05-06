@@ -8,17 +8,17 @@
 
 #import "ALFMDatabaseQueue.h"
 #import "FMDB.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "ALOCRuntime.h"
-#import "PatchworkLog_private.h"
+#import "__patchwork_config.h"
 #import <sqlite3.h>
 
 #ifndef MAX_DB_BLOCK_EXECUTE_SEC
-#define MAX_DB_BLOCK_EXECUTE_SEC 5
+#define MAX_DB_BLOCK_EXECUTE_SEC 0.25f
 #endif
 
 #ifndef MAX_DB_BLOCK_EXECUTE_SEC_MAIN
-#define MAX_DB_BLOCK_EXECUTE_SEC_MAIN 0.5f
+#define MAX_DB_BLOCK_EXECUTE_SEC_MAIN MAX_DB_BLOCK_EXECUTE_SEC
 #endif
 
 #if defined(DEBUG) && DEBUG
@@ -30,7 +30,7 @@
             [NSThread currentThread].isMainThread ? MAX_DB_BLOCK_EXECUTE_SEC_MAIN : MAX_DB_BLOCK_EXECUTE_SEC;    \
         if (dt > timeLimit) {                                                                                    \
             ALLogWarn(@"!!!Database operation time exceeded! Expected:%.2fs, was: %.2fs.\nBacktrace Stack:\n%@", \
-                      timeLimit, dt, backtraceStack(15));                                                        \
+                      timeLimit, dt, al_backtraceStack(15));                                                     \
         }                                                                                                        \
     })
 

@@ -25,7 +25,7 @@ extern NSString * const kRowIdColumnName;
 
 // convert a model's prpoerty name to table column name
 #ifndef AS_COL
-#define AS_COL(class_type, property) [class_type mappedColumnNameForProperty:keypathForClass(class_type, property)]
+#define AS_COL(class_type, property) [class_type mappedColumnNameForProperty:al_keypathForClass(class_type, property)]
 #endif
 
 #ifndef AS_COL_OJB

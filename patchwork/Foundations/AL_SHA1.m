@@ -6,12 +6,12 @@
 //
 //
 
-#import "SHA1.h"
+#import "AL_SHA1.h"
 #import <CommonCrypto/CommonHMAC.h>
 
 @implementation NSData (ALExtension_SHA1)
 
-- (NSString *)sha1Encrypting {
+- (NSString *)al_sha1Encrypting {
     NSMutableString *output = nil;
     unsigned char hashed[CC_SHA1_DIGEST_LENGTH];
     if ( CC_SHA1([self bytes], (CC_LONG)[self length], hashed) ) {
@@ -24,7 +24,7 @@
     return [output copy];
 }
 
-- (NSData *)dataByHmacSHA1EncryptingWithKey:(NSData *)key {
+- (NSData *)al_dataByHmacSHA1EncryptingWithKey:(NSData *)key {
     void* buffer = malloc(CC_SHA1_DIGEST_LENGTH);
     CCHmac(kCCHmacAlgSHA1, [key bytes], [key length], [self bytes], [self length], buffer);
     return [NSData dataWithBytesNoCopy:buffer length:CC_SHA1_DIGEST_LENGTH freeWhenDone:YES];
@@ -35,12 +35,12 @@
 
 @implementation NSString (ALExtension_SHA1)
 
-- (NSString *)sha1Encrypting {
-    return [[self dataUsingEncoding:NSUTF8StringEncoding] sha1Encrypting];
+- (NSString *)al_sha1EncryptingUsingEncoding:(NSStringEncoding)encoding {
+    return [[self dataUsingEncoding:encoding] al_sha1Encrypting];
 }
 
-- (NSData *)dataByHmacSHA1EncryptingWithKey:(NSData *)key {
-    return [[self dataUsingEncoding:NSUTF8StringEncoding] dataByHmacSHA1EncryptingWithKey:key];
+- (NSData *)al_dataByHmacSHA1EncryptingUsingEncoding:(NSStringEncoding)encoding key:(NSData *)key {
+    return [[self dataUsingEncoding:encoding] al_dataByHmacSHA1EncryptingWithKey:key];
 }
 
 @end

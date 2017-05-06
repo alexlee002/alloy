@@ -9,5 +9,5 @@
 #import <Foundation/Foundation.h>
 
 @interface NSDate (ALExtensions)
-- (NSString *)stringWithFormat:(NSString *)format;
+- (NSString *)al_stringWithFormat:(NSString *)format;
 @end

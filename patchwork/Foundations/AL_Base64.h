@@ -10,11 +10,11 @@
 
 @interface NSString (ALExtension_Base64)
 
-- (NSString *)base64Encoding;
-- (NSString *)base64Decoding;
+- (NSString *)al_base64Encoding;
+- (NSString *)al_base64Decoding;
 
-- (NSData *)dataByBase64Decoding;
-- (NSData *)dataByBase64Eecoding;
+- (NSData *)al_dataByBase64Decoding;
+- (NSData *)al_dataByBase64Eecoding;
 
 @end
 
@@ -23,6 +23,6 @@
 //NSData's base64 encoding using the Apple's native API: "-base64EncodedDataWithOptions:"
 
 
-- (NSData *)base64Decoding;
+- (NSData *)al_base64Decoding;
 
 @end

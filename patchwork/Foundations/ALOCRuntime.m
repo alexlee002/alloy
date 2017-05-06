@@ -10,14 +10,14 @@
 #import "YYClassInfo.h"
 #import "BlocksKitExtension.h"
 #import "BlocksKit.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #include <execinfo.h>
 #include <sys/sysctl.h>
 #import "ALLogger.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-AL_FORCE_INLINE BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL) {
+AL_FORCE_INLINE BOOL al_swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL) {
     Method originalMethod = isClassMethod ? class_getClassMethod(cls, originalSEL) : class_getInstanceMethod(cls, originalSEL);
     Method swizzledMethod = isClassMethod ? class_getClassMethod(cls, swizzledSEL) : class_getInstanceMethod(cls, swizzledSEL);
     
@@ -45,34 +45,7 @@ AL_FORCE_INLINE BOOL swizzle_method(Class cls, BOOL isClassMethod, SEL originalS
     return YES;
 }
 
-AL_FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls)) {
-    NSMutableSet *set = [NSMutableSet set];
-    unsigned int classesCount = 0;
-    Class *classes = objc_copyClassList( &classesCount );
-    for (int i = 0; i < classesCount; ++i) {
-        Class clazz = classes[i];
-        Class superClass = class_getSuperclass(clazz);
-        
-        if (nil == superClass) {
-            continue;
-        }
-        if (!class_respondsToSelector(clazz, @selector(doesNotRecognizeSelector:))) {
-            continue;
-        }
-        if (!class_respondsToSelector(clazz, @selector(methodSignatureForSelector:))) {
-            continue;
-        }
-        
-        if (block && block(clazz)) {
-            [set addObject:clazz];
-        }
-    }
-    free(classes);
-    
-    return set;
-}
-
-AL_FORCE_INLINE BOOL classIsSubClassOfClass(Class subCls, Class cls) {
+AL_FORCE_INLINE BOOL al_classIsSubClassOfClass(Class subCls, Class cls) {
     while ((subCls = class_getSuperclass(subCls)) != nil) {
         if (cls == subCls) {
             return YES;
@@ -81,7 +54,7 @@ AL_FORCE_INLINE BOOL classIsSubClassOfClass(Class subCls, Class cls) {
     return NO;
 }
 
-AL_FORCE_INLINE NSArray<NSString *> *backtraceStack(int size) {
+AL_FORCE_INLINE NSArray<NSString *> *al_backtraceStack(int size) {
     size = size > 0 ? size : 128;
     void* callstack[size];
     int frames = backtrace(callstack, size);
@@ -103,7 +76,7 @@ AL_FORCE_INLINE NSArray<NSString *> *backtraceStack(int size) {
 }
 
 // @see http://stackoverflow.com/questions/4744826/detecting-if-ios-app-is-run-in-debugger
-AL_FORCE_INLINE BOOL debuggerFound() {
+AL_FORCE_INLINE BOOL al_debuggerFound() {
     // Initialize the flags so that, if sysctl fails for some bizarre
     // reason, we get a predictable result.
     struct kinfo_proc info;
@@ -132,7 +105,7 @@ AL_FORCE_INLINE BOOL debuggerFound() {
 
 // @see http://blog.sunnyxx.com/2015/09/13/class-ivar-layout/
 // @see -[FoundationsTests testFakeClass]
-AL_FORCE_INLINE void fixup_class_arc(Class class) {
+AL_FORCE_INLINE void al_fixup_class_arc(Class class) {
     struct {
         Class isa;
         Class superclass;
@@ -164,13 +137,40 @@ AL_FORCE_INLINE void fixup_class_arc(Class class) {
     objcRWClass->ro->flags |= RO_IS_ARR;
 }
 
-void registerArcClassPair(Class cls) {
+void al_registerArcClassPair(Class cls) {
     if (cls != NULL) {
         objc_registerClassPair(cls);
-        fixup_class_arc(cls);
+        al_fixup_class_arc(cls);
     }
 }
 
+//private function
+AL_FORCE_INLINE static NSSet<Class> *filterClassesWithBlock(BOOL (^block)(Class cls)) {
+    NSMutableSet *set = [NSMutableSet set];
+    unsigned int classesCount = 0;
+    Class *classes = objc_copyClassList( &classesCount );
+    for (int i = 0; i < classesCount; ++i) {
+        Class clazz = classes[i];
+        Class superClass = class_getSuperclass(clazz);
+        
+        if (nil == superClass) {
+            continue;
+        }
+        if (!class_respondsToSelector(clazz, @selector(doesNotRecognizeSelector:))) {
+            continue;
+        }
+        if (!class_respondsToSelector(clazz, @selector(methodSignatureForSelector:))) {
+            continue;
+        }
+        
+        if (block && block(clazz)) {
+            [set addObject:clazz];
+        }
+    }
+    free(classes);
+    
+    return set;
+}
 
 @implementation ALOCRuntime
 
@@ -188,7 +188,7 @@ void registerArcClassPair(Class cls) {
         return nil;
     }
     return filterClassesWithBlock(^BOOL(__unsafe_unretained Class cls) {
-        return classIsSubClassOfClass(cls, clazz);
+        return al_classIsSubClassOfClass(cls, clazz);
     });
 }
 
@@ -210,17 +210,15 @@ void registerArcClassPair(Class cls) {
 
 @end
 
-
-
 @implementation NSObject (ClassMetasExtension)
 
-+ (Class)commonAncestorWithClass:(Class)other {
-    return [[[[[self ancestorClasses] al_zip:[other ancestorClasses], nil] bk_select:^BOOL(NSArray<Class> *obj) {
++ (Class)al_commonAncestorWithClass:(Class)other {
+    return [[[[[self al_ancestorClasses] al_zip:[other al_ancestorClasses], nil] bk_select:^BOOL(NSArray<Class> *obj) {
         return (obj.count == 2 && obj.firstObject == obj.lastObject);
     }] lastObject] firstObject] ?: NSObject.class;
 }
 
-+ (NSArray<Class> *)ancestorClasses {
++ (NSArray<Class> *)al_ancestorClasses {
     NSMutableArray<Class> *classes = [NSMutableArray array];
     Class clazz = self;
     while (clazz != nil) {
@@ -231,9 +229,9 @@ void registerArcClassPair(Class cls) {
 }
 
 
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)allProperties {
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)al_allProperties {
     NSMutableDictionary<NSString *, YYClassPropertyInfo *> *allProperties = [NSMutableDictionary dictionary];
-    NSArray<Class> *ancestors = [self ancestorClasses];
+    NSArray<Class> *ancestors = [self al_ancestorClasses];
     for (Class clazz in ancestors) {
         YYClassInfo *info = [YYClassInfo classInfoWithClass:clazz];
         [allProperties addEntriesFromDictionary:info.propertyInfos];
@@ -241,9 +239,9 @@ void registerArcClassPair(Class cls) {
     return allProperties;
 }
 
-+ (NSDictionary<NSString *, YYClassIvarInfo *> *)allIvars {
++ (NSDictionary<NSString *, YYClassIvarInfo *> *)al_allIvars {
     NSMutableDictionary<NSString *, YYClassIvarInfo *> *allIvars = [NSMutableDictionary dictionary];
-    NSArray<Class> *ancestors = [self ancestorClasses];
+    NSArray<Class> *ancestors = [self al_ancestorClasses];
     for (Class clazz in ancestors) {
         YYClassInfo *info = [YYClassInfo classInfoWithClass:clazz];
         [allIvars addEntriesFromDictionary:info.ivarInfos];
@@ -251,9 +249,9 @@ void registerArcClassPair(Class cls) {
     return allIvars;
 }
 
-+ (NSDictionary<NSString *, YYClassMethodInfo *> *)allMethods {
++ (NSDictionary<NSString *, YYClassMethodInfo *> *)al_allMethods {
     NSMutableDictionary<NSString *, YYClassMethodInfo *> *allMethods = [NSMutableDictionary dictionary];
-    NSArray<Class> *ancestors = [self ancestorClasses];
+    NSArray<Class> *ancestors = [self al_ancestorClasses];
     for (Class clazz in ancestors) {
         YYClassInfo *info = [YYClassInfo classInfoWithClass:clazz];
         [allMethods addEntriesFromDictionary:info.methodInfos];
@@ -261,8 +259,8 @@ void registerArcClassPair(Class cls) {
     return allMethods;
 }
 
-+ (BOOL)hasProperty:(NSString *)propertyName {
-    return [self allProperties][propertyName] != nil;
++ (BOOL)al_hasProperty:(NSString *)propertyName {
+    return [self al_allProperties][propertyName] != nil;
 }
 
 - (__kindof NSObject *_Nonnull (^)(NSString *_Nonnull propertyName, id _Nullable propertyValue))SET_PROPERTY {

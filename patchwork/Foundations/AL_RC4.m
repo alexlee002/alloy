@@ -6,8 +6,8 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "RC4.h"
-#import "UtilitiesHeader.h"
+#import "AL_RC4.h"
+#import "ALUtilitiesHeader.h"
 
 const char base[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
@@ -61,11 +61,10 @@ static AL_FORCE_INLINE void rc4_init(struct rc4_state *const state, const u_char
  * Since RC4 is a stream cypher, this function is used
  * for both encryption and decryption.
  */
-static AL_FORCE_INLINE void rc4_crypt(struct rc4_state *const state, const u_char *inbuf, u_char *outbuf, int buflen) {
-    int i;
+static AL_FORCE_INLINE void rc4_crypt(struct rc4_state *const state, const u_char *inbuf, u_char *outbuf, size_t buflen) {
+   
     u_char j;
-    
-    for (i = 0; i < buflen; i++) {
+    for (size_t i = 0; i < buflen; i++) {
         /* Update modification indicies */
         state->index1++;
         state->index2 += state->perm[state->index1];
@@ -84,25 +83,22 @@ static AL_FORCE_INLINE void rc4_crypt(struct rc4_state *const state, const u_cha
 
 @implementation NSData (ALExtension_RC4)
 
-- (NSData *)dataByRC4EncryptingWithKey:(NSString *)encryptionKey {
-    int lenPim = (int)self.length;
-    char *strRc4 = (char *)malloc(lenPim);
+- (NSData *)al_dataByRC4EncryptingWithKey:(NSData *)encryptionKey {
+    NSInteger length = (NSInteger)self.length;
+    char *strRc4 = (char *)malloc(length);
     const char *pDest = [self bytes];
-    memset(strRc4, 0, lenPim);
-    memcpy(strRc4, pDest, lenPim);
-    u_char *strOut = (u_char *)malloc(lenPim);
-    memset(strOut, 0, lenPim);
+    memset(strRc4, 0, length);
+    memcpy(strRc4, pDest, length);
+    u_char *strOut = (u_char *)malloc(length);
+    memset(strOut, 0, length);
     
     struct rc4_state rc4s;
-    const char *rc4key = [encryptionKey UTF8String];
+    const char *rc4key = [encryptionKey bytes];
     rc4_init(&rc4s, (const u_char *)rc4key, (int)encryptionKey.length);
-    rc4_crypt(&rc4s, (u_char *)strRc4, strOut, lenPim);
+    rc4_crypt(&rc4s, (u_char *)strRc4, strOut, length);
     
-    NSData *logRC4 = [NSData dataWithBytes:strOut length:lenPim];
     free(strRc4);
-    free(strOut);
-    
-    return logRC4;
+    return [NSData dataWithBytesNoCopy:strOut length:length freeWhenDone:YES];
 }
 
 @end

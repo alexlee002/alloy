@@ -9,7 +9,7 @@
 #import "URLHelper.h"
 #import "BlocksKit.h"
 #import "NSArray+ArrayExtensions.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "NSString+Helper.h"
 #import "ALOrderedMap.h"
 
@@ -22,41 +22,21 @@ AL_FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
         NSData *data = [NSJSONSerialization dataWithJSONObject:value options:0 error:nil];
         canonicalString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     } else {
-        canonicalString = [value stringify];
+        canonicalString = [value al_stringify];
     }
     
-    return stringOrEmpty(canonicalString);
+    return al_stringOrEmpty(canonicalString);
 }
 
 AL_FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *urlencodedQuery) {
     return [[[urlencodedQuery componentsSeparatedByString:@"&"] bk_select:^BOOL(NSString *itemString) {
-        return castToTypeOrNil(itemString, NSString).length > 0;
+        return ALCastToTypeOrNil(itemString, NSString).length > 0;
     }] bk_map:^ALNSURLQueryItem *(NSString *itemString) {
-        NSArray *pairs = [castToTypeOrNil(itemString, NSString) componentsSeparatedByString:@"="];
-        return [ALNSURLQueryItem queryItemWithName:[pairs.firstObject ?: @"" stringByURLDecoding]
-                                             value:[[pairs objectAtIndexSafely:1] stringByURLDecoding]];
+        NSArray *pairs = [ALCastToTypeOrNil(itemString, NSString) componentsSeparatedByString:@"="];
+        return [ALNSURLQueryItem queryItemWithName:[pairs.firstObject ?: @"" al_stringByURLDecoding]
+                                             value:[[pairs al_objectAtIndexSafely:1] al_stringByURLDecoding]];
     }];
 }
-
-//AL_FORCE_INLINE void addOrReplaceObjectInArray(NSMutableArray *array, id object, BOOL (^matchBlock)(id existedObject)) {
-//    NSUInteger index = [array indexOfObjectPassingTest:^BOOL(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-//        BOOL found = NO;
-//        if (matchBlock && matchBlock(obj)) {
-//            found = YES;
-//        }
-//        *stop = found;
-//        return found;
-//    }];
-//    if (index == NSNotFound) {
-//        if (object != nil) {
-//            [array addObject:object];
-//        }
-//    } else if (object == nil) {
-//        [array removeObjectAtIndex:index];
-//    } else {
-//        [array replaceObjectAtIndex:index withObject:object];
-//    }
-//}
 
 AL_FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *originalItems,
                                          NSArray<ALNSURLQueryItem *> *addingItems) {
@@ -68,58 +48,15 @@ AL_FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *
     [originalItems removeAllObjects];
     [orderedMap
         enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
-            [originalItems addObject:[ALNSURLQueryItem queryItemWithName:key rawValue:obj]];
+            [originalItems addObject:[ALNSURLQueryItem al_queryItemWithName:key rawValue:obj]];
         }];
-    //
-    //
-    //
-    //    NSMutableArray *appendingItems = [NSMutableArray arrayWithCapacity:addingItems.count];
-    //    [addingItems bk_each:^(ALNSURLQueryItem *item) {
-    //        addOrReplaceObjectInArray(appendingItems, item, ^BOOL(ALNSURLQueryItem *existedObject) {
-    //            return stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
-    //                                castToTypeOrNil(existedObject, ALNSURLQueryItem).name);
-    //        });
-    //    }];
-    //
-    //    [appendingItems bk_each:^(ALNSURLQueryItem *item) {
-    //        NSUInteger lastFoundIndex = NSNotFound;
-    //        while (YES) {
-    //            NSUInteger index = [originalItems indexOfObjectPassingTest:^BOOL(ALNSURLQueryItem *_Nonnull
-    //            resultItem,
-    //                                                                             NSUInteger idx, BOOL *_Nonnull stop)
-    //                                                                             {
-    //                BOOL found = stringEquals(castToTypeOrNil(item, ALNSURLQueryItem).name,
-    //                                          castToTypeOrNil(resultItem, ALNSURLQueryItem).name);
-    //                if (lastFoundIndex != NSNotFound) {
-    //                    found = found && (idx > lastFoundIndex);
-    //                }
-    //
-    //                *stop = found;
-    //                return found;
-    //            }];
-    //
-    //            if (index == NSNotFound) {
-    //                if (lastFoundIndex == NSNotFound) {
-    //                    [originalItems addObject:item];
-    //                }
-    //                break;
-    //            } else {
-    //                if (lastFoundIndex == NSNotFound) {
-    //                    [originalItems replaceObjectAtIndex:index withObject:item];
-    //                } else {
-    //                    [originalItems removeObjectAtIndex:index];
-    //                }
-    //                lastFoundIndex = index;
-    //            }
-    //        }
-    //    }];
 }
 
 AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *items) {
     return [[items bk_map:^NSString *(ALNSURLQueryItem *item) {
-        NSString *string = [item.name stringByURLEncoding];
+        NSString *string = [item.name al_stringByURLEncodingAs:ALURLComponentQuery];
         if (item.value != nil) {
-            string = [string stringByAppendingFormat:@"=%@", [item.value stringByURLEncoding]];
+            string = [string stringByAppendingFormat:@"=%@", [item.value al_stringByURLEncodingAs:ALURLComponentQuery]];
         }
         return string;
     }] componentsJoinedByString:@"&"];
@@ -132,17 +69,17 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
 @synthesize value = _value;
 
 + (instancetype)queryItemWithName:(NSString *)name value:(NSString *)value {
-    if (!([name isKindOfClass:[NSString class]] && (value == nil || [value isKindOfClass:[NSString class]]))) {
-        NSAssert(NO, @"param 'name' and 'value' must be kind of NSString");
-        return nil;
-    }
+    al_guard_or_return(([name isKindOfClass:[NSString class]] &&
+                        (value == nil || [value isKindOfClass:[NSString class]])),
+                       nil);
+
     ALNSURLQueryItem *item = [[ALNSURLQueryItem alloc] init];
-    item->_name  = [name copy];
-    item->_value = [value copy];
+    item->_name            = [name copy];
+    item->_value           = [value copy];
     return item;
 }
 
-+ (instancetype)queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue {
++ (instancetype)al_queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue {
     return [self queryItemWithName:URLParamStringify(name) value:URLParamStringify(rawValue)];
 }
 
@@ -156,7 +93,7 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
 
 @implementation NSURLQueryItem(ALURLHelper)
 
-+ (instancetype)queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue {
++ (instancetype)al_queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue {
     return [self queryItemWithName:URLParamStringify(name) value:URLParamStringify(rawValue)];
 }
 
@@ -169,13 +106,13 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
 
 - (NSURL * (^)(NSString *name, id value))SET_QUERY_ITEM {
     return ^NSURL *(NSString *name, id value) {
-        return [self URLByAppendingQueryItems:@[ queryItem(name, value) ] replace:YES];
+        return [self URLByAppendingQueryItems:@[ al_URLQueryItem(name, value) ] replace:YES];
     };
 }
 
 - (NSURL *)URLBySettingQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict {
     return [self URLByAppendingQueryItems:[itemDict.allKeys bk_map:^ALNSURLQueryItem *(NSString *name) {
-                     return queryItem(name, itemDict[name]);
+                     return al_URLQueryItem(name, itemDict[name]);
                  }]
                                   replace:YES];
 }
@@ -211,7 +148,7 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
 
 + (NSString *)queryStringWithQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemsDict {
      return queryStringFromQueryItems([itemsDict.allKeys bk_map:^ALNSURLQueryItem *(NSString *name) {
-         return [ALNSURLQueryItem queryItemWithName:name rawValue:itemsDict[name]];
+         return [ALNSURLQueryItem al_queryItemWithName:name rawValue:itemsDict[name]];
      }]);
 }
 
@@ -219,18 +156,17 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
 
 @implementation NSString (ALURLHelper)
 
-- (NSArray<ALNSURLQueryItem *> *)queryItems {
+- (NSArray<ALNSURLQueryItem *> *)URLQueryItems {
     NSString *queryString = self;
-    //FIXME: if a string is the query string of the URL, [NSURLComponents componentsWithString:] will treat it as 'path' not 'query'. Anyone could help me to solve it?
-//    NSURLComponents *comps = [NSURLComponents componentsWithString:self];
-//    if (comps) {
-//        queryString = comps.query;
-//    }
+    NSRange queryRange = [self URLQueryStringRange];
+    if (queryRange.location != NSNotFound) {
+        queryString = [self substringWithRange:queryRange];
+    }
     return queryItemsFromQueryStirng(queryString);
 }
 
-- (NSDictionary<NSString *, NSString *> *)queryItemsDictionary {
-    NSArray *items = [self queryItems];
+- (NSDictionary<NSString *, NSString *> *)URLQueryItemsDictionary {
+    NSArray *items = [self URLQueryItems];
     if (items == nil) {
         return nil;
     }
@@ -264,13 +200,13 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
 
 - (NSString * (^)(NSString *name, id value))SET_QUERY_ITEM {
     return ^NSString *(NSString *name, id value) {
-        return [self URLStringByAppendingQueryItems:@[queryItem(name, value)] replace:YES];
+        return [self URLStringByAppendingQueryItems:@[al_URLQueryItem(name, value)] replace:YES];
     };
 }
 
 - (NSString *)URLStringBySettingQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict {
     return [self URLStringByAppendingQueryItems:[itemDict.allKeys bk_map:^ALNSURLQueryItem *(NSString *name) {
-                     return queryItem(name, itemDict[name]);
+                     return al_URLQueryItem(name, itemDict[name]);
                  }]
                                         replace:YES];
 }
@@ -282,10 +218,10 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
     }
 
     NSRange queryStringRange = [self URLQueryStringRange];
-    NSString *query = [self substringWithRangeSafety:queryStringRange];
+    NSString *query = [self al_substringWithRangeSafety:queryStringRange];
 
     NSArray<ALNSURLQueryItem *> *queryItems = nil;
-    if (!isEmptyString(query)) {
+    if (!al_isEmptyString(query)) {
         queryItems = queryItemsFromQueryStirng(query);
     }
 
@@ -301,7 +237,7 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
     // queryString with URLEncoded
     query = queryStringFromQueryItems(queryItems);
     
-    if (isEmptyString(query)) {
+    if (al_isEmptyString(query)) {
         return self;
     }
 
@@ -319,36 +255,62 @@ AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> 
     return [resultUrl copy];
 }
 
-
-- (NSString *)stringByURLEncoding {
-    NSString *resultStr = self;
-    
-    CFStringRef originalString = (__bridge CFStringRef) self;
-    CFStringRef leaveUnescaped = CFSTR(" ");
-    CFStringRef forceEscaped   = CFSTR("!*'();:@&=+$,/?%#[]");
-    
-    CFStringRef escapedStr;
-    escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, originalString, leaveUnescaped,
-                                                         forceEscaped, kCFStringEncodingUTF8);
-    
-    if (escapedStr) {
-        NSMutableString *mutableStr = [NSMutableString stringWithString:(__bridge NSString *) escapedStr];
-        CFRelease(escapedStr);
-        
-        // replace spaces with plusses
-        [mutableStr replaceOccurrencesOfString:@" "
-                                    withString:@"%20"
-                                       options:0
-                                         range:NSMakeRange(0, [mutableStr length])];
-        resultStr = mutableStr;
+- (NSString *)al_stringByURLEncodingAs:(ALURLComponent)component {
+    if (component == ALURLComponentQuery) {
+        return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     }
-    return resultStr;
+    if (component == ALURLComponentPath || component == ALURLComponentParam) {
+        return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+    }
+    if (component == ALURLComponentFragment) {
+        return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]];
+    }
+    if (component == ALURLComponentHost) {
+        return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    }
+    if (component == ALURLComponentUser) {
+        return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLUserAllowedCharacterSet]];
+    }
+    if (component == ALURLComponentPassword) {
+        return [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPasswordAllowedCharacterSet]];
+    }
+    return self;
 }
 
-- (NSString *)stringByURLDecoding {
-    NSString *result = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
-    result           = [result stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    return result;
+- (NSString *)al_stringByURLDecoding {
+    return [self stringByRemovingPercentEncoding];
 }
+
+
+//- (NSString *)stringByURLEncoding {
+//    NSString *resultStr = self;
+//    
+//    CFStringRef originalString = (__bridge CFStringRef) self;
+//    CFStringRef leaveUnescaped = CFSTR(" ");
+//    CFStringRef forceEscaped   = CFSTR("!*'();:@&=+$,/?%#[]");
+//    
+//    CFStringRef escapedStr;
+//    escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, originalString, leaveUnescaped,
+//                                                         forceEscaped, kCFStringEncodingUTF8);
+//    
+//    if (escapedStr) {
+//        NSMutableString *mutableStr = [NSMutableString stringWithString:(__bridge NSString *) escapedStr];
+//        CFRelease(escapedStr);
+//        
+//        // replace spaces with plusses
+//        [mutableStr replaceOccurrencesOfString:@" "
+//                                    withString:@"%20"
+//                                       options:0
+//                                         range:NSMakeRange(0, [mutableStr length])];
+//        resultStr = mutableStr;
+//    }
+//    return resultStr;
+//}
+//
+//- (NSString *)stringByURLDecoding {
+//    NSString *result = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+//    result           = [result stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    return result;
+//}
 
 @end

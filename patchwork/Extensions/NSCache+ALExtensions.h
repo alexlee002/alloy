@@ -10,11 +10,11 @@
 
 @interface NSCache (ALExtensions)
 
-+ (instancetype)sharedCache;
++ (instancetype)al_sharedCache;
 
-- (id)objectForKey:(id)key defaultValue:(id)dftVal cacheDefaultValue:(BOOL)cache;
+- (id)al_objectForKey:(id)key defaultValue:(id)dftVal cacheDefaultValue:(BOOL)cache;
 
 // util methods
-- (NSDateFormatter *)dateFormatterWithFormat:(NSString *)format;
+- (NSDateFormatter *)al_dateFormatterWithFormat:(NSString *)format;
 
 @end

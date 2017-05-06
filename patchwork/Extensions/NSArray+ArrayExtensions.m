@@ -8,27 +8,41 @@
 
 #import "NSArray+ArrayExtensions.h"
 
-@implementation NSArray (ArrayExtensions)
+@implementation NSArray (ALExtensions)
 
-- (nullable NSArray *)subarrayFromIndex:(NSUInteger)index {
+- (nullable NSArray *)al_subarrayFromIndex:(NSInteger)from length:(NSInteger)length {
+    NSUInteger start = from > 0 ? from : self.count + from;
+    NSUInteger end = length > 0 ? start + length : self.count + length;
+    return [[self al_subarrayFromIndex:start] al_subarrayToIndex:end];
+}
+
+- (nullable NSArray *)al_subarrayFromIndex:(NSUInteger)index {
+    NSParameterAssert(index < self.count);
+    
     if (index < self.count) {
         return [self subarrayWithRange:NSMakeRange(index, self.count - index)];
     }
     return nil;
 }
 
-- (nullable NSArray *)subarrayToIndex:(NSUInteger)index {
+- (nullable NSArray *)al_subarrayToIndex:(NSUInteger)index {
+    NSParameterAssert(index < self.count);
+    
     return [self subarrayWithRange:NSMakeRange(0, MIN(index, self.count))];
 }
 
-- (nullable id)objectAtIndexSafely:(NSUInteger)index {
+- (nullable id)al_objectAtIndexSafely:(NSUInteger)index {
+    NSParameterAssert(index < self.count);
+    
     if (index < self.count) {
         return [self objectAtIndex:index];
     }
     return nil;
 }
 
-- (nullable id)objectAtIndexedSubscriptSafely:(NSUInteger)idx {
+- (nullable id)al_objectAtIndexedSubscriptSafely:(NSUInteger)idx {
+    NSParameterAssert(idx < self.count);
+    
     if (idx < self.count) {
         return [self objectAtIndexedSubscript:idx];
     }

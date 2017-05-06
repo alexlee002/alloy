@@ -125,7 +125,7 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
         if ([keys isKindOfClass:[NSArray class]]) {
             return (NSArray *)keys;
         }
-        return @[ [keys stringify] ?: property.name ];
+        return @[ [keys al_stringify] ?: property.name ];
     }
     return @[property.name];
 }
@@ -187,7 +187,7 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
 - (BOOL)modelCustomTransformToDictionary:(NSMutableDictionary *)dic {
     [[self customToJSONTransformers] bk_each:^(NSString *propertyName, ModelCustomTransformToJSON block) {
         NSString *key = [self mappedKeysForProperty:propertyName].firstObject;
-        if ((id)block != NSNull.null && !isEmptyString(key)) {
+        if ((id)block != NSNull.null && !al_isEmptyString(key)) {
             dic[key] = block(propertyName/*, [self valueForKey:propertyName]*/);
         }
     }];
@@ -224,10 +224,10 @@ static const void * const kCustomToJSONTransformers = &kCustomToJSONTransformers
         NSTextCheckingResult *result =
             [regexp firstMatchInString:selector options:0 range:NSMakeRange(0, selector.length)];
         if (result && result.range.length == selector.length && result.numberOfRanges == 3) {
-            NSString *propertyName = stringOrEmpty([selector substringWithRange:[result rangeAtIndex:1]]);
-            propertyName           = [propertyName stringByLowercaseFirst];
+            NSString *propertyName = al_stringOrEmpty([selector substringWithRange:[result rangeAtIndex:1]]);
+            propertyName           = [propertyName al_stringByLowercaseFirst];
             
-            Class classType = NSClassFromString(stringOrEmpty([selector substringWithRange:[result rangeAtIndex:2]]));
+            Class classType = NSClassFromString(al_stringOrEmpty([selector substringWithRange:[result rangeAtIndex:2]]));
             YYClassPropertyInfo *property = classInfo.propertyInfos[propertyName];
             if (property != nil && classType != nil) {
                 ALCustomTransformMethodInfo *info = [[ALCustomTransformMethodInfo alloc] init];

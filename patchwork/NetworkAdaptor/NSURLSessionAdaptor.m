@@ -16,7 +16,7 @@
 #import <objc/runtime.h>
 #import "ObjcAssociatedObjectHelpers.h"
 #import "NSArray+ArrayExtensions.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "ALLogger.h"
 
 
@@ -88,25 +88,25 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
 
 - (void)bindRequest:(ALHTTPRequest *)request toTask:(NSURLSessionTask *)task {
     objc_setAssociatedObject(task, kSrcRequestAssociatedKey, request, OBJC_ASSOCIATION_RETAIN);
-    weakify(request)
-    NSString *token = [task bk_addObserverForKeyPath:keypath(task.state) task:^(id target) {
-        strongify(request)
-        NSURLSessionTask *object = castToTypeOrNil(target, NSURLSessionTask);
+    al_weakify(request)
+    NSString *token = [task bk_addObserverForKeyPath:al_keypath(task.state) task:^(id target) {
+        al_strongify(request)
+        NSURLSessionTask *object =ALCastToTypeOrNil(target, NSURLSessionTask);
         switch (object.state) {
             case NSURLSessionTaskStateRunning:
-                [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
+                [request setValue:@(ALHTTPRequestStateRunning) forKey:al_keypath(request.state)];
                 break;
             case NSURLSessionTaskStateCanceling:
-                [request setValue:@(ALHTTPRequestStateCancelled) forKey:keypath(request.state)];
+                [request setValue:@(ALHTTPRequestStateCancelled) forKey:al_keypath(request.state)];
                 break;
             case NSURLSessionTaskStateCompleted:
-                [request setValue:@(ALHTTPRequestStateCompleted) forKey:keypath(request.state)];
+                [request setValue:@(ALHTTPRequestStateCompleted) forKey:al_keypath(request.state)];
                 break;
             case NSURLSessionTaskStateSuspended:
-                [request setValue:@(ALHTTPRequestStateSuspended) forKey:keypath(request.state)];
+                [request setValue:@(ALHTTPRequestStateSuspended) forKey:al_keypath(request.state)];
                 break;
             default:
-                [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
+                [request setValue:@(ALHTTPRequestStateRunning) forKey:al_keypath(request.state)];
                 break;
         }
     }];
@@ -114,13 +114,13 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
 }
 
 - (ALHTTPRequest *)requestWithTask:(NSURLSessionTask *)task {
-    return castToTypeOrNil(objc_getAssociatedObject(task, kSrcRequestAssociatedKey), ALHTTPRequest);
+    return ALCastToTypeOrNil(objc_getAssociatedObject(task, kSrcRequestAssociatedKey), ALHTTPRequest);
 }
 
 - (void)destoryRequest:(ALHTTPRequest *)request {
-    NSURLSessionTask *task = [castToTypeOrNil(_requestDict[@(request.identifier)], NSArray)objectAtIndexSafely:1];
-    NSString *token = castToTypeOrNil(objc_getAssociatedObject(task, kTaskStateKVOTokenAssociatedKey), NSString);
-    [castToTypeOrNil(task, NSURLSessionTask) bk_removeObserversWithIdentifier:token];
+    NSURLSessionTask *task = [ALCastToTypeOrNil(_requestDict[@(request.identifier)], NSArray) al_objectAtIndexSafely:1];
+    NSString *token =ALCastToTypeOrNil(objc_getAssociatedObject(task, kTaskStateKVOTokenAssociatedKey), NSString);
+    [ALCastToTypeOrNil(task, NSURLSessionTask) bk_removeObserversWithIdentifier:token];
     
     [_requestDict removeObjectForKey:@(request.identifier)];
     [self bindRequest:nil toTask:task];
@@ -162,22 +162,22 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     }
     
     if (request.type == ALRequestTypeUpload) {
-        NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        NSURL *url = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
         urlRequest = [NSMutableURLRequest requestWithURL:url];
         [self buildUploadRequest:urlRequest fromALRequest:request];
     } else if (request.method == ALHTTPMethodPost) {
         urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:request.url]];
         [request.params bk_each:^(NSString *key, id value) {
-            [urlRequest setValue:stringValue(value) forHTTPHeaderField:key];
+            [urlRequest setValue:al_stringValue(value) forHTTPHeaderField:key];
         }];
     } else {
-        NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        NSURL *url = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
         urlRequest = [NSMutableURLRequest requestWithURL:url];
     }
     urlRequest.HTTPMethod = [request methodName];
     
     [[request headers] bk_each:^(NSString *key, id value) {
-        [urlRequest setValue:stringValue(value) forHTTPHeaderField:key];
+        [urlRequest setValue:al_stringValue(value) forHTTPHeaderField:key];
     }];
     
     return urlRequest;
@@ -185,7 +185,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
 
 - (void)buildUploadRequest:(NSMutableURLRequest *)request fromALRequest:(ALHTTPRequest *)alRequest {
     NSStringEncoding encoding = NSUTF8StringEncoding;
-    NSString *boundaryString  = [NSString stringWithFormat:@"0xKhTmLbOuNdArY-%@", [NSString UUIDString]];
+    NSString *boundaryString  = [NSString stringWithFormat:@"0xKhTmLbOuNdArY-%@", [NSString al_UUIDString]];
     NSString *charset =
     (NSString *) CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(encoding));
     
@@ -276,11 +276,11 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
 
 - (void)cancelRequestWithIdentifyer:(NSUInteger)identifier
                      contextHandler:(void (^_Nullable)(id _Nullable context))handler {
-    NSURLSessionTask *task = [castToTypeOrNil(_requestDict[@(identifier)], NSArray)objectAtIndexSafely:1];
+    NSURLSessionTask *task = [ALCastToTypeOrNil(_requestDict[@(identifier)], NSArray) al_objectAtIndexSafely:1];
     if ([task isKindOfClass:[NSURLSessionDownloadTask class]]) {
         [((NSURLSessionDownloadTask *)task) cancelByProducingResumeData:handler];
     } else {
-        [castToTypeOrNil(task, NSURLSessionTask) cancel];
+        [ALCastToTypeOrNil(task, NSURLSessionTask) cancel];
     }
 }
 
@@ -290,7 +290,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
                                               NSArray<NSURLSessionUploadTask *> *_Nonnull uploadTasks,
                                               NSArray<NSURLSessionDownloadTask *> *_Nonnull downloadTasks){
         [[@[dataTasks, uploadTasks, downloadTasks] al_flatten] bk_each:^(NSURLSessionTask *task) {
-            [castToTypeOrNil(task, NSURLSessionTask) cancel];
+            [ALCastToTypeOrNil(task, NSURLSessionTask) cancel];
         }];
     }];
 }
@@ -328,18 +328,18 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
         request.response ?: [ALHTTPResponse responseWithNSURLResponse:downloadTask.response responseData:nil];
     [request requestDidSucceedWithResponse:response];
     
-    TrackMemoryLeak(request);
-    TrackMemoryLeak(downloadTask);
-    CheckMemoryLeak(request);
-    CheckMemoryLeak(downloadTask);
+    ALTrackMemoryLeak(request);
+    ALTrackMemoryLeak(downloadTask);
+    ALCheckMemoryLeak(request);
+    ALCheckMemoryLeak(downloadTask);
     [self destoryRequest:request];
 }
 
 //@optional
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error {
     ALLogInfo(@"session: %@ become invalid. Error: %@", _session, error);
-    TrackMemoryLeak(_session);
-    CheckMemoryLeak(_session);
+    ALTrackMemoryLeak(_session);
+    ALCheckMemoryLeak(_session);
     _session = nil;
 }
 
@@ -363,7 +363,7 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     
     ALLogVerbose(@"%@", task);
     ALHTTPRequest *srcReq = [self requestWithTask:task];
-    [srcReq setValue:request.URL forKey:keypath(srcReq.currentURL)];
+    [srcReq setValue:request.URL forKey:al_keypath(srcReq.currentURL)];
     completionHandler(request);
 }
 
@@ -404,10 +404,10 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
         request.response ?: [ALHTTPResponse responseWithNSURLResponse:task.response responseData:nil];
     [request requestDidSucceedWithResponse:response];
 
-    TrackMemoryLeak(request);
-    TrackMemoryLeak(task);
-    CheckMemoryLeak(request);
-    CheckMemoryLeak(task);
+    ALTrackMemoryLeak(request);
+    ALTrackMemoryLeak(task);
+    ALCheckMemoryLeak(request);
+    ALCheckMemoryLeak(task);
     [self destoryRequest:request];
 }
 
@@ -419,10 +419,10 @@ didReceiveResponse:(NSURLResponse *)response
     ALLogVerbose(@"%@", dataTask);
     ALHTTPRequest *request = [self requestWithTask:dataTask];
     ALHTTPResponse *alResponse = [NSURLSessionDataTaskALHTTPResponse responseWithNSURLResponse:response responseData:nil];
-    [request setValue:alResponse forKey:keypath(request.response)];
+    [request setValue:alResponse forKey:al_keypath(request.response)];
     
     completionHandler(NSURLSessionResponseAllow);
-    NSHTTPURLResponse *httpResponse = castToTypeOrNil(response, NSHTTPURLResponse);
+    NSHTTPURLResponse *httpResponse = ALCastToTypeOrNil(response, NSHTTPURLResponse);
     [request requestDidReceiveResponse:httpResponse.statusCode headers:httpResponse.allHeaderFields];
 }
 
@@ -442,7 +442,7 @@ didReceiveResponse:(NSURLResponse *)response
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
     ALLogVerbose(@"%@", dataTask);
     ALHTTPRequest *request     = [self requestWithTask:dataTask];
-    NSURLSessionDataTaskALHTTPResponse *alResponse = castToTypeOrNil(request.response, NSURLSessionDataTaskALHTTPResponse);
+    NSURLSessionDataTaskALHTTPResponse *alResponse = ALCastToTypeOrNil(request.response, NSURLSessionDataTaskALHTTPResponse);
     [alResponse appendResponseData:data];
 
     [request requestDidReceiveBytes:data.length

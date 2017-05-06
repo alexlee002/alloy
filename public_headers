@@ -26,11 +26,17 @@ for path in ${headers[@]}; do
 	fi
 
 	fn="$( basename "${path}")"
-	private_subfix="_private"
-	lower_sfn="$( echo "${fn%.*}" | perl -ne 'print lc' )"
-	fn_subfix=${lower_sfn:$((${#lower_sfn}-${#private_subfix}))}
-	# {file_name}.lowercase().endsWith('_private')
-	if [[ "${fn_subfix}" == "${private_subfix}" ]]; then
+	# private_subfix="_private"
+	# lower_sfn="$( echo "${fn%.*}" | perl -ne 'print lc' )"
+	# fn_subfix=${lower_sfn:$((${#lower_sfn}-${#private_subfix}))}
+	# # {file_name}.lowercase().endsWith('_private')
+	# if [[ "${fn_subfix}" == "${private_subfix}" ]]; then
+	# 	continue
+	# fi
+
+	# {file_name}.startsWith('__')
+	if [[ $fn == __* ]]; then
+		echo ">>> private header: ${fn}"
 		continue
 	fi
 

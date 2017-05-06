@@ -22,7 +22,7 @@
 
 + (instancetype)responseWithNSURLResponse:(NSURLResponse *)nsResponse responseData:(nullable NSData *)responseData {
     ALHTTPResponse *response = [[self alloc] init];
-    response->_NSURLResponse = castToTypeOrNil(nsResponse, NSHTTPURLResponse);
+    response->_NSURLResponse =ALCastToTypeOrNil(nsResponse, NSHTTPURLResponse);
     response->_responseData  = responseData;
     return response;
 }
@@ -59,8 +59,8 @@
 - (nullable NSString *)responseString {
     if (self.responseData && [self isTextResponse]) {
         NSStringEncoding encoding = NSUTF8StringEncoding;
-        if (!isEmptyString(self.textEncodingName)) {
-            encoding = NSStringEncodingWithName(self.textEncodingName);
+        if (!al_isEmptyString(self.textEncodingName)) {
+            encoding = al_NSStringEncodingWithName(self.textEncodingName);
         }
         return [[NSString alloc] initWithData:self.responseData encoding:encoding];
     }
@@ -68,7 +68,7 @@
 }
 
 - (BOOL)isTextResponse {
-    if (!isEmptyString(self.MIMEType)) {
+    if (!al_isEmptyString(self.MIMEType)) {
         CFStringRef uti =
             UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef) self.MIMEType, NULL);
         BOOL result = UTTypeConformsTo(uti, kUTTypeText);

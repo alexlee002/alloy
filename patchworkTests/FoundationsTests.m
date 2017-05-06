@@ -11,7 +11,7 @@
 #import "ALLogger.h"
 #import "ALAssociatedWeakObject.h"
 #import "ALOCRuntime.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "Singleton_Template.h"
 #import "ALSQLSelectStatement.h"
 #import "SafeBlocksChain.h"
@@ -55,7 +55,7 @@ AS_SINGLETON
 @end
 
 @implementation SingletonTestBase
-SYNTHESIZE_SINGLETON
+SYNTHESIZE_SINGLETON(SingletonTestBase)
 
 - (NSString *)whoAmI {
     return @"SingletonTestBase";
@@ -155,8 +155,8 @@ SYNTHESIZE_SINGLETON
 - (void)testSwizzle {
     SwizzleCls *test = [[SwizzleCls alloc] init];
     
-    swizzle_method(test.class, YES, @selector(class_sel), @selector(class_sel_swizzled));
-    swizzle_method(test.class, NO, @selector(instance_sel), @selector(instance_sel_swizzled));
+    al_swizzle_method(test.class, YES, @selector(class_sel), @selector(class_sel_swizzled));
+    al_swizzle_method(test.class, NO, @selector(instance_sel), @selector(instance_sel_swizzled));
     
     XCTAssertEqualObjects([test instance_sel], @"instance_swizzled");
     XCTAssertEqualObjects([SwizzleCls class_sel], @"class_swizzled");
@@ -280,7 +280,7 @@ SYNTHESIZE_SINGLETON
 }
 
 - (void)testSafeBlocksChain {
-    SafeBlocksChainObj(nil, ALSQLSelectStatement)
+    al_safeBlocksChainObj(nil, ALSQLSelectStatement)
         .SELECT(@"*")
         .FROM(@"table")
         .WHERE(@"colval = 1")

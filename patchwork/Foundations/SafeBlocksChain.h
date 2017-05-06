@@ -12,34 +12,34 @@
 NS_ASSUME_NONNULL_BEGIN
 
 //extern Class fakeBlocksChainClass(Class forClass);
-extern id _Nullable instanceOfFakeBlocksChainClass(Class srcClass, NSString *file, NSInteger line, NSString *funcName,
+extern id _Nullable al_instanceOfFakeBlocksChainClass(Class srcClass, NSString *file, NSInteger line, NSString *funcName,
                                                       NSArray<NSString *> *stack);
 
-#define SafeBlocksChainObj(obj, CLASS)  ((CLASS *)((obj) ?: \
-    instanceOfFakeBlocksChainClass([CLASS class],           \
-    (__bridge NSString *)CFSTR(__FILE__),                   \
-    __LINE__,                                               \
-    [NSString stringWithUTF8String:__PRETTY_FUNCTION__],    \
-    backtraceStack(10)) ))
+#define al_safeBlocksChainObj(obj, CLASS)  ((CLASS *)((obj) ?:  \
+    al_instanceOfFakeBlocksChainClass([CLASS class],            \
+    (__bridge NSString *)CFSTR(__FILE__),                       \
+    __LINE__,                                                   \
+    [NSString stringWithUTF8String:__PRETTY_FUNCTION__],        \
+    al_backtraceStack(10)) ))
 
-#define ValidBlocksChainObjectOrReturn(obj, returnExp)  \
-    if (!ObjIsValidBlocksChainObject((obj))) {          \
-        return (returnExp);                             \
+#define al_isValidBlocksChainObjectOrReturn(obj, returnExp)     \
+    if (!al_objIsValidBlocksChainObject((obj))) {               \
+        return (returnExp);                                     \
     }
 
-#define ObjIsValidBlocksChainObject(obj)                \
-    ({                                                  \
-        BOOL ret = [(obj) isValidBlocksChainObject];    \
-        if (!ret) {                                     \
-            ALLogError(@"%@", (obj));                   \
-        }                                               \
-        ret;                                            \
+#define al_objIsValidBlocksChainObject(obj)                 \
+    ({                                                      \
+        BOOL ret = [(obj) al_isValidBlocksChainObject];     \
+        if (!ret) {                                         \
+            ALLogError(@"%@", (obj));                       \
+        }                                                   \
+        ret;                                                \
     })
 
 
 @interface NSObject (SafeBlocksChain)
 
-- (BOOL)isValidBlocksChainObject;
+- (BOOL)al_isValidBlocksChainObject;
 
 - (__kindof id (^)())BLOCKS_CHAIN_END;
 

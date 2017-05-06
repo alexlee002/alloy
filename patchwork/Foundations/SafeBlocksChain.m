@@ -7,48 +7,46 @@
 //
 
 #import "SafeBlocksChain.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "ALOCRuntime.h"
 #import "NSString+Helper.h"
 #import "ALLogger.h"
 #import "ALLock.h"
 
 
-static NSString * const kFakeChainingObjectProtocolName = @"__AL_BlocksChainFakeObjectProtocol";
+static const char *kALBlocksChainFakeObjectProtocolName   = "__ALBlocksChainFakeObjectProtocol";
+static NSString * const kALBlocksChainFakeChassNamePrefix = @"__ALBlocksChainFakeClass_$_";
 
-static Protocol *fakeBlocksChainProtocol() {
-    const char *protochlCName = [kFakeChainingObjectProtocolName UTF8String];
-    
-    __block Protocol *protocol = nil;
-    static_gcd_semaphore(sem, 1);
-    with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
-        if ((protocol = objc_getProtocol(protochlCName)) != nil) {
-            return;
-        }
-        protocol = objc_allocateProtocol(protochlCName);
-        if (protocol) {
-            objc_registerProtocol(protocol);
+static Protocol *__fakeBlocksChainProtocol() {
+    static Protocol *protocol = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        protocol = objc_getProtocol(kALBlocksChainFakeObjectProtocolName);
+        if (protocol == nil) {
+            protocol = objc_allocateProtocol(kALBlocksChainFakeObjectProtocolName);
+            if (protocol) {
+                objc_registerProtocol(protocol);
+            }
         }
     });
-    
     return protocol;
 }
 
-static Class fakeBlocksChainClass(Class forClass) {
+static Class __fakeBlocksChainClass(Class forClass) {
     if (forClass == nil) {
         return Nil;
     }
 
-    Protocol *fakeProtocol = fakeBlocksChainProtocol();
+    Protocol *fakeProtocol = __fakeBlocksChainProtocol();
     if (class_conformsToProtocol(forClass, fakeProtocol)) {
         return forClass;
     }
 
     const char *classname =
-        [[NSStringFromClass(forClass) stringByAppendingString:@"_ALBlocksChainFakeClass"] UTF8String];
+        [[@"__ALBlocksChainFakeClass_$_" stringByAppendingString:NSStringFromClass(forClass)] UTF8String];
 
     __block Class fakeclass = Nil;
-    static_gcd_semaphore(sem, 1);
+    al_static_gcd_semaphore_def(sem, 1);
     with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
         if ((fakeclass = objc_getClass(classname)) != nil) {
             return;
@@ -63,18 +61,18 @@ static Class fakeBlocksChainClass(Class forClass) {
     return fakeclass;
 }
 
-id instanceOfFakeBlocksChainClass(Class srcClass, NSString *file, NSInteger line, NSString *funcName,
-                                  NSArray<NSString *> *stack) {
-    Class cls = fakeBlocksChainClass(srcClass);
+id al_instanceOfFakeBlocksChainClass(Class srcClass, NSString *file, NSInteger line, NSString *funcName,
+                                     NSArray<NSString *> *stack) {
+    Class cls = __fakeBlocksChainClass(srcClass);
     if (cls != Nil) {
         id fakeObj = [[cls alloc] init];
-
+#if DEBUG
         IMP descIMP = imp_implementationWithBlock(^NSString *(__unsafe_unretained id obj) {
             NSMutableString *desc = [NSMutableString string];
             [desc appendFormat:
                       @"*** Found nil object (expected type: %@) in blocks-chain expression, first occurred in:\n",
                       srcClass];
-            [desc appendFormat:@"    %@ (%@:%ld)\n", funcName, [stringValue(file) lastPathComponent], (long) line];
+            [desc appendFormat:@"    %@ (%@:%ld)\n", funcName, [al_stringValue(file) lastPathComponent], (long) line];
 
             [desc appendString:@"*** Backtrace:\n{\n"];
             for (NSString *frame in stack) {
@@ -87,6 +85,7 @@ id instanceOfFakeBlocksChainClass(Class srcClass, NSString *file, NSInteger line
 
         Method descMethod = class_getInstanceMethod(srcClass, @selector(description));
         method_setImplementation(descMethod, descIMP);
+#endif
         return fakeObj;
     }
     return nil;
@@ -94,13 +93,15 @@ id instanceOfFakeBlocksChainClass(Class srcClass, NSString *file, NSInteger line
 
 @implementation NSObject(SafeBlocksChain)
 
-- (BOOL)isValidBlocksChainObject {
-    return ![self conformsToProtocol:fakeBlocksChainProtocol()];
+- (BOOL)al_isValidBlocksChainObject {
+    //return ![self conformsToProtocol:__fakeBlocksChainProtocol()];
+    //According to performance test, It seems that comparing class name is faster than checking protocol.
+    return ![NSStringFromClass(self.class) hasPrefix:kALBlocksChainFakeChassNamePrefix];
 }
 
 - (__kindof id (^)())BLOCKS_CHAIN_END {
     return ^id {
-        return ObjIsValidBlocksChainObject(self) ? self : nil;
+        return al_objIsValidBlocksChainObject(self) ? self : nil;
     };
 }
 

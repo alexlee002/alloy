@@ -7,7 +7,7 @@
 //
 
 #import "ALStringInflector.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "NSString+Helper.h"
 #import "ALLogger.h"
 #import "ALLock.h"
@@ -15,11 +15,11 @@
 
 @implementation NSString (ALStringInflector)
 
-- (NSString *)singularize {
+- (NSString *)al_singularize {
     return [[ALStringInflector defaultInflector] singularize:self];
 }
 
-- (NSString *)pluralize {
+- (NSString *)al_pluralize {
     return [[ALStringInflector defaultInflector] pluralize:self];
 }
 
@@ -73,7 +73,7 @@
 
 + (instancetype)defaultInflector {
     static ALStringInflector *instance = nil;
-    static_gcd_semaphore(sem, 1)
+    al_static_gcd_semaphore_def(sem, 1)
     with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
         if (instance == nil) {
             instance = [[self alloc] init];
@@ -148,7 +148,7 @@
 }
 
 - (void)addIrregularWithSingular:(NSString *)singular plural:(NSString *)plural {
-    if (isEmptyString(singular) || isEmptyString(plural)) {
+    if (al_isEmptyString(singular) || al_isEmptyString(plural)) {
         return;
     }
     [_irregulars setObject:plural forKey:singular];

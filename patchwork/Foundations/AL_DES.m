@@ -6,9 +6,9 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "DES.h"
+#import "AL_DES.h"
 #import <CommonCrypto/CommonCryptor.h>
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "ALLogger.h"
 
 
@@ -45,11 +45,11 @@ static AL_FORCE_INLINE NSData *DES_Crypt(CCOperation op, NSData *input, NSData *
 
 @implementation NSData (ALExtension_DES)
 
-- (NSData *)dataByDESEncryptingWithKey:(NSData *)key {
+- (NSData *)al_dataByDESEncryptingWithKey:(NSData *)key {
     return DES_Crypt(kCCEncrypt, self, key);
 }
 
-- (NSData *)dataByDESDecryptingWithKey:(NSData *)key {
+- (NSData *)al_dataByDESDecryptingWithKey:(NSData *)key {
     return DES_Crypt(kCCDecrypt, self, key);
 }
 

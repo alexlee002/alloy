@@ -7,16 +7,8 @@
 //
 
 #import "ALOrderedMap.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "ALLock.h"
-
-
-#define __validateKeysAndObjs()                     \
-    if (self.keys.count != self.objects.count) {    \
-        NSAssert(NO, @"keys count[%ld] is not equal to values count:[%ld].",    \
-                 (long)self.keys.count, (long)self.objects.count);              \
-        return;                                     \
-    }
 
 
 @interface ALOrderedMap<__covariant KeyType, __covariant ObjectType> ()
@@ -44,17 +36,15 @@
 }
 
 - (void)setObject:(id)object forKey:(id)key {
-    if (key == nil) {
-        NSAssert(NO, @"'key' can not be nil!");
-        return;
-    }
+    al_guard_or_return(key != nil, AL_VOID);
+    
     if (object == nil) {
         [self removeObjectForKey:key];
         return;
     }
 
     with_gcd_semaphore(_keyLock, DISPATCH_TIME_FOREVER, ^{
-        __validateKeysAndObjs();
+        al_guard_or_return(self.keys.count == self.objects.count, AL_VOID);
 
         NSInteger index = [self.keys indexOfObject:key];
         if (index == NSNotFound) {
@@ -69,7 +59,7 @@
 - (id)__objectForKey:(id)key remove:(BOOL)remove {
     __block id obj = nil;
     with_gcd_semaphore(_keyLock, DISPATCH_TIME_FOREVER, ^{
-        __validateKeysAndObjs();
+        al_guard_or_return(self.keys.count == self.objects.count, AL_VOID);
         
         NSInteger index = [self.keys indexOfObject:key];
         if (index != NSNotFound) {

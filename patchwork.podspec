@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.source_files  = "patchwork", "patchwork/**/*.{h,m}"
   #s.exclude_files = "Classes/Exclude"
   s.public_header_files = "patchwork/**/*.h"
-  s.private_header_files =  "patchwork/**/*_{p,P}rivate.h"
+  s.private_header_files =  "patchwork/**/__*.h"
 
   s.requires_arc = true
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }

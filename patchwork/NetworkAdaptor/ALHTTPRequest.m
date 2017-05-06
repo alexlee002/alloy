@@ -10,7 +10,7 @@
 #import "BlocksKit.h"
 #import "NSString+Helper.h"
 #import "ALHTTPResponse.h"
-#import "NSObject+JSONTransform.h"
+#import "AL_JSON.h"
 #import "ALModel.h"
 #import "ALLogger.h"
 
@@ -163,7 +163,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
     if (_uploadParams.count > 0) {
         return ALRequestTypeUpload;
     }
-    if (!isEmptyString(self.downloadFilePath) || !isEmptyString(self.temporaryDownloadFilePath)) {
+    if (!al_isEmptyString(self.downloadFilePath) || !al_isEmptyString(self.temporaryDownloadFilePath)) {
         return ALRequestTypeDownload;
     }
     return ALRequestTypeNormal;
@@ -309,7 +309,7 @@ const NSInteger ALRequestTypeNotInitialized = -1;
 
 - (void)requestDidSucceedWithResponse:(nullable ALHTTPResponse *)response {
     ALLogVerbose(@"\nrequest succeeded: %@", [self descriptionDetailed:NO]);
-    id JSON = [response.responseData JSONObject];
+    id JSON = [response.responseData al_JSONObject];
     if (self.responseModelBlock != nil) {
         if (JSON != nil /*&& self.responseModelClass != nil*/) {
             NSError *error = nil;

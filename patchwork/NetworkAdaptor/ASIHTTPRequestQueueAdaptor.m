@@ -9,14 +9,14 @@
 #import "ASIHTTPRequestQueueAdaptor.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "ALHTTPResponse.h"
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
 #import "URLHelper.h"
 #import "NSString+Helper.h"
 #import "NSArray+ArrayExtensions.h"
-#import "NSObject+JSONTransform.h"
+#import "AL_JSON.h"
 #import "NSObject+YYModel.h"
 #import "ALLogger.h"
 
@@ -87,7 +87,7 @@
     ALLogVerbose(@"~~~ DEALLOC: %@ ~~~", self);
     
     [_requestDict.allValues bk_each:^(NSArray *pairs) {
-        ASIHTTPRequest *request = [pairs objectAtIndexSafely:1];
+        ASIHTTPRequest *request = [pairs al_objectAtIndexSafely:1];
         if ([request isKindOfClass:[ASIHTTPRequest class]]) {
             [request cancel];
         }
@@ -96,10 +96,8 @@
 
 #pragma mark -
 - (BOOL)sendRequest:(ALHTTPRequest *)request {
-    if (_invalidated) {
-        NSAssert(NO, @"%@ invalidated! new request can not be accepted anymore.", self);
-        return NO;
-    }
+    al_guard_or_return(!_invalidated, NO);
+    
     ASIHTTPRequest *asiRequest = [self transformFromALRequest:request];
     
     dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
@@ -107,7 +105,7 @@
     dispatch_semaphore_signal(_requestDictLock);
     
     [_requestQueue addOperation:asiRequest];
-    [request setValue:@(ALHTTPRequestStateRunning) forKey:keypath(request.state)];
+    [request setValue:@(ALHTTPRequestStateRunning) forKey:al_keypath(request.state)];
     return YES;
 }
 
@@ -127,7 +125,7 @@
         [self buildDownloadRequest:&asiRequest with:request];
     } else if (request.method == ALHTTPMethodPost) {
         asiRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:request.url]];
-        NSData *postBody = castToTypeOrNil([request postBody], NSData);
+        NSData *postBody =ALCastToTypeOrNil([request postBody], NSData);
         if (postBody != nil) {
             asiRequest.postBody = [postBody mutableCopy];
         } else {
@@ -136,7 +134,7 @@
             }];
         }
     } else {
-        NSURL *url = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        NSURL *url = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
         asiRequest = [ASIHTTPRequest requestWithURL:url];
     }
 
@@ -146,7 +144,7 @@
         [asiRequest addRequestHeader:key value:value];
     }];
 
-    if (!isEmptyString(request.userAgent)) {
+    if (!al_isEmptyString(request.userAgent)) {
         asiRequest.userAgentString = request.userAgent;
     }
 
@@ -154,7 +152,7 @@
     asiRequest.useCookiePersistence          = NO;
     asiRequest.timeOutSeconds                = request.maximumnConnectionTimeout;
     asiRequest.tag                           = request.identifier;
-    [request setValue:@(ALHTTPRequestStateSuspended) forKey:keypath(request.state)];
+    [request setValue:@(ALHTTPRequestStateSuspended) forKey:al_keypath(request.state)];
     
     return asiRequest;
 }
@@ -162,12 +160,12 @@
 - (void)buildUploadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSParameterAssert(asiRequest != NULL);
     
-    NSURL *url  = [[NSURL URLWithString:stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+    NSURL *url  = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
     if (request.method == ALHTTPMethodPut) {
         *asiRequest = [ASIHTTPRequest requestWithURL:url];
         (*asiRequest).shouldStreamPostDataFromDisk = YES;
         [request.uploadParams bk_each:^(NSString *key, id fileObj) {
-            NSData *data = castToTypeOrNil(fileObj, NSData);
+            NSData *data = ALCastToTypeOrNil(fileObj, NSData);
             if (data != nil) {
                 [(*asiRequest) appendPostData:data];
             } else {
@@ -196,7 +194,7 @@
 - (void)buildDownloadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSParameterAssert(asiRequest != NULL);
     
-    NSURL *url  = [[NSURL URLWithString:stringOrEmpty(request.url) ] URLBySettingQueryParamsOfDictionary:request.params];
+    NSURL *url  = [[NSURL URLWithString:al_stringOrEmpty(request.url) ] URLBySettingQueryParamsOfDictionary:request.params];
     *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;
     (*asiRequest).allowResumeForFileDownloads = YES;
@@ -235,9 +233,9 @@
 
 - (void)cancelRequestWithIdentifyer:(NSUInteger)identifier contextHandler:(void (^_Nullable)(id _Nullable))handler {
     ALHTTPRequest  *srcReq = [_requestDict[@(identifier)] firstObject];
-    ASIHTTPRequest *asiReq = [_requestDict[@(identifier)] objectAtIndexSafely:1];
+    ASIHTTPRequest *asiReq = [_requestDict[@(identifier)] al_objectAtIndexSafely:1];
     
-    [srcReq setValue:@(ALHTTPRequestStateCancelled) forKey:keypath(srcReq.state)];
+    [srcReq setValue:@(ALHTTPRequestStateCancelled) forKey:al_keypath(srcReq.state)];
     [asiReq cancel];
 }
 
@@ -288,14 +286,14 @@
     
     [srcReq requestDidSucceedWithResponse:[ALHTTPResponse responseWithASIHttpRequest:request]];
 
-    TrackMemoryLeak(request);
+    ALTrackMemoryLeak(request);
     ALLogVerbose(@"srcRequest:%@", srcReq.class);
     
     dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     [_requestDict removeObjectForKey:@(request.tag)];
     dispatch_semaphore_signal(_requestDictLock);
     
-    CheckMemoryLeak(request);
+    ALCheckMemoryLeak(request);
     
     if (_invalidated && _requestDict.count == 0 &&
         [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
@@ -311,14 +309,14 @@
     [srcReq requestDidFailWithResponse:[ALHTTPResponse responseWithASIHttpRequest:request]
                                  error:[self NSURLErrorTransformingFromASIError:request.error]];
     
-    TrackMemoryLeak(request);
+    ALTrackMemoryLeak(request);
     ALLogVerbose(@"srcRequest:%@", srcReq.class);
     
     dispatch_semaphore_wait(_requestDictLock, DISPATCH_TIME_FOREVER);
     [_requestDict removeObjectForKey:@(request.tag)];
     dispatch_semaphore_signal(_requestDictLock);
     
-    CheckMemoryLeak(request);
+    ALCheckMemoryLeak(request);
 
     if (_invalidated && _requestDict.count == 0 &&
         [self.delegate respondsToSelector:@selector(queueAdaptorDidBecomeInvalid:)]) {
@@ -396,7 +394,7 @@
     
     ALLogVerbose(@"\nrequest: %@ will redirect to: %@", srcReq, newURL);
     [request redirectToURL:newURL];
-    [srcReq setValue:newURL forKey:keypath(srcReq.currentURL)];
+    [srcReq setValue:newURL forKey:al_keypath(srcReq.currentURL)];
 }
 
 @end

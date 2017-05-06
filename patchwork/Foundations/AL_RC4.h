@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSData (ALExtension_RC4)
 
-- (NSData *)dataByRC4EncryptingWithKey:(NSString *)encryptionKey;
+- (NSData *)al_dataByRC4EncryptingWithKey:(NSData *)encryptionKey;
 
 @end
 

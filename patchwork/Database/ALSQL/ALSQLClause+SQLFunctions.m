@@ -8,8 +8,9 @@
 
 #import "ALSQLClause+SQLFunctions.h"
 #import "NSString+Helper.h"
+#import "ALUtilitiesHeader.h"
 
-AL_FORCE_INLINE ALSQLClause *sql_func1(NSString *funcName, NSArray *args) {
+AL_FORCE_INLINE ALSQLClause *SQLFunc(NSString *funcName, NSArray *args) {
     NSMutableString *sql = [funcName.uppercaseString mutableCopy];
     NSMutableArray *sqlArgs = [NSMutableArray array];
     [sql appendString:@"("];
@@ -22,89 +23,66 @@ AL_FORCE_INLINE ALSQLClause *sql_func1(NSString *funcName, NSArray *args) {
         if ([obj isKindOfClass:[ALSQLClause class]]) {
             [sql appendString:((ALSQLClause *)obj).SQLString];
             [sqlArgs addObjectsFromArray:((ALSQLClause *)obj).argValues];
-        } else if ([obj isKindOfClass:[NSString class]]) {
-            [sql appendString:(NSString *)obj];
-        } else if ([obj isKindOfClass:[NSNumber class]]) {
-            [sql appendString:((NSNumber *)obj).stringValue];
-        } else if ([obj respondsToSelector:@selector(stringValue)]) {
-            [sql appendString:[obj stringValue]];
+        } else {
+            [sql appendString:(al_stringValue(obj) ?: @"")];
         }
     }];
     
     [sql appendString:@")"];
     
-    return [sql SQLClauseWithArgValues:(sqlArgs.count > 0 ? sqlArgs : nil)];
+    return [sql al_SQLClauseWithArgValues:(sqlArgs.count > 0 ? sqlArgs : nil)];
 }
-
-AL_FORCE_INLINE ALSQLClause *NS_REQUIRES_NIL_TERMINATION sqlFunc(NSString *funcName, id arg, ...) {
-    
-    NSMutableArray *args = [NSMutableArray array];
-    va_list valist;
-    va_start(valist, arg);
-    id a = arg;
-    while (a != nil) {
-        [args addObject:a];
-        a = va_arg(valist, id);
-    }
-    va_end(valist);
-    
-    return sql_func1(funcName, args);
-}
-
 
 AL_FORCE_INLINE ALSQLClause *SQL_LENGTH(id obj) {
-    return sqlFunc(@"LENGTH", obj, nil);
+    return SQLFunc(@"LENGTH", @[ al_wrapNil(obj) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_ABS(id obj) {
-    return sqlFunc(@"ABS", obj, nil);
+    return SQLFunc(@"ABS", @[ al_wrapNil(obj) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_LOWER(id obj) {
-    return sqlFunc(@"LOWER", obj, nil);
+    return SQLFunc(@"LOWER", @[ al_wrapNil(obj) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_UPPER(id obj) {
-    return sqlFunc(@"UPPER", obj, nil);
+    return SQLFunc(@"UPPER", @[ al_wrapNil(obj) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_MAX(id objs) {
     
     if (![objs isKindOfClass:NSArray.class]) {
-        return sqlFunc(@"MAX", objs, nil);
+        return SQLFunc(@"MAX", @[ al_wrapNil(objs) ]);
     } else {
-        return sql_func1(@"MAX", objs);
+        return SQLFunc(@"MAX", al_wrapNil(objs));
     }
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_MIN(id objs) {
     if (![objs isKindOfClass:NSArray.class]) {
-        return sqlFunc(@"MIN", objs, nil);
+        return SQLFunc(@"MIN", @[ al_wrapNil(objs) ]);
     } else {
-        return sql_func1(@"MIN", objs);
+        return SQLFunc(@"MIN", al_wrapNil(objs));
     }
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_REPLACE(id src, id target, id replacement) {
-    return sqlFunc(@"REPLACE", target, replacement, nil);
+    return SQLFunc(@"REPLACE", @[ al_wrapNil(target), al_wrapNil(replacement) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_SUBSTR(id src, NSInteger from, NSInteger len) {
-    return sqlFunc(@"SUBSTR", @(from), @(len), nil);
+    return SQLFunc(@"SUBSTR", @[ @(from), @(len) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_COUNT(id _Nullable obj) {
-    return sqlFunc(@"COUNT", obj ?: @"*", nil);
+    return SQLFunc(@"COUNT", @[obj ?: @"*"]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_SUM(id obj) {
-    return sqlFunc(@"SUM", obj, nil);
+    return SQLFunc(@"SUM", @[ al_wrapNil(obj) ]);
 }
 
 AL_FORCE_INLINE ALSQLClause *SQL_AVG(id obj) {
-    return sqlFunc(@"AVG", obj, nil);
+    return SQLFunc(@"AVG", @[ al_wrapNil(obj) ]);
 }
 
-//@implementation ALSQLClause (SQLFunctions)
-//
-//@end

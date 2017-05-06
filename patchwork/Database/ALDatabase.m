@@ -14,7 +14,7 @@
 #import "ALDBMigrationProtocol.h"
 #import "ALDBConnectionProtocol.h"
 #import "SafeBlocksChain.h"
-#import "PatchworkLog_private.h"
+#import "__patchwork_config.h"
 #import "ALLock.h"
 #import "ALDBMigrationHelper.h"
 #import <sqlite3.h>
@@ -30,7 +30,7 @@ static AL_FORCE_INLINE NSMutableDictionary<NSString *, ALDatabase *> *openingDat
     static NSMutableDictionary *dict = nil;
 
     if (dict == nil) {
-        static_gcd_semaphore(localSem, 1);
+        al_static_gcd_semaphore_def(localSem, 1);
         with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
             if (dict == nil) {
                 dict = [NSMutableDictionary dictionary];
@@ -44,7 +44,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
     static dispatch_semaphore_t sema = NULL;
     
     if (sema == NULL) {
-        static_gcd_semaphore(localSem, 1);
+        al_static_gcd_semaphore_def(localSem, 1);
         with_gcd_semaphore(localSem, DISPATCH_TIME_FOREVER, ^{
             if (sema == NULL) {
                 sema = dispatch_semaphore_create(1);
@@ -66,7 +66,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 
 #pragma mark - database manager
 + (nullable instancetype)databaseWithPath:(NSString *)path {
-    path = stringValue(path);
+    path = al_stringValue(path);
     if (path == nil) {
         return nil;
     }
@@ -95,7 +95,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
     NSString *cachedKey = [self cachedKeyWithPath:path readonly:YES];
     __block ALDatabase *readonlyDB = openingDatabaseDict()[cachedKey];
     if (readonlyDB == nil) {
-        static_gcd_semaphore(localSema, 1);
+        al_static_gcd_semaphore_def(localSema, 1);
         with_gcd_semaphore(localSema, DISPATCH_TIME_FOREVER, ^{
             readonlyDB = openingDatabaseDict()[cachedKey];
             if (readonlyDB != nil) {
@@ -130,7 +130,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
     cachedKey = [@"ALDatabase:" stringByAppendingString:cachedKey];
     __block ALDatabase *localReadonlyDB = dict[cachedKey];
     if (localReadonlyDB == nil) {
-        static_gcd_semaphore(localSema, 1);
+        al_static_gcd_semaphore_def(localSema, 1);
         with_gcd_semaphore(localSema, DISPATCH_TIME_FOREVER, ^{
             localReadonlyDB = dict[cachedKey];
             if (localReadonlyDB != nil) {
@@ -159,7 +159,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 // openFlag: SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE
 - (nullable instancetype)initWithPath:(nullable NSString *)path flags:(int)openFlags{
     
-    if (!isEmptyString(path)) {
+    if (!al_isEmptyString(path)) {
 
         NSError *tmpError = nil;
         if (![[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent]
@@ -223,7 +223,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 + (NSString *)cachedKeyWithPath:(NSString *)path readonly:(BOOL)readonly {
     NSParameterAssert(path != nil);
     
-    NSString *key = stringOrEmpty(path);
+    NSString *key = al_stringOrEmpty(path);
     if (readonly) {
         key = [key stringByAppendingString:@"#readonly"];
     }
@@ -278,11 +278,8 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
         
         // all the database version should begins from 1 (DO NOT begins from 0 !!!)
         NSInteger newVersion = [migrationProcessor currentVersion];
-        if (newVersion < 1) {
-            NSAssert(NO, @"*** Database version must be >= 1, but was %d", (int)newVersion);
-            return NO;
-        }
-        
+        al_guard_or_return1(newVersion > 0, NO, @"*** Database version must be > 0, but was %d", (int)newVersion);
+
         if (!_dbFileExisted) { // create database directly
             BOOL created = NO;
             if ([migrationProcessor respondsToSelector:@selector(setupDatabase:)]) { // manually setup database
@@ -292,27 +289,25 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
                 created = YES;
             }
             
-            if (created) {
-                return [self updateDatabaseVersion:newVersion dbHandler:db];
-            } else {
-                NSAssert(NO, @"Can not setup database: %@", _queue.path);
-                return NO;
-            }
+            al_guard_or_return1(created, NO, @"Can not setup database at path: %@", _queue.path);
+            return [self updateDatabaseVersion:newVersion dbHandler:db];
         } else {
             NSInteger dbVersion = [db intForQuery:@"PRAGMA user_version;"];
             
             if (dbVersion < newVersion) {
-                if ([migrationProcessor migrateFromVersion:dbVersion to:newVersion databaseHandler:db]) {
-                    return [self updateDatabaseVersion:newVersion dbHandler:db];
-                } else {
-                    NSAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion),
+                if (![migrationProcessor database:db upgradeFromVersion:dbVersion to:newVersion] ) {
+                    ALAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion),
                              @(newVersion), _queue.path);
                     return NO;
                 }
+                return [self updateDatabaseVersion:newVersion dbHandler:db];
             } else if (dbVersion > newVersion) {
-                NSAssert(NO, @"Illegal database version. original:%@, new version:%@",
-                         @(dbVersion), @(newVersion));
-                return NO;
+                if (![migrationProcessor database:db downgradeFromVersion:dbVersion to:newVersion] ) {
+                    ALAssert(NO, @"migrate from version %@ to %@ failed!!! database: %@", @(dbVersion),
+                             @(newVersion), _queue.path);
+                    return NO;
+                }
+                return [self updateDatabaseVersion:newVersion dbHandler:db];
             }
         }
     }
@@ -382,7 +377,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 
 #define __ALDB_STMT_INIT(stmt_class) \
     stmt_class *stmt = nil;                                             \
-    if (ObjIsValidBlocksChainObject(self)) {                            \
+    if (al_objIsValidBlocksChainObject(self)) {                         \
         stmt = [stmt_class statementWithDatabase:self];                 \
     }
 
@@ -390,7 +385,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 - (stmt_class * (^)(id block_args))prop_name {                              \
     return ^stmt_class *(id block_args) {                                   \
         __ALDB_STMT_INIT(stmt_class);                                       \
-        return SafeBlocksChainObj(stmt, stmt_class).prop_name(block_args);  \
+        return al_safeBlocksChainObj(stmt, stmt_class).prop_name(block_args);  \
     };                                                                      \
 }
 
@@ -398,7 +393,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 - (stmt_class * (^)())prop_name {                                           \
     return ^stmt_class * {                                                  \
         __ALDB_STMT_INIT(stmt_class);                                       \
-        return SafeBlocksChainObj(stmt, stmt_class).prop_name();            \
+        return al_safeBlocksChainObj(stmt, stmt_class).prop_name();         \
     };                                                                      \
 }
 

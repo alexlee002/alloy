@@ -9,15 +9,19 @@
 #import "ALSQLClause.h"
 #import "NSString+Helper.h"
 #import "ALLogger.h"
+#import "ALUtilitiesHeader.h"
 #import <sqlite3.h>
 #import <BlocksKit.h>
 
+
 @implementation ALSQLClause {
-    NSString        *_SQLString;
-    NSMutableArray  *_argValues;
+    NSMutableString  *_SQLString;
+    NSMutableArray   *_argValues;
 }
 
 + (instancetype)SQLClauseWithString:(NSString *)sql, ...NS_REQUIRES_NIL_TERMINATION {
+    al_guard_or_return(sql != nil, nil);
+    
     NSMutableArray *array = [NSMutableArray array];
     va_list args;
     va_start(args, sql);
@@ -37,7 +41,7 @@
 - (instancetype)initWithString:(NSString *)sql argValues:(NSArray *)argValues {
     self = [super init];
     if (self) {
-        _SQLString = [sql copy];
+        _SQLString = [sql mutableCopy];
         _argValues = [argValues mutableCopy];
     }
     return self;
@@ -49,50 +53,22 @@
 
 
 - (NSString *)SQLString {
-    return _SQLString;
+    return [_SQLString copy];
 }
 
 - (NSArray *)argValues {
-    return _argValues;
+    return [_argValues copy];
 }
 
-- (NSString *)description {
-    return [[super description] stringByAppendingFormat:@"; sql string: %@", self.SQLString];
-}
-
-- (NSString *)debugDescription {
-    NSArray *args = self.argValues;
-    NSInteger argCount = args.count;
-    
-    NSMutableString *sql = [self.SQLString mutableCopy];
-    NSInteger index = 0;
-
-    NSRange range = NSMakeRange(0, sql.length);
-    while ((range = [sql rangeOfString:@"?" options:0 range:range]).location != NSNotFound && index < argCount) {
-        id argVal = args[index];
-        if ([argVal isKindOfClass:NSData.class]) {
-            argVal = [(NSData *)argVal al_debugDescription];
-        }
-        NSString *valStr = [NSString stringWithFormat:@"{%@}", argVal];
-        [sql replaceCharactersInRange:range withString:valStr];
-        index ++;
-        range.location = range.location + valStr.length;
-        range.length = sql.length - range.location;
-    }
-    if (index != argCount) {
-        ALLogWarn(@"arguments count is not expected.\nsql: %@; arguments count:%ld", self.SQLString, (long)argCount);
-        return [NSString stringWithFormat:@"sql: %@\nargs: %@", self.SQLString, args];
-    }
-    
-    return sql;
-}
-
-#pragma mark -
 - (BOOL)isValid {
-    return !isEmptyString(self.SQLString);
+    return !al_isEmptyString(self.SQLString);
 }
 
-- (void)setArgValues:(NSArray * _Nullable)argValues {
+- (void)setSQLString:(NSString *)string {
+    _SQLString = [string mutableCopy];
+}
+
+- (void)setArgValues:(NSArray *)argValues {
     _argValues = [argValues mutableCopy];
 }
 
@@ -102,11 +78,53 @@
 
 @end
 
+@implementation ALSQLClause (BaseOperations)
+
+- (void)append:(ALSQLClause *)other withDelimiter:(NSString *_Nullable)delimiter{
+    al_guard_or_return([other isKindOfClass:ALSQLClause.class], AL_VOID);
+    [self appendSQLString:other.SQLString argValues:other.argValues withDelimiter:delimiter];
+}
+
+- (void)appendSQLString:(NSString *)sql argValues:(NSArray *)arguments withDelimiter:(NSString *)delimiter {
+    sql = ALCastToTypeOrNil(sql, NSString);
+    if (_SQLString == nil) {
+        _SQLString = [sql mutableCopy];
+    } else {
+        [_SQLString appendString:al_stringOrEmpty(ALCastToTypeOrNil(delimiter, NSString))];
+        [_SQLString appendString:al_stringOrEmpty(sql)];
+    }
+    
+    if (arguments.count > 0) {
+        if (_argValues == nil) {
+            _argValues = [NSMutableArray array];
+        }
+        [_argValues addObjectsFromArray:arguments];
+    }
+    
+}
+
+- (void)appendAfterSQLString:(NSString *)sql withDelimiter:(NSString *_Nullable)delimiter {
+    al_guard_or_return([sql isKindOfClass:NSString.class], AL_VOID);
+    if (ALCastToTypeOrNil(delimiter, NSString) != nil) {
+        [_SQLString insertString:delimiter atIndex:0];
+    }
+    [_SQLString insertString:sql atIndex:0];
+}
+
+@end
+
 @implementation ALSQLClause(ALBlocksChain)
 
-- (ALSQLClause *(^)(ALSQLClause *other, NSString *delimiter))APPEND {
-    return ^ALSQLClause *(ALSQLClause *other, NSString *delimiter) {
-        [self append:other withDelimiter:delimiter];
+- (ALSQLClause *(^)(id obj, NSString *delimiter))APPEND {
+    return ^ALSQLClause *(id obj, NSString *delimiter) {
+        if ([obj isKindOfClass:NSString.class]) {
+            [self appendSQLString:obj argValues:nil withDelimiter:delimiter];
+        } else if ([obj isKindOfClass:ALSQLClause.class]) {
+            [self append:obj withDelimiter:delimiter];
+        } else {
+            ALSQLClause *clause = [obj al_SQLClause];
+            [self append:clause withDelimiter:delimiter];
+        }
         return self;
     };
 }
@@ -127,23 +145,48 @@
 
 @end
 
-@implementation ALSQLClause (BaseOperations)
+#pragma mark - debug
+@interface ALSQLClause (ALDebug)
+@end
+@implementation ALSQLClause(ALDebug)
 
-- (void)append:(ALSQLClause *)other withDelimiter:(NSString *_Nullable)delimiter{
-    [self append:other.SQLString argValues:other.argValues withDelimiter:delimiter];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"sql: %@\nargs: %@", self.SQLString, self.argValues];
 }
 
-- (void)append:(NSString *)sql argValues:(NSArray *)arguments withDelimiter:(NSString *_Nullable)delimiter {
-    _SQLString = [stringOrEmpty(self.SQLString)
-                  stringByAppendingFormat:@"%@%@", stringOrEmpty(castToTypeOrNil(delimiter, NSString)), sql];
+- (NSString *)debugDescription {
+    NSString *sql = self.SQLString;
+    NSArray *args = [self.argValues copy];
+    NSInteger argCount = args.count;
     
-    if (arguments.count > 0) {
-        if (_argValues == nil) {
-            _argValues = [NSMutableArray array];
+    NSMutableString *desc = [NSMutableString string];
+    NSInteger lastLocation = 0;
+    NSInteger argIndex = 0;
+    NSRange range = NSMakeRange(0, sql.length);
+    
+    while ((range = [sql rangeOfString:@"?" options:0 range:range]).location != NSNotFound && argIndex < argCount) {
+        id argVal = args[argIndex];
+        if ([argVal isKindOfClass:NSData.class]) {
+            argVal = [(NSData *)argVal al_debugDescription];
         }
-        [_argValues addObjectsFromArray:arguments];
+        
+        [desc appendString:[sql substringToIndex:range.location]];
+        [desc appendFormat:@"'%@'", argVal];
+        
+        lastLocation += range.length;
+        argIndex ++;
+        range.location = desc.length;
+        range.length = sql.length - range.location;
+    }
+    if (lastLocation < sql.length) {
+        [desc appendString:[sql substringFromIndex:lastLocation]];
+    }
+    if (argIndex != argCount) {
+        ALLogWarn(@"arguments count is not expected.\nsql: %@; arguments count:%ld", self.SQLString, (long)argCount);
+        return [NSString stringWithFormat:@"sql: %@\nargs: %@", self.SQLString, args];
     }
     
+    return desc;
 }
 
 @end
@@ -151,7 +194,7 @@
 
 @implementation NSObject (ALSQLClause)
 
-- (ALSQLClause *)SQLClause {
+- (ALSQLClause *)al_SQLClause {
     if ([self isKindOfClass:[NSString class]]) {
         return [ALSQLClause SQLClauseWithString:(NSString *)self argValues:nil];
     }
@@ -162,30 +205,30 @@
         return (ALSQLClause *)self;
     }
     
-    NSString *strVal = stringValue(self);
+    NSString *strVal = al_stringValue(self);
     if (strVal != nil) {
         return [ALSQLClause SQLClauseWithString:strVal argValues:nil];
     }
     return nil;
 }
 
-- (ALSQLClause *_Nullable)SQLClauseArgValue {
+- (ALSQLClause *_Nullable)al_SQLClauseByUsingAsArgValue {
     id value = [self transformToAcceptableArgValue];
     if (value != nil) {
-        return [@"?" SQLClauseWithArgValues:@[value]];
+        return [@"?" al_SQLClauseWithArgValues:@[value]];
     }
     return nil;
 }
 
-- (BOOL)isAcceptableSQLArgClassType {
+- (BOOL)al_isAcceptableSQLArgClassType {
     return [self isKindOfClass:[NSString class]] || [self isKindOfClass:[NSNumber class]] ||
            [self isKindOfClass:[NSData class]]   || [self isKindOfClass:[NSDate class]];
 }
 
 - (nullable id)transformToAcceptableArgValue {
     id value = self;
-    if (![self isAcceptableSQLArgClassType]) {
-        value = stringValue(self);
+    if (![self al_isAcceptableSQLArgClassType]) {
+        value = al_stringValue(self);
         if (value == nil) {
             ALLogWarn(@"object of type:%@ can not be accepted as SQL Clause argument", self.class);
             return nil;
@@ -198,8 +241,21 @@
 
 @implementation NSString (ALSQLClause)
 
-- (ALSQLClause *)SQLClauseWithArgValues:(NSArray *)argValues {
+- (ALSQLClause *)al_SQLClauseWithArgValues:(NSArray *)argValues {
     return [ALSQLClause SQLClauseWithString:self argValues:argValues];
+}
+
+- (ALSQLClause *)al_SQLClauseByAppendingSQLClause:(ALSQLClause *)sql withDelimiter:(NSString *)delimiter {
+    ALSQLClause *retVal = [self al_SQLClause];
+    al_guard_or_return([sql isKindOfClass:ALSQLClause.class], retVal);
+    [retVal append:sql withDelimiter:delimiter];
+    return retVal;
+}
+
+- (ALSQLClause *)al_SQLClauseByAppendingSQL:(NSString *)sql argValues:(NSArray *)argValues delimiter:(NSString *)delimiter {
+    ALSQLClause *retVal = [self al_SQLClause];
+    [retVal appendSQLString:sql argValues:argValues withDelimiter:delimiter];
+    return retVal;
 }
 
 @end

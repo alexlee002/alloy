@@ -22,7 +22,7 @@
 
 @interface NSString (ALStringInflector)
 
-- (NSString *)singularize;
-- (NSString *)pluralize;
+- (NSString *)al_singularize;
+- (NSString *)al_pluralize;
 
 @end

@@ -15,18 +15,18 @@
 @synthesize type = _type;
 
 - (void)setType:(NSString *)dataType {
-    _type = isEmptyString(dataType) ? @"BLOB" : dataType.uppercaseString;
+    _type = al_isEmptyString(dataType) ? @"BLOB" : dataType.uppercaseString;
 }
 
 
 - (NSString *)columnDefine {
     return [self.name stringByAppendingFormat:@" %@%@",
             self.type,
-            (isEmptyString(self.constraint) ? @"" : [@" " stringByAppendingString:self.constraint])];
+            (al_isEmptyString(self.constraint) ? @"" : [@" " stringByAppendingString:self.constraint])];
 }
 
 - (NSString *)description {
-    return [@[stringOrEmpty(self.property.name), stringOrEmpty(self.columnDefine)] componentsJoinedByString:@" => "];
+    return [@[al_stringOrEmpty(self.property.name), al_stringOrEmpty(self.columnDefine)] componentsJoinedByString:@" => "];
 }
 
 @end

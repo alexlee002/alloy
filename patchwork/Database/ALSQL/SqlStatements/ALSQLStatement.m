@@ -9,18 +9,29 @@
 #import "ALSQLStatement.h"
 #import "ALDatabase.h"
 #import "SafeBlocksChain.h"
-#import "PatchworkLog_private.h"
+#import "__patchwork_config.h"
 
-#define __STMT_EXEC_LOG(result, db)     {                                               \
-    ALSQLClause *clause = [self.SQLString SQLClauseWithArgValues:self.argValues];       \
-    if ((result)) {                                                                     \
-        _ALDBLog(@"Execute SQL: %@; ✔", self.db.enableDebug ? [clause debugDescription] : [clause description]);   \
-    } else {                                                                            \
-        ALLogError(@"Execute SQL: %@; ⛔ ERROR: %@", self.db.enableDebug ? [clause debugDescription] : [clause description], [db lastError]);     \
-    }                                                                                   \
-}
+#define __STMT_EXEC_LOG(result, db)                                                                                   \
+    {                                                                                                                 \
+        if ((result)) {                                                                                               \
+            _ALDBLog(@"Execute SQL: %@; ✔", self.db.enableDebug ? [self debugDescription] : [self description]);      \
+        } else {                                                                                                      \
+            ALAssert(NO, @"DB ERROR: %@; \nSQL: %@; \narguments:%@", [db lastError], self.SQLString, self.argValues); \
+        }                                                                                                             \
+    }
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface ALSQLStatement (AL_NSObject_Ext)
+@end
+@implementation ALSQLStatement(AL_NSObject_Ext)
+
+- (nullable ALSQLClause *)al_SQLClause {
+    return [self SQLClause];
+}
+
+@end
+
 
 @implementation ALSQLStatement
 
@@ -49,36 +60,36 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation ALSQLStatement (SQLExecute)
 
 - (void (^)(void (^)(FMResultSet *)))EXECUTE_QUERY {
-    weakify(self);
+    al_weakify(self);
     return ^(void (^resultHaldler)(FMResultSet *_Nullable rs)) {
-        strongify(self);
+        al_strongify(self);
         
-        if (!ObjIsValidBlocksChainObject(self)) {
-            safeInvokeBlock(resultHaldler, nil);
+        if (!al_objIsValidBlocksChainObject(self)) {
+            ALSafeInvokeBlock(resultHaldler, nil);
             return;
         }
         
         if (self.db == nil) {
             ALLogWarn(@"*** Invalid database handler");
-            safeInvokeBlock(resultHaldler, nil);
+            ALSafeInvokeBlock(resultHaldler, nil);
             return;
         }
         
         [self.db.queue inDatabase:^(FMDatabase * _Nonnull db) {
             FMResultSet *rs = [db executeQuery:self.SQLString withArgumentsInArray:self.argValues];
             __STMT_EXEC_LOG(rs != nil, db);
-            safeInvokeBlock(resultHaldler, rs);
+            ALSafeInvokeBlock(resultHaldler, rs);
             [rs close];
         }];
     };
 }
 
 - (BOOL (^)())EXECUTE_UPDATE {
-    weakify(self);
+    al_weakify(self);
     return ^BOOL () {
-        strongify(self);
+        al_strongify(self);
         
-        if (!ObjIsValidBlocksChainObject(self)) {
+        if (!al_objIsValidBlocksChainObject(self)) {
             return NO;
         }
         
@@ -98,14 +109,14 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)executeWithCompletion:(void (^)(BOOL))completion {
-    if (!ObjIsValidBlocksChainObject(self)) {
-        safeInvokeBlock(completion, NO);
+    if (!al_objIsValidBlocksChainObject(self)) {
+        ALSafeInvokeBlock(completion, NO);
         return;
     }
     
     if (self.db == nil) {
         ALLogWarn(@"*** Invalid database handler");
-        safeInvokeBlock(completion, NO);
+        ALSafeInvokeBlock(completion, NO);
         return;
     }
     
@@ -134,6 +145,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSString *)argumentsDescription {
     return self.argValues.description;
+}
+
+- (NSString *)description {
+    return [[self.SQLString al_SQLClauseWithArgValues:self.argValues] description];
+}
+
+- (NSString *)debugDescription {
+    return [[self.SQLString al_SQLClauseWithArgValues:self.argValues] debugDescription];
 }
 
 @end

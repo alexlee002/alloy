@@ -9,21 +9,21 @@
 #import "NSString+Helper.h"
 #import "BlocksKit.h"
 #import "NSCache+ALExtensions.h"
-#import "MD5.h"
+#import "AL_MD5.h"
 #import <objc/message.h>
 #import "ALLogger.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-AL_FORCE_INLINE id wrapNil(id _Nullable obj) {
+AL_FORCE_INLINE id al_wrapNil(id _Nullable obj) {
     return obj == nil ? NSNull.null : obj;
 }
 
-AL_FORCE_INLINE id _Nullable unwrapNil(id _Nullable obj) {
+AL_FORCE_INLINE id _Nullable al_unwrapNil(id _Nullable obj) {
     return obj == NSNull.null ? nil : obj;
 }
 
-AL_FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
+AL_FORCE_INLINE NSString *_Nullable al_stringValue(id _Nullable obj) {
     if ([obj isKindOfClass:NSString.class]) {
         return (NSString *)obj;
     } else if ([obj isKindOfClass:NSNumber.class]) {
@@ -36,22 +36,21 @@ AL_FORCE_INLINE NSString *_Nullable stringValue(id _Nullable obj) {
     return nil;
 }
 
-AL_FORCE_INLINE BOOL stringEquals(NSString *_Nullable str1, NSString *_Nullable str2) {
-    if (castToTypeOrNil(str1, NSString) == nil) {
+AL_FORCE_INLINE BOOL al_stringEquals(NSString *_Nullable str1, NSString *_Nullable str2) {
+    if (ALCastToTypeOrNil(str1, NSString) == nil) {
         return NO;
     }
-    if (castToTypeOrNil(str2, NSString) == nil) {
+    if (ALCastToTypeOrNil(str2, NSString) == nil) {
         return NO;
     }
     return [str1 isEqualToString:str2];
 }
 
-AL_FORCE_INLINE NSString *stringOrEmpty(NSString *_Nullable string) {
-    NSString *tmp = [string stringify];
-    return tmp == nil ? @"" : tmp;
+AL_FORCE_INLINE NSString *al_stringOrEmpty(NSString *_Nullable string) {
+    return al_stringValue(string) ?: @"";
 }
 
-AL_FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
+AL_FORCE_INLINE BOOL al_isEmptyString(NSString *_Nullable string) {
     if ([string isKindOfClass:[NSString class]]) {
         if (string.length == 0) {
             return YES;
@@ -64,7 +63,7 @@ AL_FORCE_INLINE BOOL isEmptyString(NSString *_Nullable string) {
     return YES;
 }
 
-AL_FORCE_INLINE NSStringEncoding NSStringEncodingWithName(NSString *_Nullable encodingName) {
+AL_FORCE_INLINE NSStringEncoding al_NSStringEncodingWithName(NSString *_Nullable encodingName) {
     CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef) encodingName);
     if (cfEncoding != kCFStringEncodingInvalidId) {
         return CFStringConvertEncodingToNSStringEncoding(cfEncoding);
@@ -80,19 +79,19 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     return result;
 }
 
-@implementation NSObject (StringHelper)
+@implementation NSObject (ALStringHelper)
 
-- (NSString *)stringify {
-    return stringValue(self) ?: [self description];
+- (NSString *)al_stringify {
+    return al_stringValue(self) ?: [self description];
 }
 
 @end
 
-@implementation NSString (StringHelper)
+@implementation NSString (ALStringHelper)
 
 
-- (NSUInteger)occurrencesCountOfString:(NSString *)substring {
-    substring = [substring stringify];
+- (NSUInteger)al_occurrencesCountOfString:(NSString *)substring {
+    substring = [substring al_stringify];
     if (substring.length == 0) {
         return 0;
     }
@@ -108,7 +107,7 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     return count;
 }
 
-- (NSString *)stringByConvertingCamelCaseToUnderscore {
+- (NSString *)al_stringByConvertingCamelCaseToUnderscore {
     NSScanner *scanner = [NSScanner scannerWithString:self];
     scanner.caseSensitive = YES;
     scanner.charactersToBeSkipped = nil;
@@ -136,7 +135,7 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     return [output copy];
 }
 
-- (NSString *)stringByLowercaseFirst {
+- (NSString *)al_stringByLowercaseFirst {
     if (self.length == 0) {
         return self;
     }
@@ -144,7 +143,7 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
                                          withString:[[self substringToIndex:1] lowercaseString]];
 }
 
-- (NSString *)stringbyUppercaseFirst {
+- (NSString *)al_stringbyUppercaseFirst {
     if (self.length == 0) {
         return self;
     }
@@ -152,15 +151,17 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
                                          withString:[[self substringToIndex:1] uppercaseString]];
 }
 
-- (nullable NSString *)substringToIndexSafety:(NSUInteger)to {
+- (nullable NSString *)al_substringToIndexSafety:(NSUInteger)to {
+    NSParameterAssert(to < self.length);
     return to < self.length ? [self substringToIndex:to] : nil;
 }
 
-- (nullable NSString *)substringFromIndexSafety:(NSUInteger)from {
+- (nullable NSString *)al_substringFromIndexSafety:(NSUInteger)from {
+    NSParameterAssert(from < self.length);
     return from < self.length ? [self substringFromIndex:from] : nil;
 }
 
-- (nullable NSString *)substringWithRangeSafety:(NSRange)range {
+- (nullable NSString *)al_substringWithRangeSafety:(NSRange)range {
     if (range.location < self.length) {
         if (range.location + range.length < self.length) {
             return [self substringWithRange:range];
@@ -172,14 +173,20 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     }
 }
 
-+ (NSString *)UUIDString {
+- (nullable NSString *)al_substringFromIndex:(NSInteger)from length:(NSInteger)length {
+    NSUInteger start = from > 0 ? from : self.length + from;
+    NSUInteger end = length > 0 ? start + length : self.length + length;
+    return [[self al_substringFromIndexSafety:start] al_substringToIndexSafety:end];
+}
+
++ (NSString *)al_UUIDString {
     CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
     NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
     CFRelease(uuid);
     return uuidString;
 }
 
-- (BOOL)containsEmojiCharacters {
+- (BOOL)al_containsEmojiCharacters {
     __block BOOL returnValue = NO;
     [self
         enumerateSubstringsInRange:NSMakeRange(0, [self length])
@@ -222,33 +229,33 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     return returnValue;
 }
 
-- (NSComparisonResult)compareUsingPinyinTo:(NSString *)other {
+- (NSComparisonResult)al_compareUsingPinyinTo:(NSString *)other {
     return compareStringsUsingLocale(self, other, @"zh@collation=pinyin");
 }
 
-- (NSComparisonResult)compareUsingGB2312To:(NSString *)other {
+- (NSComparisonResult)al_compareUsingGB2312To:(NSString *)other {
     return compareStringsUsingLocale(self, other, @"zh@collation=gb2312");
 }
 
-+ (NSString *)stringByFormattingSize:(int64_t)bytesCount {
-    return [self stringByFormattingSize:bytesCount maxUnits:NSByteCountFormatterUseDefault decimalPlaces:2];
++ (NSString *)al_stringByFormattingSize:(int64_t)bytesCount {
+    return [self al_stringByFormattingSize:bytesCount maximumUnit:NSByteCountFormatterUseDefault decimalPlaces:2];
 }
 
-+ (NSString *)stringByFormattingSize:(int64_t)bytesCount maxUnits:(NSByteCountFormatterUnits)maxUnits {
-    return [self stringByFormattingSize:bytesCount maxUnits:maxUnits decimalPlaces:2];
++ (NSString *)al_stringByFormattingSize:(int64_t)bytesCount maximumUnit:(NSByteCountFormatterUnits)maxUnit {
+    return [self al_stringByFormattingSize:bytesCount maximumUnit:maxUnit decimalPlaces:2];
 }
 
-+ (NSString *)stringByFormattingSize:(int64_t)bytesCount
-                            maxUnits:(NSByteCountFormatterUnits)maxUnits
-                       decimalPlaces:(uint)places {
-    maxUnits = maxUnits == NSByteCountFormatterUseAll ? NSByteCountFormatterUseDefault : maxUnits;
++ (NSString *)al_stringByFormattingSize:(int64_t)bytesCount
+                            maximumUnit:(NSByteCountFormatterUnits)maxUnit
+                          decimalPlaces:(uint)places {
+    maxUnit = maxUnit == NSByteCountFormatterUseAll ? NSByteCountFormatterUseDefault : maxUnit;
     
     NSArray<NSString *> *unitNames = @[@"B", @"KB", @"MB", @"GB", @"TB", @"PB", @"EB", @"ZB", @"YB"];
     
     NSInteger maxUnitsIndex = unitNames.count - 1;
-    if (maxUnits != NSByteCountFormatterUseDefault) {
+    if (maxUnit != NSByteCountFormatterUseDefault) {
         maxUnitsIndex = 0;
-        while ((maxUnits = maxUnits >> 1) > 0 && maxUnitsIndex < unitNames.count) {
+        while ((maxUnit = maxUnit >> 1) > 0 && maxUnitsIndex < unitNames.count) {
             maxUnitsIndex ++;
         }
     }
@@ -268,16 +275,16 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
 #pragma mark -
 @implementation NSString (ALRegularExpressions)
 
-- (nullable NSRegularExpression *)regularExpressionWithPattern:(NSString *)pattern {
-    NSString *cacheKey = [@"ALRegularExpressions_KEY$" stringByAppendingString:[pattern MD5]];
+- (nullable NSRegularExpression *)al_regularExpressionWithPattern:(NSString *)pattern {
+    NSString *cacheKey = [@"ALRegularExpressions_KEY$" stringByAppendingString:[pattern al_MD5Hash]];
     
-    NSRegularExpression *regex = [[NSCache sharedCache] objectForKey:cacheKey];
+    NSRegularExpression *regex = [[NSCache al_sharedCache] objectForKey:cacheKey];
     if (![regex isKindOfClass:[NSRegularExpression class]]) {
-        NSAssert(regex == nil, @"cached object key conflict: %@", regex);
+        ALAssert(regex == nil, @"cached object key conflict: %@", regex);
         NSError *error;
         regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
         if (regex != nil) {
-            [[NSCache sharedCache] setObject:regex forKey:cacheKey];
+            [[NSCache al_sharedCache] setObject:regex forKey:cacheKey];
         } else {
             ALLogWarn(@"ERROR: %@", error);
         }
@@ -285,17 +292,17 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     return regex;
 }
 
-- (nullable NSString *)stringByMatching:(NSString *)pattern captureRangeAt:(NSInteger)index {
-    NSRegularExpression *regex = [self regularExpressionWithPattern:pattern];
+- (nullable NSString *)al_stringByMatching:(NSString *)pattern captureRangeAt:(NSInteger)index {
+    NSRegularExpression *regex = [self al_regularExpressionWithPattern:pattern];
     NSTextCheckingResult *result = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
     if (result.numberOfRanges > 1) {
-        return [self substringWithRangeSafety:[result rangeAtIndex:index]];
+        return [self al_substringWithRangeSafety:[result rangeAtIndex:index]];
     }
     return nil;
 }
 
-- (BOOL)matchesPattern:(NSString *)pattern {
-    NSRegularExpression *regex = [self regularExpressionWithPattern:pattern];
+- (BOOL)al_matchesPattern:(NSString *)pattern {
+    NSRegularExpression *regex = [self al_regularExpressionWithPattern:pattern];
     NSTextCheckingResult *result = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
     return result.range.length == self.length;
 }
@@ -305,15 +312,15 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
 
 @implementation NSData(StringHelper)
 
-- (NSString *)hexString {
-    return bytesToHexStr(self.bytes, self.length);
+- (NSString *)al_hexString {
+    return al_bytesToHexStr(self.bytes, self.length);
 }
 
 - (NSString *)al_debugDescription {
     NSMutableString *dump = [NSMutableString string];
     NSInteger index = 0;
     while (index < MIN(16, self.length)) {
-        [dump appendFormat:@"%@%@", [[self subdataWithRange:NSMakeRange(index, MIN(4, self.length - 4))] hexString],
+        [dump appendFormat:@"%@%@", [[self subdataWithRange:NSMakeRange(index, MIN(4, self.length - 4))] al_hexString],
                            (index + 4 < self.length ? @" " : @"")];
         index += 4;
     }
@@ -322,7 +329,7 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     }
     index = MAX(index, self.length - 16);
     while (index < self.length) {
-        [dump appendFormat:@" %@", [[self subdataWithRange:NSMakeRange(index, MIN(4, self.length - 4))] hexString]];
+        [dump appendFormat:@" %@", [[self subdataWithRange:NSMakeRange(index, MIN(4, self.length - 4))] al_hexString]];
         index += 4;
     }
     
@@ -331,11 +338,11 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
 
 @end
 
-AL_FORCE_INLINE NSString *bytesToHexStr(const char *bytes, size_t len) {
-    if (len == 0 || bytes == NULL) {
-#ifndef NS_BLOCK_ASSERTIONS
-        assert(bytes != NULL);
-#endif
+AL_FORCE_INLINE NSString *al_bytesToHexStr(const char *bytes, size_t len) {
+    if (bytes == NULL) {
+        return nil;
+    }
+    if (len == 0) {
         return @"";
     }
     

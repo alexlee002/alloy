@@ -6,9 +6,12 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "CRC.h"
+#import "AL_CRC.h"
 
-@implementation NSData (CRC32)
+#define DEFAULT_POLYNOMIAL 0xEDB88320L
+#define DEFAULT_SEED       0xFFFFFFFFL
+
+@implementation NSData (AL_CRC32)
 //***********************************************************************************************************
 //  Function      : generateCRC32Table
 //
@@ -52,9 +55,9 @@ void generateCRC32Table(uint32_t *pTable, uint32_t poly)
 //
 //  Return Value  : The CRC32 value.
 //***********************************************************************************************************
--(uint32_t)crc32
+-(uint32_t)al_crc32
 {
-    return [self crc32WithSeed:DEFAULT_SEED usingPolynomial:DEFAULT_POLYNOMIAL];
+    return [self al_crc32WithSeed:DEFAULT_SEED usingPolynomial:DEFAULT_POLYNOMIAL];
 }
 
 //***********************************************************************************************************
@@ -69,9 +72,9 @@ void generateCRC32Table(uint32_t *pTable, uint32_t poly)
 //
 //  Return Value  : The CRC32 value.
 //***********************************************************************************************************
--(uint32_t)crc32WithSeed:(uint32_t)seed
+-(uint32_t)al_crc32WithSeed:(uint32_t)seed
 {
-    return [self crc32WithSeed:seed usingPolynomial:DEFAULT_POLYNOMIAL];
+    return [self al_crc32WithSeed:seed usingPolynomial:DEFAULT_POLYNOMIAL];
 }
 
 //***********************************************************************************************************
@@ -86,9 +89,9 @@ void generateCRC32Table(uint32_t *pTable, uint32_t poly)
 //
 //  Return Value  : The CRC32 value.
 //***********************************************************************************************************
--(uint32_t)crc32UsingPolynomial:(uint32_t)poly
+-(uint32_t)al_crc32UsingPolynomial:(uint32_t)poly
 {
-    return [self crc32WithSeed:DEFAULT_SEED usingPolynomial:poly];
+    return [self al_crc32WithSeed:DEFAULT_SEED usingPolynomial:poly];
 }
 
 //***********************************************************************************************************
@@ -106,7 +109,7 @@ void generateCRC32Table(uint32_t *pTable, uint32_t poly)
 //
 //  Return Value  : The CRC32 value.
 //***********************************************************************************************************
--(uint32_t)crc32WithSeed:(uint32_t)seed usingPolynomial:(uint32_t)poly
+-(uint32_t)al_crc32WithSeed:(uint32_t)seed usingPolynomial:(uint32_t)poly
 {
     uint32_t *pTable = malloc(sizeof(uint32_t) * 256);
     generateCRC32Table(pTable, poly);

@@ -6,38 +6,38 @@
 //
 //
 
-#import "MD5.h"
+#import "AL_MD5.h"
 #import <CommonCrypto/CommonDigest.h>
-#import "UtilitiesHeader.h"
+#import "ALUtilitiesHeader.h"
 #import "NSString+Helper.h"
 
 
 @implementation NSData (ALExtension_MD5)
 
-- (NSString*)MD5 {
+- (NSString*)al_MD5Hash {
     const char* cStr = [self bytes];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5(cStr, (CC_LONG)[self length], digest);
-    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
+    return al_bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
 @end
 
 @implementation NSString (ALExtension_MD5)
 
-- (NSString*)MD5 {
+- (NSString*)al_MD5Hash {
     const char* cStr = [self UTF8String];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
 
     CC_MD5(cStr, (CC_LONG) strlen(cStr), digest);
 
-    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
+    return al_bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
 @end
 
 static uint32_t MD5bufSize = 1024 * 1024;
-AL_FORCE_INLINE NSString *_Nullable fileMD5Hash(NSString *filepath) {
+AL_FORCE_INLINE NSString *_Nullable al_fileMD5Hash(NSString *filepath) {
     NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:filepath];
     if (fh == nil) {
         return nil;
@@ -54,10 +54,10 @@ AL_FORCE_INLINE NSString *_Nullable fileMD5Hash(NSString *filepath) {
     
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5_Final(digest, &md5ctx);
-    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
+    return al_bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
 
-AL_FORCE_INLINE NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRange range) {
+AL_FORCE_INLINE NSString *_Nullable al_partialFileMD5Hash(NSString *filepath, NSRange range) {
     NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:filepath];
     if (fh == nil) {
         return nil;
@@ -83,5 +83,5 @@ AL_FORCE_INLINE NSString *_Nullable partialFileMD5Hash(NSString *filepath, NSRan
     
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5_Final(digest, &md5ctx);
-    return bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
+    return al_bytesToHexStr((const char *)digest, CC_MD5_DIGEST_LENGTH);
 }
