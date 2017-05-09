@@ -41,13 +41,13 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "ALSQLUpdateStatement.h"
 
 // Extensions
+#import "AL_URLHelper.h"
 #import "BlocksKitExtension.h"
 #import "NSArray+ArrayExtensions.h"
-#import "NSBundle+BundleInfo.h"
+#import "NSBundle+ALBundleInfo.h"
 #import "NSCache+ALExtensions.h"
 #import "NSDate+ALExtensions.h"
 #import "NSString+ALHelper.h"
-#import "AL_URLHelper.h"
 
 // Foundations
 #import "ALAssociatedWeakObject.h"
