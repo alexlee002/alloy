@@ -1,5 +1,5 @@
 //
-//  UtilitiesHeader.h
+//  ALUtilitiesHeader.h
 //  patchwork
 //
 //  Created by Alex Lee on 2/18/16.
@@ -10,12 +10,12 @@
 #define ALUtilitiesHeader_h
 
 //clang attributes
-#define AL_FORCE_INLINE __inline__ __attribute__((always_inline))
+#define AL_FORCE_INLINE         __inline__
 // accept 0 or 1 param with int type. the param value should >= 100
-#define AL_CONSTRACTOR(...)   __attribute__((constructor(__VA_ARGS__)))
-#define AL_DESTRUCTOR(...)    __attribute__((destructor(__VA_ARGS__)))
+#define AL_CONSTRACTOR(...)     __attribute__((constructor(__VA_ARGS__)))
+#define AL_DESTRUCTOR(...)      __attribute__((destructor(__VA_ARGS__)))
 
-#define AL_DEPRECATED(...)    __attribute((deprecated(__VA_ARGS__)))
+#define AL_DEPRECATED(...)      __attribute((deprecated(__VA_ARGS__)))
 
 /**
  * only work for C functions and C params type
@@ -32,10 +32,19 @@
 #define AL_C_OVERLOADABLE   __attribute__((overloadable))
 
 /////////////////////////////////////////////////////////////
-#define ALAssert(condition, desc, ...)      NSAssert((condition),  (@"🔥" desc), ##__VA_ARGS__)
-#define ALCAssert(condition, desc, ...)     NSCAssert((condition), (@"🔥" desc), ##__VA_ARGS__)
-#define ALParameterAssert(condition)        ALAssert((condition), @"Invalid parameter not satisfying: %@", @#condition)
-#define ALCParameterAssert(condition)       ALCAssert((condition), @"Invalid parameter not satisfying: %@", @#condition)
+#if DEBUG
+    #define ALAssert(condition, desc, ...)  NSAssert((condition),  (@"🔥" desc), ##__VA_ARGS__)
+    #define ALCAssert(condition, desc, ...) NSCAssert((condition), (@"🔥" desc), ##__VA_ARGS__)
+    #define ALParameterAssert(condition)    ALAssert((condition),  @"Invalid parameter not satisfying: %@", @#condition)
+    #define ALCParameterAssert(condition)   ALCAssert((condition), @"Invalid parameter not satisfying: %@", @#condition)
+
+#else
+    #define ALAssert(condition, desc, ...)  NSAssert((condition),  (desc), ##__VA_ARGS__)
+    #define ALCAssert(condition, desc, ...) NSCAssert((condition), (desc), ##__VA_ARGS__)
+    #define ALParameterAssert(condition)    NSParameterAssert((condition))
+    #define ALCParameterAssert(condition)   NSCParameterAssert((condition))
+
+#endif
 
 #define AL_VOID (void)0
 
@@ -174,9 +183,9 @@
 #define __ALNAME_PREPEND(a,b) al_metamacro_concat(a,b)
 
 #ifdef  AL_SDK_NAME_PREFIX
-#define AL_NAME_PREPEND(x) __ALNAME_PREPEND(AL_SDK_NAME_PREFIX, x)
+    #define AL_NAME_PREPEND(x) __ALNAME_PREPEND(AL_SDK_NAME_PREFIX, x)
 #else  // RKL_PREPEND_TO_METHODS
-#define AL_NAME_PREPEND(x) x
+    #define AL_NAME_PREPEND(x) x
 #endif // RKL_PREPEND_TO_METHODS
 
 

@@ -7,7 +7,7 @@
 //
 
 #import "ALSQLInsertStatement.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "__ALSQLStatementHelpers.h"
 #import "SafeBlocksChain.h"
 #import "ALUtilitiesHeader.h"

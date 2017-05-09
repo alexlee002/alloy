@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "URLHelper.h"
+#import "AL_URLHelper.h"
 #import "ALLogger.h"
 #import "ALAssociatedWeakObject.h"
 #import "ALOCRuntime.h"

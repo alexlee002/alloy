@@ -8,7 +8,7 @@
 
 #import "ALHTTPRequest.h"
 #import "BlocksKit.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "ALHTTPResponse.h"
 #import "AL_JSON.h"
 #import "ALModel.h"

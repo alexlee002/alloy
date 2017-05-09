@@ -13,13 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ALSQLClause : NSObject <NSCopying>
 
-@property(PROP_ATOMIC_DEF, copy, readonly, nullable) NSString  *SQLString;
+@property(PROP_ATOMIC_DEF, copy, nullable, readonly) NSString  *SQLString;
 @property(PROP_ATOMIC_DEF, copy, nullable)           NSArray   *argValues;
 
 + (instancetype)SQLClauseWithString:(NSString *)sql, ...NS_REQUIRES_NIL_TERMINATION;
 + (instancetype)SQLClauseWithString:(NSString *)sql argValues:(NSArray *_Nullable)argValues;
 
-- (void)appendArgValues:(NSArray *)argValues;
 - (BOOL)isValid;
 
 @end
@@ -28,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ALSQLClause (ALBlocksChain)
 @property(readonly) ALSQLClause *(^APPEND)(id obj, NSString *_Nullable delimiter);
 @property(readonly) ALSQLClause *(^SET_ARG_VALUES)(NSArray * _Nullable values);
-@property(readonly) ALSQLClause *(^ADD_ARG_VALUES)(NSArray *values);
 @end
 
 @interface ALSQLClause (BaseOperations)

@@ -38,7 +38,7 @@ static NSString * kTmpDBPath3 = @"patchwork/testcase.activerecord3.db";
 SYNTHESIZE_ROWID_ALIAS(sid);
 
 + (NSArray<NSArray<NSString *> *> *)uniqueKeys {
-    return @[ @[ keypathForClass(Student, name) ] ]; // just for test
+    return @[ @[ al_keypathForClass(Student, name) ] ]; // just for test
 }
 
 @end
@@ -118,27 +118,27 @@ SYNTHESIZE_ROWID_ALIAS(cid);
     XCTAssertEqual([Student fetcher].FETCH_COUNT(nil), 0);
 
     student = [Student modelsWithCondition:AS_COL(Student, name)
-                                               .PREFIX_LIKE(@"Alex")
-                                               .AND(AS_COL(Student, age).NLT(@10))
-                                               .AND(AS_COL(Student, age).LT(@20))
-                                               .AND(AS_COL(Student, gender).EQ(@1))]
+                                               .SQL_PREFIX_LIKE(@"Alex")
+                                               .SQL_AND(AS_COL(Student, age).SQL_NLT(@10))
+                                               .SQL_AND(AS_COL(Student, age).SQL_LT(@20))
+                                               .SQL_AND(AS_COL(Student, gender).SQL_EQ(@1))]
                   .firstObject;
     
     student = [Student fetcher]
-                  .WHERE(AS_COL(Student, name).PREFIX_LIKE(@"Alex"))
-                  .ORDER_BY(AS_COL(Student, age).DESC())
+                  .WHERE(AS_COL(Student, name).SQL_PREFIX_LIKE(@"Alex"))
+                  .ORDER_BY(AS_COL(Student, age).SQL_DESC())
                   .LIMIT(@1)
                   .OFFSET(@5)
                   .FETCH_MODELS()
                   .firstObject;
     
-    [student updateProperties:@[keypath(student.age), keypath(student.province)] repleace:NO];
+    [student updateProperties:@[al_keypath(student.age), al_keypath(student.province)] repleace:NO];
 
     [Student updateProperties:@{
-        keypathForClass(Student, age) : @20,
-        keypathForClass(Student, gender) : @1
+        al_keypathForClass(Student, age) : @20,
+        al_keypathForClass(Student, gender) : @1
     }
-                withCondition:AS_COL(Student, birthday).EQ([NSDate dateWithTimeIntervalSinceNow:-20 * 365 * 86400])
+                withCondition:AS_COL(Student, birthday).SQL_EQ([NSDate dateWithTimeIntervalSinceNow:-20 * 365 * 86400])
                      repleace:NO];
 }
 
@@ -184,7 +184,7 @@ SYNTHESIZE_ROWID_ALIAS(cid);
             return;
         }
         [StudentCourse inTransaction:^(ALDatabase * _Nonnull bindingDB, BOOL * _Nonnull rollback1) {
-            if (![StudentCourse deleteRecordsWithCondition:AS_COL(StudentCourse, sid).EQ(@(student.sid))]) {
+            if (![StudentCourse deleteRecordsWithCondition:AS_COL(StudentCourse, sid).SQL_EQ(@(student.sid))]) {
                 *rollback = YES;
                 *rollback1 = YES;
             }

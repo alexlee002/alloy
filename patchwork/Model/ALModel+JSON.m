@@ -9,7 +9,7 @@
 #import "ALModel+JSON.h"
 #import "YYModel.h"
 #import "BlocksKit.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "BlocksKitExtension.h"
 #import "NSArray+ArrayExtensions.h"
 #import "ALOCRuntime.h"

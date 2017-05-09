@@ -22,17 +22,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALSQLStatement (AL_NSObject_Ext)
-@end
-@implementation ALSQLStatement(AL_NSObject_Ext)
-
-- (nullable ALSQLClause *)al_SQLClause {
-    return [self SQLClause];
-}
-
-@end
-
-
 @implementation ALSQLStatement
 
 @synthesize db = _db;
@@ -41,6 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
     ALSQLStatement *stmt = [[self alloc] init];
     stmt->_db = db;
     return stmt;
+}
+
++ (instancetype)statement {
+    return [[self alloc] init];
+}
+
+- (void)bindDatabase:(ALDatabase *)db {
+    self->_db = db;
 }
 
 - (nullable ALSQLClause *)SQLClause {
@@ -55,9 +52,25 @@ NS_ASSUME_NONNULL_BEGIN
     return [self SQLClause].argValues;
 }
 
-@end;
+@end
+
+@interface ALSQLStatement (AL_NSObject_Ext)
+@end
+@implementation ALSQLStatement(AL_NSObject_Ext)
+
+- (nullable ALSQLClause *)al_SQLClause {
+    return [self SQLClause];
+}
+
+@end
 
 @implementation ALSQLStatement (SQLExecute)
+- (__kindof ALSQLStatement *(^)(ALDatabase *db))BIND_DB {
+    return ^(ALDatabase *db) {
+        self->_db = db;
+        return self;
+    };
+}
 
 - (void (^)(void (^)(FMResultSet *)))EXECUTE_QUERY {
     al_weakify(self);

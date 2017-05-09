@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "ALSQLClause.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 extern ALSQLClause *SQLFunc(NSString *funcName, NSArray *args);

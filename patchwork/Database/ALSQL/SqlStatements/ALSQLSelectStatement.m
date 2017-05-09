@@ -7,47 +7,42 @@
 //
 
 #import "ALSQLSelectStatement.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "ALUtilitiesHeader.h"
 #import "__ALSQLStatementHelpers.h"
 #import "ALSQLClause+SQLOperation.h"
 #import "ALSQLClause+SQLFunctions.h"
 #import "SafeBlocksChain.h"
 
-#define __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ARRAY_CLAUSE(stmt_class, prop_name, _ivar_name)   \
-- (stmt_class *(^)(id clauses))prop_name {                                                  \
-    return ^stmt_class *(id clauses) {                                                      \
-        __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();                                               \
-                                                                                            \
-        if ([clauses isKindOfClass:NSString.class]) {                                       \
-            _ivar_name = @[[clauses SQLClause]];                                            \
-        }                                                                                   \
-        else if ([clauses isKindOfClass:ALSQLClause.class]) {                               \
-            _ivar_name = @[(ALSQLClause *)clauses];                                         \
-        }                                                                                   \
-        else if ([clauses isKindOfClass:ALSQLSelectStatement.class]) {                      \
-            _ivar_name = @[ [(ALSQLSelectStatement *)clauses asSubQuery] ];                 \
-        }                                                                                   \
-        else if ([clauses isKindOfClass:NSArray.class]) {                                   \
-            NSMutableArray<ALSQLClause *> *cols = [NSMutableArray arrayWithCapacity:((NSArray *)clauses).count];    \
-            [clauses enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {         \
-                if ([obj isKindOfClass:NSString.class]) {                                   \
-                    [cols addObject:[obj SQLClause]];                                       \
-                }                                                                           \
-                else if ([obj isKindOfClass:ALSQLClause.class]) {                           \
-                    [cols addObject:(ALSQLClause *)obj];                                    \
-                }                                                                           \
-                else if ([obj isKindOfClass:ALSQLSelectStatement.class]) {                  \
-                    [cols addObject:[(ALSQLSelectStatement *)obj asSubQuery]];              \
-                }                                                                           \
-            }];                                                                             \
-            _ivar_name = cols;                                                              \
-        }                                                                                   \
-        _needReBuild = YES;                                                                 \
-        return self;                                                                        \
-    };                                                                                      \
-}
-
+#define __ALSQLSTMT_BLOCK_PROP_SYNTHESIZE_ARRAY_CLAUSE(stmt_class, prop_name, _ivar_name)                             \
+    -(stmt_class * (^)(id clauses)) prop_name {                                                                       \
+        return ^stmt_class *(id clauses) {                                                                            \
+            __ALSQLSTMT_BLOCK_CHAIN_OBJ_VERIFY();                                                                     \
+                                                                                                                      \
+            if ([clauses isKindOfClass:NSString.class]) {                                                             \
+                _ivar_name = @[ [clauses al_SQLClause] ];                                                             \
+            } else if ([clauses isKindOfClass:ALSQLClause.class]) {                                                   \
+                _ivar_name = @[ (ALSQLClause *) clauses ];                                                            \
+            } else if ([clauses isKindOfClass:ALSQLSelectStatement.class]) {                                          \
+                _ivar_name = @[ [(ALSQLSelectStatement *) clauses asSubQuery] ];                                      \
+            } else if ([clauses isKindOfClass:NSArray.class]) {                                                       \
+                NSMutableArray<ALSQLClause *> *cols = [NSMutableArray arrayWithCapacity:((NSArray *) clauses).count]; \
+                [clauses enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {        \
+                    NSString *objVal = al_stringValue(obj);                                                           \
+                    if ([objVal isKindOfClass:NSString.class]) {                                                      \
+                        [cols addObject:[obj al_SQLClause]];                                                          \
+                    } else if ([obj isKindOfClass:ALSQLClause.class]) {                                               \
+                        [cols addObject:(ALSQLClause *) obj];                                                         \
+                    } else if ([obj isKindOfClass:ALSQLSelectStatement.class]) {                                      \
+                        [cols addObject:[(ALSQLSelectStatement *) obj asSubQuery]];                                   \
+                    }                                                                                                 \
+                }];                                                                                                   \
+                _ivar_name = cols;                                                                                    \
+            }                                                                                                         \
+            _needReBuild = YES;                                                                                       \
+            return self;                                                                                              \
+        };                                                                                                            \
+    }
 
 @implementation ALSQLSelectStatement {
     NSArray<ALSQLClause *> *_resultColumns;

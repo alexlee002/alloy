@@ -7,7 +7,7 @@
 //
 
 #import "ALDatabase.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "FMDB.h"
 #import "BlocksKit.h"
 #import "ALOCRuntime.h"
@@ -378,7 +378,8 @@ static AL_FORCE_INLINE dispatch_semaphore_t openingDBDictSemaphore() {
 #define __ALDB_STMT_INIT(stmt_class) \
     stmt_class *stmt = nil;                                             \
     if (al_objIsValidBlocksChainObject(self)) {                         \
-        stmt = [stmt_class statementWithDatabase:self];                 \
+        stmt = [[stmt_class alloc] init];                               \
+        [stmt bindDatabase:self];                                       \
     }
 
 #define __ALDB_STMT_BLOCK_ID_ARG(stmt_class, block_args, prop_name)         \

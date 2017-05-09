@@ -7,8 +7,7 @@
 //
 
 #import "ALSQLClause+SQLFunctions.h"
-#import "NSString+Helper.h"
-#import "ALUtilitiesHeader.h"
+#import "NSString+ALHelper.h"
 
 AL_FORCE_INLINE ALSQLClause *SQLFunc(NSString *funcName, NSArray *args) {
     NSMutableString *sql = [funcName.uppercaseString mutableCopy];

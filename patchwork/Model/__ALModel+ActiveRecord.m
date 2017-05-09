@@ -8,7 +8,7 @@
 
 #import "__ALModel+ActiveRecord.h"
 #import "ALModel+ActiveRecord.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import <objc/message.h>
 
 NS_ASSUME_NONNULL_BEGIN

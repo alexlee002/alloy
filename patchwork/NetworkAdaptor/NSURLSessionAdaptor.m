@@ -10,8 +10,8 @@
 #import "ALHTTPRequest.h"
 #import "ALHTTPResponse.h"
 #import "BlocksKit.h"
-#import "NSString+Helper.h"
-#import "URLHelper.h"
+#import "NSString+ALHelper.h"
+#import "AL_URLHelper.h"
 #import "BlocksKitExtension.h"
 #import <objc/runtime.h>
 #import "ObjcAssociatedObjectHelpers.h"

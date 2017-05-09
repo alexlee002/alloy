@@ -8,7 +8,7 @@
 
 #import "ALDBMigrationHelper.h"
 #import "ALOCRuntime.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import <BlocksKit.h>
 #import "__patchwork_config.h"
 

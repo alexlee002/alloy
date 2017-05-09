@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "FMDB.h"
-//#import "ALDatabase.h"
 #import "ALSQLClause.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,12 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, copy, nullable) NSArray  *argValues;
 
 + (instancetype)statementWithDatabase:(ALDatabase *)db;
++ (instancetype)statement;
 - (ALSQLClause *_Nullable)SQLClause;
-
+- (void)bindDatabase:(ALDatabase *)db;
 @end
 
 
 @interface ALSQLStatement (SQLExecute)
+@property(readonly, copy) __kindof ALSQLStatement *(^BIND_DB) (ALDatabase *db);
 @property(readonly, copy) void (^EXECUTE_QUERY) (void (^_Nullable)(FMResultSet *_Nullable rs));
 @property(readonly, copy) BOOL (^EXECUTE_UPDATE)();
 

@@ -46,8 +46,8 @@ FOUNDATION_EXPORT const unsigned char patchworkVersionString[];
 #import "NSBundle+BundleInfo.h"
 #import "NSCache+ALExtensions.h"
 #import "NSDate+ALExtensions.h"
-#import "NSString+Helper.h"
-#import "URLHelper.h"
+#import "NSString+ALHelper.h"
+#import "AL_URLHelper.h"
 
 // Foundations
 #import "ALAssociatedWeakObject.h"

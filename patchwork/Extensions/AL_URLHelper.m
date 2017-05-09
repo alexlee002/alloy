@@ -6,11 +6,11 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "URLHelper.h"
+#import "AL_URLHelper.h"
 #import "BlocksKit.h"
 #import "NSArray+ArrayExtensions.h"
 #import "ALUtilitiesHeader.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "ALOrderedMap.h"
 
 
@@ -28,7 +28,8 @@ AL_FORCE_INLINE NSString *URLParamStringify(id _Nullable value) {
     return al_stringOrEmpty(canonicalString);
 }
 
-AL_FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *urlencodedQuery) {
+
+static AL_FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString *urlencodedQuery) {
     return [[[urlencodedQuery componentsSeparatedByString:@"&"] bk_select:^BOOL(NSString *itemString) {
         return ALCastToTypeOrNil(itemString, NSString).length > 0;
     }] bk_map:^ALNSURLQueryItem *(NSString *itemString) {
@@ -38,7 +39,7 @@ AL_FORCE_INLINE NSArray<ALNSURLQueryItem *> *queryItemsFromQueryStirng(NSString 
     }];
 }
 
-AL_FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *originalItems,
+static AL_FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *originalItems,
                                          NSArray<ALNSURLQueryItem *> *addingItems) {
     ALOrderedMap<NSString *, NSString *> *orderedMap = [ALOrderedMap orderedMap];
     [[originalItems arrayByAddingObjectsFromArray:addingItems] bk_each:^(ALNSURLQueryItem *item) {
@@ -52,7 +53,7 @@ AL_FORCE_INLINE void addOrReplaceQueryItems(NSMutableArray<ALNSURLQueryItem *> *
         }];
 }
 
-AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *items) {
+static AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryItem *> *items) {
     return [[items bk_map:^NSString *(ALNSURLQueryItem *item) {
         NSString *string = [item.name al_stringByURLEncodingAs:ALURLComponentQuery];
         if (item.value != nil) {

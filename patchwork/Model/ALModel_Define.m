@@ -11,7 +11,7 @@
 #import "ALOCRuntime.h"
 #import <BlocksKit.h>
 #import "ALUtilitiesHeader.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import <YYModel.h>
 #import <objc/message.h>
 #import "ALLogger.h"

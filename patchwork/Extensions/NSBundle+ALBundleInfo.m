@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "NSBundle+BundleInfo.h"
+#import "NSBundle+ALBundleInfo.h"
 
 @implementation NSBundle (BundleInfo)
 

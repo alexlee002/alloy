@@ -6,12 +6,13 @@
 //  Copyright © 2016 Alex Lee. All rights reserved.
 //
 
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "BlocksKit.h"
 #import "NSCache+ALExtensions.h"
 #import "AL_MD5.h"
 #import <objc/message.h>
 #import "ALLogger.h"
+#import "ALUtilitiesHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

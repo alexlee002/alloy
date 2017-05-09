@@ -17,8 +17,8 @@
 		43132BA61DE294310045FBDA /* ALLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 43132BA41DE294310045FBDA /* ALLogger.h */; };
 		43132BA71DE294310045FBDA /* ALLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 43132BA51DE294310045FBDA /* ALLogger.m */; };
 		432F36631EBCD2FC007C8596 /* ALUtilitiesHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 432F36621EBCD2FC007C8596 /* ALUtilitiesHeader.h */; };
-		433194411E0384C80001A01E /* NSBundle+BundleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4331943F1E0384C80001A01E /* NSBundle+BundleInfo.h */; };
-		433194421E0384C80001A01E /* NSBundle+BundleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 433194401E0384C80001A01E /* NSBundle+BundleInfo.m */; };
+		433194411E0384C80001A01E /* NSBundle+ALBundleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4331943F1E0384C80001A01E /* NSBundle+ALBundleInfo.h */; };
+		433194421E0384C80001A01E /* NSBundle+ALBundleInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 433194401E0384C80001A01E /* NSBundle+ALBundleInfo.m */; };
 		434655C61EB867A800EB3C24 /* ALDatabaseValueTransformProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 434655C51EB867A800EB3C24 /* ALDatabaseValueTransformProtocol.h */; };
 		43748E311DE3262400186450 /* __ALModel+ActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 43748E2F1DE3262400186450 /* __ALModel+ActiveRecord.h */; };
 		43748E321DE3262400186450 /* __ALModel+ActiveRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 43748E301DE3262400186450 /* __ALModel+ActiveRecord.m */; };
@@ -71,10 +71,10 @@
 		AF7162801DACD9E40015F006 /* NSCache+ALExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162311DACD9E40015F006 /* NSCache+ALExtensions.m */; };
 		AF7162811DACD9E40015F006 /* NSDate+ALExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162321DACD9E40015F006 /* NSDate+ALExtensions.h */; };
 		AF7162821DACD9E40015F006 /* NSDate+ALExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162331DACD9E40015F006 /* NSDate+ALExtensions.m */; };
-		AF7162831DACD9E40015F006 /* NSString+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162341DACD9E40015F006 /* NSString+Helper.h */; };
-		AF7162841DACD9E40015F006 /* NSString+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162351DACD9E40015F006 /* NSString+Helper.m */; };
-		AF7162851DACD9E40015F006 /* URLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162361DACD9E40015F006 /* URLHelper.h */; };
-		AF7162861DACD9E40015F006 /* URLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162371DACD9E40015F006 /* URLHelper.m */; };
+		AF7162831DACD9E40015F006 /* NSString+ALHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162341DACD9E40015F006 /* NSString+ALHelper.h */; };
+		AF7162841DACD9E40015F006 /* NSString+ALHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162351DACD9E40015F006 /* NSString+ALHelper.m */; };
+		AF7162851DACD9E40015F006 /* AL_URLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162361DACD9E40015F006 /* AL_URLHelper.h */; };
+		AF7162861DACD9E40015F006 /* AL_URLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AF7162371DACD9E40015F006 /* AL_URLHelper.m */; };
 		AF7162871DACD9E40015F006 /* ALDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AF7162391DACD9E40015F006 /* ALDevice.h */; };
 		AF7162881DACD9E40015F006 /* ALDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = AF71623A1DACD9E40015F006 /* ALDevice.m */; };
 		AF7162891DACD9E40015F006 /* ALOCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = AF71623B1DACD9E40015F006 /* ALOCRuntime.h */; };
@@ -140,8 +140,8 @@
 		43132BA41DE294310045FBDA /* ALLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLogger.h; sourceTree = "<group>"; };
 		43132BA51DE294310045FBDA /* ALLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLogger.m; sourceTree = "<group>"; };
 		432F36621EBCD2FC007C8596 /* ALUtilitiesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALUtilitiesHeader.h; sourceTree = "<group>"; };
-		4331943F1E0384C80001A01E /* NSBundle+BundleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+BundleInfo.h"; sourceTree = "<group>"; };
-		433194401E0384C80001A01E /* NSBundle+BundleInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+BundleInfo.m"; sourceTree = "<group>"; };
+		4331943F1E0384C80001A01E /* NSBundle+ALBundleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+ALBundleInfo.h"; sourceTree = "<group>"; };
+		433194401E0384C80001A01E /* NSBundle+ALBundleInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+ALBundleInfo.m"; sourceTree = "<group>"; };
 		434655C51EB867A800EB3C24 /* ALDatabaseValueTransformProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatabaseValueTransformProtocol.h; sourceTree = "<group>"; };
 		43748E2E1DE322DC00186450 /* ActiveRecordAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActiveRecordAdditions.h; sourceTree = "<group>"; };
 		43748E2F1DE3262400186450 /* __ALModel+ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "__ALModel+ActiveRecord.h"; sourceTree = "<group>"; };
@@ -201,10 +201,10 @@
 		AF7162311DACD9E40015F006 /* NSCache+ALExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCache+ALExtensions.m"; sourceTree = "<group>"; };
 		AF7162321DACD9E40015F006 /* NSDate+ALExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ALExtensions.h"; sourceTree = "<group>"; };
 		AF7162331DACD9E40015F006 /* NSDate+ALExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ALExtensions.m"; sourceTree = "<group>"; };
-		AF7162341DACD9E40015F006 /* NSString+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Helper.h"; sourceTree = "<group>"; };
-		AF7162351DACD9E40015F006 /* NSString+Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Helper.m"; sourceTree = "<group>"; };
-		AF7162361DACD9E40015F006 /* URLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHelper.h; sourceTree = "<group>"; };
-		AF7162371DACD9E40015F006 /* URLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = URLHelper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		AF7162341DACD9E40015F006 /* NSString+ALHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ALHelper.h"; sourceTree = "<group>"; };
+		AF7162351DACD9E40015F006 /* NSString+ALHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ALHelper.m"; sourceTree = "<group>"; };
+		AF7162361DACD9E40015F006 /* AL_URLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AL_URLHelper.h; sourceTree = "<group>"; };
+		AF7162371DACD9E40015F006 /* AL_URLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AL_URLHelper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		AF7162391DACD9E40015F006 /* ALDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDevice.h; sourceTree = "<group>"; };
 		AF71623A1DACD9E40015F006 /* ALDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDevice.m; sourceTree = "<group>"; };
 		AF71623B1DACD9E40015F006 /* ALOCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALOCRuntime.h; sourceTree = "<group>"; };
@@ -399,12 +399,12 @@
 				AF7162311DACD9E40015F006 /* NSCache+ALExtensions.m */,
 				AF7162321DACD9E40015F006 /* NSDate+ALExtensions.h */,
 				AF7162331DACD9E40015F006 /* NSDate+ALExtensions.m */,
-				AF7162341DACD9E40015F006 /* NSString+Helper.h */,
-				AF7162351DACD9E40015F006 /* NSString+Helper.m */,
-				AF7162361DACD9E40015F006 /* URLHelper.h */,
-				AF7162371DACD9E40015F006 /* URLHelper.m */,
-				4331943F1E0384C80001A01E /* NSBundle+BundleInfo.h */,
-				433194401E0384C80001A01E /* NSBundle+BundleInfo.m */,
+				AF7162341DACD9E40015F006 /* NSString+ALHelper.h */,
+				AF7162351DACD9E40015F006 /* NSString+ALHelper.m */,
+				AF7162361DACD9E40015F006 /* AL_URLHelper.h */,
+				AF7162371DACD9E40015F006 /* AL_URLHelper.m */,
+				4331943F1E0384C80001A01E /* NSBundle+ALBundleInfo.h */,
+				433194401E0384C80001A01E /* NSBundle+ALBundleInfo.m */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -506,8 +506,8 @@
 				43FBB3AA1E1BC3CD00BA9B33 /* ALSQLInsertStatement.h in Headers */,
 				43FBB3A21E1BC3CD00BA9B33 /* ALSQLClause+SQLFunctions.h in Headers */,
 				AF71628F1DACD9E40015F006 /* AL_DES.h in Headers */,
-				AF7162831DACD9E40015F006 /* NSString+Helper.h in Headers */,
-				433194411E0384C80001A01E /* NSBundle+BundleInfo.h in Headers */,
+				AF7162831DACD9E40015F006 /* NSString+ALHelper.h in Headers */,
+				433194411E0384C80001A01E /* NSBundle+ALBundleInfo.h in Headers */,
 				434655C61EB867A800EB3C24 /* ALDatabaseValueTransformProtocol.h in Headers */,
 				AF7162891DACD9E40015F006 /* ALOCRuntime.h in Headers */,
 				AF71628B1DACD9E40015F006 /* AL_Base64.h in Headers */,
@@ -540,7 +540,7 @@
 				AF7162931DACD9E40015F006 /* AL_MD5.h in Headers */,
 				AF7162661DACD9E40015F006 /* ALDatabase.h in Headers */,
 				430EB06D1DF099E800A5AE48 /* ALAssociatedWeakObject.h in Headers */,
-				AF7162851DACD9E40015F006 /* URLHelper.h in Headers */,
+				AF7162851DACD9E40015F006 /* AL_URLHelper.h in Headers */,
 				AF71627F1DACD9E40015F006 /* NSCache+ALExtensions.h in Headers */,
 				AF5218411DACD8390072FA26 /* patchwork.h in Headers */,
 				AF7162871DACD9E40015F006 /* ALDevice.h in Headers */,
@@ -749,7 +749,7 @@
 				AF7162821DACD9E40015F006 /* NSDate+ALExtensions.m in Sources */,
 				430EB06E1DF099E800A5AE48 /* ALAssociatedWeakObject.m in Sources */,
 				430EAFB51DE726FD00A5AE48 /* ALLock.m in Sources */,
-				AF7162841DACD9E40015F006 /* NSString+Helper.m in Sources */,
+				AF7162841DACD9E40015F006 /* NSString+ALHelper.m in Sources */,
 				AF7162A21DACD9E40015F006 /* ALModel+JSON.m in Sources */,
 				4390DF4C1DC2591A00B10CF7 /* ALOrderedMap.m in Sources */,
 				43132BA71DE294310045FBDA /* ALLogger.m in Sources */,
@@ -771,7 +771,7 @@
 				4390DF441DC197A100B10CF7 /* ALModel+ActiveRecord.m in Sources */,
 				AF7162B11DACD9E40015F006 /* NSURLSessionAdaptor.m in Sources */,
 				43FBB3A31E1BC3CD00BA9B33 /* ALSQLClause+SQLFunctions.m in Sources */,
-				AF7162861DACD9E40015F006 /* URLHelper.m in Sources */,
+				AF7162861DACD9E40015F006 /* AL_URLHelper.m in Sources */,
 				AF7162801DACD9E40015F006 /* NSCache+ALExtensions.m in Sources */,
 				AF71627C1DACD9E40015F006 /* BlocksKitExtension.m in Sources */,
 				43FBB3AF1E1BC3CD00BA9B33 /* ALSQLStatement.m in Sources */,
@@ -779,7 +779,7 @@
 				AF7162671DACD9E40015F006 /* ALDatabase.m in Sources */,
 				43FBB3BC1E1CF6CE00BA9B33 /* ALDBMigrationHelper.m in Sources */,
 				AF71628E1DACD9E40015F006 /* AL_CRC.m in Sources */,
-				433194421E0384C80001A01E /* NSBundle+BundleInfo.m in Sources */,
+				433194421E0384C80001A01E /* NSBundle+ALBundleInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,8 +8,9 @@
 
 #import "ALLogger.h"
 #import "ALOCRuntime.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import <pthread.h>
+#import "ALUtilitiesHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -152,7 +152,7 @@
             .LIMIT(@5)
             .OFFSET(@3);
         XCTAssertEqualObjects(stmt.SQLString, @"SELECT COUNT(*) AS num, UPPER(province) AS province FROM students "
-                                              @"WHERE LOWER(gender) = ? GROUP BY province HAVING age > ? ORDER BY num "
+                                              @"WHERE LOWER(gender) = ? GROUP BY province HAVING age > ? ORDER BY (num) "
                                               @"DESC, province LIMIT 5 OFFSET 3");
         XCTAssertTrue([stmt validateWitherror:nil]);
     }
@@ -257,7 +257,7 @@
     
     stmt = [ALSQLDeleteStatement statementWithDatabase:self.db];
     stmt.DELETE().FROM(@"students").WHERE(@"name".SQL_SUBFIX_LIKE(@"lee")).ORDER_BY(@"age".SQL_DESC()).LIMIT(@5);
-    XCTAssertEqualObjects(stmt.SQLString, @"DELETE FROM students WHERE name LIKE ? ORDER BY age DESC LIMIT 5");
+    XCTAssertEqualObjects(stmt.SQLString, @"DELETE FROM students WHERE name LIKE ? ORDER BY (age) DESC LIMIT 5");
     XCTAssertTrue([stmt validateWitherror:nil]);
 }
 

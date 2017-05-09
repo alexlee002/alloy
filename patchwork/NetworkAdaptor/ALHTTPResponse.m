@@ -7,7 +7,9 @@
 //
 
 #import "ALHTTPResponse.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
+#import "ALUtilitiesHeader.h"
+
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 @import CoreServices;
 #else
@@ -22,7 +24,7 @@
 
 + (instancetype)responseWithNSURLResponse:(NSURLResponse *)nsResponse responseData:(nullable NSData *)responseData {
     ALHTTPResponse *response = [[self alloc] init];
-    response->_NSURLResponse =ALCastToTypeOrNil(nsResponse, NSHTTPURLResponse);
+    response->_NSURLResponse = ALCastToTypeOrNil(nsResponse, NSHTTPURLResponse);
     response->_responseData  = responseData;
     return response;
 }

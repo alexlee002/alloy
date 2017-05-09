@@ -16,14 +16,14 @@
 @implementation StringTests
 
 - (void)testPluraize {
-    XCTAssertEqualObjects([@"person" pluralize], @"people");
-    XCTAssertEqualObjects([@"tomato" pluralize], @"tomatoes");
-    XCTAssertEqualObjects([@"matrix" pluralize], @"matrices");
-    XCTAssertEqualObjects([@"octopus" pluralize], @"octopi");
-    XCTAssertEqualObjects([@"fish" pluralize], @"fish");
+    XCTAssertEqualObjects([@"person" al_pluralize], @"people");
+    XCTAssertEqualObjects([@"tomato" al_pluralize], @"tomatoes");
+    XCTAssertEqualObjects([@"matrix" al_pluralize], @"matrices");
+    XCTAssertEqualObjects([@"octopus" al_pluralize], @"octopi");
+    XCTAssertEqualObjects([@"fish" al_pluralize], @"fish");
     
-    XCTAssertEqualObjects([@"fileDownload" pluralize], @"fileDownloads");
-    XCTAssertEqualObjects([@"fileDownload_" pluralize], @"fileDownload_s");
+    XCTAssertEqualObjects([@"fileDownload" al_pluralize], @"fileDownloads");
+    XCTAssertEqualObjects([@"fileDownload_" al_pluralize], @"fileDownload_s");
 }
 
 @end

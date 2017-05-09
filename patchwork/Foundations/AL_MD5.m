@@ -9,7 +9,7 @@
 #import "AL_MD5.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "ALUtilitiesHeader.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 
 
 @implementation NSData (ALExtension_MD5)

@@ -10,7 +10,7 @@
 #import "ALUtilitiesHeader.h"
 #import "YYModel.h"
 #import "BlocksKitExtension.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "BlocksKit.h"
 #import "ALDBColumnInfo.h"
 #import "ALDatabase.h"

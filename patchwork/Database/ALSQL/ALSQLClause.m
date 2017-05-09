@@ -7,7 +7,7 @@
 //
 
 #import "ALSQLClause.h"
-#import "NSString+Helper.h"
+#import "NSString+ALHelper.h"
 #import "ALLogger.h"
 #import "ALUtilitiesHeader.h"
 #import <sqlite3.h>
@@ -71,11 +71,6 @@
 - (void)setArgValues:(NSArray *)argValues {
     _argValues = [argValues mutableCopy];
 }
-
-- (void)appendArgValues:(NSArray *)argValues {
-    [_argValues addObjectsFromArray:argValues];
-}
-
 @end
 
 @implementation ALSQLClause (BaseOperations)
@@ -136,13 +131,6 @@
     };
 }
 
-- (ALSQLClause *(^)(NSArray *values))ADD_ARG_VALUES {
-    return ^ALSQLClause *(NSArray * _Nullable values) {
-        [self appendArgValues:values];
-        return self;
-    };
-}
-
 @end
 
 #pragma mark - debug
@@ -175,8 +163,10 @@
         
         lastLocation += range.length;
         argIndex ++;
-        range.location = desc.length;
+
+        range.location += range.length;
         range.length = sql.length - range.location;
+        
     }
     if (lastLocation < sql.length) {
         [desc appendString:[sql substringFromIndex:lastLocation]];
