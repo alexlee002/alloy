@@ -3,9 +3,9 @@
 
 Patchwork is a simple toolkit that makes your iOS / OS X apps development more easier.
 
-[中文文档](./Patchwork 开发文档.md) | English Document
+[中文文档](./Patchwork%20开发文档.md) | English Document
 
-##Important!
+## Important!
 The `BlocksKit` defines a macro named `SELECT`, which is conflict with the property name in `ALDatabase`,  so **BE SURE** add this code in your `Podfile`:
 
 ```Ruby
