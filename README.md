@@ -1,7 +1,7 @@
-# patchwork
+# <del>patchwork</del> Alloy
 
 
-Patchwork is a simple toolkit that makes your iOS / OS X apps development more easier.
+<del>Patchwork</del> Alloy is a simple toolkit that makes your iOS / OS X apps development more easier.
 
 [中文文档](./Patchwork%20开发文档.md) | English Document
 
