@@ -1,0 +1,39 @@
+#!/bin/sh
+
+Usage(){
+	echo 'USAGE:\n\t'$0' [-h|--help|?] [--rebase-no] [-o|--repo repo] [remote_branch]'
+	echo 'DEFAULT: \033[32mgit pull --rebase origin \033[31m$CURRENT_BRANCH\033[0m'
+	echo ''
+}
+
+REBASE='--rebase'
+REPO='origin'
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-h|--help|?)
+			Usage
+			exit
+			;;
+		--rebase-no)
+			REBASE=''
+			shift
+			;;
+		-o|--repo)
+			REPO=$2
+			shift 2
+			;;
+		*)
+			BRANCH=$1
+			shift
+			;;
+	esac
+done
+
+GIT=/usr/bin/git
+
+if [[ -z ${BRANCH} ]]; then
+	BRANCH=`${GIT} symbolic-ref --short HEAD`
+fi
+
+#echo ${GIT} pull ${REBASE} ${REPO} ${BRANCH}
+${GIT} pull ${REBASE} ${REPO} ${BRANCH}

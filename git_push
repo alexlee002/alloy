@@ -1,0 +1,58 @@
+#!/bin/sh
+
+Usage(){
+	echo 'USAGE:\n\t'$0' [-h|--help|?] [-o|--repo repo] [local_branch[:remote_branch]]'
+	echo 'DEFAULT: \033[32mgit push origin \033[31m$CURRENT_BRANCH\033[32m:refs/for/\033[31m$CURRENT_BRANCH\033[0m'
+	echo ''
+}
+
+REPO='origin'
+IS_CI=0
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-h|--help|?)
+			Usage
+			exit
+			;;
+		-o|--repo)
+			REPO=$2
+			BRANCH=$3
+			shift 3
+			;;
+		-ci)
+			IS_CI=1
+			shift 1			
+			;;
+		-xcproj)
+			XCPROJ=$2
+			shift 2
+			;;
+		*)
+			Usage
+			exit
+			;;
+	esac
+done
+
+GIT=/usr/bin/git
+
+if [[ -n ${BRANCH} ]]; then
+	arr=$(echo $BRANCH | tr ":" "\n")
+	for o in $arr; do
+		if [[ -z $LOCAL_REF ]]; then
+			LOCAL_REF=$o
+		elif [[ -z $REMOTE_REF ]]; then
+			REMOTE_REF=$o
+		fi
+	done
+else
+	LOCAL_REF=`${GIT} symbolic-ref --short HEAD`
+fi
+
+if [[ -z $REMOTE_REF ]]; then
+	REMOTE_REF=$LOCAL_REF
+fi
+
+#${GIT} pull --rebase ${REPO} ${LOCAL_REF} || exit -1
+#echo ${GIT} push ${REPO} ${LOCAL_REF}:${REMOTE_REF}
+${GIT} push ${REPO} ${LOCAL_REF}:${REMOTE_REF}

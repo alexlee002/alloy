@@ -2,10 +2,10 @@ source 'https://github.com/CocoaPods/Specs.git'
 # Uncomment this line to define a global platform for your project
 # platform :ios, '9.0'
 
-workspace 'patchwork'
+workspace 'alloy'
 
 def shared_pods
-    pod 'YYModel'
+    #pod 'YYModel'
     pod 'FMDB'
     pod 'BlocksKit/Core'
     pod 'ASIHTTPRequest/Core'
@@ -13,29 +13,29 @@ def shared_pods
     pod 'ObjcAssociatedObjectHelpers/Core'
 end
 
-target 'patchwork' do
+target 'alloy' do
 	# Uncomment this line if you're using Swift or would like to use dynamic frameworks
 	# use_frameworks!
 
-    project 'patchwork.xcodeproj'
+    project 'alloy.xcodeproj'
 	platform :ios, '7.0'
     #platform :osx, '10.10'
 
 	shared_pods
 
-	target 'patchworkTests' do
+	target 'alloyTests' do
 		inherit! :search_paths
 		# Pods for testing
 	end
 
 end
 
-target 'patchwork-demo-osx' do
-	project 'Examples/patchwork-demo-osx/patchwork-demo-osx.xcodeproj'
-	platform :osx, '10.10'
-	shared_pods
-    pod 'patchwork-demo', :path => '.'
-end
+# target 'alloy-demo-osx' do
+# 	project 'Examples/alloy-demo-osx/alloy-demo-osx.xcodeproj'
+# 	platform :osx, '10.10'
+# 	shared_pods
+#     pod 'alloy-demo', :path => '.'
+# end
 
 
 pre_install do
