@@ -19,7 +19,7 @@ class Catchable {
     std::shared_ptr<aldb::Error> get_error() const;
     bool has_error() const;
     
-    void log_error(const char *file = __FILE__, int line = __LINE__) const;
+    void log_error(const char *file, int line) const;
 
   protected:
     Catchable();

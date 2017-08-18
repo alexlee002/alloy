@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4304F3ED1F46BB8000AA45DE /* aldbCoreTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */; };
+		4304F3EF1F46BBC500AA45DE /* sqlExprTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */; };
 		4306CEC71F29CEBE006C73B9 /* ALDBMigrationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */; };
 		4306CEC81F29CEBE006C73B9 /* ALDBMigrationHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */; };
 		431F68D01F20B05D009FF268 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 431F68CF1F20B05D009FF268 /* libsqlite3.tbd */; };
@@ -158,6 +160,8 @@
 
 /* Begin PBXFileReference section */
 		2296EE0CF3CDF1D2CCA169D6 /* libPods-alloyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-alloyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = aldbCoreTests.mm; sourceTree = "<group>"; };
+		4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sqlExprTests.mm; sourceTree = "<group>"; };
 		4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBMigrationHelper.h; sourceTree = "<group>"; };
 		4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBMigrationHelper.mm; sourceTree = "<group>"; };
 		431F68CF1F20B05D009FF268 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
@@ -597,6 +601,8 @@
 			children = (
 				43C25DB31F1770A100C97ED8 /* alloyTests.mm */,
 				43C25DB51F1770A100C97ED8 /* Info.plist */,
+				4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */,
+				4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */,
 			);
 			path = alloyTests;
 			sourceTree = "<group>";
@@ -944,6 +950,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				43C25DB41F1770A100C97ED8 /* alloyTests.mm in Sources */,
+				4304F3ED1F46BB8000AA45DE /* aldbCoreTests.mm in Sources */,
+				4304F3EF1F46BBC500AA45DE /* sqlExprTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

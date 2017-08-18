@@ -16,12 +16,19 @@ extern "C" {
 #import "ALLogger.h"
 }
 
+class ALSQLExpr;
 class ALSQLValue {
 public:
     //native value type
+    ALSQLValue(int32_t v);
+    ALSQLValue(int64_t v);
+    ALSQLValue(double v);
+    ALSQLValue(BOOL v);
     ALSQLValue(const std::string &s);
+    ALSQLValue(const char *value);
     ALSQLValue(const void *b, size_t size);
-    ALSQLValue(const std::nullptr_t);
+    ALSQLValue(std::nullptr_t);
+    ALSQLValue(const aldb::SQLValue &v);
 
     template <typename T>
     ALSQLValue(const T &value,
@@ -41,10 +48,14 @@ public:
 
     template <typename T>
     ALSQLValue(const T &value,
-               typename std::enable_if<std::is_same<T, NSRange>::value      || std::is_same<T, CGSize>::value         ||
-                                       std::is_same<T, CGPoint>::value      || std::is_same<T, CGRect>::value         ||
-                                       std::is_same<T, UIEdgeInsets>::value || std::is_same<T, UIOffset>::value       ||
-                                       std::is_same<T, CGVector>::value     || std::is_same<T, CGAffineTransform>::value ||
+               typename std::enable_if<std::is_same<T, NSRange>::value           ||
+                                       std::is_same<T, CGSize>::value            ||
+                                       std::is_same<T, CGPoint>::value           ||
+                                       std::is_same<T, CGRect>::value            ||
+                                       std::is_same<T, UIEdgeInsets>::value      ||
+                                       std::is_same<T, UIOffset>::value          ||
+                                       std::is_same<T, CGVector>::value          ||
+                                       std::is_same<T, CGAffineTransform>::value ||
                                        std::is_same<T, CATransform3D>::value>::type * = nullptr) {
         NSValue *v = [NSValue value:&value withObjCType:@encode(T)];
         @try {
@@ -55,8 +66,11 @@ public:
         }
     }
 
+    ALSQLValue operator=(const ALSQLValue &o);
+    bool operator==(const ALSQLValue &o) const;
     operator aldb::SQLValue() const;
     operator std::list<const aldb::SQLValue>();
+    operator ALSQLExpr() const;
 protected:    
-    const aldb::SQLValue _coreValue;
+    aldb::SQLValue _coreValue;
 };

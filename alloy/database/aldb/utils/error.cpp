@@ -16,7 +16,16 @@ Error::Error(const std::string &domain, int64_t code, const char *message)
 
 Error::Error(const Error &other) : domain(other.domain), code(other.code), message(other.message) {}
 
-Error::operator std::string() const { return "Error: [" + domain + ": " + std::to_string(code) + "]; " + message; }
+Error::operator std::string() const {
+    std::string msg;
+    msg.append("Error: [" + domain + ": " + std::to_string(code) + "]; " + message);
+    if (!file.empty()) {
+        msg.append("; First occur in:\"");
+        msg.append(std::string(basename((char *)file.c_str())) + ": "+ std::to_string(line) +"\"");
+    }
+    msg.append("\n");
+    return msg;
+}
 
 void Error::log(const char *file, int line) const {
     printf("‼️ [ALDB] - ");

@@ -35,7 +35,7 @@ void StatementHandle::finalize() {
         return;
     }
     Catchable::set_sqlite_error(h);
-    Catchable::log_error();
+    Catchable::log_error(__FILE__, __LINE__);
 }
 
 bool StatementHandle::step() {
@@ -58,7 +58,7 @@ bool StatementHandle::step() {
     }
     
     Catchable::set_sqlite_error(sqlite3_db_handle((sqlite3_stmt *) _stmt));
-    Catchable::log_error();
+    Catchable::log_error(__FILE__, __LINE__);
     return false;
 }
 
@@ -73,7 +73,7 @@ bool StatementHandle::reset_bindings() {
         return true;
     } else {
         Catchable::set_sqlite_error(sqlite3_db_handle((sqlite3_stmt *) _stmt));
-        Catchable::log_error();
+        Catchable::log_error(__FILE__, __LINE__);
         return false;
     }
 }
@@ -94,7 +94,7 @@ bool StatementHandle::bind_value(const SQLValue &value, const int index) {
             rc = sqlite3_bind_text((sqlite3_stmt *) _stmt, index, value.s_val.c_str(), -1, SQLITE_STATIC);
             break;
         case aldb::ColumnType::BLOB_T:
-            rc = sqlite3_bind_blob((sqlite3_stmt *) _stmt, index, value.s_val.c_str(), -1, SQLITE_STATIC);
+            rc = sqlite3_bind_blob((sqlite3_stmt *) _stmt, index, value.s_val.c_str(), (int)value.val_size, SQLITE_STATIC);
             break;
         case aldb::ColumnType::NULL_T:
             rc = sqlite3_bind_null((sqlite3_stmt *) _stmt, index);
@@ -106,7 +106,7 @@ bool StatementHandle::bind_value(const SQLValue &value, const int index) {
     }
     if (rc != SQLITE_OK) {
         Catchable::set_sqlite_error(sqlite3_db_handle((sqlite3_stmt *) _stmt));
-        Catchable::log_error();
+        Catchable::log_error(__FILE__, __LINE__);
         return false;
     } else {
         Catchable::reset_error();

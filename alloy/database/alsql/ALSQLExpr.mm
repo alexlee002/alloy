@@ -21,7 +21,18 @@ ALSQLExpr::ALSQLExpr(const ALSQLValue &value) : ALSQLClause("?", {value}), _prec
 
 ALSQLExpr::ALSQLExpr(const ALSQLExpr &expr) : ALSQLClause(expr), _precedence(expr._precedence) {}
 
-ALSQLExpr::operator bool() const { return !is_empty(); }
+ALSQLExpr::ALSQLExpr(const char *value)
+    : ALSQLClause("?", {ALSQLValue(value ? value : "")}), _precedence(s_default_precedence) {}
+
+ALSQLExpr::ALSQLExpr(const std::string &value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+
+ALSQLExpr::ALSQLExpr(const std::nullptr_t &) : ALSQLClause("NULL"), _precedence(s_default_precedence) {}
+
+ALSQLExpr::ALSQLExpr(id value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+
+//ALSQLExpr::operator bool() const { return !is_empty(); }
+
+ALSQLExpr::operator std::list<const ALSQLExpr>() const { return {*this};}
 
 //ALSQLExpr::operator ALSQLClause() const { return _clause; }
 //
@@ -223,7 +234,7 @@ ALSQLExpr ALSQLExpr::not_in(const std::string &table_name) const {
 
 ALSQLExpr ALSQLExpr::like(const ALSQLExpr &expr, const ALSQLExpr &escape) const {
     ALSQLExpr likeExpr(expr);
-    if (escape) {
+    if (!escape.is_empty()) {
         likeExpr.append(" ESCAPE ");
         likeExpr.append(escape);
     }
@@ -232,7 +243,7 @@ ALSQLExpr ALSQLExpr::like(const ALSQLExpr &expr, const ALSQLExpr &escape) const 
 
 ALSQLExpr ALSQLExpr::not_like(const ALSQLExpr &expr, const ALSQLExpr &escape) const {
     ALSQLExpr likeExpr(expr);
-    if (escape) {
+    if (!escape.is_empty()) {
         likeExpr.append(" ESCAPE ");
         likeExpr.append(escape);
     }

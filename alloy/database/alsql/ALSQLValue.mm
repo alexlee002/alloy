@@ -7,21 +7,26 @@
 //
 
 #import "ALSQLValue.h"
+#import "ALSQLExpr.h"
 #include <unordered_set>
 
-//ALSQLValue::ALSQLValue(const int32_t i32):_coreValue(i32) {};
-//
-//ALSQLValue::ALSQLValue(const int64_t i64):_coreValue(i64) {}
+ALSQLValue::ALSQLValue(int32_t i32):_coreValue(i32) {};
 
-//ALSQLValue::ALSQLValue(const double   d): _coreValue(d) {}
+ALSQLValue::ALSQLValue(int64_t i64):_coreValue(i64) {}
+
+ALSQLValue::ALSQLValue(double d): _coreValue(d) {}
+
+ALSQLValue::ALSQLValue(BOOL b): _coreValue(b) {}
 
 ALSQLValue::ALSQLValue(const std::string &s): _coreValue(s) {}
 
-//ALSQLValue::ALSQLValue(const char *c) :_coreValue(c) {}
+ALSQLValue::ALSQLValue(const char *c) :_coreValue(c) {}
 
 ALSQLValue::ALSQLValue(const void *b, size_t size):_coreValue(b, size) {}
 
-ALSQLValue::ALSQLValue(const std::nullptr_t): _coreValue(nullptr) {}
+ALSQLValue::ALSQLValue(std::nullptr_t): _coreValue(nullptr) {}
+
+ALSQLValue::ALSQLValue(const aldb::SQLValue &v): _coreValue(v) {}
 
 //ALSQLValue::ALSQLValue(NSInteger i): _coreValue(sizeof(i) > 4 ? (int64_t)i : (int32_t)i) {}
 
@@ -64,10 +69,23 @@ ALSQLValue::ALSQLValue(id obj) {
     }
 }
 
+bool ALSQLValue::operator==(const ALSQLValue &o) const {
+    return _coreValue == o._coreValue;
+}
+
+ALSQLValue ALSQLValue::operator=(const ALSQLValue &o) {
+    _coreValue = o._coreValue;
+    return *this;
+}
+
 ALSQLValue::operator aldb::SQLValue() const {
     return _coreValue;
 }
 
 ALSQLValue::operator std::list<const aldb::SQLValue>() {
     return {_coreValue};
+}
+
+ALSQLValue::operator ALSQLExpr() const {
+    return ALSQLExpr(*this);
 }

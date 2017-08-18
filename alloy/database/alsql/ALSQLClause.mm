@@ -25,11 +25,22 @@ ALSQLClause::ALSQLClause(NSString *_Nonnull sql, NSArray<id> *_Nonnull args) : _
 
 ALSQLClause::ALSQLClause(const ALSQLClause &clause) : _sql(clause._sql), _args(clause._args) {}
 
-ALSQLClause &ALSQLClause::append(const std::string &sql, const std::list<const ALSQLValue> &args) { return *this; }
+ALSQLClause &ALSQLClause::append(const std::string &sql, const std::list<const ALSQLValue> &args) {
+    _sql.append(sql);
+    _args.insert(_args.end(), args.begin(), args.end());
+    return *this;
+}
 
-ALSQLClause &ALSQLClause::append(NSString *_Nonnull sql) { return *this; }
+ALSQLClause &ALSQLClause::append(NSString *_Nonnull sql) {
+    if (sql.length > 0) {
+        _sql.append(sql.UTF8String);
+    }
+    return *this;
+}
 
-ALSQLClause &ALSQLClause::append(const ALSQLClause &clause) { return *this; }
+ALSQLClause &ALSQLClause::append(const ALSQLClause &clause) {
+    return append(clause.sql_str(), clause.sqlArgs());
+}
 
 //ALSQLClause &ALSQLClause::operator+=(const ALSQLClause &clause) { return *this; }
 //

@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import "sql_value.hpp"
 
+NS_ASSUME_NONNULL_BEGIN
+
 class ALSQLValue;
 class ALSQLClause {
 public:
@@ -39,9 +41,12 @@ public:
     const std::list<const ALSQLValue> &sqlArgs() const;
     
     bool is_empty() const;
-    
+  
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
     template<typename T>
     static typename std::enable_if<std::is_base_of<ALSQLClause, T>::value, T>::type
+#pragma clang diagnostic pop
     combine(const std::list<const T> &clauses, const char *_Nullable delimiter) {
         T clause;
         bool flag = false;
@@ -61,3 +66,5 @@ protected:
     std::list<const ALSQLValue> _args;
     
 };
+
+NS_ASSUME_NONNULL_END

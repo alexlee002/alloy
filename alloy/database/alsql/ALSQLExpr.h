@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <unordered_map>
 #import <string>
+#import <UIKit/UIKit.h>
 #import "ALSQLClause.h"
 #import "ALDBTypeDefs.h"
 
@@ -19,11 +20,35 @@ public:
     ALSQLExpr(const ALDBColumn &column);
     ALSQLExpr(const ALSQLValue &value);
     ALSQLExpr(const ALSQLExpr &expr);
-    
-//    operator ALSQLClause() const;
-//    const ALSQLClause &SQLClause() const;
-    
-    operator bool() const;
+
+    ALSQLExpr(const char *value);
+    ALSQLExpr(const std::string &value);
+    ALSQLExpr(const std::nullptr_t &);
+    ALSQLExpr(id value);
+
+    template <typename T>
+    ALSQLExpr(const T &value,
+              typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type * = nullptr)
+        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+
+    template <typename T>
+    ALSQLExpr(const T &value,
+              typename std::enable_if<std::is_same<T, NSRange>::value           ||
+                                      std::is_same<T, CGSize>::value            ||
+                                      std::is_same<T, CGPoint>::value           ||
+                                      std::is_same<T, CGRect>::value            ||
+                                      std::is_same<T, UIEdgeInsets>::value      ||
+                                      std::is_same<T, UIOffset>::value          ||
+                                      std::is_same<T, CGVector>::value          ||
+                                      std::is_same<T, CGAffineTransform>::value ||
+                                      std::is_same<T, CATransform3D>::value>::type * = nullptr)
+        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+
+    //    operator ALSQLClause() const;
+    //    const ALSQLClause &SQLClause() const;
+
+    //    operator bool() const;
+    operator std::list<const ALSQLExpr>() const;
     
     static const ALDBOptrPrecedence s_default_precedence;
     static const ALSQLExpr s_null_expr;

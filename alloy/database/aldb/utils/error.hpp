@@ -27,12 +27,15 @@ class Error {
 
     operator std::string() const;
     
-    void log(const char *file = __FILE__, int line = __LINE__) const;
+    void log(const char *file, int line) const;
 
   public:
     const std::string domain;
     const int64_t code;
     const std::string message;
+    
+    std::string file;
+    int line;
 };
 }
 

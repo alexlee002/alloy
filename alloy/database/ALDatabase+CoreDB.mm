@@ -60,7 +60,10 @@
     if (stmt) {
         return [[ALDBResultSet alloc] initWithStatement:stmt];
     }
-    ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
+    
+    if ([self _coreDB]->has_error()) {
+        ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
+    }
     return nil;
 }
 
