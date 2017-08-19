@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <unordered_set>
 #include <functional>
 #include "concurrent_list.hpp"
 #include "core_base.hpp"
@@ -27,6 +28,9 @@ class Database : public CoreBase {
     Database(const std::string &path, const Configs &default_configs, const DatabaseOpenCallback &on_opened);
     
     const std::string &get_path() const override;
+    void set_max_concurrency(int size);
+//    void should_cache_statement(bool yes_or_no);
+    void cache_statement_for_sql(const std::string &sql);
     
     bool is_opened() const;
     void close(std::function<void(void)> on_closed);
@@ -50,7 +54,9 @@ class Database : public CoreBase {
     RecyclableHandle pop_handle();
     
     RecyclableHandlePool _pool;
-    static ThreadLocal<std::unordered_map<std::string, RecyclableHandle>> _s_threadedHandle;
+    
+    static std::unordered_map<std::string/* path */, std::unordered_set<std::string>/* sqls */> _s_cached_sqls;
+    static ThreadLocal<std::unordered_map<std::string/* path */, RecyclableHandle>> _s_threadedHandle;
 };
 }
 

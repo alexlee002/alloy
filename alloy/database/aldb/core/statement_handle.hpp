@@ -42,7 +42,7 @@ namespace aldb {
 //        const aldb::ResultSet result_set();
 //        operator aldb::ResultSet() const;
         
-        __uint64_t threadid;
+//        __uint64_t threadid;
         
     protected:
         StatementHandle(const Handle &handle, void *stmt);
@@ -51,6 +51,9 @@ namespace aldb {
         
         const Handle &_hadler;
         void *_stmt;
+        
+        std::atomic<bool> _inuse;
+        bool _cached;
         
         friend class Handle;
         friend class ResultSet;

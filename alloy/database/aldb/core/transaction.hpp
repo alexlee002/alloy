@@ -31,7 +31,7 @@ class StatementHandle;
 
 class Transaction : public CoreBase {
   public:
-    ~Transaction();
+    virtual ~Transaction();
     
     bool auto_commit; // automatically commit while transaction being destoryed
 

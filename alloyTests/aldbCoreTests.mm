@@ -26,17 +26,46 @@ static NSString *kPath = nil;
     kPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
     XCTAssertTrue(kPath.length > 0);
     kPath = [kPath stringByAppendingPathComponent:@"aldb-test.sqlite"];
+    
+    ALDatabase *database = [ALDatabase databaseWithPath:kPath keepAlive:YES];
+    [database setConfig:[](std::shared_ptr<aldb::Handle> &handle, aldb::Error **error) -> bool {
+        handle->exec("PRAGMA cache_size=-2000");
+        handle->exec("PRAGMA page_size=4096");
+        handle->exec("PRAGMA locking_mode=NORMAL");
+        handle->exec("PRAGMA synchronous=NORMAL");
+        handle->exec("PRAGMA journal_mode=WAL");
+        
+        handle->register_sqlite_busy_handler([](void *h, int c)->int {
+            sqlite3_sleep(MIN(pow(2, c), 64));
+            return 1;
+        });
+        return true;
+    } named:@"default"];
 }
 
 - (void)testCore {
-    aldb::Database db(kPath.UTF8String, {}, nullptr);
-    db.exec("PRAGMA user_version=10;");
-    aldb::RecyclableStatement stmt = db.prepare("PRAGMA user_version");
-    stmt->step();
-    aldb::RecyclableStatement stmt1 = stmt;
-    stmt = nullptr;
-    int32_t v = stmt1->get_int32_value(0);
-    XCTAssertEqual(v, 10);
+    {
+        aldb::Database db(kPath.UTF8String, {}, nullptr);
+        db.exec("PRAGMA user_version=10;");
+        aldb::RecyclableStatement stmt = db.prepare("PRAGMA user_version");
+        stmt->step();
+        aldb::RecyclableStatement stmt1 = stmt;
+        stmt = nullptr;
+        int32_t v = stmt1->get_int32_value(0);
+        XCTAssertEqual(v, 10);
+    }
+    {
+        aldb::Database db(kPath.UTF8String, {}, nullptr);
+        db.exec("PRAGMA user_version=10;");
+        aldb::RecyclableStatement stmt = db.prepare("PRAGMA user_version");
+        ALDBResultSet *rs = [ALDBResultSet resultSetWithStatement:stmt];
+        stmt = nullptr;
+        NSInteger v = 0;
+        while ([rs next]) {
+            v = [rs integerValueForColumnIndex:0];
+        }
+        XCTAssertEqual(v, 10);
+    }
 }
 
 - (void)testDatabase {
@@ -49,33 +78,34 @@ static NSString *kPath = nil;
 
         NSInteger total = 10000;
         {
-//            [self measureBlock:^{
-            [database inTransaction:^BOOL{
+            NSString *sql = @"INSERT INTO test_tbl (d_val, txt_val, blob_val, dt_val) VALUES (?, ?, ?, ?)";
+            [database cacheStatementForSQL:sql];
+            [self measureBlock:^{
+//            [database inTransaction:^BOOL{
                 for (int i = 0; i < total; ++i) {
                     CFTimeInterval t = CFAbsoluteTimeGetCurrent();
                     NSString *txt    = [NSString stringWithFormat:@"time interval: %f", t];
                     NSData *bytes    = [txt dataUsingEncoding:NSUTF8StringEncoding];
-                    [database exec:@"INSERT INTO test_tbl (d_val, txt_val, blob_val, dt_val) VALUES (?, ?, ?, ?)"
-                              args:{t, txt, bytes, [NSDate date]}];
+                    [database exec:sql args:{t, txt, bytes, [NSDate date]}];
                 }
-                return YES;
-            } eventHandler:nil];
+//                return YES;
+//            } eventHandler:nil];
             
-//             }];
+             }];
         }
 
-        __block NSInteger count = 0;
-        {
-//            [self measureBlock:^{
-                ALDBResultSet *rs = [database query:@"SELECT * FROM test_tbl"];
-                while ([rs next]) {
-                    if (rs[@"blob_val"] && rs[@"dt_val"]) {/* nop */}
-                    ++count;
-                }
-//            }];
-        }
+//        __block NSInteger count = 0;
+//        {
+////            [self measureBlock:^{
+//                ALDBResultSet *rs = [database query:@"SELECT * FROM test_tbl"];
+//                while ([rs next]) {
+//                    if (rs[@"blob_val"] && rs[@"dt_val"]) {/* nop */}
+//                    ++count;
+//                }
+////            }];
+//        }
 
-        XCTAssertEqual(total, count);
+//        XCTAssertEqual(total, count);
     }
 }
 

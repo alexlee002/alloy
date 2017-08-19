@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ALDBResultSet : NSObject
 
 #ifdef __cplusplus
-- (instancetype)initWithStatement:(const aldb::RecyclableStatement &)stmt;
++ (instancetype)resultSetWithStatement:(const aldb::RecyclableStatement &)stmt;
 #endif
 
 - (NSInteger)columnCount;

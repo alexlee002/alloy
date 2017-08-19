@@ -14,11 +14,35 @@
 namespace aldb {
 
 ThreadLocal<std::unordered_map<std::string, RecyclableHandle>> Database::_s_threadedHandle;
+std::unordered_map<std::string/* path */, std::unordered_set<std::string>/* sqls */> Database::_s_cached_sqls;
 
 Database::Database(const std::string &path, const Configs &default_configs, const DatabaseOpenCallback &on_opened)
     :aldb::CoreBase(CoreType::DATABASE), _pool(HandlePool::get_pool(path, default_configs, on_opened)){};
 
 const std::string &Database::get_path() const { return _pool->path; }
+
+void Database::set_max_concurrency(int size) { _pool->max_concurrency = size; }
+
+void Database::cache_statement_for_sql(const std::string &sql) {
+    auto it = _s_cached_sqls.find(get_path());
+    std::unordered_set<std::string> sqls;
+    if (it != _s_cached_sqls.end()) {
+        sqls = it->second;
+    }
+    if (sqls.find(sql) != sqls.end()) { // already exists
+        return;
+    }
+    
+    sqls.insert(sql);
+    _s_cached_sqls.insert({get_path(), sqls});
+
+    set_config("aldb-enable-cache-statement", [sqls](std::shared_ptr<Handle> &handle, Error **) -> bool {
+        for (auto sql : sqls) {
+            handle->cache_statement_for_sql(sql);
+        }
+        return true;
+    });
+}
 
 bool Database::is_opened() const { return !_pool->is_drained(); }
 

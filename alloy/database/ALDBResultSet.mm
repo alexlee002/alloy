@@ -17,13 +17,13 @@ typedef std::unordered_map<std::string, int> StringIndexMap;
     std::shared_ptr<StringIndexMap> _nameIndexMap;
 }
 
-- (instancetype)initWithStatement:(const aldb::RecyclableStatement &)stmt {
-    self = [super init];
-    if (self) {
-        _stmt = stmt;
-        _nameIndexMap = nullptr;
++ (instancetype)resultSetWithStatement:(const aldb::RecyclableStatement &)stmt {
+    ALDBResultSet *rs = [[self alloc] init];
+    if (rs) {
+        rs->_stmt = stmt;
+        rs->_nameIndexMap = nullptr;
     }
-    return self;
+    return rs;
 }
 
 - (NSInteger)columnCount {

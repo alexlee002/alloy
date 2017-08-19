@@ -53,7 +53,7 @@ class HandlePool : public Catchable {
   public:
     //    std::atomic<Tag> tag;
     const std::string path;
-    std::atomic<int> maxConcurrency;
+    std::atomic<int> max_concurrency;
 
     RecyclableHandle flow_out();
     bool fill_one();
@@ -79,8 +79,8 @@ class HandlePool : public Catchable {
 
     std::shared_ptr<HandleWrap> init_handle();
 
-    bool apply_configs(std::shared_ptr<HandleWrap> &handleWrap);
-    void flow_back(const std::shared_ptr<HandleWrap> &handleWrap);
+    bool apply_configs(std::shared_ptr<HandleWrap> &handle);
+    void flow_back(const std::shared_ptr<HandleWrap> &handle);
 
     ConcurrentList<HandleWrap> _handles;
     std::atomic<int> _aliveHandleCount;
@@ -91,7 +91,7 @@ class HandlePool : public Catchable {
     RWLock _rwlock;
     std::mutex _mutex;
 
-    static const int _s_hardwareConcurrency;
+    static const int _s_hardware_concurrency;
 };
 
 }  // namespace aldb

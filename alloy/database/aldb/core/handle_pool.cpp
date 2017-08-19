@@ -27,7 +27,7 @@ namespace aldb {
 
 std::unordered_map<std::string, std::pair<std::shared_ptr<HandlePool>, int>> HandlePool::_s_pools;
 std::mutex HandlePool::_s_mutex;
-const int HandlePool::_s_hardwareConcurrency = std::thread::hardware_concurrency();
+const int HandlePool::_s_hardware_concurrency = std::thread::hardware_concurrency();
 
 RecyclableHandlePool HandlePool::get_pool(const std::string &path,
                                           const Configs &default_configs,
@@ -68,8 +68,8 @@ void HandlePool::purge_all_free_handles() {
 HandlePool::HandlePool(const std::string &thePath, const Configs &configs, const DatabaseOpenCallback &open_callback)
     : aldb::Catchable()
     , path(thePath)
-    , maxConcurrency(64)
-    , _handles(_s_hardwareConcurrency)
+    , max_concurrency(64)
+    , _handles(std::min(_s_hardware_concurrency, max_concurrency.load()))
     , _aliveHandleCount(0)
     , _open_callback(open_callback)
     , _opened(false)
@@ -103,13 +103,10 @@ bool HandlePool::is_drained() const { return _aliveHandleCount == 0; }
 RecyclableHandle HandlePool::flow_out() {
     _rwlock.lock_read();
     std::shared_ptr<HandleWrap> handleWrap = _handles.pop_back();
-    if (handleWrap == nullptr && _aliveHandleCount < maxConcurrency) {
+    if (handleWrap == nullptr && _aliveHandleCount < max_concurrency) {
         handleWrap = init_handle();
         if (handleWrap) {
             ++_aliveHandleCount;
-            if (_aliveHandleCount > _s_hardwareConcurrency) {
-                // TODO: warning
-            }
         }
     }
     if (handleWrap) {

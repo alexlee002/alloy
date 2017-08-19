@@ -29,7 +29,7 @@ namespace aldb {
 class InCaseLockGuard {
   public:
     InCaseLockGuard(std::shared_ptr<std::mutex> &mutex);
-    ~InCaseLockGuard();
+    virtual ~InCaseLockGuard();
 
   protected:
     std::shared_ptr<std::mutex> _mutex;

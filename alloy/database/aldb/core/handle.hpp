@@ -27,6 +27,11 @@ class Error;
 class Handle : public Catchable {
   public:
     Handle(const std::string &path);
+    virtual ~Handle();
+    
+//    void should_cache_statment(bool yes_or_no);
+//    bool statement_cache_enabled() const;
+    void cache_statement_for_sql(const std::string &sql);
 
     bool open();
     void close();
@@ -59,9 +64,11 @@ class Handle : public Catchable {
   protected:
     Handle(const Handle &) = delete;
     Handle &operator=(const Handle &) = delete;
-
+    
     const std::string _path;
     void *_handle;
+    bool _cache_stmt;
+    std::unordered_map<std::string, std::shared_ptr<StatementHandle>> _stmt_caches;
 };
 }
 

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setConfig:(const aldb::Config)config named:(NSString *)name ordered:(aldb::Configs::Order)order;
 - (void)setConfig:(const aldb::Config)config named:(NSString *)name;
+- (void)cacheStatementForSQL:(NSString *)sql;
 
 - (BOOL)exec:(NSString *)sql;
 - (BOOL)exec:(NSString *)sql args:(const std::list<const ALSQLValue>)args;

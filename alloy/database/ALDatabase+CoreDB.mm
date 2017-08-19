@@ -27,6 +27,10 @@
     [self _coreDB]->set_config(name.UTF8String, config);
 }
 
+- (void)cacheStatementForSQL:(NSString *)sql {
+    [self _coreDB]->cache_statement_for_sql(sql.UTF8String);
+}
+
 - (BOOL)exec:(NSString *)sql {
     return [self _coreDB]->exec(sql.UTF8String);
 }
@@ -58,7 +62,7 @@
 - (nullable ALDBResultSet *)query:(NSString *)sql {
     aldb::RecyclableStatement stmt = [self _coreDB]->prepare(sql.UTF8String);
     if (stmt) {
-        return [[ALDBResultSet alloc] initWithStatement:stmt];
+        return [ALDBResultSet resultSetWithStatement:stmt];
     }
     
     if ([self _coreDB]->has_error()) {
@@ -75,7 +79,7 @@
             stmt->bind_value(v, idx);
             idx++;
         }
-        return [[ALDBResultSet alloc] initWithStatement:stmt];
+        return [ALDBResultSet resultSetWithStatement:stmt];
     }
     ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
     return nil;
@@ -89,7 +93,7 @@
             stmt->bind_value(ALSQLValue(v), idx);
             idx++;
         }
-        return [[ALDBResultSet alloc] initWithStatement:stmt];
+        return [ALDBResultSet resultSetWithStatement:stmt];
     }
     ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
     return nil;

@@ -15,9 +15,18 @@
 #include <assert.h>
 
 namespace aldb {
-Handle::Handle(const std::string &path) : aldb::Catchable(), _path(path), _handle(nullptr) {}
+Handle::Handle(const std::string &path) : aldb::Catchable(), _path(path), _handle(nullptr), _cache_stmt(false) {}
+
+Handle::~Handle() { close(); }
 
 const std::string &Handle::get_path() const { return _path; }
+
+void Handle::cache_statement_for_sql(const std::string &sql) {
+    auto it = _stmt_caches.find(sql);
+    if (it == _stmt_caches.end()) {
+        _stmt_caches.insert({sql, nullptr});
+    }
+}
 
 bool Handle::open() {
     if (_handle) {
@@ -32,13 +41,18 @@ bool Handle::open() {
         return true;
     }
 
-    Catchable::set_sqlite_error((sqlite3 *)_handle);
+    Catchable::set_sqlite_error((sqlite3 *) _handle);
     _handle = nullptr;
     return false;
 }
 
 void Handle::close() {
     // TODO: close statements & resultsets
+    for (auto it = _stmt_caches.begin(); it != _stmt_caches.end(); ++it) {
+        auto stmt = it->second;
+        stmt->_cached = false;
+        stmt->finalize();
+    }
 
     if (!_handle) {
         return;
@@ -67,17 +81,40 @@ void Handle::close() {
 }
 
 std::shared_ptr<StatementHandle> Handle::prepare(const std::string &sql) {
+    bool need_cache_stmt = false;
+
+    auto it = _stmt_caches.find(sql);
+    if (it != _stmt_caches.end()) {
+        std::shared_ptr<StatementHandle> cached_stmt = it->second;
+        if (cached_stmt) {
+            if (!cached_stmt->_inuse) {
+                cached_stmt->reset_bindings();
+                cached_stmt->_cached = true;
+                cached_stmt->_inuse  = true;
+                return cached_stmt;
+            }
+        } else {
+            need_cache_stmt = true;
+        }
+    }
+
     sqlite3_stmt *pstmt = nullptr;
     int rc = sqlite3_prepare_v2((sqlite3 *) _handle, sql.c_str(), -1, &pstmt, nullptr);
     if (SQLITE_OK != rc) {
-        Catchable::set_sqlite_error((sqlite3 *)_handle);
+        Catchable::set_sqlite_error((sqlite3 *) _handle);
         sqlite3_finalize(pstmt);
         return nullptr;
     }
-    
+
     Catchable::reset_error();
     auto stmt = std::shared_ptr<StatementHandle>(new StatementHandle(*this, pstmt));
-    stmt->threadid = this->threadid;
+    if (need_cache_stmt) {
+        _stmt_caches.erase(sql);
+        _stmt_caches.insert({sql, stmt});
+        stmt->_cached = true;
+    }
+    stmt->_inuse = true;
+
     return stmt;
 }
 

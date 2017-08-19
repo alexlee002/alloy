@@ -18,11 +18,19 @@ namespace aldb {
 StatementHandle::StatementHandle(const Handle &handle, void *stmt)
     : aldb::Catchable()
     , _hadler(handle)
-    , _stmt(stmt) {}
+    , _stmt(stmt)
+    , _inuse(false)
+    , _cached(false) {}
     
 StatementHandle::~StatementHandle() { finalize(); }
 
 void StatementHandle::finalize() {
+    // if this statement is cached by Handle, need to unset _cached flag to finalize
+    if (_cached) {
+        _inuse = false;
+        return;
+    }
+    
     if (!_stmt) {
         return;
     }
@@ -32,6 +40,7 @@ void StatementHandle::finalize() {
     _stmt = nullptr;
     if (rc == SQLITE_OK) {
         Catchable::reset_error();
+        _inuse = false;
         return;
     }
     Catchable::set_sqlite_error(h);
