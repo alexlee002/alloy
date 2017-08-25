@@ -34,10 +34,12 @@ public:
 //    ALSQLClause &operator+=(const ALSQLClause &clause);
 //    ALSQLClause operator+(const ALSQLClause &clause) const;
     
+    ALSQLClause operator=(const ALSQLClause &other);
+    
     const std::string &sql_str() const;
     const std::list<const aldb::SQLValue> sql_args() const;
     
-    NSString *_Nonnull sqlString();
+    NSString *_Nonnull sqlString() const;
     const std::list<const ALSQLValue> &sqlArgs() const;
     
     bool is_empty() const;

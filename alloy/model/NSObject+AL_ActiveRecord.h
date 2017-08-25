@@ -28,8 +28,8 @@ typedef NSInteger ALDBRowIdType;
 //{propertyName: ColumnDefine}
 + (const std::unordered_map<std::string, std::shared_ptr<ALDBColumnDefine>>)al_modelPropertyColumnsMap;
 
-+ (nullable NSArray<id<ALActiveRecord>> *)al_modelsSelectedBy:(const ALDBCondition &)condition;
-+ (nullable NSEnumerator<id<ALActiveRecord>> *)al_enumerateModelsBy:(const ALDBCondition &)condition;
++ (nullable NSArray<id<ALActiveRecord>> *)al_modelsWithCondition:(const ALDBCondition &)condition;
++ (nullable NSEnumerator<id<ALActiveRecord>> *)al_modelEnumeratorWithCondition:(const ALDBCondition &)condition;
 #endif
 
 #pragma mark - objc methods

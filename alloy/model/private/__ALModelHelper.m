@@ -87,24 +87,37 @@ NSNumber *_YYNSNumberCreateFromID(__unsafe_unretained id value) {
                 @"<Null>" : (id)kCFNull,
                 @"<null>" : (id)kCFNull};
     });
-    
-    if (!value || value == (id)kCFNull) return nil;
-    if ([value isKindOfClass:[NSNumber class]]) return value;
+
+    if (!value || value == (id) kCFNull) {
+        return nil;
+    }
+    if ([value isKindOfClass:[NSNumber class]]) {
+        return value;
+    }
     if ([value isKindOfClass:[NSString class]]) {
         NSNumber *num = dic[value];
         if (num) {
-            if (num == (id)kCFNull) return nil;
+            if (num == (id) kCFNull) {
+                return nil;
+            }
             return num;
         }
-        if ([(NSString *)value rangeOfCharacterFromSet:dot].location != NSNotFound) {
-            const char *cstring = ((NSString *)value).UTF8String;
-            if (!cstring) return nil;
+        if ([(NSString *) value rangeOfCharacterFromSet:dot].location != NSNotFound) {
+            const char *cstring = ((NSString *) value).UTF8String;
+            if (!cstring) {
+                return nil;
+            }
+            
             double num = atof(cstring);
-            if (isnan(num) || isinf(num)) return nil;
+            if (isnan(num) || isinf(num)) {
+                return nil;
+            }
             return @(num);
         } else {
-            const char *cstring = ((NSString *)value).UTF8String;
-            if (!cstring) return nil;
+            const char *cstring = ((NSString *) value).UTF8String;
+            if (!cstring) {
+                return nil;
+            }
             return @(atoll(cstring));
         }
     }
@@ -456,6 +469,7 @@ AL_FORCE_INLINE void _ModelSetValueForProperty(__unsafe_unretained id model,
                                                __unsafe_unretained _ALModelPropertyMeta *meta,
                                                __unsafe_unretained Class _Nullable genericClass,
                                                SEL _Nullable customClassForDictionarySelector) {
+    
     if (meta->_setter == nil) {
         _ModelKVCSetValueForProperty(model, value, meta);
         return;

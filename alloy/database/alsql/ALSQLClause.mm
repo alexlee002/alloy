@@ -42,6 +42,15 @@ ALSQLClause &ALSQLClause::append(const ALSQLClause &clause) {
     return append(clause.sql_str(), clause.sqlArgs());
 }
 
+ALSQLClause ALSQLClause::operator=(const ALSQLClause &other) {
+    if (this != &other) {
+        _sql = other._sql;
+        _args.clear();
+        _args.insert(_args.end(), other._args.begin(), other._args.end());
+    }
+    return *this;
+}
+
 //ALSQLClause &ALSQLClause::operator+=(const ALSQLClause &clause) { return *this; }
 //
 //ALSQLClause ALSQLClause::operator+(const ALSQLClause &other) const {
@@ -59,7 +68,7 @@ const std::list<const aldb::SQLValue> ALSQLClause::sql_args() const {
     return core_args;
 }
 
-NSString *_Nonnull ALSQLClause::sqlString() { return @(_sql.c_str()); }
+NSString *_Nonnull ALSQLClause::sqlString() const { return @(_sql.c_str()); }
 
 const std::list<const ALSQLValue> &ALSQLClause::sqlArgs() const { return _args; }
 

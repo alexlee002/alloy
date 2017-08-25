@@ -13,7 +13,7 @@
 #import "ALDatabase.h"
 #import "database.hpp"
 
-@interface ALDatabase (__Private)
+@interface ALDatabase (AL_Private)
 
 - (std::shared_ptr<aldb::Database> &)_coreDB;
 

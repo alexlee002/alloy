@@ -9,6 +9,7 @@
 #import "__ALModelMeta+ActiveRecord.h"
 #import "ALSQLValue.h"
 #import "ALDBColumnDefine.h"
+#import "ALDBColumnProperty.h"
 #import "ALDBTypeCoding.h"
 #import "__ALModelHelper.h"
 #import "ALActiveRecord.h"
@@ -34,7 +35,9 @@ extern "C" {
 
 @end
 
-@implementation _ALModelTableBindings
+@implementation _ALModelTableBindings {
+    NSMutableDictionary<NSString */*propertyName*/, NSString */*columnName*/> *_propertyColumnNameMapper; //lazy fill
+}
 
 + (instancetype)bindingsWithClass:(Class)cls {
     return [self bindingsWithModelMeta:[_ALModelMeta metaWithClass:cls]];
@@ -107,21 +110,21 @@ extern "C" {
         if (!binding) {
             continue;
         }
-        if (columnBindings[propname]) {
+        if (columnBindings[colname]) {
             continue;
         }
-        columnBindings[propname] = binding;
+        columnBindings[colname] = binding;
     }
 
     if (columnBindings.count > 0) {
-        _propertyColumnMapper = columnBindings;
+        _columnMapper = columnBindings;
     }
 }
 
 - (void)loadTableConstraints {
     NSString *pk = nil;
     NSMutableArray *uk = [NSMutableArray array];
-    for (_ALPropertyColumnBindings *columnBinding in _propertyColumnMapper.allValues) {
+    for (_ALPropertyColumnBindings *columnBinding in _columnMapper.allValues) {
         auto columnDef = columnBinding->_column;
         if (columnDef->is_primary()) {
             ALAssert(pk == nil, @"Duplicated primary key!");
@@ -159,16 +162,22 @@ extern "C" {
 }
 
 - (NSString *)columnNameForProperty:(NSString *)propertyName {
-    Class cls = _modelMeta->_classInfo.cls;
-    if ([(id)cls respondsToSelector:@selector(modelCustomColumnNameMapper)]) {
-        NSDictionary *customMapper = [(id<ALActiveRecord>)cls modelCustomColumnNameMapper];
-        NSString *colname = customMapper[propertyName];
-        if (!al_isEmptyString(colname)) {
-            return colname;
+    NSString *colname = _propertyColumnNameMapper[propertyName];
+    if (colname == nil) {
+        Class cls = _modelMeta->_classInfo.cls;
+        if ([(id)cls respondsToSelector:@selector(modelCustomColumnNameMapper)]) {
+            NSDictionary *customMapper = [(id<ALActiveRecord>)cls modelCustomColumnNameMapper];
+            NSString *tmpColName = customMapper[propertyName];
+            if (!al_isEmptyString(tmpColName)) {
+                _propertyColumnNameMapper[propertyName] = tmpColName;
+                colname = tmpColName;
+            }
         }
+        
+        colname = [propertyName al_stringByConvertingCamelCaseToUnderscore];
+        _propertyColumnNameMapper[propertyName] = colname;
     }
-    
-    return [propertyName al_stringByConvertingCamelCaseToUnderscore];
+    return colname;
 }
 
 @end

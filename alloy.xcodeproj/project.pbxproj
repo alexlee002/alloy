@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4300188A1F4DBEE00056E4DE /* ALDatabase+Statement.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018881F4DBEE00056E4DE /* ALDatabase+Statement.h */; };
+		4300188B1F4DBEE00056E4DE /* ALDatabase+Statement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018891F4DBEE00056E4DE /* ALDatabase+Statement.mm */; };
+		4300188E1F4DC3350056E4DE /* __ALResultSetEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4300188C1F4DC3350056E4DE /* __ALResultSetEnumerator.h */; };
+		4300188F1F4DC3350056E4DE /* __ALResultSetEnumerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4300188D1F4DC3350056E4DE /* __ALResultSetEnumerator.mm */; };
 		4304F3ED1F46BB8000AA45DE /* aldbCoreTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */; };
 		4304F3EF1F46BBC500AA45DE /* sqlExprTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */; };
 		4306CEC71F29CEBE006C73B9 /* ALDBMigrationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */; };
@@ -144,6 +148,14 @@
 		43C25DAF1F1770A100C97ED8 /* alloy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43C25DA51F1770A100C97ED8 /* alloy.framework */; };
 		43C25DB41F1770A100C97ED8 /* alloyTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43C25DB31F1770A100C97ED8 /* alloyTests.mm */; };
 		43C25DB61F1770A100C97ED8 /* alloy.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C25DA81F1770A100C97ED8 /* alloy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43DA43F11F47F96A002A4972 /* ALSQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 43DA43EF1F47F96A002A4972 /* ALSQLStatement.h */; };
+		43DA43F21F47F96A002A4972 /* ALSQLStatement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43DA43F01F47F96A002A4972 /* ALSQLStatement.mm */; };
+		43DA43F51F480451002A4972 /* ALSQLSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = 43DA43F31F480451002A4972 /* ALSQLSelect.h */; };
+		43DA43F61F480451002A4972 /* ALSQLSelect.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43DA43F41F480451002A4972 /* ALSQLSelect.mm */; };
+		43DA43F91F49DFA7002A4972 /* ALDBResultColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = 43DA43F71F49DFA7002A4972 /* ALDBResultColumn.h */; };
+		43DA43FA1F49DFA7002A4972 /* ALDBResultColumn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43DA43F81F49DFA7002A4972 /* ALDBResultColumn.mm */; };
+		43DA43FD1F4AB2C1002A4972 /* ALDBColumnProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 43DA43FB1F4AB2C1002A4972 /* ALDBColumnProperty.h */; };
+		43DA43FE1F4AB2C1002A4972 /* ALDBColumnProperty.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43DA43FC1F4AB2C1002A4972 /* ALDBColumnProperty.mm */; };
 		B072673ED3D55AF4BB96B7CF /* libPods-alloyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2296EE0CF3CDF1D2CCA169D6 /* libPods-alloyTests.a */; };
 		E872FE29D949AC8B9AD457FB /* libPods-alloy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ABE802FB87C43F6532B8F935 /* libPods-alloy.a */; };
 /* End PBXBuildFile section */
@@ -160,6 +172,10 @@
 
 /* Begin PBXFileReference section */
 		2296EE0CF3CDF1D2CCA169D6 /* libPods-alloyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-alloyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		430018881F4DBEE00056E4DE /* ALDatabase+Statement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALDatabase+Statement.h"; sourceTree = "<group>"; };
+		430018891F4DBEE00056E4DE /* ALDatabase+Statement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDatabase+Statement.mm"; sourceTree = "<group>"; };
+		4300188C1F4DC3350056E4DE /* __ALResultSetEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = __ALResultSetEnumerator.h; sourceTree = "<group>"; };
+		4300188D1F4DC3350056E4DE /* __ALResultSetEnumerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = __ALResultSetEnumerator.mm; sourceTree = "<group>"; };
 		4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = aldbCoreTests.mm; sourceTree = "<group>"; };
 		4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sqlExprTests.mm; sourceTree = "<group>"; };
 		4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBMigrationHelper.h; sourceTree = "<group>"; };
@@ -300,6 +316,14 @@
 		43C25DAE1F1770A100C97ED8 /* alloyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = alloyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		43C25DB31F1770A100C97ED8 /* alloyTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = alloyTests.mm; sourceTree = "<group>"; };
 		43C25DB51F1770A100C97ED8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		43DA43EF1F47F96A002A4972 /* ALSQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLStatement.h; sourceTree = "<group>"; };
+		43DA43F01F47F96A002A4972 /* ALSQLStatement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLStatement.mm; sourceTree = "<group>"; };
+		43DA43F31F480451002A4972 /* ALSQLSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLSelect.h; sourceTree = "<group>"; };
+		43DA43F41F480451002A4972 /* ALSQLSelect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLSelect.mm; sourceTree = "<group>"; };
+		43DA43F71F49DFA7002A4972 /* ALDBResultColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBResultColumn.h; sourceTree = "<group>"; };
+		43DA43F81F49DFA7002A4972 /* ALDBResultColumn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBResultColumn.mm; sourceTree = "<group>"; };
+		43DA43FB1F4AB2C1002A4972 /* ALDBColumnProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ALDBColumnProperty.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		43DA43FC1F4AB2C1002A4972 /* ALDBColumnProperty.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = ALDBColumnProperty.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		4CFB0EF33490C12863B4BAE1 /* Pods-alloyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alloyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-alloyTests/Pods-alloyTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E55576873781C229D0F73D2 /* Pods-alloy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alloy.release.xcconfig"; path = "Pods/Target Support Files/Pods-alloy/Pods-alloy.release.xcconfig"; sourceTree = "<group>"; };
 		749A5EF5BFC3186D232E3F2C /* Pods-alloy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alloy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-alloy/Pods-alloy.debug.xcconfig"; sourceTree = "<group>"; };
@@ -357,6 +381,14 @@
 				43B45FA01F433BFA005A7EC8 /* ALSQLClause.mm */,
 				43B45FA31F436535005A7EC8 /* ALDBColumnDefine.h */,
 				43B45FA41F436535005A7EC8 /* ALDBColumnDefine.mm */,
+				43DA43EF1F47F96A002A4972 /* ALSQLStatement.h */,
+				43DA43F01F47F96A002A4972 /* ALSQLStatement.mm */,
+				43DA43F31F480451002A4972 /* ALSQLSelect.h */,
+				43DA43F41F480451002A4972 /* ALSQLSelect.mm */,
+				43DA43F71F49DFA7002A4972 /* ALDBResultColumn.h */,
+				43DA43F81F49DFA7002A4972 /* ALDBResultColumn.mm */,
+				43DA43FB1F4AB2C1002A4972 /* ALDBColumnProperty.h */,
+				43DA43FC1F4AB2C1002A4972 /* ALDBColumnProperty.mm */,
 			);
 			path = alsql;
 			sourceTree = "<group>";
@@ -469,6 +501,8 @@
 				436A50BB1F17BE9B00B0D32E /* __ALModelMeta+JSONMapping.m */,
 				436A50BC1F17BE9B00B0D32E /* __ALModelMeta.h */,
 				436A50BD1F17BE9B00B0D32E /* __ALModelMeta.m */,
+				4300188C1F4DC3350056E4DE /* __ALResultSetEnumerator.h */,
+				4300188D1F4DC3350056E4DE /* __ALResultSetEnumerator.mm */,
 			);
 			path = private;
 			sourceTree = "<group>";
@@ -484,6 +518,8 @@
 				43B770551F2B41F900B877CE /* __ALDatabase+private.h */,
 				43B770561F2B41F900B877CE /* ALDatabase+CoreDB.h */,
 				43B770571F2B41F900B877CE /* ALDatabase+CoreDB.mm */,
+				430018881F4DBEE00056E4DE /* ALDatabase+Statement.h */,
+				430018891F4DBEE00056E4DE /* ALDatabase+Statement.mm */,
 				434252791F298EA200BCE32E /* ALDBConnectionDelegate.h */,
 				4342527B1F2997AE00BCE32E /* ALDBMigrationDelegate.h */,
 				4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */,
@@ -631,6 +667,7 @@
 				43B45F9E1F433096005A7EC8 /* utils.hpp in Headers */,
 				434252771F28F64900BCE32E /* ALDatabase.h in Headers */,
 				436A51001F17BE9B00B0D32E /* __ALModelMeta+JSONMapping.h in Headers */,
+				43DA43FD1F4AB2C1002A4972 /* ALDBColumnProperty.h in Headers */,
 				436A50E81F17BE9B00B0D32E /* NSDate+ALExtensions.h in Headers */,
 				4342527C1F2997AE00BCE32E /* ALDBMigrationDelegate.h in Headers */,
 				436A50CF1F17BE9B00B0D32E /* ALOrderedMap.h in Headers */,
@@ -646,6 +683,8 @@
 				43B45FBB1F45C3A8005A7EC8 /* ALDBResultSet.h in Headers */,
 				436A50C51F17BE9B00B0D32E /* AL_JSON.h in Headers */,
 				43B45F831F433096005A7EC8 /* handle.hpp in Headers */,
+				43DA43F51F480451002A4972 /* ALSQLSelect.h in Headers */,
+				4300188E1F4DC3350056E4DE /* __ALResultSetEnumerator.h in Headers */,
 				436A50CD1F17BE9B00B0D32E /* ALLogger.h in Headers */,
 				436A50F81F17BE9B00B0D32E /* NSObject+AL_JSONMapping.h in Headers */,
 				436A50F21F17BE9B00B0D32E /* SafeBlocksChain.h in Headers */,
@@ -677,11 +716,13 @@
 				436A50E61F17BE9B00B0D32E /* NSCache+ALExtensions.h in Headers */,
 				43544A491F323B6B001486B5 /* ALSQLExpr.h in Headers */,
 				43B45F8A1F433096005A7EC8 /* sql_value.hpp in Headers */,
+				43DA43F11F47F96A002A4972 /* ALSQLStatement.h in Headers */,
 				436A50EE1F17BE9B00B0D32E /* ALOCRuntime.h in Headers */,
 				43B45F971F433096005A7EC8 /* recyclable.hpp in Headers */,
 				436A51021F17BE9B00B0D32E /* __ALModelMeta.h in Headers */,
 				438143BB1F3587FA004F6AFD /* ALDBTypeDefs.h in Headers */,
 				43B770581F2B41F900B877CE /* __ALDatabase+private.h in Headers */,
+				4300188A1F4DBEE00056E4DE /* ALDatabase+Statement.h in Headers */,
 				436A50F61F17BE9B00B0D32E /* NSObject+AL_ActiveRecord.h in Headers */,
 				436A50FC1F17BE9B00B0D32E /* __ALModelHelper.h in Headers */,
 				436A50D31F17BE9B00B0D32E /* ALUtilitiesHeader.h in Headers */,
@@ -689,6 +730,7 @@
 				43B45F9C1F433096005A7EC8 /* thread_local.hpp in Headers */,
 				436A50CB1F17BE9B00B0D32E /* ALLock.h in Headers */,
 				43B45F991F433096005A7EC8 /* rwlock.hpp in Headers */,
+				43DA43F91F49DFA7002A4972 /* ALDBResultColumn.h in Headers */,
 				43B45F7B1F433096005A7EC8 /* config.hpp in Headers */,
 				43B45F851F433096005A7EC8 /* handle_pool.hpp in Headers */,
 				436A50D11F17BE9B00B0D32E /* ALStringInflector.h in Headers */,
@@ -899,6 +941,7 @@
 				436A50F11F17BE9B00B0D32E /* YYClassInfo.m in Sources */,
 				43B45F861F433096005A7EC8 /* handle_recyclable.cpp in Sources */,
 				436A50DF1F17BE9B00B0D32E /* ALURLHelper.m in Sources */,
+				43DA43FA1F49DFA7002A4972 /* ALDBResultColumn.mm in Sources */,
 				43B45F7A1F433096005A7EC8 /* config.cpp in Sources */,
 				43B45F821F433096005A7EC8 /* handle.cpp in Sources */,
 				436A50F31F17BE9B00B0D32E /* SafeBlocksChain.m in Sources */,
@@ -906,6 +949,7 @@
 				436A50E31F17BE9B00B0D32E /* NSArray+ArrayExtensions.m in Sources */,
 				43B45FBC1F45C3A8005A7EC8 /* ALDBResultSet.mm in Sources */,
 				43B45F881F433096005A7EC8 /* result_set.cpp in Sources */,
+				4300188F1F4DC3350056E4DE /* __ALResultSetEnumerator.mm in Sources */,
 				436A50E71F17BE9B00B0D32E /* NSCache+ALExtensions.m in Sources */,
 				436A50C61F17BE9B00B0D32E /* AL_JSON.m in Sources */,
 				436A50C41F17BE9B00B0D32E /* AL_Base64.m in Sources */,
@@ -917,6 +961,7 @@
 				43544A501F323C4E001486B5 /* ALSQLValue.mm in Sources */,
 				43B45F951F433096005A7EC8 /* in_case_lock_guard.cpp in Sources */,
 				43B45F9A1F433096005A7EC8 /* spin.cpp in Sources */,
+				43DA43FE1F4AB2C1002A4972 /* ALDBColumnProperty.mm in Sources */,
 				43B7705A1F2B41F900B877CE /* ALDatabase+CoreDB.mm in Sources */,
 				436A50ED1F17BE9B00B0D32E /* HHTimer.m in Sources */,
 				436A50DB1F17BE9B00B0D32E /* AL_RC4.m in Sources */,
@@ -929,7 +974,10 @@
 				436A50E91F17BE9B00B0D32E /* NSDate+ALExtensions.m in Sources */,
 				43B45F781F433096005A7EC8 /* catchable.cpp in Sources */,
 				436A50EB1F17BE9B00B0D32E /* NSString+ALHelper.m in Sources */,
+				43DA43F21F47F96A002A4972 /* ALSQLStatement.mm in Sources */,
 				43B45F8B1F433096005A7EC8 /* statement_handle.cpp in Sources */,
+				43DA43F61F480451002A4972 /* ALSQLSelect.mm in Sources */,
+				4300188B1F4DBEE00056E4DE /* ALDatabase+Statement.mm in Sources */,
 				436A50CA1F17BE9B00B0D32E /* ALDevice.m in Sources */,
 				4306CEC81F29CEBE006C73B9 /* ALDBMigrationHelper.mm in Sources */,
 				436A50D51F17BE9B00B0D32E /* AL_CRC.m in Sources */,

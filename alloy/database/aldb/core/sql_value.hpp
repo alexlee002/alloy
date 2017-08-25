@@ -99,26 +99,28 @@ struct SQLValue {
     }
     
     SQLValue operator=(const SQLValue &o) {
-        val_type = o.val_type;
-        switch (o.val_type) {
-            case aldb::ColumnType::INT32_T:
-                i32_val = o.i32_val;
-                break;
-            case aldb::ColumnType::INT64_T:
-                i64_val = o.i64_val;
-                break;
-            case aldb::ColumnType::DOUBLE_T:
-                d_val = o.d_val;
-                break;
-                
-            case aldb::ColumnType::TEXT_T: //fall
-            case aldb::ColumnType::BLOB_T:
-                ::new (&s_val) auto(o.s_val);
-                break;
-            default:
-                break;
+        if (this != &o) {
+            val_type = o.val_type;
+            switch (o.val_type) {
+                case aldb::ColumnType::INT32_T:
+                    i32_val = o.i32_val;
+                    break;
+                case aldb::ColumnType::INT64_T:
+                    i64_val = o.i64_val;
+                    break;
+                case aldb::ColumnType::DOUBLE_T:
+                    d_val = o.d_val;
+                    break;
+                    
+                case aldb::ColumnType::TEXT_T: //fall
+                case aldb::ColumnType::BLOB_T:
+                    ::new (&s_val) auto(o.s_val);
+                    break;
+                default:
+                    break;
+            }
+            val_size = o.val_size;
         }
-        val_size = o.val_size;
         
         return *this;
     }

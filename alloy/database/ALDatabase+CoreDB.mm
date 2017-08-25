@@ -11,6 +11,15 @@
 #import "ALUtilitiesHeader.h"
 #import "ALLogger.h"
 
+#ifdef DEBUG
+#define DEBUG_LOG_DB_ERROR()                                                  \
+    if ([self _coreDB]->has_error()) {                                        \
+        ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str()); \
+    }
+#else
+#define DEBUG_LOG_DB_ERROR() do {} while (0)
+#endif
+
 @implementation ALDatabase (CoreDB)
 
 - (BOOL)isOpened {
@@ -21,10 +30,12 @@
             named:(NSString *)name
           ordered:(aldb::Configs::Order)order {
     [self _coreDB]->set_config(name.UTF8String, config, order);
+    DEBUG_LOG_DB_ERROR();
 }
 
 - (void)setConfig:(const aldb::Config)config named:(NSString *)name {
     [self _coreDB]->set_config(name.UTF8String, config);
+    DEBUG_LOG_DB_ERROR();
 }
 
 - (void)cacheStatementForSQL:(NSString *)sql {
@@ -32,7 +43,9 @@
 }
 
 - (BOOL)exec:(NSString *)sql {
-    return [self _coreDB]->exec(sql.UTF8String);
+    BOOL ret = [self _coreDB]->exec(sql.UTF8String);
+    DEBUG_LOG_DB_ERROR();
+    return ret;
 }
 
 - (BOOL)exec:(NSString *)sql args:(const std::list<const ALSQLValue>)args {
@@ -44,7 +57,9 @@
     for (auto arg : args) {
         coreValues.push_back(arg);
     }
-    return [self _coreDB]->exec(sql.UTF8String, coreValues);
+    BOOL ret = [self _coreDB]->exec(sql.UTF8String, coreValues);
+    DEBUG_LOG_DB_ERROR();
+    return ret;
 }
 
 - (BOOL)exec:(NSString *)sql arguments:(NSArray<id> *)args {
@@ -56,7 +71,9 @@
     for (id arg in args) {
         coreValues.push_back(ALSQLValue(arg));
     }
-    return [self _coreDB]->exec(sql.UTF8String, coreValues);
+    BOOL ret = [self _coreDB]->exec(sql.UTF8String, coreValues);
+    DEBUG_LOG_DB_ERROR();
+    return ret;
 }
 
 - (nullable ALDBResultSet *)query:(NSString *)sql {
@@ -65,9 +82,7 @@
         return [ALDBResultSet resultSetWithStatement:stmt];
     }
     
-    if ([self _coreDB]->has_error()) {
-        ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
-    }
+    DEBUG_LOG_DB_ERROR();
     return nil;
 }
 
@@ -81,7 +96,8 @@
         }
         return [ALDBResultSet resultSetWithStatement:stmt];
     }
-    ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
+    
+    DEBUG_LOG_DB_ERROR();
     return nil;
 }
 
@@ -95,7 +111,8 @@
         }
         return [ALDBResultSet resultSetWithStatement:stmt];
     }
-    ALLogError(@"%s", std::string(*[self _coreDB]->get_error()).c_str());
+   
+    DEBUG_LOG_DB_ERROR();
     return nil;
 }
 

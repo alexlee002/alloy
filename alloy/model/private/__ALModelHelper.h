@@ -36,36 +36,36 @@ typedef NS_ENUM (NSUInteger, _YYEncodingNSType) {
     YYEncodingTypeNSMutableSet,
 };
 
-extern NSString *const _ALNSUnknownKeyException;
+OBJC_EXPORT NSString *const _ALNSUnknownKeyException;
 
-extern _YYEncodingNSType _YYClassGetNSType(Class cls);
-extern BOOL _YYEncodingTypeIsCNumber(YYEncodingType type);
-extern NSNumber *_YYNSNumberCreateFromID(__unsafe_unretained id value);
-extern NSDate *_YYNSDateFromString(__unsafe_unretained NSString *string);
-extern Class _YYNSBlockClass(void);
-extern NSDateFormatter *_YYISODateFormatter(void);
-extern id _YYValueForKeyPath(__unsafe_unretained NSDictionary *dic, __unsafe_unretained NSArray *keyPaths);
-extern id _YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic, __unsafe_unretained NSArray *multiKeys);
-extern BOOL _YYIsStructAvailableForKeyArchiver(NSString *structTypeEncoding);
+OBJC_EXPORT _YYEncodingNSType _YYClassGetNSType(Class cls);
+OBJC_EXPORT BOOL _YYEncodingTypeIsCNumber(YYEncodingType type);
+OBJC_EXPORT NSNumber *_YYNSNumberCreateFromID(__unsafe_unretained id value);
+OBJC_EXPORT NSDate *_YYNSDateFromString(__unsafe_unretained NSString *string);
+OBJC_EXPORT Class _YYNSBlockClass(void);
+OBJC_EXPORT NSDateFormatter *_YYISODateFormatter(void);
+OBJC_EXPORT id _YYValueForKeyPath(__unsafe_unretained NSDictionary *dic, __unsafe_unretained NSArray *keyPaths);
+OBJC_EXPORT id _YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic, __unsafe_unretained NSArray *multiKeys);
+OBJC_EXPORT BOOL _YYIsStructAvailableForKeyArchiver(NSString *structTypeEncoding);
 
 @class _ALModelPropertyMeta;
-extern BOOL _YYPropertyIsKVCCompatible(_ALModelPropertyMeta *meta);
-extern void _ModelSetNumberToProperty(__unsafe_unretained id model,
-                                     __unsafe_unretained NSNumber *num,
-                                     __unsafe_unretained _ALModelPropertyMeta *meta);
+OBJC_EXPORT BOOL _YYPropertyIsKVCCompatible(_ALModelPropertyMeta *meta);
+OBJC_EXPORT void _ModelSetNumberToProperty(__unsafe_unretained id model,
+                                           __unsafe_unretained NSNumber *num,
+                                           __unsafe_unretained _ALModelPropertyMeta *meta);
 
-extern void _ModelSetValueForProperty(__unsafe_unretained id model,
-                                      __unsafe_unretained id value,
-                                      __unsafe_unretained _ALModelPropertyMeta *meta,
-                                      __unsafe_unretained Class _Nullable genericClass,
-                                      SEL _Nullable customClassForDictionarySelector);
+OBJC_EXPORT void _ModelSetValueForProperty(__unsafe_unretained id model,
+                                           __unsafe_unretained id value,
+                                           __unsafe_unretained _ALModelPropertyMeta *meta,
+                                           __unsafe_unretained Class _Nullable genericClass,
+                                           SEL _Nullable customClassForDictionarySelector);
 
-extern BOOL _ModelKVCSetValueForProperty(__unsafe_unretained id model,
-                                         __unsafe_unretained id value,
-                                         __unsafe_unretained _ALModelPropertyMeta *meta);
+OBJC_EXPORT BOOL _ModelKVCSetValueForProperty(__unsafe_unretained id model,
+                                              __unsafe_unretained id value,
+                                              __unsafe_unretained _ALModelPropertyMeta *meta);
 
-extern NSNumber *_ModelCreateNumberFromProperty(__unsafe_unretained id model,
-                                                __unsafe_unretained _ALModelPropertyMeta *meta);
+OBJC_EXPORT NSNumber *_ModelCreateNumberFromProperty(__unsafe_unretained id model,
+                                                     __unsafe_unretained _ALModelPropertyMeta *meta);
 
 #pragma mark -
 @interface _ALModelHelper : NSObject

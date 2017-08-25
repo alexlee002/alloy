@@ -10,24 +10,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern id           al_wrapNil  (id _Nullable obj);
-extern id _Nullable al_unwrapNil(id _Nullable obj);
+OBJC_EXPORT id           al_wrapNil  (id _Nullable obj);
+OBJC_EXPORT id _Nullable al_unwrapNil(id _Nullable obj);
 
 /**
  * return string value of `obj`.  Check if obj can responds to SEL 'stringValue' and send message to SEL.
  * if object has no such SEL, return nil;
  * @see "-[NSObject(StringHelper) stringify]"
  */
-extern NSString *_Nullable al_stringValue(id _Nullable obj);
+OBJC_EXPORT NSString *_Nullable al_stringValue(id _Nullable obj);
 
 /**
  * return if str1 is equals to str2
  * If str1 is nil or str2 is nil or not a NSString, return NO; others return [str1 isEqualToString:str2]
  */
-extern BOOL             al_stringEquals       (NSString *_Nullable str1, NSString *_Nullable str2);
-extern NSString         *al_stringOrEmpty     (NSString *_Nullable string);
-extern BOOL             al_isEmptyString      (NSString *_Nullable string);
-extern NSStringEncoding al_NSStringEncodingWithName(NSString *_Nullable encodingName);
+OBJC_EXPORT BOOL             al_stringEquals       (NSString *_Nullable str1, NSString *_Nullable str2);
+OBJC_EXPORT NSString         *al_stringOrEmpty     (NSString *_Nullable string);
+OBJC_EXPORT BOOL             al_isEmptyString      (NSString *_Nullable string);
+OBJC_EXPORT NSStringEncoding al_NSStringEncodingWithName(NSString *_Nullable encodingName);
 
 @interface NSObject (ALStringHelper)
 
@@ -94,10 +94,10 @@ extern NSStringEncoding al_NSStringEncodingWithName(NSString *_Nullable encoding
 @end
 
 // convert bytes to hexadecimal string(lowercase)
-extern NSString *_Nullable al_bytesToHexStr(const char *bytes, size_t len);
+OBJC_EXPORT NSString *_Nullable al_bytesToHexStr(const char *bytes, size_t len);
 
 //convert number from base-10 to base-N, N <= 62;
-NSString *_Nullable decimalToBaseN(uint64_t num, uint8_t base);
-uint64_t baseNToDecimal(const char *s, uint8_t base);
+OBJC_EXPORT NSString *_Nullable decimalToBaseN(uint64_t num, uint8_t base);
+OBJC_EXPORT uint64_t baseNToDecimal(const char *s, uint8_t base);
 
 NS_ASSUME_NONNULL_END

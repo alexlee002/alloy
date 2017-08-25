@@ -81,6 +81,13 @@ void ALSQLExpr::operate_with(const ALSQLExpr &other, const std::string &optr, AL
     if (p == s_default_precedence) {
         p = operator_precedence(optr);
     }
+    
+    if (this->is_empty()) {
+        ALSQLClause::append(other);
+        return;
+    } else if (other.is_empty()) {
+        return;
+    }
 
     if (p != s_default_precedence && p < _precedence) {
         enclode_with_brackets();
@@ -273,29 +280,26 @@ ALSQLExpr ALSQLExpr::is_not(const ALSQLExpr &expr) const {
     return expr_operate(expr, "IS NOT");
 }
 
-ALSQLExpr ALSQLExpr::cast_as(const ALSQLExpr &expr, const std::string &type_name) {
+ALSQLExpr ALSQLExpr::cast_as(const std::string &type_name) {
     ALSQLExpr castExpr;
     castExpr.append("CAST (");
-    castExpr.append(expr);
+    castExpr.append(*this);
     castExpr.append(" AS " + type_name + ")");
     return castExpr;
 }
 
-ALSQLExpr cast_as(const ALSQLExpr &expr, const ALDBColumnType type) {
-    return ALSQLExpr::cast_as(expr, aldb::column_type_name((aldb::ColumnType)type));
+ALSQLExpr ALSQLExpr::cast_as(const ALDBColumnType type) {
+    return cast_as(aldb::column_type_name((aldb::ColumnType)type));
 }
 //    static ALSQLExpr exists(const SelectStatement &stmt);
 //    static ALSQLExpr not_exists(const SelectStatement &stmt);
 
 // case a when b then c else d end
-ALSQLExpr ALSQLExpr::case_clause(const ALSQLExpr &expr,
-                             const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
-                             const ALSQLExpr &else_value) {
+ALSQLExpr ALSQLExpr::case_when(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
+                               const ALSQLExpr &else_value) {
     ALSQLExpr caseExpr;
     caseExpr.append("CASE ");
-    if (!expr.is_empty()) {
-        caseExpr.append(expr);
-    }
+    caseExpr.append(*this);
     
     for (auto &pair : when_then) {
         caseExpr.append(" WHEN ");
@@ -313,7 +317,21 @@ ALSQLExpr ALSQLExpr::case_clause(const ALSQLExpr &expr,
 
 ALSQLExpr ALSQLExpr::case_clause(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
                                  const ALSQLExpr &else_value) {
-    return ALSQLExpr::case_clause(s_null_expr, when_then, else_value);
+    ALSQLExpr caseExpr;
+    caseExpr.append("CASE ");
+    
+    for (auto &pair : when_then) {
+        caseExpr.append(" WHEN ");
+        caseExpr.append(pair.first);
+        caseExpr.append(" THEN ");
+        caseExpr.append(pair.second);
+    }
+    if (!else_value.is_empty()) {
+        caseExpr.append(" ELSE ");
+        caseExpr.append(else_value);
+    }
+    caseExpr.append(" END");
+    return caseExpr;
 }
 
 
@@ -329,6 +347,10 @@ ALSQLExpr ALSQLExpr::function(const std::string &fun_name, const std::list<const
     funcExpr.append(combine(args, ", "));
     funcExpr.append(")");
     return funcExpr;
+}
+
+ALSQLExpr ALSQLExpr::function(const std::string &fun_name, bool distinct) {
+    return ALSQLExpr::function(fun_name, {*this}, distinct);
 }
 
 ALSQLExpr ALSQLExpr::concat(const ALSQLExpr &expr) const { // "abc"||"def"
@@ -399,11 +421,11 @@ ALSQLExpr ALSQLExpr::count(bool distinct) const {
     return ALSQLExpr::function("COUNT", {*this}, distinct);
 }
 
-ALSQLExpr ALSQLExpr::groupConcat(bool distinct) const {
+ALSQLExpr ALSQLExpr::group_concat(bool distinct) const {
     return ALSQLExpr::function("GROUP_CONCAT", {*this}, distinct);
 }
 
-ALSQLExpr ALSQLExpr::groupConcat(const ALSQLExpr &seperator, bool distinct) const {
+ALSQLExpr ALSQLExpr::group_concat(const ALSQLExpr &seperator, bool distinct) const {
     return ALSQLExpr::function("GROUP_CONCAT", {*this, seperator}, distinct);
 }
 

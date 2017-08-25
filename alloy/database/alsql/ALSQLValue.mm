@@ -73,7 +73,7 @@ bool ALSQLValue::operator==(const ALSQLValue &o) const {
     return _coreValue == o._coreValue;
 }
 
-ALSQLValue ALSQLValue::operator=(const ALSQLValue &o) {
+ALSQLValue &ALSQLValue::operator=(const ALSQLValue &o) {
     _coreValue = o._coreValue;
     return *this;
 }

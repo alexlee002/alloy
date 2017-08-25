@@ -55,8 +55,8 @@ typedef NS_ENUM(NSInteger, ALDBDefaultTime) {
     ALDBDefaultTimeCurrentDateTime  /*= (int8_t)aldb::ColumnDefine::DefaultTime::CURRENT_DATE_TIME*/
 };
 
-class ALSQLClause;
-typedef ALSQLClause ALDBCondition;
+class ALSQLExpr;
+typedef ALSQLExpr ALDBCondition;
 
 typedef int16_t ALDBOptrPrecedence; // sql operator precedence
 

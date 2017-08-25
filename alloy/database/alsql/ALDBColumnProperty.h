@@ -1,61 +1,30 @@
 //
-//  ALSQLExpr.h
+//  ALDBColumnProperty.h
 //  alloy
 //
-//  Created by Alex Lee on 03/08/2017.
+//  Created by Alex Lee on 21/08/2017.
 //  Copyright © 2017 Alex Lee. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import <unordered_map>
 #import <string>
-#import <UIKit/UIKit.h>
-#import "ALSQLClause.h"
-#import "ALDBTypeDefs.h"
+#import "ALSQLExpr.h"
+#import "ALDBColumn.h"
 
-class ALDBColumn;
-class ALSQLValue;
-class ALSQLExpr : public ALSQLClause {
+class ALDBColumnProperty : public ALDBColumn {
 public:
-    ALSQLExpr();
-    ALSQLExpr(const ALDBColumn &column);
-    ALSQLExpr(const ALSQLValue &value);
-    ALSQLExpr(const ALSQLExpr &expr);
-
-    ALSQLExpr(const char *value);
-    ALSQLExpr(const std::string &value);
-    ALSQLExpr(const std::nullptr_t &);
-    ALSQLExpr(id value);
-
-    template <typename T>
-    ALSQLExpr(const T &value,
-              typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type * = nullptr)
-        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
-
-    template <typename T>
-    ALSQLExpr(const T &value,
-              typename std::enable_if<std::is_same<T, NSRange>::value           ||
-                                      std::is_same<T, CGSize>::value            ||
-                                      std::is_same<T, CGPoint>::value           ||
-                                      std::is_same<T, CGRect>::value            ||
-                                      std::is_same<T, UIEdgeInsets>::value      ||
-                                      std::is_same<T, UIOffset>::value          ||
-                                      std::is_same<T, CGVector>::value          ||
-                                      std::is_same<T, CGAffineTransform>::value ||
-                                      std::is_same<T, CATransform3D>::value>::type * = nullptr)
-        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
-
-    //    operator ALSQLClause() const;
-    //    const ALSQLClause &SQLClause() const;
-
-    //    operator bool() const;
-    operator std::list<const ALSQLExpr>() const;
+    ALDBColumnProperty(const std::string &columnName, id/* _ALPropertyColumnBindings */ propertyColumnBidings);
     
-    static const ALDBOptrPrecedence s_default_precedence;
-    static const ALSQLExpr s_null_expr;
+//    ALDBColumnProperty distinct() const;
+    ALDBColumnProperty in_table(NSString *tableName) const;
     
-#pragma mark - sql opetations
-    //@link: http://www.sqlite.org/lang_expr.html
+//    ALDBColumnProperty desc() const;
+//    ALDBColumnProperty asc() const;
+    const std::string name() const;
+    id column_binding() const;
+    Class binding_class() const;
+
+#pragma mark - operations
     // unary
     ALSQLExpr operator!() const;
     ALSQLExpr operator+() const;
@@ -86,10 +55,10 @@ public:
     //    ALSQLExpr in(const SelectStatement &stmt) const;
     ALSQLExpr not_in(const std::list<const ALSQLExpr> &expr_list) const;
     ALSQLExpr not_in(const std::string &table_name) const;
-//    ALSQLExpr not_in(const char *table_name) const;
+    //    ALSQLExpr not_in(const char *table_name) const;
     
-    ALSQLExpr like(const ALSQLExpr &expr, const ALSQLExpr &escape = s_null_expr) const;
-    ALSQLExpr not_like(const ALSQLExpr &expr, const ALSQLExpr &escape = s_null_expr) const;
+    ALSQLExpr like(const ALSQLExpr &expr, const ALSQLExpr &escape = ALSQLExpr::s_null_expr) const;
+    ALSQLExpr not_like(const ALSQLExpr &expr, const ALSQLExpr &escape = ALSQLExpr::s_null_expr) const;
     
     ALSQLExpr is_null() const;
     ALSQLExpr not_null() const;
@@ -103,18 +72,10 @@ public:
     
     // case (*this) when b then c else d end
     ALSQLExpr case_when(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
-                   const ALSQLExpr &else_value = s_null_expr);
-    // case when a then b else c end
-    static ALSQLExpr case_clause(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
-                                 const ALSQLExpr &else_value = s_null_expr);
-    
+                        const ALSQLExpr &else_value = ALSQLExpr::s_null_expr);
     
 #pragma mark - sql functions
     //@link: http://www.sqlite.org/lang_corefunc.html
-    
-    static ALSQLExpr function(const std::string &fun_name,
-                              const std::list<const ALSQLExpr> &args,
-                              bool distinct = false);
     
     ALSQLExpr function(const std::string &name, bool distinct = false);
     ALSQLExpr concat(const ALSQLExpr &expr) const; // "abc"||"def"
@@ -142,21 +103,10 @@ public:
     ALSQLExpr sum(bool distinct = false) const;
     ALSQLExpr total(bool distinct = false) const;
     
-#pragma mark -
 protected:
-    static const std::unordered_map<std::string, int> &operator_precedence_map();
-    void operate_with(const ALSQLExpr &other,
-                      const std::string &optr,
-                      ALDBOptrPrecedence optr_precedence = s_default_precedence);
-    void enclode_with_brackets();
-    
-    static ALDBOptrPrecedence operator_precedence(const std::string &optr);
+    ALDBColumnProperty(const ALDBColumn &column,
+                       id /* _ALPropertyColumnBindings */ propertyColumnBidings);
     
 private:
-    
-//    ALSQLClause _clause;
-    ALDBOptrPrecedence _precedence;
-    
-    friend class ALSQLClause;
+    id _binding;
 };
-

@@ -13,8 +13,12 @@ const ALDBColumn ALDBColumn::s_any   = ALDBColumn("*");
 
 ALDBColumn::ALDBColumn(const std::string &name) : _name(name) {}
 
+ALDBColumn ALDBColumn::in_table(const std::string &table) const {
+    return ALDBColumn(table + "." + _name);
+}
+
 ALDBColumn::operator std::string() const { return _name; }
-std::string ALDBColumn::to_string() const { return _name; }
+const std::string ALDBColumn::to_string() const { return _name; }
 
 bool ALDBColumn::operator==(const ALDBColumn &column) const {
     return _name == column._name;

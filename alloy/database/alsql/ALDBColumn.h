@@ -16,8 +16,10 @@ public:
     
     ALDBColumn(const std::string &name);
     
+    ALDBColumn in_table(const std::string &name) const;
+    
     operator std::string() const;
-    std::string to_string() const;
+    const std::string to_string() const;
     bool operator==(const ALDBColumn &column) const;
     
 protected:

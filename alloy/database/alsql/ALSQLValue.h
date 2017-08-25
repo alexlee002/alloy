@@ -66,7 +66,7 @@ public:
         }
     }
 
-    ALSQLValue operator=(const ALSQLValue &o);
+    ALSQLValue &operator=(const ALSQLValue &o);
     bool operator==(const ALSQLValue &o) const;
     operator aldb::SQLValue() const;
     operator std::list<const aldb::SQLValue>();

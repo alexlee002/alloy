@@ -27,7 +27,7 @@
     @package
     _ALModelMeta *_modelMeta;
     
-    NSDictionary<NSString *, _ALPropertyColumnBindings *> *_propertyColumnMapper;
+    NSDictionary<NSString */*columnName*/, _ALPropertyColumnBindings *> *_columnMapper;
     
 //    NSArray<_ALPropertyColumnBindings *> *_allPropertyBindings;
     NSArray<NSString *> *_allPrimaryKeys; // property name of primary keys
