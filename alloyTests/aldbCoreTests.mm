@@ -80,18 +80,43 @@ static NSString *kPath = nil;
         {
             NSString *sql = @"INSERT INTO test_tbl (d_val, txt_val, blob_val, dt_val) VALUES (?, ?, ?, ?)";
             [database cacheStatementForSQL:sql];
-            [self measureBlock:^{
-//            [database inTransaction:^BOOL{
-                for (int i = 0; i < total; ++i) {
+            
+            [NSThread detachNewThreadWithBlock:^{
+                NSLog(@"Thread: %@", [NSThread currentThread]);
+                for (int i = 0; i < 10; ++i) {
                     CFTimeInterval t = CFAbsoluteTimeGetCurrent();
                     NSString *txt    = [NSString stringWithFormat:@"time interval: %f", t];
                     NSData *bytes    = [txt dataUsingEncoding:NSUTF8StringEncoding];
                     [database exec:sql args:{t, txt, bytes, [NSDate date]}];
                 }
-//                return YES;
-//            } eventHandler:nil];
+                
+                [NSThread detachNewThreadWithBlock:^{
+                    NSLog(@"Thread: %@", [NSThread currentThread]);
+                    for (int i = 0; i < 10; ++i) {
+                        CFTimeInterval t = CFAbsoluteTimeGetCurrent();
+                        NSString *txt    = [NSString stringWithFormat:@"time interval: %f", t];
+                        NSData *bytes    = [txt dataUsingEncoding:NSUTF8StringEncoding];
+                        [database exec:sql args:{t, txt, bytes, [NSDate date]}];
+                    }
+                }];
+            }];
+
+            [[NSRunLoop currentRunLoop]runUntilDate:[NSDate dateWithTimeIntervalSinceNow:5]];
+        
             
-             }];
+            
+//            [self measureBlock:^{
+////            [database inTransaction:^BOOL{
+//                for (int i = 0; i < total; ++i) {
+//                    CFTimeInterval t = CFAbsoluteTimeGetCurrent();
+//                    NSString *txt    = [NSString stringWithFormat:@"time interval: %f", t];
+//                    NSData *bytes    = [txt dataUsingEncoding:NSUTF8StringEncoding];
+//                    [database exec:sql args:{t, txt, bytes, [NSDate date]}];
+//                }
+////                return YES;
+////            } eventHandler:nil];
+//            
+//             }];
         }
 
 //        __block NSInteger count = 0;

@@ -82,7 +82,7 @@
  *  Custom transform property value from resultSet
  *  @see "+modelsWithCondition:"
  */
-//- (void)customTransform{PropertyName}FromRecord:(in FMResultSet *)rs columnIndex:(int)index;
+//- (void)customTransform{PropertyName}FromResultSet:(in FMResultSet *)rs atIndex:(int)index;
 
 /**
  * key: the property name

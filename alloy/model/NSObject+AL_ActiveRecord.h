@@ -10,23 +10,31 @@
 #import "ALUtilitiesHeader.h"
 
 #ifdef __cplusplus
-    #import "ALDBColumnDefine.h"
-    #import "ALDBTypeDefs.h"
+#import "ALDBColumnDefine.h"
+#import "ALDBTypeDefs.h"
+#import "ALDBColumnProperty.h"
+#import "ALSQLClause.h"
+#import "ALSQLValue.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
+
+#define AS_COL(cls, propertyName)   [cls al_columnPropertiesForProperty:al_keypathForClass(cls, propertyName)]
 
 typedef NSInteger ALDBRowIdType;
 
 @protocol ALActiveRecord;
 @interface NSObject (AL_ActiveRecord)
 
-@property(PROP_ATOMIC_DEF) ALDBRowIdType al_rowid;
+@property(PROP_ATOMIC_DEF, setter=al_setRowid:) ALDBRowIdType al_rowid;
 
 #pragma mark - cpp methods
 #ifdef __cplusplus
-//{propertyName: ColumnDefine}
-+ (const std::unordered_map<std::string, std::shared_ptr<ALDBColumnDefine>>)al_modelPropertyColumnsMap;
+
++ (const ALDBColumnProperty &)al_rowidColumn;
+// not include rowid
++ (const std::list<const ALDBColumnProperty> &)al_allColumnProperties;
++ (const ALDBColumnProperty)al_columnPropertiesForProperty:(NSString *)propertyName;
 
 + (nullable NSArray<id<ALActiveRecord>> *)al_modelsWithCondition:(const ALDBCondition &)condition;
 + (nullable NSEnumerator<id<ALActiveRecord>> *)al_modelEnumeratorWithCondition:(const ALDBCondition &)condition;
@@ -36,17 +44,21 @@ typedef NSInteger ALDBRowIdType;
 + (nullable NSString *)al_columnNameForPropertyNamed:(NSString *)propertyName;
 + (nullable id<ALActiveRecord>)al_modelWithRowId:(ALDBRowIdType)rowId;
 
-- (BOOL)saveOrReplace:(BOOL)replaceOnConflict;
-- (BOOL)updateOrReplace:(BOOL)replaceOnConflict;
-- (BOOL)updateProperties:(NSArray<NSString *> *)propertiesNames replace:(BOOL)replaceOnConflict;
+//+ ()
 
-- (BOOL)deleteModel;
+- (BOOL)al_saveOrReplace:(BOOL)replaceOnConflict;
+- (BOOL)al_updateOrReplace:(BOOL)replaceOnConflict;
+- (BOOL)al_updateProperties:(NSArray<NSString *> *)propertiesNames replace:(BOOL)replaceOnConflict;
 
-+ (BOOL)saveModels:(NSArray<id<ALActiveRecord>> *)models replace:(BOOL)replaceOnConflict;
-+ (BOOL)updateProperties:(NSDictionary<NSString *, id> *)contentValues withCodition:(const ALDBCondition &)condition replace:(BOOL)replaceOnCoflict;
-+ (BOOL)updateModels:(NSArray<id<ALActiveRecord>> *)models replace:(BOOL)replaceOnConflict;
+- (BOOL)al_deleteModel;
 
-+ (BOOL)deleteModelsWithCondition:(const ALDBCondition &)condition;
++ (BOOL)al_saveModels:(NSArray<id<ALActiveRecord>> *)models replace:(BOOL)replaceOnConflict;
++ (BOOL)al_updateProperties:(NSDictionary<NSString * /* propertyName */, id> *)propertyValues
+              withCondition:(const ALDBCondition &)condition
+                    replace:(BOOL)replaceOnCoflict;
++ (BOOL)al_updateModels:(NSArray<id<ALActiveRecord>> *)models replace:(BOOL)replaceOnConflict;
+
++ (BOOL)al_deleteModelsWithCondition:(const ALDBCondition &)condition;
 @end
 
 NS_ASSUME_NONNULL_END

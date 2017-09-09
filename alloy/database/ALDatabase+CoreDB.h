@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable ALDBResultSet *)query:(NSString *)sql args:(const std::list<const ALSQLValue>)args;
 - (nullable ALDBResultSet *)query:(NSString *)sql arguments:(NSArray<id> *)args;
 
-- (BOOL)inTransaction:(BOOL (^)(void))transactionBlock
+- (BOOL)inTransaction:(void (^)(BOOL *rollback))transactionBlock
          eventHandler:(void (^_Nullable)(ALDBTransactionEvent event))eventHandler;
 
 //- (BOOL)beginTransaction:(ALDBTransactionMode)mode;

@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)where:(const ALDBCondition &)conditions;
 - (instancetype)groupBy:(const std::list<const ALSQLExpr> &)exprList;
 - (instancetype)having:(const ALSQLExpr &)having;
+- (instancetype)orderBy:(const std::list<const ALSQLExpr> &)exprlist;
 - (instancetype)limit:(const ALSQLExpr &)limit;
 - (instancetype)offset:(const ALSQLExpr &)offset;
 

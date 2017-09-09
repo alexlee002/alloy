@@ -15,28 +15,17 @@
 #import "ALActiveRecord.h"
 #import "ALUtilitiesHeader.h"
 #import <objc/message.h>
-extern "C" {
-    #import "NSString+ALHelper.h"
-}
+#import "NSString+ALHelper.h"
+#import "__ALPropertyColumnBindings+private.h"
+#import "NSObject+AL_ActiveRecord.h"
+#import <BlocksKit.h>
+#import "BlocksKitExtension.h"
 
-@implementation _ALPropertyColumnBindings
-
-+ (instancetype)bindingWithPropertyMeta:(_ALModelPropertyMeta *)meta column:(NSString *)columnName {
-    _ALPropertyColumnBindings *bindings = [[self alloc] init];
-
-    bindings->_propertyMeta = meta;
-    bindings->_columnName   = [columnName copy];
-    ALDBColumnType colType  = [ALDBTypeCoding columnTypeForObjCType:meta->_info.typeEncoding.UTF8String];
-    bindings->_column =
-        std::shared_ptr<ALDBColumnDefine>(new ALDBColumnDefine(ALDBColumn(columnName.UTF8String), colType));
-    
-    return bindings;
-}
-
-@end
+static NSString *const kRowId = @"rowid";
 
 @implementation _ALModelTableBindings {
     NSMutableDictionary<NSString */*propertyName*/, NSString */*columnName*/> *_propertyColumnNameMapper; //lazy fill
+    dispatch_semaphore_t _dsem;
 }
 
 + (instancetype)bindingsWithClass:(Class)cls {
@@ -78,23 +67,23 @@ extern "C" {
     
     self = [super init];
     _modelMeta = meta;
+    _dsem = dispatch_semaphore_create(1);
     
     [self loadPropertyColumnBindings];
+    [self cacheColumnProperties];
     
     return self;
 }
 
 - (void)loadPropertyColumnBindings {
-    //    #define PropertyColumnMap(p) [self p]
-    //    NSArray *a = @[PropertyColumnMap(column1), PropertyColumnMap(column2)];
-
-    NSSet *blacklist =
-        [_ALModelHelper model:_modelMeta->_classInfo.cls propertySetWithSelector:@selector(columnPropertyBlacklist)];
-    NSSet *whitelist =
-        [_ALModelHelper model:_modelMeta->_classInfo.cls propertySetWithSelector:@selector(columnPropertyWhitelist)];
+    Class modelCls = _modelMeta->_classInfo.cls;
+    NSSet *blacklist = [_ALModelHelper model:modelCls propertySetWithSelector:@selector(columnPropertyBlacklist)];
+    NSSet *whitelist = [_ALModelHelper model:modelCls propertySetWithSelector:@selector(columnPropertyWhitelist)];
 
     // Create all property metas.
-    NSMutableDictionary<NSString *, _ALPropertyColumnBindings *> *columnBindings = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSString * /*columnName*/, ALPropertyColumnBindings *> *columnsDict =
+        [NSMutableDictionary dictionary];
+
     for (_ALModelPropertyMeta *propmeta in _modelMeta->_allPropertyMetasDict.allValues) {
         NSString *propname = propmeta->_name;
         if ([blacklist containsObject:propname]) {
@@ -105,32 +94,63 @@ extern "C" {
         }
 
         NSString *colname = [self columnNameForProperty:propname];
-        _ALPropertyColumnBindings *binding =
-            [_ALPropertyColumnBindings bindingWithPropertyMeta:propmeta column:colname];
+        if (columnsDict[colname]) {
+            continue;
+        }
+        
+        ALPropertyColumnBindings *binding =
+            [ALPropertyColumnBindings bindingWithModel:_modelMeta->_classInfo.cls propertyMeta:propmeta column:colname];
         if (!binding) {
             continue;
         }
-        if (columnBindings[colname]) {
-            continue;
+
+        NSString *tmpPN = [propname al_stringbyUppercaseFirst];
+        NSString *selName = [@"customColumnValueTransformFrom" stringByAppendingString:tmpPN];
+        NSDictionary *methods = _modelMeta->_classInfo.methodInfos;
+        if (methods[selName]) {
+            binding->_customGetter = NSSelectorFromString(selName);
         }
-        columnBindings[colname] = binding;
+        
+        selName = [NSString stringWithFormat:@"customTransform%@FromResultSet:atIndex:", tmpPN];
+        if (methods[selName]) {
+            binding->_customSetter = NSSelectorFromString(selName);
+        }
+        
+        columnsDict[colname] = binding;
+//        [allColumns addObject:binding];
     }
 
-    if (columnBindings.count > 0) {
-        _columnMapper = columnBindings;
+    [self loadTableConstraintsWithColumns:columnsDict.allValues];
+
+    if (_allPrimaryKeys.count == 0 && !al_safeInvokeSelector(BOOL, modelCls, @selector(withoutRowId))) {
+        // add rowid column
+        NSString *rowidColName = @(ALDBColumn::s_rowid.to_string().c_str());
+        ALPropertyColumnBindings *rowidBinding = [ALPropertyColumnBindings
+            bindingWithModel:_modelMeta->_classInfo.cls
+                propertyMeta:_modelMeta->_allPropertyMetasDict[al_keypathForClass(NSObject, al_rowid)]
+                      column:rowidColName];
+        rowidBinding->_columnDef->as_primary(ALDBOrderDefault, ALDBConflictPolicyDefault, true);
+
+        columnsDict[rowidColName] = rowidBinding;
+        _allPrimaryKeys           = @[ al_keypathForClass(NSObject, al_rowid) ];
+    }
+
+    if (columnsDict.count > 0) {
+        _columnsDict = [columnsDict copy];
+        _allColumns = [_columnsDict.allValues sortedArrayUsingComparator:[self columnOrderComparator]];
     }
 }
 
-- (void)loadTableConstraints {
+- (void)loadTableConstraintsWithColumns:(NSArray<ALPropertyColumnBindings *> *)columns {
     NSString *pk = nil;
     NSMutableArray *uk = [NSMutableArray array];
-    for (_ALPropertyColumnBindings *columnBinding in _columnMapper.allValues) {
-        auto columnDef = columnBinding->_column;
-        if (columnDef->is_primary()) {
+    for (ALPropertyColumnBindings *columnBinding in columns) {
+        auto columnDef = [columnBinding columnDefine];
+        if (columnDef.is_primary()) {
             ALAssert(pk == nil, @"Duplicated primary key!");
-            pk = @(std::string(columnDef->column()).c_str());
-        } else if (columnDef->is_unique()) {
-            [uk addObject:@(std::string(columnDef->column()).c_str())];
+            pk = [columnBinding propertyName];
+        } else if (columnDef.is_unique()) {
+            [uk addObject:[columnBinding propertyName]];
         }
     }
     Class cls = _modelMeta->_classInfo.cls;
@@ -162,22 +182,67 @@ extern "C" {
 }
 
 - (NSString *)columnNameForProperty:(NSString *)propertyName {
+    dispatch_semaphore_wait(_dsem, DISPATCH_TIME_FOREVER);
+    if (_propertyColumnNameMapper == nil) {
+        _propertyColumnNameMapper = [@{ al_keypathForClass(NSObject, al_rowid) : kRowId } mutableCopy];
+    }
+
     NSString *colname = _propertyColumnNameMapper[propertyName];
     if (colname == nil) {
         Class cls = _modelMeta->_classInfo.cls;
-        if ([(id)cls respondsToSelector:@selector(modelCustomColumnNameMapper)]) {
-            NSDictionary *customMapper = [(id<ALActiveRecord>)cls modelCustomColumnNameMapper];
-            NSString *tmpColName = customMapper[propertyName];
+        if ([(id) cls respondsToSelector:@selector(modelCustomColumnNameMapper)]) {
+            NSDictionary *customMapper = [(id<ALActiveRecord>) cls modelCustomColumnNameMapper];
+            NSString *tmpColName       = customMapper[propertyName];
             if (!al_isEmptyString(tmpColName)) {
                 _propertyColumnNameMapper[propertyName] = tmpColName;
                 colname = tmpColName;
             }
         }
-        
+
         colname = [propertyName al_stringByConvertingCamelCaseToUnderscore];
         _propertyColumnNameMapper[propertyName] = colname;
     }
+    dispatch_semaphore_signal(_dsem);
     return colname;
+}
+
+- (NSComparator)columnOrderComparator {
+    Class cls = _modelMeta->_classInfo.cls;
+    NSArray *list = al_safeInvokeSelector(NSArray *, cls, @selector(columnPropertyWhitelist)) ?: [[@[
+        al_wrapNil(_allPrimaryKeys), al_wrapNil([_allUniqueKeys al_flatten]), al_wrapNil([_allIndexeKeys al_flatten])
+    ] bk_reject:^BOOL(id obj) {
+        return obj == NSNull.null;
+    }] al_flatten];
+    
+    NSString *rowidPN = al_keypathForClass(NSObject, al_rowid);
+    return ^NSComparisonResult(ALPropertyColumnBindings *col1, ALPropertyColumnBindings *col2) {
+        NSString *pn1 = [col1 propertyName];
+        NSString *pn2 = [col2 propertyName];
+        if ([pn1 isEqualToString:rowidPN]) {
+            return NSOrderedAscending;
+        } else if ([pn2 isEqualToString:rowidPN]) {
+            return NSOrderedDescending;
+        }
+        
+        NSInteger idx1 = [list indexOfObject:pn1];
+        NSInteger idx2 = [list indexOfObject:pn2];
+        
+        if (idx1 != NSNotFound && idx2 != NSNotFound) {
+            return [@(idx1) compare:@(idx2)];
+        } else if (idx1 != NSNotFound) {
+            return NSOrderedAscending;
+        } else if (idx2 != NSNotFound) {
+            return NSOrderedDescending;
+        } else {
+            return NSOrderedSame;
+        }
+    };
+}
+
+- (void)cacheColumnProperties {
+    [_allColumns bk_each:^(ALPropertyColumnBindings *binding) {
+        _allColumnProperties.push_back(ALDBColumnProperty([binding columnName], binding));
+    }];
 }
 
 @end

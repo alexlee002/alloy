@@ -33,8 +33,16 @@ void Catchable::raise_error(const std::shared_ptr<Error> error) {
     _error = error;
 }
 
-void Catchable::set_sqlite_error(sqlite3 *h) {
-    _error = std::shared_ptr<Error>(new Error(aldb::SqliteErrorDomain, sqlite3_errcode(h), sqlite3_errmsg(h)));
+void Catchable::set_sqlite_error(sqlite3 *h, const char *sql) {
+    std::string errmsg;
+    if (sql) {
+        errmsg.append("sql: \""+ std::string(sql) +"\"; ");
+    }
+    const char *sqlite_err = sqlite3_errmsg(h);
+    if (sqlite_err) {
+        errmsg.append(sqlite_err);
+    }
+    _error = std::shared_ptr<Error>(new Error(aldb::SqliteErrorDomain, sqlite3_errcode(h), errmsg.c_str()));
 }
 
 void Catchable::set_aldb_error(int code, const char *message) {

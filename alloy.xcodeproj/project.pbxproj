@@ -11,11 +11,39 @@
 		4300188B1F4DBEE00056E4DE /* ALDatabase+Statement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018891F4DBEE00056E4DE /* ALDatabase+Statement.mm */; };
 		4300188E1F4DC3350056E4DE /* __ALResultSetEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4300188C1F4DC3350056E4DE /* __ALResultSetEnumerator.h */; };
 		4300188F1F4DC3350056E4DE /* __ALResultSetEnumerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4300188D1F4DC3350056E4DE /* __ALResultSetEnumerator.mm */; };
+		430018A41F4FF2EF0056E4DE /* ALSQLUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018A21F4FF2EF0056E4DE /* ALSQLUpdate.h */; };
+		430018A51F4FF2EF0056E4DE /* ALSQLUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018A31F4FF2EF0056E4DE /* ALSQLUpdate.mm */; };
+		430018AF1F5015BF0056E4DE /* ALARExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018AE1F5015BF0056E4DE /* ALARExecutor.h */; };
+		430018B21F5054610056E4DE /* ALSQLInsert.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018B01F5054610056E4DE /* ALSQLInsert.h */; };
+		430018B31F5054610056E4DE /* ALSQLInsert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018B11F5054610056E4DE /* ALSQLInsert.mm */; };
+		430018B61F51B4B00056E4DE /* ALSQLDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018B41F51B4B00056E4DE /* ALSQLDelete.h */; };
+		430018B71F51B4B00056E4DE /* ALSQLDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018B51F51B4B00056E4DE /* ALSQLDelete.mm */; };
+		430018BA1F51C75D0056E4DE /* ALSQLCreateTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018B81F51C75C0056E4DE /* ALSQLCreateTable.h */; };
+		430018BB1F51C75D0056E4DE /* ALSQLCreateTable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018B91F51C75C0056E4DE /* ALSQLCreateTable.mm */; };
+		430018BE1F526C820056E4DE /* ALDBTableConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018BC1F526C820056E4DE /* ALDBTableConstraint.h */; };
+		430018BF1F526C820056E4DE /* ALDBTableConstraint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018BD1F526C820056E4DE /* ALDBTableConstraint.mm */; };
+		430018C21F526D9F0056E4DE /* ALDBIndexedColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = 430018C01F526D9F0056E4DE /* ALDBIndexedColumn.h */; };
+		430018C31F526D9F0056E4DE /* ALDBIndexedColumn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 430018C11F526D9F0056E4DE /* ALDBIndexedColumn.mm */; };
 		4304F3ED1F46BB8000AA45DE /* aldbCoreTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */; };
 		4304F3EF1F46BBC500AA45DE /* sqlExprTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */; };
 		4306CEC71F29CEBE006C73B9 /* ALDBMigrationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */; };
 		4306CEC81F29CEBE006C73B9 /* ALDBMigrationHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */; };
+		431B62761F541DA000FE763A /* ALSQLAlterTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62741F541DA000FE763A /* ALSQLAlterTable.h */; };
+		431B62771F541DA000FE763A /* ALSQLAlterTable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B62751F541DA000FE763A /* ALSQLAlterTable.mm */; };
+		431B627A1F542B6200FE763A /* ALSQLCreateIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62781F542B6200FE763A /* ALSQLCreateIndex.h */; };
+		431B627B1F542B6200FE763A /* ALSQLCreateIndex.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B62791F542B6200FE763A /* ALSQLCreateIndex.mm */; };
+		431B627E1F543FFB00FE763A /* ALSQLDropTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B627C1F543FFB00FE763A /* ALSQLDropTable.h */; };
+		431B627F1F543FFB00FE763A /* ALSQLDropTable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B627D1F543FFB00FE763A /* ALSQLDropTable.mm */; };
+		431B62821F5440DB00FE763A /* ALSQLDropIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62801F5440DB00FE763A /* ALSQLDropIndex.h */; };
+		431B62831F5440DB00FE763A /* ALSQLDropIndex.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B62811F5440DB00FE763A /* ALSQLDropIndex.mm */; };
+		431B62861F54426C00FE763A /* ALSQLPragma.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62841F54426C00FE763A /* ALSQLPragma.h */; };
+		431B62871F54426C00FE763A /* ALSQLPragma.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B62851F54426C00FE763A /* ALSQLPragma.mm */; };
+		431B628A1F54697300FE763A /* ALPropertyColumnBindings.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62881F54697300FE763A /* ALPropertyColumnBindings.h */; };
+		431B628B1F54697300FE763A /* ALPropertyColumnBindings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B62891F54697300FE763A /* ALPropertyColumnBindings.mm */; };
+		431B628E1F553FBA00FE763A /* __ALPropertyColumnBindings+private.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B628C1F553FBA00FE763A /* __ALPropertyColumnBindings+private.h */; };
 		431F68D01F20B05D009FF268 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 431F68CF1F20B05D009FF268 /* libsqlite3.tbd */; };
+		432CE1721F5EBFB300F81A16 /* ActiveRecordTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 432CE1711F5EBFB300F81A16 /* ActiveRecordTests.mm */; };
+		432CE18A1F5FF69A00F81A16 /* __NSObject+AL_ARInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 432CE1891F5FF69A00F81A16 /* __NSObject+AL_ARInternal.m */; };
 		434252771F28F64900BCE32E /* ALDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 434252751F28F64900BCE32E /* ALDatabase.h */; };
 		434252781F28F64900BCE32E /* ALDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 434252761F28F64900BCE32E /* ALDatabase.mm */; };
 		4342527A1F298EA200BCE32E /* ALDBConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 434252791F298EA200BCE32E /* ALDBConnectionDelegate.h */; };
@@ -176,11 +204,39 @@
 		430018891F4DBEE00056E4DE /* ALDatabase+Statement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDatabase+Statement.mm"; sourceTree = "<group>"; };
 		4300188C1F4DC3350056E4DE /* __ALResultSetEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = __ALResultSetEnumerator.h; sourceTree = "<group>"; };
 		4300188D1F4DC3350056E4DE /* __ALResultSetEnumerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = __ALResultSetEnumerator.mm; sourceTree = "<group>"; };
+		430018A21F4FF2EF0056E4DE /* ALSQLUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLUpdate.h; sourceTree = "<group>"; };
+		430018A31F4FF2EF0056E4DE /* ALSQLUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLUpdate.mm; sourceTree = "<group>"; };
+		430018AE1F5015BF0056E4DE /* ALARExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALARExecutor.h; sourceTree = "<group>"; };
+		430018B01F5054610056E4DE /* ALSQLInsert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLInsert.h; sourceTree = "<group>"; };
+		430018B11F5054610056E4DE /* ALSQLInsert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLInsert.mm; sourceTree = "<group>"; };
+		430018B41F51B4B00056E4DE /* ALSQLDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLDelete.h; sourceTree = "<group>"; };
+		430018B51F51B4B00056E4DE /* ALSQLDelete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLDelete.mm; sourceTree = "<group>"; };
+		430018B81F51C75C0056E4DE /* ALSQLCreateTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLCreateTable.h; sourceTree = "<group>"; };
+		430018B91F51C75C0056E4DE /* ALSQLCreateTable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLCreateTable.mm; sourceTree = "<group>"; };
+		430018BC1F526C820056E4DE /* ALDBTableConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBTableConstraint.h; sourceTree = "<group>"; };
+		430018BD1F526C820056E4DE /* ALDBTableConstraint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBTableConstraint.mm; sourceTree = "<group>"; };
+		430018C01F526D9F0056E4DE /* ALDBIndexedColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBIndexedColumn.h; sourceTree = "<group>"; };
+		430018C11F526D9F0056E4DE /* ALDBIndexedColumn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBIndexedColumn.mm; sourceTree = "<group>"; };
 		4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = aldbCoreTests.mm; sourceTree = "<group>"; };
 		4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sqlExprTests.mm; sourceTree = "<group>"; };
 		4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBMigrationHelper.h; sourceTree = "<group>"; };
 		4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBMigrationHelper.mm; sourceTree = "<group>"; };
+		431B62741F541DA000FE763A /* ALSQLAlterTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLAlterTable.h; sourceTree = "<group>"; };
+		431B62751F541DA000FE763A /* ALSQLAlterTable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLAlterTable.mm; sourceTree = "<group>"; };
+		431B62781F542B6200FE763A /* ALSQLCreateIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLCreateIndex.h; sourceTree = "<group>"; };
+		431B62791F542B6200FE763A /* ALSQLCreateIndex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLCreateIndex.mm; sourceTree = "<group>"; };
+		431B627C1F543FFB00FE763A /* ALSQLDropTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLDropTable.h; sourceTree = "<group>"; };
+		431B627D1F543FFB00FE763A /* ALSQLDropTable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLDropTable.mm; sourceTree = "<group>"; };
+		431B62801F5440DB00FE763A /* ALSQLDropIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLDropIndex.h; sourceTree = "<group>"; };
+		431B62811F5440DB00FE763A /* ALSQLDropIndex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLDropIndex.mm; sourceTree = "<group>"; };
+		431B62841F54426C00FE763A /* ALSQLPragma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLPragma.h; sourceTree = "<group>"; };
+		431B62851F54426C00FE763A /* ALSQLPragma.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLPragma.mm; sourceTree = "<group>"; };
+		431B62881F54697300FE763A /* ALPropertyColumnBindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALPropertyColumnBindings.h; sourceTree = "<group>"; };
+		431B62891F54697300FE763A /* ALPropertyColumnBindings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALPropertyColumnBindings.mm; sourceTree = "<group>"; };
+		431B628C1F553FBA00FE763A /* __ALPropertyColumnBindings+private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "__ALPropertyColumnBindings+private.h"; sourceTree = "<group>"; };
 		431F68CF1F20B05D009FF268 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		432CE1711F5EBFB300F81A16 /* ActiveRecordTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActiveRecordTests.mm; sourceTree = "<group>"; };
+		432CE1891F5FF69A00F81A16 /* __NSObject+AL_ARInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "__NSObject+AL_ARInternal.m"; sourceTree = "<group>"; };
 		434252751F28F64900BCE32E /* ALDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatabase.h; sourceTree = "<group>"; };
 		434252761F28F64900BCE32E /* ALDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDatabase.mm; sourceTree = "<group>"; };
 		434252791F298EA200BCE32E /* ALDBConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBConnectionDelegate.h; sourceTree = "<group>"; };
@@ -368,27 +424,49 @@
 			isa = PBXGroup;
 			children = (
 				438143BA1F3587FA004F6AFD /* ALDBTypeDefs.h */,
+				438143B81F35853C004F6AFD /* ALDBValueCoding.h */,
+				438143B41F3580EF004F6AFD /* ALDBTypeCoding.h */,
+				438143B51F3580EF004F6AFD /* ALDBTypeCoding.mm */,
 				43544A4B1F323C4E001486B5 /* ALSQLValue.h */,
 				43544A4D1F323C4E001486B5 /* ALSQLValue.mm */,
+				43B45F9F1F433BFA005A7EC8 /* ALSQLClause.h */,
+				43B45FA01F433BFA005A7EC8 /* ALSQLClause.mm */,
 				43544A471F323B6B001486B5 /* ALSQLExpr.h */,
 				43544A481F323B6B001486B5 /* ALSQLExpr.mm */,
 				43544A511F323CE8001486B5 /* ALDBColumn.h */,
 				43544A521F323CE8001486B5 /* ALDBColumn.mm */,
-				438143B81F35853C004F6AFD /* ALDBValueCoding.h */,
-				438143B41F3580EF004F6AFD /* ALDBTypeCoding.h */,
-				438143B51F3580EF004F6AFD /* ALDBTypeCoding.mm */,
-				43B45F9F1F433BFA005A7EC8 /* ALSQLClause.h */,
-				43B45FA01F433BFA005A7EC8 /* ALSQLClause.mm */,
+				430018C01F526D9F0056E4DE /* ALDBIndexedColumn.h */,
+				430018C11F526D9F0056E4DE /* ALDBIndexedColumn.mm */,
 				43B45FA31F436535005A7EC8 /* ALDBColumnDefine.h */,
 				43B45FA41F436535005A7EC8 /* ALDBColumnDefine.mm */,
+				43DA43F71F49DFA7002A4972 /* ALDBResultColumn.h */,
+				43DA43F81F49DFA7002A4972 /* ALDBResultColumn.mm */,
+				430018BC1F526C820056E4DE /* ALDBTableConstraint.h */,
+				430018BD1F526C820056E4DE /* ALDBTableConstraint.mm */,
+				43DA43FB1F4AB2C1002A4972 /* ALDBColumnProperty.h */,
+				43DA43FC1F4AB2C1002A4972 /* ALDBColumnProperty.mm */,
 				43DA43EF1F47F96A002A4972 /* ALSQLStatement.h */,
 				43DA43F01F47F96A002A4972 /* ALSQLStatement.mm */,
 				43DA43F31F480451002A4972 /* ALSQLSelect.h */,
 				43DA43F41F480451002A4972 /* ALSQLSelect.mm */,
-				43DA43F71F49DFA7002A4972 /* ALDBResultColumn.h */,
-				43DA43F81F49DFA7002A4972 /* ALDBResultColumn.mm */,
-				43DA43FB1F4AB2C1002A4972 /* ALDBColumnProperty.h */,
-				43DA43FC1F4AB2C1002A4972 /* ALDBColumnProperty.mm */,
+				430018A21F4FF2EF0056E4DE /* ALSQLUpdate.h */,
+				430018A31F4FF2EF0056E4DE /* ALSQLUpdate.mm */,
+				430018B01F5054610056E4DE /* ALSQLInsert.h */,
+				430018B11F5054610056E4DE /* ALSQLInsert.mm */,
+				430018B41F51B4B00056E4DE /* ALSQLDelete.h */,
+				430018B51F51B4B00056E4DE /* ALSQLDelete.mm */,
+				430018B81F51C75C0056E4DE /* ALSQLCreateTable.h */,
+				430018B91F51C75C0056E4DE /* ALSQLCreateTable.mm */,
+				431B62741F541DA000FE763A /* ALSQLAlterTable.h */,
+				431B62751F541DA000FE763A /* ALSQLAlterTable.mm */,
+				431B62781F542B6200FE763A /* ALSQLCreateIndex.h */,
+				431B62791F542B6200FE763A /* ALSQLCreateIndex.mm */,
+				431B627C1F543FFB00FE763A /* ALSQLDropTable.h */,
+				431B627D1F543FFB00FE763A /* ALSQLDropTable.mm */,
+				431B62801F5440DB00FE763A /* ALSQLDropIndex.h */,
+				431B62811F5440DB00FE763A /* ALSQLDropIndex.mm */,
+				431B62841F54426C00FE763A /* ALSQLPragma.h */,
+				431B62851F54426C00FE763A /* ALSQLPragma.mm */,
 			);
 			path = alsql;
 			sourceTree = "<group>";
@@ -486,6 +564,7 @@
 				436A50B31F17BE9B00B0D32E /* NSObject+ALModel.h */,
 				436A50B41F17BE9B00B0D32E /* NSObject+ALModel.m */,
 				436A50B51F17BE9B00B0D32E /* private */,
+				430018AE1F5015BF0056E4DE /* ALARExecutor.h */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -493,6 +572,7 @@
 		436A50B51F17BE9B00B0D32E /* private */ = {
 			isa = PBXGroup;
 			children = (
+				432CE1891F5FF69A00F81A16 /* __NSObject+AL_ARInternal.m */,
 				436A50B61F17BE9B00B0D32E /* __ALModelHelper.h */,
 				436A50B71F17BE9B00B0D32E /* __ALModelHelper.m */,
 				436A50B81F17BE9B00B0D32E /* __ALModelMeta+ActiveRecord.h */,
@@ -526,6 +606,9 @@
 				4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */,
 				43B45FB91F45C3A8005A7EC8 /* ALDBResultSet.h */,
 				43B45FBA1F45C3A8005A7EC8 /* ALDBResultSet.mm */,
+				431B62881F54697300FE763A /* ALPropertyColumnBindings.h */,
+				431B628C1F553FBA00FE763A /* __ALPropertyColumnBindings+private.h */,
+				431B62891F54697300FE763A /* ALPropertyColumnBindings.mm */,
 			);
 			path = database;
 			sourceTree = "<group>";
@@ -639,6 +722,7 @@
 				43C25DB51F1770A100C97ED8 /* Info.plist */,
 				4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */,
 				4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */,
+				432CE1711F5EBFB300F81A16 /* ActiveRecordTests.mm */,
 			);
 			path = alloyTests;
 			sourceTree = "<group>";
@@ -673,10 +757,13 @@
 				436A50CF1F17BE9B00B0D32E /* ALOrderedMap.h in Headers */,
 				436A50EC1F17BE9B00B0D32E /* HHTimer.h in Headers */,
 				436A50EA1F17BE9B00B0D32E /* NSString+ALHelper.h in Headers */,
+				431B627A1F542B6200FE763A /* ALSQLCreateIndex.h in Headers */,
 				436A50DE1F17BE9B00B0D32E /* ALURLHelper.h in Headers */,
 				43B45F9B1F433096005A7EC8 /* spin.hpp in Headers */,
+				430018B61F51B4B00056E4DE /* ALSQLDelete.h in Headers */,
 				4342527A1F298EA200BCE32E /* ALDBConnectionDelegate.h in Headers */,
 				436A50F51F17BE9B00B0D32E /* ALActiveRecord.h in Headers */,
+				430018C21F526D9F0056E4DE /* ALDBIndexedColumn.h in Headers */,
 				436A50D41F17BE9B00B0D32E /* AL_CRC.h in Headers */,
 				436A50C71F17BE9B00B0D32E /* ALAssociatedWeakObject.h in Headers */,
 				43B45F891F433096005A7EC8 /* result_set.hpp in Headers */,
@@ -685,12 +772,15 @@
 				43B45F831F433096005A7EC8 /* handle.hpp in Headers */,
 				43DA43F51F480451002A4972 /* ALSQLSelect.h in Headers */,
 				4300188E1F4DC3350056E4DE /* __ALResultSetEnumerator.h in Headers */,
+				430018AF1F5015BF0056E4DE /* ALARExecutor.h in Headers */,
+				431B62761F541DA000FE763A /* ALSQLAlterTable.h in Headers */,
 				436A50CD1F17BE9B00B0D32E /* ALLogger.h in Headers */,
 				436A50F81F17BE9B00B0D32E /* NSObject+AL_JSONMapping.h in Headers */,
 				436A50F21F17BE9B00B0D32E /* SafeBlocksChain.h in Headers */,
 				43B45F961F433096005A7EC8 /* in_case_lock_guard.hpp in Headers */,
 				43B45F871F433096005A7EC8 /* handle_recyclable.hpp in Headers */,
 				436A50E41F17BE9B00B0D32E /* NSBundle+ALBundleInfo.h in Headers */,
+				431B627E1F543FFB00FE763A /* ALSQLDropTable.h in Headers */,
 				436A50DA1F17BE9B00B0D32E /* AL_RC4.h in Headers */,
 				43544A4E1F323C4E001486B5 /* ALSQLValue.h in Headers */,
 				436A50E01F17BE9B00B0D32E /* BlocksKitExtension.h in Headers */,
@@ -699,6 +789,7 @@
 				4383B1271F273F3F0074BF62 /* aldb.h in Headers */,
 				43B45F7F1F433096005A7EC8 /* database.hpp in Headers */,
 				43B45F7D1F433096005A7EC8 /* core_base.hpp in Headers */,
+				430018BE1F526C820056E4DE /* ALDBTableConstraint.h in Headers */,
 				43C25DB61F1770A100C97ED8 /* alloy.h in Headers */,
 				436A50FA1F17BE9B00B0D32E /* NSObject+ALModel.h in Headers */,
 				43B45F8E1F433096005A7EC8 /* statement_recyclable.hpp in Headers */,
@@ -707,6 +798,7 @@
 				43B770591F2B41F900B877CE /* ALDatabase+CoreDB.h in Headers */,
 				436A50FE1F17BE9B00B0D32E /* __ALModelMeta+ActiveRecord.h in Headers */,
 				43B45F8C1F433096005A7EC8 /* statement_handle.hpp in Headers */,
+				430018BA1F51C75D0056E4DE /* ALSQLCreateTable.h in Headers */,
 				436A50F41F17BE9B00B0D32E /* Singleton_Template.h in Headers */,
 				43B45F931F433096005A7EC8 /* error.hpp in Headers */,
 				43B45FA51F436535005A7EC8 /* ALDBColumnDefine.h in Headers */,
@@ -726,18 +818,24 @@
 				436A50F61F17BE9B00B0D32E /* NSObject+AL_ActiveRecord.h in Headers */,
 				436A50FC1F17BE9B00B0D32E /* __ALModelHelper.h in Headers */,
 				436A50D31F17BE9B00B0D32E /* ALUtilitiesHeader.h in Headers */,
+				431B628E1F553FBA00FE763A /* __ALPropertyColumnBindings+private.h in Headers */,
+				430018B21F5054610056E4DE /* ALSQLInsert.h in Headers */,
 				43B45F901F433096005A7EC8 /* transaction.hpp in Headers */,
 				43B45F9C1F433096005A7EC8 /* thread_local.hpp in Headers */,
 				436A50CB1F17BE9B00B0D32E /* ALLock.h in Headers */,
 				43B45F991F433096005A7EC8 /* rwlock.hpp in Headers */,
 				43DA43F91F49DFA7002A4972 /* ALDBResultColumn.h in Headers */,
 				43B45F7B1F433096005A7EC8 /* config.hpp in Headers */,
+				430018A41F4FF2EF0056E4DE /* ALSQLUpdate.h in Headers */,
 				43B45F851F433096005A7EC8 /* handle_pool.hpp in Headers */,
 				436A50D11F17BE9B00B0D32E /* ALStringInflector.h in Headers */,
+				431B62861F54426C00FE763A /* ALSQLPragma.h in Headers */,
 				438143B61F3580EF004F6AFD /* ALDBTypeCoding.h in Headers */,
 				43B45F941F433096005A7EC8 /* gcd_lock_guard.hpp in Headers */,
 				436A50DC1F17BE9B00B0D32E /* AL_SHA1.h in Headers */,
+				431B628A1F54697300FE763A /* ALPropertyColumnBindings.h in Headers */,
 				4306CEC71F29CEBE006C73B9 /* ALDBMigrationHelper.h in Headers */,
+				431B62821F5440DB00FE763A /* ALSQLDropIndex.h in Headers */,
 				436A50D61F17BE9B00B0D32E /* AL_DES.h in Headers */,
 				43B45F911F433096005A7EC8 /* concurrent_list.hpp in Headers */,
 			);
@@ -931,7 +1029,9 @@
 				43B45F921F433096005A7EC8 /* error.cpp in Sources */,
 				436A50D01F17BE9B00B0D32E /* ALOrderedMap.m in Sources */,
 				43B45F7E1F433096005A7EC8 /* database.cpp in Sources */,
+				431B62831F5440DB00FE763A /* ALSQLDropIndex.mm in Sources */,
 				438143B71F3580EF004F6AFD /* ALDBTypeCoding.mm in Sources */,
+				430018BB1F51C75D0056E4DE /* ALSQLCreateTable.mm in Sources */,
 				43B45F9D1F433096005A7EC8 /* utils.cpp in Sources */,
 				434252781F28F64900BCE32E /* ALDatabase.mm in Sources */,
 				43544A4A1F323B6B001486B5 /* ALSQLExpr.mm in Sources */,
@@ -939,12 +1039,15 @@
 				43B45F981F433096005A7EC8 /* rwlock.cpp in Sources */,
 				436A50F71F17BE9B00B0D32E /* NSObject+AL_ActiveRecord.mm in Sources */,
 				436A50F11F17BE9B00B0D32E /* YYClassInfo.m in Sources */,
+				431B627B1F542B6200FE763A /* ALSQLCreateIndex.mm in Sources */,
 				43B45F861F433096005A7EC8 /* handle_recyclable.cpp in Sources */,
 				436A50DF1F17BE9B00B0D32E /* ALURLHelper.m in Sources */,
 				43DA43FA1F49DFA7002A4972 /* ALDBResultColumn.mm in Sources */,
 				43B45F7A1F433096005A7EC8 /* config.cpp in Sources */,
+				431B62771F541DA000FE763A /* ALSQLAlterTable.mm in Sources */,
 				43B45F821F433096005A7EC8 /* handle.cpp in Sources */,
 				436A50F31F17BE9B00B0D32E /* SafeBlocksChain.m in Sources */,
+				431B627F1F543FFB00FE763A /* ALSQLDropTable.mm in Sources */,
 				436A50DD1F17BE9B00B0D32E /* AL_SHA1.m in Sources */,
 				436A50E31F17BE9B00B0D32E /* NSArray+ArrayExtensions.m in Sources */,
 				43B45FBC1F45C3A8005A7EC8 /* ALDBResultSet.mm in Sources */,
@@ -953,6 +1056,7 @@
 				436A50E71F17BE9B00B0D32E /* NSCache+ALExtensions.m in Sources */,
 				436A50C61F17BE9B00B0D32E /* AL_JSON.m in Sources */,
 				436A50C41F17BE9B00B0D32E /* AL_Base64.m in Sources */,
+				430018C31F526D9F0056E4DE /* ALDBIndexedColumn.mm in Sources */,
 				436A51031F17BE9B00B0D32E /* __ALModelMeta.m in Sources */,
 				43544A541F323CE8001486B5 /* ALDBColumn.mm in Sources */,
 				43B45FA21F433BFA005A7EC8 /* ALSQLClause.mm in Sources */,
@@ -974,9 +1078,11 @@
 				436A50E91F17BE9B00B0D32E /* NSDate+ALExtensions.m in Sources */,
 				43B45F781F433096005A7EC8 /* catchable.cpp in Sources */,
 				436A50EB1F17BE9B00B0D32E /* NSString+ALHelper.m in Sources */,
+				430018B31F5054610056E4DE /* ALSQLInsert.mm in Sources */,
 				43DA43F21F47F96A002A4972 /* ALSQLStatement.mm in Sources */,
 				43B45F8B1F433096005A7EC8 /* statement_handle.cpp in Sources */,
 				43DA43F61F480451002A4972 /* ALSQLSelect.mm in Sources */,
+				432CE18A1F5FF69A00F81A16 /* __NSObject+AL_ARInternal.m in Sources */,
 				4300188B1F4DBEE00056E4DE /* ALDatabase+Statement.mm in Sources */,
 				436A50CA1F17BE9B00B0D32E /* ALDevice.m in Sources */,
 				4306CEC81F29CEBE006C73B9 /* ALDBMigrationHelper.mm in Sources */,
@@ -984,10 +1090,15 @@
 				43B45F7C1F433096005A7EC8 /* core_base.cpp in Sources */,
 				436A50EF1F17BE9B00B0D32E /* ALOCRuntime.m in Sources */,
 				436A51011F17BE9B00B0D32E /* __ALModelMeta+JSONMapping.m in Sources */,
+				431B628B1F54697300FE763A /* ALPropertyColumnBindings.mm in Sources */,
 				436A50F91F17BE9B00B0D32E /* NSObject+AL_JSONMapping.m in Sources */,
 				436A50D71F17BE9B00B0D32E /* AL_DES.m in Sources */,
+				430018BF1F526C820056E4DE /* ALDBTableConstraint.mm in Sources */,
 				43B45F801F433096005A7EC8 /* defines.cpp in Sources */,
 				43B45F8D1F433096005A7EC8 /* statement_recyclable.cpp in Sources */,
+				430018B71F51B4B00056E4DE /* ALSQLDelete.mm in Sources */,
+				431B62871F54426C00FE763A /* ALSQLPragma.mm in Sources */,
+				430018A51F4FF2EF0056E4DE /* ALSQLUpdate.mm in Sources */,
 				43B45FA61F436535005A7EC8 /* ALDBColumnDefine.mm in Sources */,
 				436A50E51F17BE9B00B0D32E /* NSBundle+ALBundleInfo.m in Sources */,
 			);
@@ -997,6 +1108,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				432CE1721F5EBFB300F81A16 /* ActiveRecordTests.mm in Sources */,
 				43C25DB41F1770A100C97ED8 /* alloyTests.mm in Sources */,
 				4304F3ED1F46BB8000AA45DE /* aldbCoreTests.mm in Sources */,
 				4304F3EF1F46BBC500AA45DE /* sqlExprTests.mm in Sources */,

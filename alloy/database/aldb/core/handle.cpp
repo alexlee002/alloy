@@ -91,6 +91,7 @@ std::shared_ptr<StatementHandle> Handle::prepare(const std::string &sql) {
                 cached_stmt->reset_bindings();
                 cached_stmt->_cached = true;
                 cached_stmt->_inuse  = true;
+                printf("handle: %p re-use stmt: %p\n", this, cached_stmt.get());
                 return cached_stmt;
             }
         } else {
@@ -101,7 +102,7 @@ std::shared_ptr<StatementHandle> Handle::prepare(const std::string &sql) {
     sqlite3_stmt *pstmt = nullptr;
     int rc = sqlite3_prepare_v2((sqlite3 *) _handle, sql.c_str(), -1, &pstmt, nullptr);
     if (SQLITE_OK != rc) {
-        Catchable::set_sqlite_error((sqlite3 *) _handle);
+        Catchable::set_sqlite_error((sqlite3 *) _handle, sql.c_str());
         sqlite3_finalize(pstmt);
         return nullptr;
     }
@@ -125,7 +126,7 @@ bool Handle::exec(const std::string &sql) {
         return true;
     }
     
-    Catchable::set_sqlite_error((sqlite3 *)_handle);
+    Catchable::set_sqlite_error((sqlite3 *)_handle, sql.c_str());
     return false;
 }
 

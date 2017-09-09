@@ -31,7 +31,7 @@ struct SQLValue {
     SQLValue(const int64_t l)     : val_type(aldb::ColumnType::INT64_T), val_size(0), i64_val(l)  {}
     SQLValue(const double d)      : val_type(aldb::ColumnType::DOUBLE_T),val_size(0), d_val(d)    {}
     SQLValue(const std::string &s): val_type(aldb::ColumnType::TEXT_T),  val_size(0), s_val(s)    {}
-    SQLValue(const std::nullptr_t): val_type(aldb::ColumnType::NULL_T),  val_size(0)            {}
+    SQLValue(const std::nullptr_t): val_type(aldb::ColumnType::NULL_T),  val_size(0)              {}
     
     SQLValue(const char *c) {
         if (c) {
@@ -98,7 +98,7 @@ struct SQLValue {
         }
     }
     
-    SQLValue operator=(const SQLValue &o) {
+    SQLValue &operator=(const SQLValue &o) {
         if (this != &o) {
             val_type = o.val_type;
             switch (o.val_type) {

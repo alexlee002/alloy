@@ -72,14 +72,19 @@
 }
 
 + (instancetype)defaultInflector {
-    static ALStringInflector *instance = nil;
-    al_static_gcd_semaphore_def(sem, 1)
-    with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
-        if (instance == nil) {
-            instance = [[self alloc] init];
-        }
-    });
-    return instance;
+    static __weak ALStringInflector *instance;
+    __block ALStringInflector *strongInstance = instance;
+
+    if (strongInstance == nil) {
+        al_static_gcd_semaphore_def(sem, 1);
+        with_gcd_semaphore(sem, DISPATCH_TIME_FOREVER, ^{
+            if (strongInstance == nil) {
+                strongInstance = [[[self class] alloc] init];
+                instance = strongInstance;
+            }
+        });
+    }
+    return strongInstance;
 }
 
 - (instancetype)init {

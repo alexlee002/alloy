@@ -154,6 +154,7 @@ extern YYEncodingType YYEncodingGetType(const char *typeEncoding);
 @property (nonatomic, strong, readonly, nullable) YYClassInfo   *superClassInfo; ///< super class's class info
 @property (nonatomic, strong, readonly, nullable) NSDictionary<NSString *, YYClassIvarInfo *> *ivarInfos;        ///< ivars
 @property (nonatomic, strong, readonly, nullable) NSDictionary<NSString *, YYClassMethodInfo *> *methodInfos;     ///< methods
+@property (nonatomic, strong, readonly, nullable) NSDictionary<NSString *, YYClassMethodInfo *> *classMethodInfos; ///< class methods
 @property (nonatomic, strong, readonly, nullable) NSDictionary<NSString *, YYClassPropertyInfo *> *propertyInfos; ///< properties
 
 /**

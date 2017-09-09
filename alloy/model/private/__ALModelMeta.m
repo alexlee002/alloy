@@ -87,7 +87,7 @@
 - (void)loadAllPropertyMetas {
     NSMutableDictionary<NSString *, _ALModelPropertyMeta *> *allPropertiesDict = [NSMutableDictionary dictionary];
     YYClassInfo *tmpClassInfo = _classInfo;
-    while (tmpClassInfo && tmpClassInfo.superCls != nil) {  // FIXME: should ignore root class(NSObject/JSProxy)?
+    while (tmpClassInfo /*&& tmpClassInfo.superCls != nil*/) {  // FIXME: should ignore root class(NSObject/JSProxy)?
         for (YYClassPropertyInfo *propertyInfo in tmpClassInfo.propertyInfos.allValues) {
             if (!propertyInfo.name) {
                 continue;
@@ -102,6 +102,9 @@
                 continue;
             }
             allPropertiesDict[propertyMeta->_name] = propertyMeta;
+        }
+        if (tmpClassInfo.superCls == nil) {
+            break;
         }
         tmpClassInfo = tmpClassInfo.superClassInfo;
     }

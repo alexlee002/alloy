@@ -27,7 +27,7 @@ class Catchable {
     void set_error(const Error &error);
     void raise_error(const std::shared_ptr<Error> error);
 
-    void set_sqlite_error(sqlite3 *h);
+    void set_sqlite_error(sqlite3 *h, const char *sql = NULL);
     void set_aldb_error(int code, const char *message);
 
   private:

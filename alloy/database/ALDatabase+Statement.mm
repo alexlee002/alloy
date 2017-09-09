@@ -11,7 +11,7 @@
 
 @implementation ALDatabase (Statement)
 
-- (nullable ALDBResultSet *)query:(ALSQLSelect *)select {
+- (nullable ALDBResultSet *)select:(ALSQLSelect *)select {
     const ALSQLClause clause = [select SQLClause];
     return [self query:clause.sqlString() args:clause.sqlArgs()];
 }

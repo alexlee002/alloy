@@ -57,7 +57,7 @@ class CoreBase : public Catchable {
         ROLLBACK        = 2,
         ROLLBACK_FAILED = 3,
     };
-    typedef std::function<bool()> TransactionBlock;
+    typedef std::function<void(bool &)> TransactionBlock;
     typedef std::function<void(TransactionEvent)> TransactionEventBlock;
     
     virtual bool begin_transaction(const aldb::TransactionMode mode) = 0;

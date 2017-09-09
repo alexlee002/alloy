@@ -22,6 +22,7 @@ public:
     //native value type
     ALSQLValue(int32_t v);
     ALSQLValue(int64_t v);
+    ALSQLValue(long value);
     ALSQLValue(double v);
     ALSQLValue(BOOL v);
     ALSQLValue(const std::string &s);
@@ -30,19 +31,19 @@ public:
     ALSQLValue(std::nullptr_t);
     ALSQLValue(const aldb::SQLValue &v);
 
-    template <typename T>
-    ALSQLValue(const T &value,
-               typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type * = nullptr)
-        : _coreValue(value) {}
+//    template <typename T>
+//    ALSQLValue(const T &value,
+//               typename std::enable_if</*std::is_arithmetic<T>::value || */std::is_enum<T>::value>::type * = nullptr)
+//    : _coreValue(sizeof(value) > 4 ? (int64_t)value : (int32_t)(value)) {}
 
     //objc type
 //    ALSQLValue(NSInteger i);
-    
-    ALSQLValue(NSString *s);
-    ALSQLValue(NSData *d);
-    ALSQLValue(NSDate *date);
-    ALSQLValue(NSURL *url);
-    ALSQLValue(NSNumber *num);
+//    
+//    ALSQLValue(NSString *s);
+//    ALSQLValue(NSData *d);
+//    ALSQLValue(NSDate *date);
+//    ALSQLValue(NSURL *url);
+//    ALSQLValue(NSNumber *num);
     
     ALSQLValue(id obj);
 
@@ -66,10 +67,11 @@ public:
         }
     }
 
-    ALSQLValue &operator=(const ALSQLValue &o);
+//    ALSQLValue &operator=(const ALSQLValue &o);
     bool operator==(const ALSQLValue &o) const;
     operator aldb::SQLValue() const;
-    operator std::list<const aldb::SQLValue>();
+    operator std::list<const aldb::SQLValue>() const;
+    operator std::list<const ALSQLValue>() const;
     operator ALSQLExpr() const;
 protected:    
     aldb::SQLValue _coreValue;

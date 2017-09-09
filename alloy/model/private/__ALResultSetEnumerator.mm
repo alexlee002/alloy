@@ -9,6 +9,7 @@
 #import "__ALResultSetEnumerator.h"
 #import "ALUtilitiesHeader.h"
 #import "__ALModelMeta+ActiveRecord.h"
+#import "__ALPropertyColumnBindings+private.h"
 #import <objc/message.h>
 #import "NSString+ALHelper.h"
 #import "__ALModelHelper.h"
@@ -18,7 +19,7 @@
     Class _cls;
     std::list<const ALDBResultColumn> _columns;
     
-    NSMutableArray<_ALPropertyColumnBindings *> *_bindings; // maybe contains NSNull.null
+    NSArray<ALPropertyColumnBindings *> *_bindings; // maybe contains NSNull.null
 }
 
 + (NSEnumerator *)enumatorWithResultSet:(ALDBResultSet *)rs
@@ -45,14 +46,20 @@
     
     id obj = [[_cls alloc] init];
     int index = 0;
-    for (_ALPropertyColumnBindings *binding in [self columnBindings]) {
-        [self setPropertyForModel:obj atColumnIndex:index withBinding:binding];
+    for (ALPropertyColumnBindings *binding in [self columnBindings]) {
+        if (al_unwrapNil(binding)) {
+            [self setPropertyForModel:obj atColumnIndex:index withBinding:binding];
+        }
+        index ++;
     }
     return obj;
 }
 
-- (void)setPropertyForModel:(id)obj atColumnIndex:(int)index withBinding:(_ALPropertyColumnBindings *)binding {
-    SEL customSetter = binding->_customPropertyValueFromColumnTransformer;
+- (void)setPropertyForModel:(id)obj atColumnIndex:(int)index withBinding:(ALPropertyColumnBindings *)binding {
+    if (![binding isKindOfClass:ALPropertyColumnBindings.class]) {
+        return;
+    }
+    SEL customSetter = [binding customPropertyValueFromColumnTransformer];
     if (customSetter != nil) {
         ((void (*)(id, SEL, id /*ALDBResultSet*/, int /*index*/))(void *) objc_msgSend)((id) obj, customSetter,
                                                                                         (id) _rs, index);
@@ -61,25 +68,33 @@
     }
 }
 
-- (NSArray<_ALPropertyColumnBindings *> *)columnBindings {
+- (NSArray<ALPropertyColumnBindings *> *)columnBindings {
     if (_bindings == nil) {
         NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_columns.size()];
         
-        _ALPropertyColumnBindings *binding = nil;
         _ALModelTableBindings *modelBindings = nil;
         auto it = _columns.begin();
-        for (int idx = 0; idx < _rs.columnCount; ++idx, ++ it) {
+        for (int idx = 0; idx < _rs.columnCount; ++idx) {
+            ALPropertyColumnBindings *binding = nil;
+            NSString *columnName = [_rs columnNameAt:idx];
             if (it != _columns.end()) {
                 binding = (*it).column_binding();
-            } else {
-                NSString *columnName = [_rs columnNameAt:idx];
+                if (binding && ![[binding columnName] isEqualToString:columnName]) {
+                    ALAssert(NO, @"column name is not match! WTF?");
+                    binding = nil;
+                }
+                ++ it;
+            }
+            if (binding == nil) {
                 if (modelBindings == nil) {
                     modelBindings = [_ALModelTableBindings bindingsWithClass:_cls];
                 }
-                binding = modelBindings->_columnMapper[columnName];
+                binding = modelBindings->_columnsDict[columnName];
             }
+            ALAssert(binding != nil, @"column binding is nil! column:%@", columnName);
             [arr addObject:al_wrapNil(binding)];
         }
+        _bindings = [arr copy];
     }
     return _bindings;
 }

@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern void with_gcd_semaphore(dispatch_semaphore_t dsema, dispatch_time_t timeout, void(^block)(void));
-extern void with_lock(NSLock *lock, void (^block)(void));
+OBJC_EXPORT void with_gcd_semaphore(dispatch_semaphore_t dsema, dispatch_time_t timeout, void(^block)(void));
+OBJC_EXPORT void with_lock(NSLock *lock, void (^block)(void));
 
 NS_ASSUME_NONNULL_END

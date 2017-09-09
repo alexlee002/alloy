@@ -19,18 +19,24 @@ class ALSQLExpr : public ALSQLClause {
 public:
     ALSQLExpr();
     ALSQLExpr(const ALDBColumn &column);
-    ALSQLExpr(const ALSQLValue &value);
     ALSQLExpr(const ALSQLExpr &expr);
+    
+    ALSQLExpr(const ALSQLValue &value);
+    ALSQLExpr(int32_t value);
+    ALSQLExpr(int64_t value);
+    ALSQLExpr(long value);
+    ALSQLExpr(double value);
+    ALSQLExpr(BOOL value);
 
     ALSQLExpr(const char *value);
     ALSQLExpr(const std::string &value);
     ALSQLExpr(const std::nullptr_t &);
     ALSQLExpr(id value);
 
-    template <typename T>
-    ALSQLExpr(const T &value,
-              typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type * = nullptr)
-        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+//    template <typename T>
+//    ALSQLExpr(const T &value,
+//              typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type * = nullptr)
+//        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
 
     template <typename T>
     ALSQLExpr(const T &value,
@@ -50,6 +56,7 @@ public:
 
     //    operator bool() const;
     operator std::list<const ALSQLExpr>() const;
+    ALSQLExpr &operator=(const ALSQLExpr &r);
     
     static const ALDBOptrPrecedence s_default_precedence;
     static const ALSQLExpr s_null_expr;
@@ -105,8 +112,8 @@ public:
     ALSQLExpr case_when(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
                    const ALSQLExpr &else_value = s_null_expr);
     // case when a then b else c end
-    static ALSQLExpr case_clause(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
-                                 const ALSQLExpr &else_value = s_null_expr);
+    static ALSQLExpr case_expr(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
+                               const ALSQLExpr &else_value = s_null_expr);
     
     
 #pragma mark - sql functions

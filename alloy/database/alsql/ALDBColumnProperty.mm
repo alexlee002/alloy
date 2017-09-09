@@ -10,12 +10,19 @@
 #import "ALSQLValue.h"
 #import "__ALModelMeta+ActiveRecord.h"
 
-ALDBColumnProperty::ALDBColumnProperty(const std::string &columnName,
-                                       id /* _ALPropertyColumnBindings */ propertyColumnBidings)
-    : ALDBColumn(columnName), _binding(propertyColumnBidings) {}
+//ALDBColumnProperty::ALDBColumnProperty(const ALDBColumnProperty &o): ALDBColumn(o), _binding(o._binding) {}
+
+ALDBColumnProperty::ALDBColumnProperty(): ALDBColumn("") {}
+
+ALDBColumnProperty::ALDBColumnProperty(ALPropertyColumnBindings *propertyColumnBidings)
+    : ALDBColumn(propertyColumnBidings.columnName), _binding(propertyColumnBidings) {}
+
+//ALDBColumnProperty::ALDBColumnProperty(const std::string &columnName,
+//                                       ALPropertyColumnBindings *propertyColumnBidings)
+//    : ALDBColumn(columnName), _binding(propertyColumnBidings) {}
 
 ALDBColumnProperty::ALDBColumnProperty(const ALDBColumn &column,
-                                       id /* _ALPropertyColumnBindings */ propertyColumnBidings)
+                                       ALPropertyColumnBindings *propertyColumnBidings)
     : ALDBColumn(column), _binding(propertyColumnBidings) {}
 
 //ALDBColumnProperty ALDBColumnProperty::distinct() const {
@@ -41,7 +48,7 @@ id ALDBColumnProperty::column_binding() const {
 }
 
 Class ALDBColumnProperty::binding_class() const {
-    return ((_ALPropertyColumnBindings *)_binding)->_propertyMeta->_cls;
+    return [((ALPropertyColumnBindings *)_binding) propertyInfo].cls;
 }
 
 // unary

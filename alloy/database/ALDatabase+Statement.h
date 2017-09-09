@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface ALDatabase (Statement)
 
-- (nullable ALDBResultSet *)query:(ALSQLSelect *)select;
+- (nullable ALDBResultSet *)select:(ALSQLSelect *)select;
 - (BOOL)execute:(ALSQLStatement *)sql;
 
 @end

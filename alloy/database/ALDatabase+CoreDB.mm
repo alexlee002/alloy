@@ -116,7 +116,7 @@
     return nil;
 }
 
-- (BOOL)inTransaction:(BOOL (^)(void))transactionBlock
+- (BOOL)inTransaction:(void (^)(BOOL *rollback))transactionBlock
          eventHandler:(void (^)(ALDBTransactionEvent event))eventHandler {
     if (transactionBlock == nil) {
         return NO;
@@ -129,8 +129,8 @@
         };
     }
     
-    return [self _coreDB]->exec_transaction([&transactionBlock]()->bool {
-        return transactionBlock();
+    return [self _coreDB]->exec_transaction([&transactionBlock](bool &rollback) {
+        transactionBlock(&rollback);
     },  eventBlock);
 }
 

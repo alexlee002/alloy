@@ -11,6 +11,7 @@
 #import "ALSQLValue.h"
 #import "ALDBColumn.h"
 #import "ALSQLClause.h"
+#import "ALDBColumnProperty.h"
 #import <list>
 #import <unordered_map>
 
@@ -47,9 +48,18 @@
     }
     
     {
-        ALSQLExpr expr(ALDBColumn("col1"));
-        auto expr1 = (expr > 10 || expr <= 0) && (expr == 1 || expr == 2);
-        XCTAssertEqual(expr1.sql_str(), "(col1 > ? OR col1 <= ?) AND (col1 = ? OR col1 = ?)");
+        ALSQLExpr expr(ALDBColumn("col"));
+        expr = expr == 4 || expr == 5;
+        
+        auto expect_args = std::list<const ALSQLValue>(ALSQLValue(1));
+        auto args = ALSQLExpr(1).sqlArgs();
+        XCTAssertTrue(args == expect_args);
+//        XCTAssertEqual(ALSQLExpr(@1).sqlArgs(),  std::list<const ALSQLValue>(ALSQLValue(1)));
+        
+        
+//        ALSQLExpr expr(ALDBColumn("col1"));
+//        auto expr1 = (expr > 10 || expr <= 0) && (expr == 1 || expr == 2);
+//        XCTAssertEqual(expr1.sql_str(), "(col1 > ? OR col1 <= ?) AND (col1 = ? OR col1 = ?)");
     }
 
     {
@@ -59,10 +69,20 @@
     }
     
     {
-        ALSQLExpr expr = ALSQLExpr::case_clause(ALSQLExpr(ALDBColumn("col1")), {{"abc", 1}, {"def", 2}}, 3);
-        XCTAssertEqual(expr.sql_str(), "CASE col1 WHEN ? THEN ? WHEN ? THEN ? ELSE ? END");
+        ALSQLExpr expr = ALSQLExpr::case_expr({{"abc", 1}, {"def", 2}}, 3);
+        XCTAssertEqual(expr.sql_str(), "CASE WHEN ? THEN ? WHEN ? THEN ? ELSE ? END");
     }
     
+    {
+        auto exp = ([sqlExprTests myProperty] == 1);
+        printf("%s\n", exp.sql_str().c_str());
+    }
+    
+}
+
++ (const ALDBColumnProperty &)myProperty {
+    static const ALDBColumnProperty p("col", nil);
+    return p;
 }
 
 //- (void)testPerformanceExample {

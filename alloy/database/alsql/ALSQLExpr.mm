@@ -19,6 +19,12 @@ ALSQLExpr::ALSQLExpr(const ALDBColumn &column) : ALSQLClause(std::string(column)
 
 ALSQLExpr::ALSQLExpr(const ALSQLValue &value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
 
+ALSQLExpr::ALSQLExpr(int32_t value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(long value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(int64_t value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(double value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(BOOL value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+
 ALSQLExpr::ALSQLExpr(const ALSQLExpr &expr) : ALSQLClause(expr), _precedence(expr._precedence) {}
 
 ALSQLExpr::ALSQLExpr(const char *value)
@@ -33,6 +39,14 @@ ALSQLExpr::ALSQLExpr(id value) : ALSQLClause("?", {value}), _precedence(s_defaul
 //ALSQLExpr::operator bool() const { return !is_empty(); }
 
 ALSQLExpr::operator std::list<const ALSQLExpr>() const { return {*this};}
+
+ALSQLExpr &ALSQLExpr::operator=(const ALSQLExpr &r) {
+    if (this != &r) {
+        ALSQLClause::operator=(r);
+        _precedence = r._precedence;
+    }
+    return *this;
+}
 
 //ALSQLExpr::operator ALSQLClause() const { return _clause; }
 //
@@ -209,7 +223,7 @@ ALSQLExpr ALSQLExpr::operator!=(const ALSQLExpr &r) const {
 }
 
 ALSQLExpr ALSQLExpr::in(const std::list<const ALSQLExpr> &expr_list) const {
-    ALSQLExpr inclause = ALSQLClause::combine<ALSQLExpr>(expr_list, ", ");
+    ALSQLExpr inclause = ALSQLClause::combine<ALSQLExpr, ALSQLExpr>(expr_list, ", ");
     inclause.enclode_with_brackets();
     
     return expr_operate(inclause, "IN");
@@ -223,7 +237,7 @@ ALSQLExpr ALSQLExpr::in(const std::string &table_name) const {
 }
 //    ALSQLExpr in(const SelectStatement &stmt) const;
 ALSQLExpr ALSQLExpr::not_in(const std::list<const ALSQLExpr> &expr_list) const {
-    ALSQLExpr inclause = ALSQLClause::combine<ALSQLExpr>(expr_list, ", ");
+    ALSQLExpr inclause = ALSQLClause::combine<ALSQLExpr, ALSQLExpr>(expr_list, ", ");
     inclause.enclode_with_brackets();
     
     ALSQLExpr expr(*this);
@@ -315,10 +329,10 @@ ALSQLExpr ALSQLExpr::case_when(const std::list<const std::pair<const ALSQLExpr, 
     return caseExpr;
 }
 
-ALSQLExpr ALSQLExpr::case_clause(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
-                                 const ALSQLExpr &else_value) {
+ALSQLExpr ALSQLExpr::case_expr(const std::list<const std::pair<const ALSQLExpr, const ALSQLExpr>> &when_then,
+                               const ALSQLExpr &else_value) {
     ALSQLExpr caseExpr;
-    caseExpr.append("CASE ");
+    caseExpr.append("CASE");
     
     for (auto &pair : when_then) {
         caseExpr.append(" WHEN ");
@@ -344,7 +358,7 @@ ALSQLExpr ALSQLExpr::function(const std::string &fun_name, const std::list<const
     if (distinct) {
         funcExpr.append("DISTINCT ");
     }
-    funcExpr.append(combine(args, ", "));
+    funcExpr.append(combine<ALSQLExpr, ALSQLExpr>(args, ", "));
     funcExpr.append(")");
     return funcExpr;
 }

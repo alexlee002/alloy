@@ -26,6 +26,7 @@ class Error {
     Error(const Error &other);
 
     operator std::string() const;
+    const char *description() const;
     
     void log(const char *file, int line) const;
 

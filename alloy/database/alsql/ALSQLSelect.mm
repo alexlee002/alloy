@@ -59,6 +59,16 @@
     return self;
 }
 
+- (instancetype)orderBy:(const std::list<const ALSQLExpr> &)exprlist {
+    for (auto expr : exprlist) {
+        if (!_orderBy.is_empty()) {
+            _orderBy.append(@", ");
+        }
+        _orderBy.append(expr);
+    }
+    return self;
+}
+
 - (instancetype)limit:(const ALSQLExpr &)limit {
     _limit = limit;
     return self;
@@ -71,39 +81,33 @@
 
 - (const ALSQLClause)SQLClause {
     ALSQLClause clause("SELECT ");
-    clause.append(ALSQLClause::combine(_resultColumns, ", "));
+    clause.append(ALSQLClause::combine<ALSQLClause, ALDBResultColumn>(_resultColumns, ", "));
 
     clause.append(" FROM ");
-    clause.append(ALSQLClause::combine(_tablesOrSubQueries, ", "));
+    clause.append(ALSQLClause::combine<ALSQLClause, ALSQLClause>(_tablesOrSubQueries, ", "));
 
     if (!_where.is_empty()) {
-        clause.append(" WHERE ");
-        clause.append(_where);
+        clause.append(" WHERE ").append(_where);
     }
 
     if (!_groupBy.is_empty()) {
-        clause.append(" GROUP BY ");
-        clause.append(_groupBy);
+        clause.append(" GROUP BY ").append(_groupBy);
 
         if (!_having.is_empty()) {
-            clause.append(" HAVING ");
-            clause.append(_having);
+            clause.append(" HAVING ").append(_having);
         }
     }
 
     if (!_orderBy.is_empty()) {
-        clause.append(" ORDER BY ");
-        clause.append(_orderBy);
+        clause.append(" ORDER BY ").append(_orderBy);
     }
 
     if (!_limit.is_empty()) {
-        clause.append(" LIMIT ");
-        clause.append(_limit);
+        clause.append(" LIMIT ").append(_limit);
     }
 
     if (!_offset.is_empty()) {
-        clause.append(" OFFSET ");
-        clause.append(_offset);
+        clause.append(" OFFSET ").append(_offset);
     }
     return clause;
 }

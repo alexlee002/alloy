@@ -13,7 +13,7 @@
 @implementation ALDBTypeCoding
 
 + (ALDBColumnType)columnTypeForObjCType:(const char *)objcTypeEncode {
-    static const std::unordered_set<const char *> int32_types = {
+    static const std::unordered_set<std::string> int32_types = {
         @encode(int8_t),
         @encode(uint8_t),
         @encode(char),
@@ -25,7 +25,7 @@
         @encode(uint32_t)
     };
 
-    static const std::unordered_set<const char *> int64_types = {
+    static const std::unordered_set<std::string> int64_types = {
         @encode(int64_t),
         @encode(uint16_t),
         @encode(long),
@@ -34,11 +34,11 @@
         @encode(unsigned long long)
     };
     
-    static const std::unordered_set<const char *> double_types = {
+    static const std::unordered_set<std::string> double_types = {
         @encode(float), @encode(double), @encode(long double)
     };
 
-    static const std::unordered_set<const char *> text_types = {
+    static const std::unordered_set<std::string> text_types = {
         @encode(char *),
         @encode(const char *),
         @encode(std::string),

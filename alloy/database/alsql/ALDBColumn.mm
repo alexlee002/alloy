@@ -12,6 +12,8 @@ const ALDBColumn ALDBColumn::s_rowid = ALDBColumn("rowid");
 const ALDBColumn ALDBColumn::s_any   = ALDBColumn("*");
 
 ALDBColumn::ALDBColumn(const std::string &name) : _name(name) {}
+ALDBColumn::ALDBColumn(NSString *name) : _name(name ? name.UTF8String : "") {};
+ALDBColumn::ALDBColumn(const char *name) : _name(name ?: "") {}
 
 ALDBColumn ALDBColumn::in_table(const std::string &table) const {
     return ALDBColumn(table + "." + _name);

@@ -152,14 +152,16 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
                                          withString:[[self substringToIndex:1] uppercaseString]];
 }
 
-- (nullable NSString *)al_substringToIndexSafety:(NSUInteger)to {
-    NSParameterAssert(to < self.length);
-    return to < self.length ? [self substringToIndex:to] : nil;
+- (nullable NSString *)al_substringToIndexSafety:(NSInteger)to {
+    NSParameterAssert(to <= self.length && to >= -self.length);
+    to = to < 0 ? self.length + to : to;
+    return [self substringToIndex:to];
 }
 
-- (nullable NSString *)al_substringFromIndexSafety:(NSUInteger)from {
-    NSParameterAssert(from < self.length);
-    return from < self.length ? [self substringFromIndex:from] : nil;
+- (nullable NSString *)al_substringFromIndexSafety:(NSInteger)from {
+    NSParameterAssert(from < self.length && from >= -self.length);
+    from = from < 0 ? self.length + from : from;
+    return [self substringFromIndex:from];
 }
 
 - (nullable NSString *)al_substringWithRangeSafety:(NSRange)range {

@@ -27,14 +27,17 @@ public:
     
     ALSQLClause(const ALSQLClause &clause);
     
+    ALSQLClause &rebind_values(const std::list<const ALSQLValue> &args);
+    
     ALSQLClause &append(const std::string &sql, const std::list<const ALSQLValue> &args);
     ALSQLClause &append(NSString *_Nonnull sql);
     ALSQLClause &append(const ALSQLClause &clause);
+    ALSQLClause &append(const char * sql);
     
 //    ALSQLClause &operator+=(const ALSQLClause &clause);
 //    ALSQLClause operator+(const ALSQLClause &clause) const;
     
-    ALSQLClause operator=(const ALSQLClause &other);
+    ALSQLClause &operator=(const ALSQLClause &other);
     
     const std::string &sql_str() const;
     const std::list<const aldb::SQLValue> sql_args() const;
@@ -43,16 +46,16 @@ public:
     const std::list<const ALSQLValue> &sqlArgs() const;
     
     bool is_empty() const;
-  
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
-    template<typename T>
-    static typename std::enable_if<std::is_base_of<ALSQLClause, T>::value, T>::type
-#pragma clang diagnostic pop
-    combine(const std::list<const T> &clauses, const char *_Nullable delimiter) {
+    template <typename T, typename U>
+    static typename std::enable_if<std::is_base_of<ALSQLClause, T>::value &&
+                                   std::is_base_of<ALSQLClause, U>::value, T>::type
+    combine(const std::list<const U> &clauses, const char *_Nullable delimiter) {
         T clause;
         bool flag = false;
-        for (const T t : clauses) {
+        for (const U t : clauses) {
             if (flag) {
                 clause._sql.append(delimiter);
             } else {
@@ -62,8 +65,9 @@ public:
         }
         return clause;
     }
+#pragma clang diagnostic pop
 
-protected:
+  protected:
     std::string _sql;
     std::list<const ALSQLValue> _args;
     

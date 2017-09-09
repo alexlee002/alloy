@@ -15,14 +15,14 @@ typedef NS_ENUM(NSInteger, ALLogLevel) {
     ALLogLevelError,
 };
 
-extern void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
+OBJC_EXPORT void ALLogImp(NSString *file, int line, NSString *func, NSString *tag, ALLogLevel level,
               NSString *message, BOOL asyncMode);
 
 //always log, much like NSLog
-extern void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
+OBJC_EXPORT void ALLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
 
 // only log in DEBUG model
-extern void ALDebugLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
+OBJC_EXPORT void ALDebugLog(NSString *file, int line, NSString *func, NSString * tag, ALLogLevel level, NSString *fmt, ...);
 
 
 #if DEBUG

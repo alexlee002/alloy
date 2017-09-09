@@ -59,16 +59,22 @@ RecyclableStatement Database::prepare(const std::string &sql) {
     return CoreBase::prepare(handle, sql);
 }
 
-bool Database::exec(const std::string &sql) { return CoreBase::exec(pop_handle(), sql, {}); }
+bool Database::exec(const std::string &sql) { return CoreBase::exec(pop_handle(), sql); }
 
 bool Database::exec(const std::string &sql, const std::list<const SQLValue> &args) {
     return CoreBase::exec(pop_handle(), sql, args);
 }
 
 bool Database::exec_transaction(TransactionBlock transaction, TransactionEventBlock event_handle) {
+    if (!transaction) {
+        return true;
+    }
+    
     std::unordered_map<std::string, RecyclableHandle> *threadedHandle = _s_threadedHandle.get();
     if (threadedHandle->find(get_path()) != threadedHandle->end()) {
-        return transaction();
+        bool rollback = false;
+        transaction(rollback);
+        return !rollback;
     }
     return CoreBase::exec_transaction(transaction, event_handle);
 }

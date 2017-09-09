@@ -29,12 +29,13 @@ namespace aldb {
         bool reset_bindings();
         bool bind_value(const SQLValue &value, const int index);
         
-        const int32_t get_int32_value(int index);
-        const int64_t get_int64_value(int index);
-        const double get_double_value(int index);
-        const char *get_text_value(int index);
-        const void *get_blob_value(int index, size_t &size);
+        const int32_t get_int32_value(int index) const;
+        const int64_t get_int64_value(int index) const ;
+        const double get_double_value(int index) const ;
+        const char *get_text_value(int index) const ;
+        const void *get_blob_value(int index, size_t &size) const;
         
+        int64_t last_insert_rowid() const;
         int column_count() const;
         const char *column_name(int idx) const;
         ColumnType column_type(int idx) const;

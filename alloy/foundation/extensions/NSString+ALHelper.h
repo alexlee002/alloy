@@ -48,8 +48,8 @@ OBJC_EXPORT NSStringEncoding al_NSStringEncodingWithName(NSString *_Nullable enc
 - (NSString *)al_stringByLowercaseFirst;
 - (NSString *)al_stringbyUppercaseFirst;
 
-- (nullable NSString *)al_substringToIndexSafety:(NSUInteger)to;
-- (nullable NSString *)al_substringFromIndexSafety:(NSUInteger)from;
+- (nullable NSString *)al_substringToIndexSafety:(NSInteger)to;
+- (nullable NSString *)al_substringFromIndexSafety:(NSInteger)from;
 - (nullable NSString *)al_substringWithRangeSafety:(NSRange)range;
 
 /**

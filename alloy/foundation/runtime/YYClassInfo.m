@@ -271,10 +271,11 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
 }
 
 - (void)_update {
-    _ivarInfos = nil;
-    _methodInfos = nil;
-    _propertyInfos = nil;
-    
+    _ivarInfos        = nil;
+    _methodInfos      = nil;
+    _classMethodInfos = nil;
+    _propertyInfos    = nil;
+
     Class cls = self.cls;
     unsigned int methodCount = 0;
     Method *methods = class_copyMethodList(cls, &methodCount);
@@ -283,10 +284,23 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
         _methodInfos = methodInfos;
         for (unsigned int i = 0; i < methodCount; i++) {
             YYClassMethodInfo *info = [[YYClassMethodInfo alloc] initWithMethod:methods[i]];
-            if (info.name) methodInfos[info.name] = info;
+            if (info.name) { methodInfos[info.name] = info; }
         }
         free(methods);
     }
+    
+    methods = class_copyMethodList(object_getClass(cls), &methodCount);
+    if (methods) {
+        NSMutableDictionary *methodInfos = [NSMutableDictionary new];
+        _classMethodInfos = methodInfos;
+        for (unsigned int i = 0; i < methodCount; i++) {
+            YYClassMethodInfo *info = [[YYClassMethodInfo alloc] initWithMethod:methods[i]];
+            if (info.name) { methodInfos[info.name] = info; }
+        }
+        free(methods);
+    }
+    
+    
     unsigned int propertyCount = 0;
     objc_property_t *properties = class_copyPropertyList(cls, &propertyCount);
     if (properties) {

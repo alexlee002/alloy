@@ -66,11 +66,18 @@ bool CoreBase::exec_transaction(TransactionBlock transaction, TransactionEventBl
             event_handle(eventType);           \
         }
     
+    if (!transaction) {
+        return true;
+    }
+    
     if (!begin_transaction(aldb::TransactionMode::IMMEDIATE)) {
         TRANSATION_EVENT(TransactionEvent::BEGIN_FAILED);
         return false;
     }
-    if (transaction()) {
+    
+    bool need_rollback = false;
+    transaction(need_rollback);
+    if (!need_rollback) {
         //User discards error
         if (commit()) {
             return true;

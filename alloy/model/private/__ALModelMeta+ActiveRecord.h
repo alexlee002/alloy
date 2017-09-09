@@ -8,33 +8,30 @@
 
 #import "__ALModelMeta.h"
 #import "ALDBColumnDefine.h"
+#import "ALPropertyColumnBindings.h"
+#import "ALDBColumnProperty.h"
 #import <memory>
+#import <list>
 
-@interface _ALPropertyColumnBindings : NSObject {
-    @package
-    _ALModelPropertyMeta    *_propertyMeta;
-    
-    std::shared_ptr<ALDBColumnDefine> _column;
-    NSString *_columnName;
-    SEL _customPropertyToColumnValueTransformer;
-    SEL _customPropertyValueFromColumnTransformer;
-}
-
-+ (instancetype)bindingWithPropertyMeta:(_ALModelPropertyMeta *)meta column:(NSString *)columnName;
-@end
 
 @interface _ALModelTableBindings : NSObject {
     @package
     _ALModelMeta *_modelMeta;
     
-    NSDictionary<NSString */*columnName*/, _ALPropertyColumnBindings *> *_columnMapper;
+    std::list<const ALDBColumnProperty> _allColumnProperties;
+    
+    NSArray<ALPropertyColumnBindings *> *_allColumns; // sorted columns
+    NSDictionary<NSString */*columnName*/, ALPropertyColumnBindings *> *_columnsDict;
+//    NSDictionary<NSString */*propertyName*/, ALPropertyColumnBindings *> *_columnsMapper;
     
 //    NSArray<_ALPropertyColumnBindings *> *_allPropertyBindings;
-    NSArray<NSString *> *_allPrimaryKeys; // property name of primary keys
-    NSArray<NSArray<NSString *> *> *_allUniqueKeys;  // property name of unique keys
-    NSArray<NSArray<NSString *> *> *_allIndexeKeys;  // property name of index keys
+    NSArray<NSString */*propertyName*/> *_allPrimaryKeys; // property name of primary keys
+    NSArray<NSArray<NSString */*propertyName*/> *> *_allUniqueKeys;  // property name of unique keys
+    NSArray<NSArray<NSString */*propertyName*/> *> *_allIndexeKeys;  // property name of index keys
 }
 
 + (instancetype)bindingsWithClass:(Class)cls;
 + (instancetype)bindingsWithModelMeta:(_ALModelMeta *)meta;
+
+- (NSString *)columnNameForProperty:(NSString *)propertyName;
 @end

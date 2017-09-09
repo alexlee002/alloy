@@ -27,11 +27,13 @@ Error::operator std::string() const {
     return msg;
 }
 
+const char *Error::description() const { return std::string(*this).c_str(); }
+
 void Error::log(const char *file, int line) const {
     printf("‼️ [ALDB] - ");
     if (file && strlen(file) > 0) {
         printf("(%s: %d)", basename((char *) file), line);
     }
-    printf("%s\n", std::string(*this).c_str());
+    printf("%s\n", description());
 }
 }

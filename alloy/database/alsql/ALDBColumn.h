@@ -1,3 +1,4 @@
+
 //
 //  ALDBColumn.h
 //  alloy
@@ -8,6 +9,7 @@
 
 #import <Foundation/Foundation.h>
 #import <string>
+#import <list>
 
 class ALDBColumn {
 public:
@@ -15,6 +17,8 @@ public:
     static const ALDBColumn s_any;
     
     ALDBColumn(const std::string &name);
+    ALDBColumn(NSString *name);
+    ALDBColumn(const char *name);
     
     ALDBColumn in_table(const std::string &name) const;
     
@@ -25,3 +29,12 @@ public:
 protected:
     std::string _name;
 };
+
+class ALDBColumnList : public std::list<const ALDBColumn> {
+  public:
+    template <typename T>
+    ALDBColumnList(const std::list<const T> &list,
+                   typename std::enable_if<std::is_base_of<ALDBColumn, T>::value>::type * = nullptr)
+        : std::list<const ALDBColumn>(list.begin(), list.end()) {}
+};
+;

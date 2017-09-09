@@ -12,7 +12,7 @@
 
 @protocol ALDBValueCoding <NSObject>
 
-+ (ALDBColumnType)columnType;
-- (nullable ALSQLValue *)valueByTransformingToDB;
-- (nullable instancetype)valueByTransformingFromDBObject:(nullable id)obj;
++ (ALDBColumnType)ALDBColumnType;
+- (const aldb::SQLValue)al_valueByTransformingToDB;
+- (nullable instancetype)al_valueByTransformingFromDBObject:(nullable id)obj;
 @end

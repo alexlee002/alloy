@@ -123,24 +123,29 @@ bool StatementHandle::bind_value(const SQLValue &value, const int index) {
     }
 }
 
-const int32_t StatementHandle::get_int32_value(int index) {
+const int32_t StatementHandle::get_int32_value(int index) const {
     return (int32_t) sqlite3_column_int((sqlite3_stmt *) _stmt, index);
 }
 
-const int64_t StatementHandle::get_int64_value(int index) {
+const int64_t StatementHandle::get_int64_value(int index) const {
     return (int64_t) sqlite3_column_int64((sqlite3_stmt *) _stmt, index);
 }
 
-const double StatementHandle::get_double_value(int index) {
+const double StatementHandle::get_double_value(int index) const {
     return (double) sqlite3_column_double((sqlite3_stmt *) _stmt, index);
 }
 
-const char *StatementHandle::get_text_value(int index) {
+const char *StatementHandle::get_text_value(int index) const {
     return (const char *) sqlite3_column_text((sqlite3_stmt *) _stmt, index);
 }
-const void *StatementHandle::get_blob_value(int index, size_t &size) {
+
+const void *StatementHandle::get_blob_value(int index, size_t &size) const {
     size = sqlite3_column_bytes((sqlite3_stmt *) _stmt, index);
     return (const void *) sqlite3_column_blob((sqlite3_stmt *) _stmt, index);
+}
+
+int64_t StatementHandle::last_insert_rowid() const {
+    return sqlite3_last_insert_rowid(sqlite3_db_handle((sqlite3_stmt *) _stmt));
 }
 
 int StatementHandle::column_count() const { return sqlite3_column_count((sqlite3_stmt *) _stmt); }

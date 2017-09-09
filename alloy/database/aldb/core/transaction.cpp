@@ -72,9 +72,15 @@ bool Transaction::rollback() {
 }
 
 bool Transaction::exec_transaction(TransactionBlock transaction, TransactionEventBlock event_handle) {
+    if (!transaction) {
+        return true;
+    }
+    
     std::lock_guard<std::mutex> lockGuard(_mutex);
     if (_inTransaction) {
-        return transaction();
+        bool rollback = false;
+        transaction(rollback);
+        return !rollback;
     }
     return CoreBase::exec_transaction(transaction, event_handle);
 }
