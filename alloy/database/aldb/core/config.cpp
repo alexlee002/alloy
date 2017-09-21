@@ -66,10 +66,10 @@ void Configs::set_config(const std::string &name, const Config &config) {
     _configs = newConfigs;
 }
 
-bool Configs::apply_configs(std::shared_ptr<Handle> &handle, Error **error) {
+bool Configs::apply_configs(std::shared_ptr<Handle> &handle, ErrorPtr &error) {
     std::shared_ptr<ConfigList> configs = _configs;
     for (const auto &config : *configs.get()) {
-        if (config._apply && !config._apply(handle, error)) {
+        if (config._config && !config._config(handle, error)) {
             return false;
         }
     }

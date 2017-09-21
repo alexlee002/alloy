@@ -31,7 +31,7 @@
 namespace aldb {
 
 class Handle;
-typedef std::function<bool(std::shared_ptr<Handle> &, Error **)> Config;
+typedef std::function<bool(std::shared_ptr<Handle> &, ErrorPtr &)> Config;
 typedef struct ConfigWrap ConfigWrap;
 
 /*
@@ -66,7 +66,7 @@ class Configs {
     void set_config(const std::string &name, const Config &config, Configs::Order order);
     void set_config(const std::string &name, const Config &config);
 
-    bool apply_configs(std::shared_ptr<Handle> &handle, Error **error);
+    bool apply_configs(std::shared_ptr<Handle> &handle, ErrorPtr &error);
 
     friend bool operator==(const Configs &left, const Configs &right);
     friend bool operator!=(const Configs &left, const Configs &right);
@@ -82,11 +82,11 @@ class Configs {
 
 struct ConfigWrap {
     const std::string _name;
-    const Config _apply;
+    const Config _config;
     const Configs::Order _order;
 
     ConfigWrap(const std::string &theName, const Config &theConfig, Configs::Order theOrder)
-        : _name(theName), _apply(theConfig), _order(theOrder) {}
+        : _name(theName), _config(theConfig), _order(theOrder) {}
 };
 
 }  // namespace aldb

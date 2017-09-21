@@ -25,6 +25,7 @@ public:
     operator std::string() const;
     const std::string to_string() const;
     bool operator==(const ALDBColumn &column) const;
+    bool operator!=(const ALDBColumn &column) const;
     
 protected:
     std::string _name;

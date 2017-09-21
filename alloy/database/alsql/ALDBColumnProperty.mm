@@ -9,6 +9,7 @@
 #import "ALDBColumnProperty.h"
 #import "ALSQLValue.h"
 #import "__ALModelMeta+ActiveRecord.h"
+#import "__ALPropertyColumnBindings+private.h"
 
 //ALDBColumnProperty::ALDBColumnProperty(const ALDBColumnProperty &o): ALDBColumn(o), _binding(o._binding) {}
 
@@ -48,7 +49,10 @@ id ALDBColumnProperty::column_binding() const {
 }
 
 Class ALDBColumnProperty::binding_class() const {
-    return [((ALPropertyColumnBindings *)_binding) propertyInfo].cls;
+    if (!_binding) {
+        return Nil;
+    }
+    return (ALPropertyColumnBindings *)_binding->_cls;
 }
 
 // unary

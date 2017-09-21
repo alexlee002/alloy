@@ -29,6 +29,9 @@ namespace aldb {
     enum class TransactionMode: int8_t {DEFERED, IMMEDIATE, EXCLUSIVE};
     const std::string transaction_mode(const TransactionMode mode);
 
+    enum class ErrorCode: int {
+        DB_CONNS_EXCEED = -1, // database connections out of limits.
+    };
 }
 
 #endif /* defines_hpp */

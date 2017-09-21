@@ -36,7 +36,7 @@ void Database::cache_statement_for_sql(const std::string &sql) {
     sqls.insert(sql);
     _s_cached_sqls.insert({get_path(), sqls});
 
-    set_config("aldb-enable-cache-statement", [sqls](std::shared_ptr<Handle> &handle, Error **) -> bool {
+    set_config("aldb-enable-cache-statement", [sqls](std::shared_ptr<Handle> &handle, ErrorPtr &error) -> bool {
         for (auto sql : sqls) {
             handle->cache_statement_for_sql(sql);
         }

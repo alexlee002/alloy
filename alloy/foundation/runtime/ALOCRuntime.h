@@ -22,13 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
 //        ((return_type (*)(id, SEL))(void *) objc_msgSend)((id)(obj), (sel), ##__VA_ARGS__)
 //#endif
 
-extern BOOL al_swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL);
+OBJC_EXPORT BOOL al_swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL);
 
-extern NSArray<NSString *> *al_backtraceStack(int stackSize);
-extern BOOL al_debuggerFound(void);
-extern BOOL al_classIsSubClassOfClass(Class subCls, Class cls);
-extern void al_fixup_class_arc(Class cls);
-extern void al_registerArcClassPair(Class cls);
+OBJC_EXPORT NSArray<NSString *> *al_backtraceStack(int stackSize);
+OBJC_EXPORT BOOL al_debuggerFound(void);
+OBJC_EXPORT BOOL al_classIsSubClassOfClass(Class subCls, Class cls);
+OBJC_EXPORT void al_fixup_class_arc(Class cls);
+OBJC_EXPORT void al_registerArcClassPair(Class cls);
 
 @interface ALOCRuntime : NSObject
 

@@ -72,17 +72,23 @@
 + (void)customDefineColumn:(ALDBColumnDefine &)cloumn forProperty:(in YYClassPropertyInfo *_Nonnull)property;
 
 /**
+ * Custom defines the column type for property
+ *
+ */
+//+ (ALDBColumnType)customColumnTypeFor{PropertyName};
+ 
+/**
  *  Custom transform property value to save to database
  *
  *  @return value to save to database
  */
-//- (id)customColumnValueTransformFrom{PropertyName};
+//- (id)customGetColumnValueFor{PropertyName};
 
 /**
  *  Custom transform property value from resultSet
  *  @see "+modelsWithCondition:"
  */
-//- (void)customTransform{PropertyName}FromResultSet:(in FMResultSet *)rs atIndex:(int)index;
+//- (void)customSet{PropertyName}WithColumnValue:(id)value;
 
 /**
  * key: the property name

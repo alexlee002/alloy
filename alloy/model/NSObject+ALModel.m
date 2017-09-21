@@ -433,7 +433,7 @@ static NSString *ModelDescription(NSObject *model) {
     return value;
 }
 
-- (BOOL)al_modelISEquel:(id)model {
+- (BOOL)al_modelIsEquel:(id)model {
     if (self == model) {
         return YES;
     }

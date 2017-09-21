@@ -124,7 +124,7 @@
             }
             values.append("?");
         }
-        clause.append(values);
+        clause.append(" VALUES (").append(values).append(")");
     }
     
     return clause;

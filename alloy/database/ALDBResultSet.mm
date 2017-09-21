@@ -9,6 +9,8 @@
 #import "ALDBResultSet.h"
 #import <unordered_map>
 #import <sqlite3.h>
+#import "__ALModelHelper.h"
+#import "ALLogger.h"
 
 typedef std::unordered_map<std::string, int> StringIndexMap;
 @implementation ALDBResultSet {
@@ -33,6 +35,10 @@ typedef std::unordered_map<std::string, int> StringIndexMap;
 - (NSString *)columnNameAt:(NSInteger)index {
     const char *name = _stmt->column_name((int)index);
     return name ? @(name) : nil;
+}
+
+- (ALDBColumnType)columnTypeAt:(NSInteger)index {
+    return (ALDBColumnType)_stmt->column_type((int)index);
 }
 
 - (NSInteger)columnIndexForName:(NSString *)name {
@@ -116,13 +122,28 @@ typedef std::unordered_map<std::string, int> StringIndexMap;
 }
 
 - (NSDate *)dateForColumnIndex:(NSInteger)index {
-    aldb::ColumnType type = _stmt->column_type((int)index);
-    if (type == aldb::ColumnType::TEXT_T) {
-        //TODO: need dateformater
-        return nil;
+    aldb::ColumnType ct = _stmt->column_type((int) index);
+    if (ct == aldb::ColumnType::INT32_T || ct == aldb::ColumnType::INT64_T || ct == aldb::ColumnType::DOUBLE_T) {
+        NSTimeInterval t = [self doubleValueForColumnIndex:index];
+        return [NSDate dateWithTimeIntervalSince1970:t];
+        
+    } else if (ct == aldb::ColumnType::TEXT_T) {
+        NSString *s = [self stringValueForColumnIndex:index];
+        return _YYNSDateFromString(s);
+        
+    } else {
+        NSData *d = [self dataForColumnIndex:index];
+        NSDate *value = nil;
+        @try {
+            value = [NSKeyedUnarchiver unarchiveObjectWithData:d];
+            if ([value isKindOfClass:NSDate.class]) {
+                return value;
+            }
+        } @catch (NSException *exception) {
+            ALLogWarn(@"extract NSDate from column at :%d exception: %@", index, exception);
+        }
+        return value;
     }
-    
-    return [NSDate dateWithTimeIntervalSince1970:[self doubleValueForColumnIndex:index]];
 }
 
 - (id)objectAtIndexedSubscript:(NSInteger)index {

@@ -20,6 +20,7 @@
 
 #include "handle.hpp"
 #include "handle_pool.hpp"
+#include "defines.hpp"
 #include <thread>
 #include <unordered_map>
 
@@ -72,7 +73,7 @@ HandlePool::HandlePool(const std::string &thePath, const Configs &configs, const
     , _handles(std::min(_s_hardware_concurrency, max_concurrency.load()))
     , _aliveHandleCount(0)
     , _open_callback(open_callback)
-    , _opened(false)
+    , _db_inited(false)
     , _configs(configs) {}
 
 void HandlePool::block() { _rwlock.lock_write(); }
@@ -103,34 +104,21 @@ bool HandlePool::is_drained() const { return _aliveHandleCount == 0; }
 RecyclableHandle HandlePool::flow_out() {
     _rwlock.lock_read();
     std::shared_ptr<HandleWrap> handleWrap = _handles.pop_back();
-    if (handleWrap == nullptr && _aliveHandleCount < max_concurrency) {
-        handleWrap = init_handle();
-        if (handleWrap) {
-            ++_aliveHandleCount;
+    if (handleWrap == nullptr) {
+        if (_aliveHandleCount < max_concurrency) {
+            handleWrap = init_handle();
+            if (handleWrap) {
+                ++_aliveHandleCount;
+            }
+        } else {
+            Catchable::set_aldb_error((int)aldb::ErrorCode::DB_CONNS_EXCEED, "connection pool out of limit!");
+            Catchable::log_error(__FILE__, __LINE__);
         }
     }
     if (handleWrap) {
         if (apply_configs(handleWrap)) {
-            //            __uint64_t threadid;
-            //            pthread_threadid_np(NULL, &threadid);
-            //            handleWrap->operator->()->threadid = threadid;
-
-            RecyclableHandle handle = RecyclableHandle(
-                handleWrap, [this](std::shared_ptr<HandleWrap> &handleWrap) { flow_back(handleWrap); });
-
-            if (!_opened) {
-                std::unique_lock<std::mutex> lock(_mutex);
-                if (!_opened) {
-                    if (_open_callback) {
-                        _open_callback(handle);
-
-                        // make sure apply configs changed by opencallback;
-                        apply_configs(handleWrap);
-                    }
-                    _opened = true;
-                }
-            }
-            return handle;
+            return RecyclableHandle(handleWrap,
+                                    [this](std::shared_ptr<HandleWrap> &handleWrap) { flow_back(handleWrap); });
         }
     }
 
@@ -159,8 +147,18 @@ std::shared_ptr<HandleWrap> HandlePool::init_handle() {
     }
 
     Configs defaultConfigs = _configs;  // cache config to avoid multi-thread assigning
-    Error *error = nullptr;
-    if (defaultConfigs.apply_configs(handle, &error)) {
+    ErrorPtr error;
+    if (defaultConfigs.apply_configs(handle, error)) {
+        if (!_db_inited) {
+            std::unique_lock<std::mutex> lock(_db_init_mutex);
+            if (!_db_inited) {
+                if (_open_callback) {
+                    _open_callback(handle);
+                }
+                _db_inited = true;
+            }
+        }
+
         return std::shared_ptr<HandleWrap>(new HandleWrap(handle, defaultConfigs));
     }
     Catchable::raise_error(std::shared_ptr<Error>(error));
@@ -185,8 +183,8 @@ bool HandlePool::fill_one() {
 bool HandlePool::apply_configs(std::shared_ptr<HandleWrap> &handleWrap) {
     Configs newConfigs = _configs;  // cache config to avoid multi-thread assigning
     if (newConfigs != handleWrap->configs) {
-        Error *error = nullptr;
-        if (!newConfigs.apply_configs(handleWrap->handle, &error)) {
+        ErrorPtr error;
+        if (!newConfigs.apply_configs(handleWrap->handle, error)) {
             Catchable::raise_error(std::shared_ptr<Error>(error));
             return false;
         }

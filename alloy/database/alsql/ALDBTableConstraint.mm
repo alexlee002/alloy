@@ -16,7 +16,9 @@ ALDBTableConstraint::ALDBTableConstraint(const std::string &name) : ALSQLClause(
 
 ALDBTableConstraint &ALDBTableConstraint::primary_key(const std::list<const ALDBIndexedColumn> &columns,
                                                       ALDBConflictPolicy on_conflict) {
-    ALSQLClause::append(" PRIMARY KEY ").append(ALSQLClause::combine<ALSQLClause, ALDBIndexedColumn>(columns, ", "));
+    ALSQLClause::append(" PRIMARY KEY (")
+        .append(ALSQLClause::combine<ALSQLClause, ALDBIndexedColumn>(columns, ", "))
+        .append(")");
     if (on_conflict != ALDBConflictPolicyDefault) {
         ALSQLClause::append(" ON CONFLICT ").append(aldb::conflict_term((aldb::ConflictPolicy) on_conflict));
     }

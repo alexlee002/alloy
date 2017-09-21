@@ -12,12 +12,6 @@
 #include <stdio.h>
 #include <string>
 
-#ifdef DEBUG
-#define ALDB_DEBUG_LOG(error_ref) (error_ref).log()
-#else
-#define ALDB_DEBUG_LOG(error_ref) do{}while(0)
-#endif
-
 namespace aldb {
 class Error {
   public:
@@ -26,7 +20,7 @@ class Error {
     Error(const Error &other);
 
     operator std::string() const;
-    const char *description() const;
+    const std::string description() const;
     
     void log(const char *file, int line) const;
 
@@ -38,6 +32,32 @@ class Error {
     std::string file;
     int line;
 };
+
+typedef std::shared_ptr<aldb::Error> ErrorPtr;
+    
+//class ErrorPtr {
+//  public:
+//    ErrorPtr();
+//    ErrorPtr(const Error &error);
+//    ErrorPtr(const std::nullptr_t &);
+//    virtual ~ErrorPtr();
+//
+//    void set_error(const Error &err);
+//
+//    operator bool() const;
+//    bool operator==(const std::nullptr_t &) const;
+//    bool operator!=(const std::nullptr_t &) const;
+//    ErrorPtr &operator=(const std::nullptr_t &);
+//    ErrorPtr &operator=(std::shared_ptr<Error> ptr);
+//
+//    constexpr Error *operator->() const { return _error.get(); }
+//
+//  private:
+//    bool is_nullptr() const;
+//    
+//    std::shared_ptr<Error> _error;
+//    bool _is_null;
+//};
 }
 
 #endif /* Error_hpp */

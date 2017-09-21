@@ -13,7 +13,7 @@
 
 @implementation ALSQLSelect{
     BOOL _distinct;
-    std::list<const ALDBResultColumn> _resultColumns;
+    ALDBResultColumnList              _resultColumns;
     std::list<const ALSQLClause>      _tablesOrSubQueries;
 
     ALSQLExpr   _where;
@@ -24,11 +24,11 @@
     ALSQLClause _limit;
 }
 
-- (const std::list<const ALDBResultColumn> &)resultColumns {
+- (const ALDBResultColumnList &)resultColumns {
     return _resultColumns;
 }
 
-- (instancetype)select:(const std::list<const ALDBResultColumn> &)columns distinct:(BOOL)distinct {
+- (instancetype)select:(const ALDBResultColumnList &)columns distinct:(BOOL)distinct {
     _resultColumns.insert(_resultColumns.end(), columns.begin(), columns.end());
     _distinct = distinct;
     return self;

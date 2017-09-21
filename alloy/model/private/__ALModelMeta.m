@@ -92,6 +92,45 @@
             if (!propertyInfo.name) {
                 continue;
             }
+            
+            if (tmpClassInfo.cls == NSObject.class || tmpClassInfo.cls == NSProxy.class) {
+                static NSSet<NSString *> *kIgnoreProperties = nil;
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    kIgnoreProperties = [NSSet setWithObjects:@"accessibilityActivationPoint",
+                                         @"accessibilityCustomActions",
+                                         @"accessibilityCustomRotors",
+                                         @"accessibilityElements",
+                                         @"accessibilityElementsHidden",
+                                         @"accessibilityFrame",
+                                         @"accessibilityHeaderElements",
+                                         @"accessibilityHint",
+                                         @"accessibilityIdentifier",
+                                         @"accessibilityLabel",
+                                         @"accessibilityLanguage",
+                                         @"accessibilityNavigationStyle",
+                                         @"accessibilityPath",
+                                         @"accessibilityTraits",
+                                         @"accessibilityValue",
+                                         @"accessibilityViewIsModal",
+                                         @"autoContentAccessingProxy",
+                                         @"classForKeyedArchiver",
+                                         @"isAccessibilityElement",
+                                         @"observationInfo",
+                                         @"shouldGroupAccessibilityChildren",
+                                         @"traitStorageList",
+                                         nil];
+                });
+                
+                if ([kIgnoreProperties containsObject:propertyInfo.name]) {
+                    continue;
+                }
+            }
+            
+            if ([@[@"debugDescription", @"description", @"hash", @"superclass",] containsObject:propertyInfo.name]) {
+                continue;
+            }
+            
             _ALModelPropertyMeta *propertyMeta =
                 [_ALModelPropertyMeta metaWithClassInfo:_classInfo propertyInfo:propertyInfo];
             

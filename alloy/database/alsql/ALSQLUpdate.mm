@@ -53,8 +53,10 @@
 - (instancetype)columns:(const /*std::list<const ALDBColumn>*/ALDBColumnList &)columns {
     _setClause = ALSQLClause();
     for (auto c : columns) {
-        _setClause.append(c.to_string());
-        _setClause.append(" = ?");
+        if (!_setClause.is_empty()) {
+            _setClause.append(", ");
+        }
+        _setClause.append(c.to_string()).append(" = ?");
     }
     return self;
 }

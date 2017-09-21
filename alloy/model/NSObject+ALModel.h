@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)al_modelInitWithCoder:(NSCoder *)coder;
 
 - (NSUInteger)al_modelHash;
-- (BOOL)al_modelISEquel:(id)model;
+- (BOOL)al_modelIsEquel:(id)model;
 - (NSString *)al_modelDescription;
 @end
 

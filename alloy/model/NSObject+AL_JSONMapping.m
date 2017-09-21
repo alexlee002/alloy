@@ -408,3 +408,93 @@ static id ModelToJSONObjectRecursive(NSObject *model) {
 @end
 
 
+@implementation NSArray (AL_JSONMapping)
+
++ (NSArray *)al_modelArrayWithClass:(Class)cls JSON:(id)json {
+    if (!json) {
+        return nil;
+    }
+    NSArray *arr     = nil;
+    NSData *jsonData = nil;
+    if ([json isKindOfClass:[NSArray class]]) {
+        arr = json;
+
+    } else if ([json isKindOfClass:[NSString class]]) {
+        jsonData = [(NSString *) json dataUsingEncoding:NSUTF8StringEncoding];
+
+    } else if ([json isKindOfClass:[NSData class]]) {
+        jsonData = json;
+    }
+    if (jsonData) {
+        arr = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:NULL];
+        if (![arr isKindOfClass:[NSArray class]]) {
+            arr = nil;
+        }
+    }
+    return [self al_modelArrayWithClass:cls array:arr];
+}
+
++ (NSArray *)al_modelArrayWithClass:(Class)cls array:(NSArray *)arr {
+    if (!cls || !arr) {
+        return nil;
+    }
+    NSMutableArray *result = [NSMutableArray array];
+    for (NSDictionary *dic in arr) {
+        if (![dic isKindOfClass:[NSDictionary class]]) {
+            continue;
+        }
+        NSObject *obj = [cls al_modelWithDictionary:dic];
+        if (obj) {
+            [result addObject:obj];
+        }
+    }
+    return result;
+}
+
+@end
+
+
+@implementation NSDictionary (AL_JSONMapping)
+
++ (NSDictionary *)al_modelDictionaryWithClass:(Class)cls JSON:(id)json {
+    if (!json) {
+        return nil;
+    }
+    NSDictionary *dic = nil;
+    NSData *jsonData  = nil;
+    if ([json isKindOfClass:[NSDictionary class]]) {
+        dic = json;
+    } else if ([json isKindOfClass:[NSString class]]) {
+        jsonData = [(NSString *) json dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([json isKindOfClass:[NSData class]]) {
+        jsonData = json;
+    }
+    if (jsonData) {
+        dic = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:NULL];
+        if (![dic isKindOfClass:[NSDictionary class]]) {
+            dic = nil;
+        }
+    }
+    return [self al_modelDictionaryWithClass:cls dictionary:dic];
+}
+
++ (NSDictionary *)al_modelDictionaryWithClass:(Class)cls dictionary:(NSDictionary *)dic {
+    if (!cls || !dic) {
+        return nil;
+    }
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    for (NSString *key in dic.allKeys) {
+        if (![key isKindOfClass:[NSString class]]) {
+            continue;
+        }
+        NSObject *obj = [cls al_modelWithDictionary:dic[key]];
+        if (obj) {
+            result[key] = obj;
+        }
+    }
+    return result;
+}
+
+@end
+
+

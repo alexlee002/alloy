@@ -34,8 +34,11 @@ class HandleWrap {
 
     constexpr Handle *operator->() const { return handle.get(); }
 
+  protected:
     std::shared_ptr<Handle> handle;
     Configs configs;
+
+    friend class HandlePool;
 };
 
 class RecyclableHandle {

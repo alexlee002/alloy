@@ -68,10 +68,10 @@ ALSQLValue::ALSQLValue(id obj) {
     if (obj == nil || obj == NSNull.null) {
         _coreValue = aldb::SQLValue(nullptr);
     } else {
-        if ([(id)[obj class] respondsToSelector:@selector(al_valueByTransformingToDB)]) {
+        /*if ([(id)[obj class] respondsToSelector:@selector(al_valueByTransformingToDB)]) {
             _coreValue = ((aldb::SQLValue(*)(id, SEL))(void *)objc_msgSend)(obj, @selector(al_valueByTransformingToDB));
         }
-        else if ([obj isKindOfClass:NSString.class]) {
+        else */if ([obj isKindOfClass:NSString.class]) {
             _coreValue = aldb::SQLValue([(NSString *)obj UTF8String]);
         }
         else if ([obj isKindOfClass:NSNumber.class]) {

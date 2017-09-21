@@ -12,8 +12,8 @@
 
 @interface ALDBMigrationHelper : NSObject
 
-+ (BOOL)setupDatabaseUsingHandle:(const aldb::RecyclableHandle &)handle;
-+ (BOOL)autoMigrateDatabaseUsingHandle:(const aldb::RecyclableHandle &)handle;
++ (BOOL)setupDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle;
++ (BOOL)autoMigrateDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle;
 
 @end
 

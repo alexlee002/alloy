@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "aldb.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,13 +31,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)upgradeFromVersion:(NSInteger)oldVersion
                         to:(NSInteger)newVersion
-               usingHandle:(const aldb::RecyclableHandle)handle;
+               usingHandle:(std::shared_ptr<aldb::Handle> &)handle;
+
 - (BOOL)downgradeFromVersion:(NSInteger)oldVersion
                           to:(NSInteger)newVersion
-                 usingHandle:(const aldb::RecyclableHandle)handle;
+                 usingHandle:(std::shared_ptr<aldb::Handle> &)handle;
 
 @optional
-- (BOOL)setupDatabaseUsingHandle:(const aldb::RecyclableHandle)handle;
+- (BOOL)setupDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle;
 
 @end
 

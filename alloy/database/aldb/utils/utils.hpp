@@ -12,6 +12,9 @@
 #include <string>
 #include <list>
 #include <functional>
+#include <sqlite3.h>
+#include "error.hpp"
+
 
 #define ALDB_SET_REF_VAL(ref_ptr, value) if(ref_ptr) { *ref_ptr = value; }
 
@@ -40,6 +43,9 @@ std::list<T> list_map(const std::list<U> &src, std::function<T(U &)> map_func) {
     }
     return dest;
 }
+
+std::shared_ptr<Error> sqlite_error(sqlite3 *h, const char *sql = NULL);
+std::shared_ptr<Error> aldb_error(int code, const char *message);
 }
 
 #endif /* utils_h */

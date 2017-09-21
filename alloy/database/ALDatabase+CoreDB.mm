@@ -10,6 +10,7 @@
 #import "__ALDatabase+private.h"
 #import "ALUtilitiesHeader.h"
 #import "ALLogger.h"
+#import "ALOCRuntime.h"
 
 #ifdef DEBUG
 #define DEBUG_LOG_DB_ERROR()                                                  \
@@ -125,6 +126,27 @@
     aldb::CoreBase::TransactionEventBlock eventBlock = nullptr;
     if (eventHandler) {
         eventBlock = [&eventHandler](aldb::CoreBase::TransactionEvent event) {
+#if DEBUG
+            NSString *eventMsg = @"UNKNOWN";
+            switch (event) {
+                case aldb::CoreBase::TransactionEvent::BEGIN_FAILED:
+                    eventMsg = @"BEGIN_FAILED";
+                    break;
+                case aldb::CoreBase::TransactionEvent::COMMIT_FAILED:
+                    eventMsg = @"COMMIT_FAILED";
+                    break;
+                case aldb::CoreBase::TransactionEvent::ROLLBACK:
+                    eventMsg = @"ROLLBACK";
+                    break;
+                case aldb::CoreBase::TransactionEvent::ROLLBACK_FAILED:
+                    eventMsg = @"ROLLBACK_FAILED";
+                    break;
+                    
+                default:
+                    break;
+            }
+            ALLogWarn(@"transaction doesn't commit! event:%@\ncall stack:\n%@", eventMsg, al_backtraceStack(15));
+#endif
             ALSafeInvokeBlock(eventHandler, (ALDBTransactionEvent)event);
         };
     }

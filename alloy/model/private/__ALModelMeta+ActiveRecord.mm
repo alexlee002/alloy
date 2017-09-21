@@ -99,23 +99,10 @@ static NSString *const kRowId = @"rowid";
         }
         
         ALPropertyColumnBindings *binding =
-            [ALPropertyColumnBindings bindingWithModel:_modelMeta->_classInfo.cls propertyMeta:propmeta column:colname];
+            [ALPropertyColumnBindings bindingWithModelMeta:_modelMeta propertyMeta:propmeta column:colname];
         if (!binding) {
             continue;
-        }
-
-        NSString *tmpPN = [propname al_stringbyUppercaseFirst];
-        NSString *selName = [@"customColumnValueTransformFrom" stringByAppendingString:tmpPN];
-        NSDictionary *methods = _modelMeta->_classInfo.methodInfos;
-        if (methods[selName]) {
-            binding->_customGetter = NSSelectorFromString(selName);
-        }
-        
-        selName = [NSString stringWithFormat:@"customTransform%@FromResultSet:atIndex:", tmpPN];
-        if (methods[selName]) {
-            binding->_customSetter = NSSelectorFromString(selName);
-        }
-        
+        }        
         columnsDict[colname] = binding;
 //        [allColumns addObject:binding];
     }
@@ -126,9 +113,9 @@ static NSString *const kRowId = @"rowid";
         // add rowid column
         NSString *rowidColName = @(ALDBColumn::s_rowid.to_string().c_str());
         ALPropertyColumnBindings *rowidBinding = [ALPropertyColumnBindings
-            bindingWithModel:_modelMeta->_classInfo.cls
-                propertyMeta:_modelMeta->_allPropertyMetasDict[al_keypathForClass(NSObject, al_rowid)]
-                      column:rowidColName];
+            bindingWithModelMeta:_modelMeta
+                    propertyMeta:_modelMeta->_allPropertyMetasDict[al_keypathForClass(NSObject, al_rowid)]
+                          column:rowidColName];
         rowidBinding->_columnDef->as_primary(ALDBOrderDefault, ALDBConflictPolicyDefault, true);
 
         columnsDict[rowidColName] = rowidBinding;

@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "aldb.h"
 
 @class ALDatabase;
 @protocol ALDBConnectionDelegate <NSObject>
@@ -16,8 +15,8 @@
 + (BOOL)canOpenDatabaseWithPath:(nonnull in NSString *)path;
 
 @optional
-- (void)databaseDidOpen:(const aldb::RecyclableHandle)handle;
-- (void)databaseDidReady:(const aldb::RecyclableHandle)handle;
+- (void)databaseDidOpen:(std::shared_ptr<aldb::Handle> &)handle;
+- (void)databaseDidReady:(std::shared_ptr<aldb::Handle> &)handle;
 
 - (void)willCloseDatabase:(ALDatabase *_Nonnull)database;
 - (void)didCloseDatabase:(ALDatabase *_Nonnull)database;

@@ -25,3 +25,7 @@ const std::string ALDBColumn::to_string() const { return _name; }
 bool ALDBColumn::operator==(const ALDBColumn &column) const {
     return _name == column._name;
 }
+
+bool ALDBColumn::operator!=(const ALDBColumn &column) const {
+    return _name != column._name;
+}

@@ -27,13 +27,41 @@ Error::operator std::string() const {
     return msg;
 }
 
-const char *Error::description() const { return std::string(*this).c_str(); }
+const std::string Error::description() const { return std::string(*this); }
 
 void Error::log(const char *file, int line) const {
     printf("‼️ [ALDB] - ");
     if (file && strlen(file) > 0) {
         printf("(%s: %d)", basename((char *) file), line);
     }
-    printf("%s\n", description());
+    printf("%s\n", description().c_str());
 }
+
+//ErrorPtr::ErrorPtr(): _error(nullptr), _is_null(false){};
+//ErrorPtr::ErrorPtr(const Error &error) : _error(std::make_shared<Error>(error)), _is_null(false) {}
+//ErrorPtr::ErrorPtr(const std::nullptr_t &) : _error(nullptr), _is_null(true) {}
+//ErrorPtr::~ErrorPtr() { _error = nullptr; }
+//
+//void ErrorPtr::set_error(const Error &err) { _error = std::make_shared<Error>(err); }
+//
+//ErrorPtr::operator bool() const { return _error != nullptr; }
+//
+//bool ErrorPtr::operator==(const std::nullptr_t &) const { return _error == nullptr; }
+//
+//bool ErrorPtr::operator!=(const std::nullptr_t &) const { return _error != nullptr; }
+//
+//ErrorPtr &ErrorPtr::operator=(const std::nullptr_t &) {
+//    _error = nullptr;
+//    _is_null = true;
+//    return *this;
+//}
+//
+//ErrorPtr &ErrorPtr::operator=(std::shared_ptr<Error> ptr) {
+//    _error = ptr;
+//    _is_null = !ptr;
+//    return *this;
+//}
+//
+//bool ErrorPtr::is_nullptr() const { return !_error && !_is_null; }
+
 }

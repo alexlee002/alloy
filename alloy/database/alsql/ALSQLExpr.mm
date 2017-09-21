@@ -10,35 +10,39 @@
 #import "ALDBColumn.h"
 #import "ALSQLValue.h"
 
+const std::string ALSQLExpr::_s_param_mark("?");
 const ALDBOptrPrecedence ALSQLExpr::s_default_precedence = 0;
 const ALSQLExpr ALSQLExpr::s_null_expr = ALSQLExpr();
+const ALSQLExpr ALSQLExpr::s_param_mark = ALSQLExpr(ALDBColumn(_s_param_mark));
 
 ALSQLExpr::ALSQLExpr() : ALSQLClause(), _precedence(s_default_precedence) {}
 
 ALSQLExpr::ALSQLExpr(const ALDBColumn &column) : ALSQLClause(std::string(column)), _precedence(s_default_precedence) {}
 
-ALSQLExpr::ALSQLExpr(const ALSQLValue &value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(const ALSQLValue &value)
+    : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
 
-ALSQLExpr::ALSQLExpr(int32_t value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
-ALSQLExpr::ALSQLExpr(long value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
-ALSQLExpr::ALSQLExpr(int64_t value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
-ALSQLExpr::ALSQLExpr(double value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
-ALSQLExpr::ALSQLExpr(BOOL value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(int32_t value) : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(long value) : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(int64_t value) : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(double value) : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(BOOL value) : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
 
 ALSQLExpr::ALSQLExpr(const ALSQLExpr &expr) : ALSQLClause(expr), _precedence(expr._precedence) {}
 
 ALSQLExpr::ALSQLExpr(const char *value)
-    : ALSQLClause("?", {ALSQLValue(value ? value : "")}), _precedence(s_default_precedence) {}
+    : ALSQLClause(_s_param_mark, {ALSQLValue(value ? value : "")}), _precedence(s_default_precedence) {}
 
-ALSQLExpr::ALSQLExpr(const std::string &value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(const std::string &value)
+    : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
 
 ALSQLExpr::ALSQLExpr(const std::nullptr_t &) : ALSQLClause("NULL"), _precedence(s_default_precedence) {}
 
-ALSQLExpr::ALSQLExpr(id value) : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+ALSQLExpr::ALSQLExpr(id value) : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
 
-//ALSQLExpr::operator bool() const { return !is_empty(); }
+// ALSQLExpr::operator bool() const { return !is_empty(); }
 
-ALSQLExpr::operator std::list<const ALSQLExpr>() const { return {*this};}
+ALSQLExpr::operator std::list<const ALSQLExpr>() const { return {*this}; }
 
 ALSQLExpr &ALSQLExpr::operator=(const ALSQLExpr &r) {
     if (this != &r) {

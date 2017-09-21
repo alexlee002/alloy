@@ -23,6 +23,7 @@
 #import "ALSQLCreateTable.h"
 #import "ALSQLCreateIndex.h"
 #import <objc/message.h>
+#import "ALDatabase.h"
 #import "__ALModelMeta+ActiveRecord.h"
 
 static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
@@ -69,7 +70,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
 
 @implementation ALDBMigrationHelper
 
-+ (BOOL)setupDatabaseUsingHandle:(const aldb::RecyclableHandle &)handle {
++ (BOOL)setupDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     [[self modelClassesWithDatabasePath:@(handle->get_path().c_str())] bk_each:^(Class cls) {
         [self createTableForModel:cls usingHandle:handle];
     }];
@@ -77,7 +78,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     return YES;
 }
 
-+ (BOOL)autoMigrateDatabaseUsingHandle:(const aldb::RecyclableHandle &)handle {
++ (BOOL)autoMigrateDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     NSMutableSet<NSString *> *tables = [[self getTablesInDatabaseUsingHandle:handle] mutableCopy];
 
     for (Class modelClass in [self modelClassesWithDatabasePath:@(handle->get_path().c_str())]) {
@@ -156,7 +157,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     }];
 }
 
-+ (BOOL)createTableForModel:(Class)modelCls usingHandle:(const aldb::RecyclableHandle)handle {
++ (BOOL)createTableForModel:(Class)modelCls usingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     const ALSQLClause createTableStaement = [self tableSchemaForModel:modelCls];
     bool result = handle->exec(createTableStaement.sql_str(), createTableStaement.sql_args());
     al_guard_or_return1(result, NO, "*** create table for model:%@ failed: %s", modelCls,
@@ -166,7 +167,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
         ALSQLStatement *stmt = [self indexStatementForModel:modelCls indexProperties:propertieNames uniqued:YES];
         ALSQLClause clause   = [stmt SQLClause];
         if (!handle->exec(clause.sql_str(), clause.sql_args())) {
-            ALLogError(@"%s", handle->get_error()->description());
+            ALDB_LOG_ERROR(handle);
         }
     }];
 
@@ -174,7 +175,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
         ALSQLStatement *stmt = [self indexStatementForModel:modelCls indexProperties:propertieNames uniqued:NO];
         ALSQLClause clause   = [stmt SQLClause];
         if (!handle->exec(clause.sql_str(), clause.sql_args())) {
-            ALLogError(@"%s", handle->get_error()->description());
+            ALDB_LOG_ERROR(handle);
         }
     }];
 
@@ -193,8 +194,11 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     //columns
     {
         std::list<const ALDBColumnDefine> columnDefs;
-        for (ALPropertyColumnBindings *conlumBinding in tableBindings->_allColumns) {
-            columnDefs.push_back(conlumBinding.columnDefine);
+        for (ALPropertyColumnBindings *columBinding in tableBindings->_allColumns) {
+            if ([columBinding columnDefine].column() == ALDBColumn::s_rowid) {
+                continue;
+            }
+            columnDefs.push_back(columBinding.columnDefine);
         }
         if (columnDefs.size() > 0) {
             [stmt columnDefines:columnDefs];
@@ -351,7 +355,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     return [s copy];
 }
 
-+ (NSSet<NSString *> *)getTablesInDatabaseUsingHandle:(const aldb::RecyclableHandle)handle {
++ (NSSet<NSString *> *)getTablesInDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     NSMutableSet<NSString *> *tables = [NSMutableSet set];
     
     std::shared_ptr<aldb::StatementHandle> stmt = handle->prepare("SELECT tbl_name FROM sqlite_master WHERE type = ? AND name NOT LIKE ?;");
@@ -366,14 +370,12 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     return tables;
 }
 
-+ (const std::list<const ALDBColumnDefine>)getTableColumns:(NSString *)table usingHandle:(const aldb::RecyclableHandle)handle {
++ (const std::list<const ALDBColumnDefine>)getTableColumns:(NSString *)table usingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     std::list<const ALDBColumnDefine> colunms;
     std::shared_ptr<aldb::StatementHandle> stmt =
         handle->prepare("PRAGMA table_info(" + std::string(table.UTF8String) + ");");
     if (!stmt) {
-        if (handle->has_error()) {
-            ALLogError(@"%s", handle->get_error()->description());
-        }
+        ALDB_LOG_ERROR(stmt);
         return {};
     }
     
@@ -397,7 +399,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     return colunms;
 }
 
-+ (NSArray<__ALDBIndex *> *)getTableIndexes:(NSString *)table usingHandle:(const aldb::RecyclableHandle)handle {
++ (NSArray<__ALDBIndex *> *)getTableIndexes:(NSString *)table usingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     NSMutableArray<__ALDBIndex *> *indexes = [NSMutableArray array];
     
     std::string table_name = std::string(table.UTF8String);
@@ -451,7 +453,7 @@ static AL_FORCE_INLINE BOOL hasClassMethod(Class cls, NSString *name){
     return indexes;
 }
 
-+ (bool)addColumn:(const ALDBColumnDefine &)coldef inTable:(const std::string &)table usingHandle:(const aldb::RecyclableHandle)handle {
++ (bool)addColumn:(const ALDBColumnDefine &)coldef inTable:(const std::string &)table usingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     ALSQLClause clause("ALTER TABLE " + table + " ADD COLUMN ");
     clause.append(coldef);
     return handle->exec(clause.sql_str(), clause.sql_args());

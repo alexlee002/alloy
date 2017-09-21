@@ -12,12 +12,12 @@
 
 @interface ALPropertyColumnBindings : NSObject
 
-- (YYClassPropertyInfo *)propertyInfo;
+- (nullable YYClassPropertyInfo *)propertyInfo;
 - (const ALDBColumnDefine &)columnDefine;
-- (NSString *)columnName;
-- (NSString *)propertyName;
+- (nullable NSString *)columnName;
+- (nullable NSString *)propertyName;
 
-- (SEL)customPropertyValueFromColumnTransformer;
-- (SEL)customPropertyValueToColumnTransformer;
+- (nullable SEL)customPropertyValueSetter; // from ResultSet
+- (nullable SEL)customPropertyValueGetter; // to Column Value
 
 @end

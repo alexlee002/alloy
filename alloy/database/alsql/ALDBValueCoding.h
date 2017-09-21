@@ -11,8 +11,10 @@
 #import "ALSQLValue.h"
 
 @protocol ALDBValueCoding <NSObject>
+// Custom define column type and value coding in specified model define.
+// If different SDKs defines the same class's value coding,  there would be conflict.
 
-+ (ALDBColumnType)ALDBColumnType;
-- (const aldb::SQLValue)al_valueByTransformingToDB;
-- (nullable instancetype)al_valueByTransformingFromDBObject:(nullable id)obj;
+//+ (ALDBColumnType)al_DBColumnType;
+//- (const aldb::SQLValue)al_DBColumnValue;
+//+ (nullable instancetype)al_instanctWithColumnValue:(nullable id)obj;
 @end

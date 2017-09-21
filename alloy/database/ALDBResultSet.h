@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ALDBTypeDefs.h"
 
 #ifdef __cplusplus
 #import "statement_recyclable.hpp"
@@ -23,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)columnCount;
 - (nullable NSString *)columnNameAt:(NSInteger)index;
 - (NSInteger)columnIndexForName:(NSString *)name;
+- (ALDBColumnType)columnTypeAt:(NSInteger)index;
 
 - (BOOL)next;
 

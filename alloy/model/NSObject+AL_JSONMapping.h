@@ -33,4 +33,44 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSString *)al_modelToJSONString;
 
 @end
+
+
+/**
+ Provide some data-model method for NSArray.
+ */
+@interface NSArray (AL_JSONMapping)
+
+/**
+ Creates and returns an array from a json-array.
+ This method is thread-safe.
+ 
+ @param cls  The instance's class in array.
+ @param json  A json array of `NSArray`, `NSString` or `NSData`.
+ Example: [{"name":"Mary"},{name:"Joe"}]
+ 
+ @return A array, or nil if an error occurs.
+ */
++ (nullable NSArray *)al_modelArrayWithClass:(Class)cls JSON:(id)json;
+
+@end
+
+
+
+/**
+ Provide some data-model method for NSDictionary.
+ */
+@interface NSDictionary (AL_JSONMapping)
+
+/**
+ Creates and returns a dictionary from a json.
+ This method is thread-safe.
+ 
+ @param cls  The value instance's class in dictionary.
+ @param json  A json dictionary of `NSDictionary`, `NSString` or `NSData`.
+ Example: {"user1":{"name","Mary"}, "user2": {name:"Joe"}}
+ 
+ @return A dictionary, or nil if an error occurs.
+ */
++ (nullable NSDictionary *)al_modelDictionaryWithClass:(Class)cls JSON:(id)json;
+@end
 NS_ASSUME_NONNULL_END

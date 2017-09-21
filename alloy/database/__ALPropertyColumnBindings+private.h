@@ -20,7 +20,7 @@
     SEL _customGetter;
 }
 
-+ (instancetype)bindingWithModel:(Class)modelClass
-                    propertyMeta:(_ALModelPropertyMeta *)meta
-                          column:(NSString *)columnName;
++ (instancetype)bindingWithModelMeta:(_ALModelMeta *)modelMeta
+                        propertyMeta:(_ALModelPropertyMeta *)propertyMeta
+                              column:(NSString *)columnName;
 @end

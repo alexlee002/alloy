@@ -22,7 +22,10 @@
 
 - (instancetype)setPragma:(ALSQLPragmaName)pragma value:(const ALSQLValue &)value {
     ALSQLClause clause;
-    clause.append("PRAGMA ").append(ALSQLExpr([self pragmaNameWithPragma:pragma]) == ALSQLExpr(value));
+    clause.append("PRAGMA ")
+        .append([self pragmaNameWithPragma:pragma])
+        .append(" = ")
+        .append(std::string(aldb::SQLValue(value)));
     _clause = clause;
     return self;
 }

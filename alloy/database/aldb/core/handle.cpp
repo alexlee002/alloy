@@ -61,6 +61,7 @@ void Handle::close() {
     int rc;
     bool retry = false, tryFinalizingOpenedStatements = false;
     do {
+        retry = false;
         rc = sqlite3_close((sqlite3 *) _handle);
         if (SQLITE_BUSY == rc || SQLITE_LOCKED == rc) {
             if (!tryFinalizingOpenedStatements) {
@@ -73,7 +74,7 @@ void Handle::close() {
                 }
             }
         } else if (SQLITE_OK != rc) {
-            // TODO: error handle
+            aldb::sqlite_error((sqlite3 *)_handle)->log(__FILE__, __LINE__);
         }
     } while (retry);
 

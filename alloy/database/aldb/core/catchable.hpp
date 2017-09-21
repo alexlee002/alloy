@@ -10,8 +10,9 @@
 #define catchable_hpp
 
 #include <stdio.h>
-#include "Error.hpp"
+#include "error.hpp"
 #include <sqlite3.h>
+
 
 namespace aldb {
 class Catchable {

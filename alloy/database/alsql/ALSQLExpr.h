@@ -17,6 +17,8 @@ class ALDBColumn;
 class ALSQLValue;
 class ALSQLExpr : public ALSQLClause {
 public:
+    static const ALSQLExpr s_param_mark;
+    
     ALSQLExpr();
     ALSQLExpr(const ALDBColumn &column);
     ALSQLExpr(const ALSQLExpr &expr);
@@ -49,7 +51,7 @@ public:
                                       std::is_same<T, CGVector>::value          ||
                                       std::is_same<T, CGAffineTransform>::value ||
                                       std::is_same<T, CATransform3D>::value>::type * = nullptr)
-        : ALSQLClause("?", {value}), _precedence(s_default_precedence) {}
+        : ALSQLClause(_s_param_mark, {value}), _precedence(s_default_precedence) {}
 
     //    operator ALSQLClause() const;
     //    const ALSQLClause &SQLClause() const;
@@ -151,6 +153,7 @@ public:
     
 #pragma mark -
 protected:
+    static const std::string _s_param_mark;
     static const std::unordered_map<std::string, int> &operator_precedence_map();
     void operate_with(const ALSQLExpr &other,
                       const std::string &optr,

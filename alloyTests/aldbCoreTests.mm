@@ -28,7 +28,7 @@ static NSString *kPath = nil;
     kPath = [kPath stringByAppendingPathComponent:@"aldb-test.sqlite"];
     
     ALDatabase *database = [ALDatabase databaseWithPath:kPath keepAlive:YES];
-    [database setConfig:[](std::shared_ptr<aldb::Handle> &handle, aldb::Error **error) -> bool {
+    [database setConfig:[](std::shared_ptr<aldb::Handle> &handle, aldb::ErrorPtr &error) -> bool {
         handle->exec("PRAGMA cache_size=-2000");
         handle->exec("PRAGMA page_size=4096");
         handle->exec("PRAGMA locking_mode=NORMAL");

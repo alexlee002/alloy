@@ -565,8 +565,16 @@ AL_FORCE_INLINE void _ModelSetValueForProperty(__unsafe_unretained id model,
                     if ([value isKindOfClass:[NSDate class]]) {
                         ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, meta->_setter, value);
                     } else if ([value isKindOfClass:[NSString class]]) {
-                        ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, meta->_setter,
-                                                                       _YYNSDateFromString(value));
+                        NSDate *d = _YYNSDateFromString(value);
+                        if (d == nil) {
+                            CFTimeInterval t = [value doubleValue];
+                            d = [NSDate dateWithTimeIntervalSince1970:t];
+                        }
+                        ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, meta->_setter, d);
+                    } else if ([value isKindOfClass:[NSNumber class]]) {
+                        CFTimeInterval t = [value doubleValue];
+                        NSDate *d = [NSDate dateWithTimeIntervalSince1970:t];
+                        ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, meta->_setter, d);
                     }
                 } break;
                     

@@ -32,7 +32,7 @@
 namespace aldb {
 
 class Handle;
-typedef std::function<bool(const RecyclableHandle &)> DatabaseOpenCallback;
+typedef std::function<bool(std::shared_ptr<Handle> &)> DatabaseOpenCallback;
 
 class HandlePool;
 typedef Recyclable<std::shared_ptr<HandlePool>> RecyclableHandlePool;
@@ -85,11 +85,11 @@ class HandlePool : public Catchable {
     ConcurrentList<HandleWrap> _handles;
     std::atomic<int> _aliveHandleCount;
     const DatabaseOpenCallback _open_callback;
-    std::atomic<bool> _opened;
+    std::atomic<bool> _db_inited;
 
     Configs _configs;
     RWLock _rwlock;
-    std::mutex _mutex;
+    std::mutex _db_init_mutex;
 
     static const int _s_hardware_concurrency;
 };

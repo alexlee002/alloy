@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ALSQLSelect : ALSQLStatement
 
-- (const std::list<const ALDBResultColumn> &)resultColumns;
+- (const ALDBResultColumnList &)resultColumns;
 
-- (instancetype)select:(const std::list<const ALDBResultColumn> &)columns distinct:(BOOL)distinct;
+- (instancetype)select:(const ALDBResultColumnList &)columns distinct:(BOOL)distinct;
 - (instancetype)from:(NSString *)table;
 - (instancetype)where:(const ALDBCondition &)conditions;
 - (instancetype)groupBy:(const std::list<const ALSQLExpr> &)exprList;

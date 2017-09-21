@@ -28,3 +28,6 @@ ALDBResultColumn &ALDBResultColumn::as(NSString *name) {
     ALSQLClause::append(name.UTF8String);
     return *this;
 }
+
+
+ALDBResultColumnList::ALDBResultColumnList() : std::list<const ALDBResultColumn>() {}

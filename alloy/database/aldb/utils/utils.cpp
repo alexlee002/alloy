@@ -7,6 +7,7 @@
 //
 
 #include "utils.hpp"
+#include "defines.hpp"
 
 namespace aldb {
 const std::string str_to_upper(const std::string &str) {
@@ -32,5 +33,21 @@ const std::string literal_value(const std::string &str, bool blob_type) {
         // TODO: need to escape '
         return "'" + str + "'";
     }
+}
+
+std::shared_ptr<Error> sqlite_error(sqlite3 *h, const char *sql) {
+    std::string errmsg;
+    if (sql) {
+        errmsg.append("sql: \"" + std::string(sql) + "\"; ");
+    }
+    const char *sqlite_err = sqlite3_errmsg(h);
+    if (sqlite_err) {
+        errmsg.append(sqlite_err);
+    }
+    return std::shared_ptr<Error>(new Error(aldb::SqliteErrorDomain, sqlite3_errcode(h), errmsg.c_str()));
+}
+
+std::shared_ptr<Error> aldb_error(int code, const char *message) {
+    return std::shared_ptr<Error>(new Error(aldb::ALDBErrorDomain, code, message));
 }
 }

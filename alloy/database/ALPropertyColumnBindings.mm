@@ -13,6 +13,7 @@
 #import "ALUtilitiesHeader.h"
 #import "ALDBValueCoding.h"
 #import "ALActiveRecord.h"
+#import "NSString+ALHelper.h"
 #import <unordered_map>
 #import <string>
 #import <objc/message.h>
@@ -22,22 +23,49 @@ AL_FORCE_INLINE ALDBColumnType columnTypeForProperty(_ALModelPropertyMeta *prope
 
 @implementation ALPropertyColumnBindings
 
-+ (instancetype)bindingWithModel:(Class)modelClass
-                    propertyMeta:(_ALModelPropertyMeta *)meta
-                          column:(NSString *)columnName {
++ (instancetype)bindingWithModelMeta:(_ALModelMeta *)modelMeta
+                        propertyMeta:(_ALModelPropertyMeta *)propertyMeta
+                              column:(NSString *)columnName {
     
     ALPropertyColumnBindings *bindings = [[self alloc] init];
-    bindings->_cls = modelClass;
-    bindings->_propertyMeta = meta;
-    bindings->_colName   = [columnName copy];
-    ALDBColumnType colType  = columnTypeForProperty(meta);
+    bindings->_cls                     = modelMeta->_classInfo.cls;
+    bindings->_propertyMeta            = propertyMeta;
+    bindings->_colName                 = [columnName copy];
+
+    NSString *tmpPN = [propertyMeta->_name al_stringbyUppercaseFirst];
+    //+ (id)customGetColumnValueFor{PropertyName};
+    NSString *selName = [@"customGetColumnValueFor" stringByAppendingString:tmpPN];
+    NSDictionary *methods = modelMeta->_classInfo.methodInfos;
+    if (methods[selName]) {
+        bindings->_customGetter = NSSelectorFromString(selName);
+    }
+
+    //- (void)customSet{PropertyName}WithColumnValue:(id)value;
+    selName = [NSString stringWithFormat:@"customSet%@WithColumnValue:", tmpPN];
+    if (methods[selName]) {
+        bindings->_customSetter = NSSelectorFromString(selName);
+    }
+
+    ALDBColumnType colType = ALDBColumnTypeBlob;
+    //- (ALDBColumnType)customColumnTypeFor{PropertyName};
+    selName = [NSString stringWithFormat:@"customColumnTypeFor%@", tmpPN];
+    if (methods[selName]) {
+        colType =
+            ((ALDBColumnType(*)(id, SEL))(void *) objc_msgSend)((id) bindings->_cls, NSSelectorFromString(selName));
+    } else {
+        colType = columnTypeForProperty(propertyMeta);
+    }
+
     bindings->_columnDef =
         std::shared_ptr<ALDBColumnDefine>(new ALDBColumnDefine(ALDBColumn(columnName.UTF8String), colType));
 
-    if ([(id) modelClass respondsToSelector:@selector(customDefineColumn:forProperty:)]) {
+    SEL customColDef = @selector(customDefineColumn:forProperty:);
+    if ([(id) bindings->_cls respondsToSelector:customColDef]) {
+        
         ((void (*)(id, SEL, ALDBColumnDefine, id /*YYClassPropertyInfo*/))(void *) objc_msgSend)(
-            (id) modelClass, @selector(customDefineColumn:forProperty:), *(bindings->_columnDef), meta->_info);
+            (id) bindings->_cls, customColDef, *(bindings->_columnDef), propertyMeta->_info);
     }
+
     return bindings;
 }
 
@@ -57,11 +85,11 @@ AL_FORCE_INLINE ALDBColumnType columnTypeForProperty(_ALModelPropertyMeta *prope
     return _propertyMeta->_name;
 }
 
-- (SEL)customPropertyValueFromColumnTransformer {
+- (SEL)customPropertyValueSetter {
     return _customSetter;
 }
 
-- (SEL)customPropertyValueToColumnTransformer {
+- (SEL)customPropertyValueGetter {
     return _customGetter;
 }
 
@@ -103,9 +131,9 @@ AL_FORCE_INLINE BOOL columnTypeForCType(YYEncodingType ctype, ALDBColumnType *co
 AL_FORCE_INLINE ALDBColumnType columnTypeForProperty(_ALModelPropertyMeta *property) {
     
     if ((property->_type & YYEncodingTypeMask) == YYEncodingTypeObject) {
-        if ([(id)property->_cls respondsToSelector:@selector(ALDBColumnType)]) {
-            return ((ALDBColumnType(*)(id, SEL))(void *)objc_msgSend)((id)property->_cls, @selector(ALDBColumnType));
-        }
+//        if ([(id)property->_cls respondsToSelector:@selector(ALDBColumnType)]) {
+//            return ((ALDBColumnType(*)(id, SEL))(void *)objc_msgSend)((id)property->_cls, @selector(ALDBColumnType));
+//        }
 
         static const std::unordered_map<long, uint8_t> NSTypesMap = {
             {YYEncodingTypeNSString,        ALDBColumnTypeText},

@@ -28,6 +28,10 @@
 		4304F3EF1F46BBC500AA45DE /* sqlExprTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */; };
 		4306CEC71F29CEBE006C73B9 /* ALDBMigrationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */; };
 		4306CEC81F29CEBE006C73B9 /* ALDBMigrationHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */; };
+		431835B81F6688400039A746 /* ALDatabase+Config.h in Headers */ = {isa = PBXBuildFile; fileRef = 431835B61F6688400039A746 /* ALDatabase+Config.h */; };
+		431835B91F6688400039A746 /* ALDatabase+Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431835B71F6688400039A746 /* ALDatabase+Config.mm */; };
+		431835BC1F66D3760039A746 /* ALSQLStatement+Database.h in Headers */ = {isa = PBXBuildFile; fileRef = 431835BA1F66D3760039A746 /* ALSQLStatement+Database.h */; };
+		431835BD1F66D3760039A746 /* ALSQLStatement+Database.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431835BB1F66D3760039A746 /* ALSQLStatement+Database.mm */; };
 		431B62761F541DA000FE763A /* ALSQLAlterTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62741F541DA000FE763A /* ALSQLAlterTable.h */; };
 		431B62771F541DA000FE763A /* ALSQLAlterTable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431B62751F541DA000FE763A /* ALSQLAlterTable.mm */; };
 		431B627A1F542B6200FE763A /* ALSQLCreateIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 431B62781F542B6200FE763A /* ALSQLCreateIndex.h */; };
@@ -176,6 +180,9 @@
 		43C25DAF1F1770A100C97ED8 /* alloy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43C25DA51F1770A100C97ED8 /* alloy.framework */; };
 		43C25DB41F1770A100C97ED8 /* alloyTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43C25DB31F1770A100C97ED8 /* alloyTests.mm */; };
 		43C25DB61F1770A100C97ED8 /* alloy.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C25DA81F1770A100C97ED8 /* alloy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43CBF6EA1F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 43CBF6E81F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.h */; };
+		43CBF6EB1F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43CBF6E91F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.mm */; };
+		43CBF7021F73E21D00316B3F /* JsonMappingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43CBF7011F73E21D00316B3F /* JsonMappingTests.m */; };
 		43DA43F11F47F96A002A4972 /* ALSQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 43DA43EF1F47F96A002A4972 /* ALSQLStatement.h */; };
 		43DA43F21F47F96A002A4972 /* ALSQLStatement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43DA43F01F47F96A002A4972 /* ALSQLStatement.mm */; };
 		43DA43F51F480451002A4972 /* ALSQLSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = 43DA43F31F480451002A4972 /* ALSQLSelect.h */; };
@@ -221,6 +228,10 @@
 		4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sqlExprTests.mm; sourceTree = "<group>"; };
 		4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBMigrationHelper.h; sourceTree = "<group>"; };
 		4306CEC61F29CEBE006C73B9 /* ALDBMigrationHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBMigrationHelper.mm; sourceTree = "<group>"; };
+		431835B61F6688400039A746 /* ALDatabase+Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALDatabase+Config.h"; sourceTree = "<group>"; };
+		431835B71F6688400039A746 /* ALDatabase+Config.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDatabase+Config.mm"; sourceTree = "<group>"; };
+		431835BA1F66D3760039A746 /* ALSQLStatement+Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALSQLStatement+Database.h"; sourceTree = "<group>"; };
+		431835BB1F66D3760039A746 /* ALSQLStatement+Database.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALSQLStatement+Database.mm"; sourceTree = "<group>"; };
 		431B62741F541DA000FE763A /* ALSQLAlterTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLAlterTable.h; sourceTree = "<group>"; };
 		431B62751F541DA000FE763A /* ALSQLAlterTable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLAlterTable.mm; sourceTree = "<group>"; };
 		431B62781F542B6200FE763A /* ALSQLCreateIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLCreateIndex.h; sourceTree = "<group>"; };
@@ -372,6 +383,9 @@
 		43C25DAE1F1770A100C97ED8 /* alloyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = alloyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		43C25DB31F1770A100C97ED8 /* alloyTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = alloyTests.mm; sourceTree = "<group>"; };
 		43C25DB51F1770A100C97ED8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		43CBF6E81F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALDBResultSet+AL_ActiveRecord.h"; sourceTree = "<group>"; };
+		43CBF6E91F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDBResultSet+AL_ActiveRecord.mm"; sourceTree = "<group>"; };
+		43CBF7011F73E21D00316B3F /* JsonMappingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonMappingTests.m; sourceTree = "<group>"; };
 		43DA43EF1F47F96A002A4972 /* ALSQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLStatement.h; sourceTree = "<group>"; };
 		43DA43F01F47F96A002A4972 /* ALSQLStatement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALSQLStatement.mm; sourceTree = "<group>"; };
 		43DA43F31F480451002A4972 /* ALSQLSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSQLSelect.h; sourceTree = "<group>"; };
@@ -563,8 +577,10 @@
 				436A50B21F17BE9B00B0D32E /* NSObject+AL_JSONMapping.m */,
 				436A50B31F17BE9B00B0D32E /* NSObject+ALModel.h */,
 				436A50B41F17BE9B00B0D32E /* NSObject+ALModel.m */,
-				436A50B51F17BE9B00B0D32E /* private */,
 				430018AE1F5015BF0056E4DE /* ALARExecutor.h */,
+				436A50B51F17BE9B00B0D32E /* private */,
+				43CBF6E81F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.h */,
+				43CBF6E91F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.mm */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -598,8 +614,12 @@
 				43B770551F2B41F900B877CE /* __ALDatabase+private.h */,
 				43B770561F2B41F900B877CE /* ALDatabase+CoreDB.h */,
 				43B770571F2B41F900B877CE /* ALDatabase+CoreDB.mm */,
+				431835B61F6688400039A746 /* ALDatabase+Config.h */,
+				431835B71F6688400039A746 /* ALDatabase+Config.mm */,
 				430018881F4DBEE00056E4DE /* ALDatabase+Statement.h */,
 				430018891F4DBEE00056E4DE /* ALDatabase+Statement.mm */,
+				431835BA1F66D3760039A746 /* ALSQLStatement+Database.h */,
+				431835BB1F66D3760039A746 /* ALSQLStatement+Database.mm */,
 				434252791F298EA200BCE32E /* ALDBConnectionDelegate.h */,
 				4342527B1F2997AE00BCE32E /* ALDBMigrationDelegate.h */,
 				4306CEC51F29CEBE006C73B9 /* ALDBMigrationHelper.h */,
@@ -625,7 +645,6 @@
 		43B45F4E1F433096005A7EC8 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				43B45F4F1F433096005A7EC8 /* alsql */,
 				43B45F501F433096005A7EC8 /* catchable.cpp */,
 				43B45F511F433096005A7EC8 /* catchable.hpp */,
 				43B45F521F433096005A7EC8 /* config.cpp */,
@@ -653,13 +672,6 @@
 				43B45F681F433096005A7EC8 /* transaction.hpp */,
 			);
 			path = core;
-			sourceTree = "<group>";
-		};
-		43B45F4F1F433096005A7EC8 /* alsql */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = alsql;
 			sourceTree = "<group>";
 		};
 		43B45F691F433096005A7EC8 /* utils */ = {
@@ -723,6 +735,7 @@
 				4304F3EC1F46BB8000AA45DE /* aldbCoreTests.mm */,
 				4304F3EE1F46BBC500AA45DE /* sqlExprTests.mm */,
 				432CE1711F5EBFB300F81A16 /* ActiveRecordTests.mm */,
+				43CBF7011F73E21D00316B3F /* JsonMappingTests.m */,
 			);
 			path = alloyTests;
 			sourceTree = "<group>";
@@ -788,6 +801,7 @@
 				43B45F811F433096005A7EC8 /* defines.hpp in Headers */,
 				4383B1271F273F3F0074BF62 /* aldb.h in Headers */,
 				43B45F7F1F433096005A7EC8 /* database.hpp in Headers */,
+				431835B81F6688400039A746 /* ALDatabase+Config.h in Headers */,
 				43B45F7D1F433096005A7EC8 /* core_base.hpp in Headers */,
 				430018BE1F526C820056E4DE /* ALDBTableConstraint.h in Headers */,
 				43C25DB61F1770A100C97ED8 /* alloy.h in Headers */,
@@ -808,6 +822,8 @@
 				436A50E61F17BE9B00B0D32E /* NSCache+ALExtensions.h in Headers */,
 				43544A491F323B6B001486B5 /* ALSQLExpr.h in Headers */,
 				43B45F8A1F433096005A7EC8 /* sql_value.hpp in Headers */,
+				431835BC1F66D3760039A746 /* ALSQLStatement+Database.h in Headers */,
+				43CBF6EA1F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.h in Headers */,
 				43DA43F11F47F96A002A4972 /* ALSQLStatement.h in Headers */,
 				436A50EE1F17BE9B00B0D32E /* ALOCRuntime.h in Headers */,
 				43B45F971F433096005A7EC8 /* recyclable.hpp in Headers */,
@@ -1066,6 +1082,7 @@
 				43B45F951F433096005A7EC8 /* in_case_lock_guard.cpp in Sources */,
 				43B45F9A1F433096005A7EC8 /* spin.cpp in Sources */,
 				43DA43FE1F4AB2C1002A4972 /* ALDBColumnProperty.mm in Sources */,
+				43CBF6EB1F70BF7F00316B3F /* ALDBResultSet+AL_ActiveRecord.mm in Sources */,
 				43B7705A1F2B41F900B877CE /* ALDatabase+CoreDB.mm in Sources */,
 				436A50ED1F17BE9B00B0D32E /* HHTimer.m in Sources */,
 				436A50DB1F17BE9B00B0D32E /* AL_RC4.m in Sources */,
@@ -1088,9 +1105,11 @@
 				4306CEC81F29CEBE006C73B9 /* ALDBMigrationHelper.mm in Sources */,
 				436A50D51F17BE9B00B0D32E /* AL_CRC.m in Sources */,
 				43B45F7C1F433096005A7EC8 /* core_base.cpp in Sources */,
+				431835BD1F66D3760039A746 /* ALSQLStatement+Database.mm in Sources */,
 				436A50EF1F17BE9B00B0D32E /* ALOCRuntime.m in Sources */,
 				436A51011F17BE9B00B0D32E /* __ALModelMeta+JSONMapping.m in Sources */,
 				431B628B1F54697300FE763A /* ALPropertyColumnBindings.mm in Sources */,
+				431835B91F6688400039A746 /* ALDatabase+Config.mm in Sources */,
 				436A50F91F17BE9B00B0D32E /* NSObject+AL_JSONMapping.m in Sources */,
 				436A50D71F17BE9B00B0D32E /* AL_DES.m in Sources */,
 				430018BF1F526C820056E4DE /* ALDBTableConstraint.mm in Sources */,
@@ -1108,6 +1127,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43CBF7021F73E21D00316B3F /* JsonMappingTests.m in Sources */,
 				432CE1721F5EBFB300F81A16 /* ActiveRecordTests.mm in Sources */,
 				43C25DB41F1770A100C97ED8 /* alloyTests.mm in Sources */,
 				4304F3ED1F46BB8000AA45DE /* aldbCoreTests.mm in Sources */,

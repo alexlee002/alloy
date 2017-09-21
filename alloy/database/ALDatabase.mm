@@ -10,12 +10,13 @@
 #import "ALLock.h"
 #import "statement_recyclable.hpp"
 #import "database.hpp"
-#import "handle_recyclable.hpp"
+#import "handle.hpp"
 #import "ALUtilitiesHeader.h"
 #import "ALDBConnectionDelegate.h"
 #import "ALDBMigrationDelegate.h"
 #import "ALDBMigrationHelper.h"
 #import "ALOCRuntime.h"
+#import "ALDatabase+Config.h"
 #import <BlocksKit.h>
 
 static AL_FORCE_INLINE NSMutableDictionary<NSString *, ALDatabase *> *KeepAliveDatabases() {
@@ -43,27 +44,36 @@ static AL_FORCE_INLINE dispatch_semaphore_t KeepAliveDatabaseSemaphore() {
     BOOL _dbFileExisted;
 }
 
++ (nullable instancetype)databaseWithPath:(NSString *)path {
+    return [self databaseWithPath:path keepAlive:NO];
+}
+
 + (nullable instancetype)databaseWithPath:(NSString *)path keepAlive:(BOOL)keepAlive {
     ALDatabase *db = [[ALDatabase alloc] init];
     db->_path = [path copy];
     
     BOOL isDir = NO;
     db->_dbFileExisted = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir] && !isDir;
-    
-    std::shared_ptr<aldb::Database> coreDB(
-        new aldb::Database([path UTF8String], {}, [db](const aldb::RecyclableHandle &handle) -> bool {
-        return [db openDatabaseWithHandle:handle];
-    }));
-    
+
+    std::shared_ptr<aldb::Database> coreDB(new aldb::Database(
+        [path UTF8String],
+        [self defaultConfigs],
+        [db](std::shared_ptr<aldb::Handle> &handle) -> bool { return [db openDatabaseWithHandle:handle]; }));
+
     db->_coreDB = coreDB;
+    [db keepAlive:keepAlive];
     
-    if (keepAlive) {
-        dispatch_semaphore_t dsem = KeepAliveDatabaseSemaphore();
-        dispatch_semaphore_wait(dsem, DISPATCH_TIME_FOREVER);
-        KeepAliveDatabases()[path] = db;
-        dispatch_semaphore_signal(dsem);
-    }
     return db;
+}
+
+- (void)keepAlive:(BOOL)keepAlive {
+    with_gcd_semaphore(KeepAliveDatabaseSemaphore(), DISPATCH_TIME_FOREVER, ^{
+        if (keepAlive) {
+            KeepAliveDatabases()[_path] = self;
+        } else {
+            [KeepAliveDatabases() removeObjectForKey:_path];
+        }
+    });
 }
 
 - (void)close {
@@ -83,7 +93,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t KeepAliveDatabaseSemaphore() {
 
 #pragma mark -
 
-- (BOOL)openDatabaseWithHandle:(const aldb::RecyclableHandle)handle {
+- (BOOL)openDatabaseWithHandle:(std::shared_ptr<aldb::Handle> &)handle {
     if (!handle) {
         return NO;
     }
@@ -107,7 +117,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t KeepAliveDatabaseSemaphore() {
     return NO;
 }
 
-- (BOOL)migrateDatabaseUsingHandle:(const aldb::RecyclableHandle)handle {
+- (BOOL)migrateDatabaseUsingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     id<ALDBMigrationDelegate> delegate = [self migrationDelegate];
 
     if (!_dbFileExisted) {  // create new database
@@ -157,7 +167,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t KeepAliveDatabaseSemaphore() {
     return YES;
 }
 
-- (NSInteger)currentDBVersion:(const aldb::RecyclableHandle)handle {
+- (NSInteger)currentDBVersion:(std::shared_ptr<aldb::Handle> &)handle {
     NSInteger ver = 0;
     std::shared_ptr<aldb::StatementHandle> stmt = handle->prepare("PRAGMA user_version;");
     if (stmt && stmt->step()) {
@@ -167,7 +177,7 @@ static AL_FORCE_INLINE dispatch_semaphore_t KeepAliveDatabaseSemaphore() {
     return ver;
 }
 
-- (BOOL)setDatabaseVersion:(NSInteger)newVersion usingHandle:(const aldb::RecyclableHandle)handle {
+- (BOOL)setDatabaseVersion:(NSInteger)newVersion usingHandle:(std::shared_ptr<aldb::Handle> &)handle {
     return handle->exec("PRAGMA user_version = " + std::to_string(newVersion));
 }
 
@@ -196,9 +206,6 @@ static AL_FORCE_INLINE dispatch_semaphore_t KeepAliveDatabaseSemaphore() {
 }
 
 #pragma mark 
-
-- (id)copy { return self; }
-- (id)mutableCopy { return self; }
 
 - (std::shared_ptr<aldb::Database> &)_coreDB {
     return _coreDB;
