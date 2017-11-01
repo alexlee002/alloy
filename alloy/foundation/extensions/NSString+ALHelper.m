@@ -7,14 +7,12 @@
 //
 
 #import "NSString+ALHelper.h"
-#import "BlocksKit.h"
+#import <BlocksKit.h>
 #import "NSCache+ALExtensions.h"
-#import "AL_MD5.h"
+#import "ALMD5.h"
 #import <objc/message.h>
 #import "ALLogger.h"
-#import "ALUtilitiesHeader.h"
-
-NS_ASSUME_NONNULL_BEGIN
+#import "ALMacros.h"
 
 AL_FORCE_INLINE id al_wrapNil(id _Nullable obj) {
     return obj == nil ? NSNull.null : obj;
@@ -90,7 +88,6 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
 
 @implementation NSString (ALStringHelper)
 
-
 - (NSUInteger)al_occurrencesCountOfString:(NSString *)substring {
     substring = [substring al_stringify];
     if (substring.length == 0) {
@@ -152,19 +149,28 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
                                          withString:[[self substringToIndex:1] uppercaseString]];
 }
 
-- (nullable NSString *)al_substringToIndexSafety:(NSInteger)to {
-    NSParameterAssert(to <= self.length && to >= -self.length);
-    to = to < 0 ? self.length + to : to;
-    return [self substringToIndex:to];
+- (NSString *)al_substringFromIndex:(NSInteger)from {
+    from = from < 0 ? MAX(0, (NSInteger) self.length + from) : from;
+
+    if (from < self.length) {
+        return [self substringFromIndex:from];
+    }
+    return nil;
 }
 
-- (nullable NSString *)al_substringFromIndexSafety:(NSInteger)from {
-    NSParameterAssert(from < self.length && from >= -self.length);
-    from = from < 0 ? self.length + from : from;
-    return [self substringFromIndex:from];
+- (NSString *)al_substringToIndex:(NSInteger)to {
+    if (to < 0) {
+        NSUInteger index = ABS(to);
+        if (index < self.length) {
+            return [self substringToIndex:self.length - index];
+        }
+        return nil;
+    }
+    
+    return [self substringToIndex:MIN(to, self.length)];
 }
 
-- (nullable NSString *)al_substringWithRangeSafety:(NSRange)range {
+- (NSString *)al_substringWithRange:(NSRange)range {
     if (range.location < self.length) {
         if (range.location + range.length < self.length) {
             return [self substringWithRange:range];
@@ -176,10 +182,32 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     }
 }
 
-- (nullable NSString *)al_substringFromIndex:(NSInteger)from length:(NSInteger)length {
-    NSUInteger start = from > 0 ? from : self.length + from;
-    NSUInteger end = length > 0 ? start + length : self.length + length;
-    return [[self al_substringFromIndexSafety:start] al_substringToIndexSafety:end];
+- (NSString *)al_substringFromIndex:(NSInteger)from length:(NSInteger)length {
+    from = from < 0 ? MAX(0, (NSInteger) self.length + from) : from;
+    if (from >= self.length) {
+        return nil;
+    }
+    
+    if (length < 0) {
+        NSInteger end = (NSInteger)self.length + length;
+        if (end < from) {
+            return nil;
+        }
+        return [self substringWithRange:NSMakeRange(from, end - from)];
+    }
+    
+    return [self substringWithRange:NSMakeRange(from, MIN(length, self.length - from))];
+}
+
+- (nullable NSString *)al_substringFromIndexSafely:(NSUInteger)from {
+    if (from < self.length) {
+        return [self substringFromIndex:from];
+    }
+    return nil;
+}
+
+- (nullable NSString *)al_substringToIndexSafely:(NSUInteger)to {
+    return [self substringToIndex:MIN(to, self.length)];
 }
 
 + (NSString *)al_UUIDString {
@@ -299,7 +327,7 @@ AL_FORCE_INLINE static NSComparisonResult compareStringsUsingLocale(NSString *st
     NSRegularExpression *regex = [self al_regularExpressionWithPattern:pattern];
     NSTextCheckingResult *result = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
     if (result.numberOfRanges > 1) {
-        return [self al_substringWithRangeSafety:[result rangeAtIndex:index]];
+        return [self al_substringWithRange:[result rangeAtIndex:index]];
     }
     return nil;
 }
@@ -401,4 +429,4 @@ AL_FORCE_INLINE uint64_t baseNToDecimal(const char *s, uint8_t base) {
     }
     return result;
 }
-NS_ASSUME_NONNULL_END
+

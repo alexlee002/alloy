@@ -2,26 +2,27 @@ PODS:
   - ASIHTTPRequest/Core (1.8.2):
     - Reachability
   - BlocksKit/Core (2.2.5)
-  - FMDB (2.7.2):
-    - FMDB/standard (= 2.7.2)
-  - FMDB/standard (2.7.2)
-  - ObjcAssociatedObjectHelpers/Core (2.0.1)
   - Reachability (3.2)
 
 DEPENDENCIES:
-  - ASIHTTPRequest/Core
+  - ASIHTTPRequest/Core (from `https://github.com/alexlee002/asi-http-request.git`)
   - BlocksKit/Core
-  - FMDB
-  - ObjcAssociatedObjectHelpers/Core
   - Reachability
 
+EXTERNAL SOURCES:
+  ASIHTTPRequest:
+    :git: https://github.com/alexlee002/asi-http-request.git
+
+CHECKOUT OPTIONS:
+  ASIHTTPRequest:
+    :commit: 68513c32a6eb952ef806f6b301271b075259f2bf
+    :git: https://github.com/alexlee002/asi-http-request.git
+
 SPEC CHECKSUMS:
-  ASIHTTPRequest: ec013992946676b7978dcbde6396d57312d21db4
+  ASIHTTPRequest: d27452b583992d2dea350d1938e04d0e376367fe
   BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
-  FMDB: 6198a90e7b6900cfc046e6bc0ef6ebb7be9236aa
-  ObjcAssociatedObjectHelpers: 686c291f292c26a49b9b1fa7d58130a8d35d59d2
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
 
-PODFILE CHECKSUM: 64aa42ed01e41a2c1a41e30c3536756d0fd7f42d
+PODFILE CHECKSUM: e3076d11940c612ae91fab331c6050845cc9ca2b
 
 COCOAPODS: 1.2.1

@@ -8,7 +8,7 @@
 
 #import "NSCache+ALExtensions.h"
 #import "NSString+ALHelper.h"
-#import "ALUtilitiesHeader.h"
+#import "ALMacros.h"
 
 @implementation NSCache (ALExtensions)
 

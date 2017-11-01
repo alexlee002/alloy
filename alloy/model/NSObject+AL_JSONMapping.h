@@ -1,8 +1,8 @@
 //
-//  NSObject+JSONMapping.h
-//  patchwork
+//  NSObject+AL_JSONMapping.h
+//  alloy
 //
-//  Created by Alex Lee on 09/06/2017.
+//  Created by Alex Lee on 06/10/2017.
 //  Copyright © 2017 Alex Lee. All rights reserved.
 //
 //  IMPORTANT:
@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)al_modelWithDictionary:(NSDictionary *)dict;
 - (BOOL)al_modelSetWithJSON:(id)json;
 - (BOOL)al_modelSetWithDictionary:(NSDictionary *)dic;
+
++ (nullable NSArray *)al_modelArrayWithJSON:(id)json;
++ (nullable NSDictionary *)al_modelDictionaryWithJSON:(id)json;
 
 - (nullable __kindof id)al_modelToJSONObject;
 - (nullable NSData *)al_modelToJSONData;

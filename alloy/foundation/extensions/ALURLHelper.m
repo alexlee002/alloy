@@ -8,8 +8,8 @@
 
 #import "ALURLHelper.h"
 #import "BlocksKit.h"
-#import "NSArray+ArrayExtensions.h"
-#import "ALUtilitiesHeader.h"
+#import "NSArray+ALExtensions.h"
+#import "ALMacros.h"
 #import "NSString+ALHelper.h"
 #import "ALOrderedMap.h"
 
@@ -219,7 +219,7 @@ static AL_FORCE_INLINE NSString *queryStringFromQueryItems(NSArray<ALNSURLQueryI
     }
 
     NSRange queryStringRange = [self URLQueryStringRange];
-    NSString *query = [self al_substringWithRangeSafety:queryStringRange];
+    NSString *query = [self al_substringWithRange:queryStringRange];
 
     NSArray<ALNSURLQueryItem *> *queryItems = nil;
     if (!al_isEmptyString(query)) {

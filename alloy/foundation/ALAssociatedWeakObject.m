@@ -8,7 +8,7 @@
 
 #import "ALAssociatedWeakObject.h"
 #import <objc/runtime.h>
-#import "ALUtilitiesHeader.h"
+#import "ALMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

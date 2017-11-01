@@ -7,7 +7,7 @@
 //
 
 #import "ALLock.h"
-#import "ALUtilitiesHeader.h"
+#import "ALMacros.h"
 
 AL_FORCE_INLINE void with_gcd_semaphore(dispatch_semaphore_t dsema, dispatch_time_t timeout, void(^block)(void)) {
     if (block) {

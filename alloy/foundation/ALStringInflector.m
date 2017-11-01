@@ -7,7 +7,7 @@
 //
 
 #import "ALStringInflector.h"
-#import "ALUtilitiesHeader.h"
+#import "ALMacros.h"
 #import "NSString+ALHelper.h"
 #import "ALLogger.h"
 #import "ALLock.h"

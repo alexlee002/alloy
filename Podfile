@@ -6,11 +6,11 @@ workspace 'alloy'
 
 def shared_pods
     #pod 'YYModel'
-    pod 'FMDB'
+    #pod 'FMDB'
     pod 'BlocksKit/Core'
-    pod 'ASIHTTPRequest/Core'
+    pod 'ASIHTTPRequest/Core', :git => 'https://github.com/alexlee002/asi-http-request.git'
     pod 'Reachability'
-    pod 'ObjcAssociatedObjectHelpers/Core'
+    #pod 'ObjcAssociatedObjectHelpers/Core'
 end
 
 target 'alloy' do

@@ -7,11 +7,28 @@
 //
 
 #import "NSObject+ALModel.h"
-#import "__ALModelMeta.h"
+#import "_ALModelMeta.h"
+#import "_ALModelHelper.h"
+#import "ALMacros.h"
 #import <objc/message.h>
 
+static AL_FORCE_INLINE BOOL _YYIsStructAvailableForKeyArchiver(NSString *structTypeEncoding) {
+    static NSSet *availableTypes = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        availableTypes = [NSSet setWithObjects:
+                          // 32 bit
+                          @"{CGSize=ff}", @"{CGPoint=ff}", @"{CGRect={CGPoint=ff}{CGSize=ff}}",
+                          @"{CGAffineTransform=ffffff}", @"{UIEdgeInsets=ffff}", @"{UIOffset=ff}",
+                          // 64 bit
+                          @"{CGSize=dd}", @"{CGPoint=dd}", @"{CGRect={CGPoint=dd}{CGSize=dd}}",
+                          @"{CGAffineTransform=dddddd}", @"{UIEdgeInsets=dddd}", @"{UIOffset=dd}", nil];
+    });
+    return [availableTypes containsObject:structTypeEncoding];
+}
+
 /// Add indent to string (exclude first line)
-static NSMutableString *ModelDescriptionAddIndent(NSMutableString *desc, NSUInteger indent) {
+static AL_FORCE_INLINE  NSMutableString *ModelDescriptionAddIndent(NSMutableString *desc, NSUInteger indent) {
     for (NSUInteger i = 0, max = desc.length; i < max; i++) {
         unichar c = [desc characterAtIndex:i];
         if (c == '\n') {
@@ -26,7 +43,7 @@ static NSMutableString *ModelDescriptionAddIndent(NSMutableString *desc, NSUInte
 }
 
 /// Generaate a description string
-static NSString *ModelDescription(NSObject *model) {
+static AL_FORCE_INLINE  NSString *ModelDescription(NSObject *model) {
     static const int kDescMaxLength = 100;
     
     if (!model) {
@@ -40,7 +57,7 @@ static NSString *ModelDescription(NSObject *model) {
     }
     
     _ALModelMeta *modelMeta = [_ALModelMeta metaWithClass:model.class];
-    switch (modelMeta->_nsType) {
+    switch (modelMeta->_NSType) {
         case YYEncodingTypeNSString:
         case YYEncodingTypeNSMutableString: {
             return [NSString stringWithFormat:@"\"%@\"", model];
@@ -128,19 +145,19 @@ static NSString *ModelDescription(NSObject *model) {
                 _ALModelPropertyMeta *property = properties[i];
                 NSString *propertyDesc;
                 if (property->_isCNumber) {
-                    NSNumber *num = _ModelCreateNumberFromProperty(model, property);
+                    NSNumber *num = _ALModelCreateNumberFromProperty(model, property);
                     propertyDesc  = num.stringValue;
                 } else {
                     switch (property->_type & YYEncodingTypeMask) {
                         case YYEncodingTypeObject: {
-                            id v         = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, property->_getter);
+                            id v = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, property->_getter);
                             propertyDesc = ModelDescription(v);
                             if (!propertyDesc) {
                                 propertyDesc = @"<nil>";
                             }
                         } break;
                         case YYEncodingTypeClass: {
-                            id v         = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, property->_getter);
+                            id v = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, property->_getter);
                             propertyDesc = ((NSObject *) v).description;
                             if (!propertyDesc) {
                                 propertyDesc = @"<nil>";
@@ -155,7 +172,7 @@ static NSString *ModelDescription(NSObject *model) {
                             }
                         } break;
                         case YYEncodingTypeBlock: {
-                            id block     = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, property->_getter);
+                            id block = ((id(*)(id, SEL))(void *) objc_msgSend)((id) model, property->_getter);
                             propertyDesc = block ? ((NSObject *) block).description : @"<nil>";
                         } break;
                         case YYEncodingTypeCArray:
@@ -192,7 +209,7 @@ static NSString *ModelDescription(NSObject *model) {
     }
     
     _ALModelMeta *modelMeta = [_ALModelMeta metaWithClass:self.class];
-    if (modelMeta->_nsType) {
+    if (modelMeta->_NSType) {
         return [self copy];
     }
     
@@ -203,7 +220,7 @@ static NSString *ModelDescription(NSObject *model) {
         }
         if (!propertyMeta->_setter) {
             NSValue *value = [self valueForKey:propertyMeta->_name];
-            _ModelKVCSetValueForProperty(one, value, propertyMeta);
+            _ALModelKVCSetValueForProperty(one, value, propertyMeta);
             continue;
         }
         
@@ -292,7 +309,7 @@ static NSString *ModelDescription(NSObject *model) {
     }
     
     _ALModelMeta *modelMeta = [_ALModelMeta metaWithClass:self.class];
-    if (modelMeta->_nsType) {
+    if (modelMeta->_NSType) {
         [((id<NSCoding>) self) encodeWithCoder:aCoder];
         return;
     }
@@ -303,7 +320,7 @@ static NSString *ModelDescription(NSObject *model) {
         }
         
         if (propertyMeta->_isCNumber) {
-            NSNumber *value = _ModelCreateNumberFromProperty(self, propertyMeta);
+            NSNumber *value = _ALModelCreateNumberFromProperty(self, propertyMeta);
             if (value) {
                 [aCoder encodeObject:value forKey:propertyMeta->_name];
             }
@@ -311,7 +328,7 @@ static NSString *ModelDescription(NSObject *model) {
             switch (propertyMeta->_type & YYEncodingTypeMask) {
                 case YYEncodingTypeObject: {
                     id value = ((id(*)(id, SEL))(void *) objc_msgSend)((id) self, propertyMeta->_getter);
-                    if (value && (propertyMeta->_nsType || [value respondsToSelector:@selector(encodeWithCoder:)])) {
+                    if (value && (propertyMeta->_NSType || [value respondsToSelector:@selector(encodeWithCoder:)])) {
                         if ([value isKindOfClass:[NSValue class]]) {
                             @try {
                                 [aCoder encodeObject:value forKey:propertyMeta->_name];
@@ -357,21 +374,21 @@ static NSString *ModelDescription(NSObject *model) {
     }
     
     _ALModelMeta *modelMeta = [_ALModelMeta metaWithClass:self.class];
-    if (modelMeta->_nsType) {
+    if (modelMeta->_NSType) {
         return self;
     }
     
     for (_ALModelPropertyMeta *propertyMeta in modelMeta->_allPropertyMetasDict.allValues) {
         if (!propertyMeta->_setter) {
             NSValue *value = [aDecoder decodeObjectForKey:propertyMeta->_name];
-            _ModelKVCSetValueForProperty(self, value, propertyMeta);
+            _ALModelKVCSetValueForProperty(self, value, propertyMeta);
             continue;
         }
         
         if (propertyMeta->_isCNumber) {
             NSNumber *value = [aDecoder decodeObjectForKey:propertyMeta->_name];
             if ([value isKindOfClass:[NSNumber class]]) {
-                _ModelSetNumberToProperty(self, value, propertyMeta);
+                _ALModelSetNumberToProperty(self, value, propertyMeta);
                 [value class];
             }
         } else {
@@ -391,7 +408,7 @@ static NSString *ModelDescription(NSObject *model) {
                 case YYEncodingTypeStruct:
                 case YYEncodingTypeUnion: {
                     NSValue *value = [aDecoder decodeObjectForKey:propertyMeta->_name];
-                    _ModelKVCSetValueForProperty(self, value, propertyMeta);
+                    _ALModelKVCSetValueForProperty(self, value, propertyMeta);
                 } break;
                     
                 default:
@@ -408,7 +425,7 @@ static NSString *ModelDescription(NSObject *model) {
     }
     
     _ALModelMeta *modelMeta = [_ALModelMeta metaWithClass:self.class];
-    if (modelMeta->_nsType) {
+    if (modelMeta->_NSType) {
         return [self hash];
     }
     
@@ -421,11 +438,7 @@ static NSString *ModelDescription(NSObject *model) {
         @try {
             value ^= [[self valueForKey:NSStringFromSelector(propertyMeta->_getter)] hash];
             count++;
-        } @catch (NSException *e) {
-            if ([e.name isEqualToString:_ALNSUnknownKeyException]) {
-                propertyMeta->_isKVCCompatible = NO;
-            }
-        }
+        } @catch (NSException *e) {}
     }
     if (count == 0) {
         value = (long) ((__bridge void *) self);
@@ -442,7 +455,7 @@ static NSString *ModelDescription(NSObject *model) {
     }
     
     _ALModelMeta *modelMeta = [_ALModelMeta metaWithClass:self.class];
-    if (modelMeta->_nsType) {
+    if (modelMeta->_NSType) {
         return [self isEqual:model];
     }
     if ([self hash] != [model hash]) {
