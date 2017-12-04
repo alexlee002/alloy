@@ -12,7 +12,7 @@
 #import "ALHTTPResponse.h"
 #import "ALJSON.h"
 #import "ALLogger.h"
-#import "NSObject+AL_JSONMapping.h"
+#import "NSObject+ALJSONMapping.h"
 
 #define ConfirmInited(dict) do { if((dict) == nil) { (dict) = [NSMutableDictionary dictionary];} } while(NO)
 

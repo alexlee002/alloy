@@ -7,7 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
+#import "NSObject+ALActiveRecord.h"
 #import "ALActiveRecord.h"
 #import "ALMacros.h"
 #import "YYClassInfo.h"

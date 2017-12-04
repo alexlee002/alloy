@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable ALDBStatement *)prepare:(const aldb::SQLStatement &)statement error:(NSError *_Nullable *)error;
 
+- (BOOL)inTransaction:(void (^)(BOOL *rollback))transaction error:(NSError *_Nullable*)error;
+
 @end
 
 NS_ASSUME_NONNULL_END

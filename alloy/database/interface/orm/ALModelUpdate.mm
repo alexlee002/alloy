@@ -7,12 +7,13 @@
 //
 
 #import "ALModelUpdate.h"
+#import "ALModelORMBase+Private.h"
 #import "sql_update.hpp"
 #import "ALActiveRecord.h"
 #import "ALDBExpr.h"
 #import "ALDatabase.h"
 #import "qualified_table_name.hpp"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import "ALLogger.h"
 #import "ALDBColumnBinding.h"
 #import "_ALModelHelper+cxx.h"
@@ -21,25 +22,40 @@
 @implementation ALModelUpdate {
     aldb::SQLUpdate _statement;
     ALDBPropertyList _columns;
-    Class _modelClass;
     NSInteger _changes;
     ALDBConflictPolicy _conflictPolicy;
+}
+
+- (instancetype)initWithDatabase:(ALDBHandle *)handle
+                           table:(NSString *)table
+                      modelClass:(Class)modelClass
+                      properties:(const ALDBPropertyList &)propertiesToUpdate
+                      onConflict:(ALDBConflictPolicy)onConflict {
+    self = [self init];
+    if (self) {
+        _database = handle;
+        _modelClass = modelClass;
+        _conflictPolicy = onConflict;
+        _columns.insert(_columns.begin(), propertiesToUpdate.begin(), propertiesToUpdate.end());
+        
+        std::list<const std::pair<const aldb::UpdateColumns, const ALDBExpr>>list;
+        for (auto p : propertiesToUpdate) {
+            list.push_back({p, ALDBExpr::BIND_PARAM});
+        }
+        _statement.update(table.UTF8String, (aldb::ConflictPolicy)onConflict).set(list);
+    }
+    return self;
 }
 
 + (instancetype)updateModel:(Class)modelClass
                  properties:(const ALDBPropertyList &)propertiesToUpdate
                  onConflict:(ALDBConflictPolicy)onConflict {
-    ALModelUpdate *update = [[self alloc] init];
-    update->_modelClass = modelClass;
-    update->_conflictPolicy = onConflict;
-    update->_columns.insert(update->_columns.begin(), propertiesToUpdate.begin(), propertiesToUpdate.end());
-    
-    std::list<const std::pair<const aldb::UpdateColumns, const ALDBExpr>>list;
-    for (auto p : propertiesToUpdate) {
-        list.push_back({p, ALDBExpr::BIND_PARAM});
-    }
-    update->_statement.update(ALTableNameForModel(modelClass).UTF8String, (aldb::ConflictPolicy)onConflict).set(list);
-    return update;
+
+    return [[self alloc] initWithDatabase:[modelClass al_database]
+                                    table:ALTableNameForModel(modelClass)
+                               modelClass:modelClass
+                               properties:propertiesToUpdate
+                               onConflict:onConflict];
 }
 
 - (instancetype)where:(const ALDBCondition &)condition {
@@ -96,9 +112,8 @@
 }
 
 - (nullable ALDBStatement *)preparedStatement {
-    ALDatabase *database = [_modelClass al_database];
     NSError *error = nil;
-    ALDBStatement *stmt = [database prepare:_statement error:&error];
+    ALDBStatement *stmt = [_database prepare:_statement error:&error];
     if (!stmt && error) {
         _changes = 0;
         ALLogError(@"%@", error);

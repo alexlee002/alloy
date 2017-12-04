@@ -29,7 +29,7 @@
 #import "ALDBExpr.h"
 #import "expr.hpp"
 #import "ALDBResultColumn.h"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import "NSError+ALDBError.h"
 #import "ALDBTableBinding+Database.h"
 #import "ALDBIndexBinding.h"

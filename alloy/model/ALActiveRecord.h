@@ -10,14 +10,14 @@
 
 @protocol ALActiveRecord <NSObject>
 
-@required
+@optional
 /**
  *  @return The database identifier (normally the database file path) that associates with this model.
  *  Return nil if the model doesn't bind to any database.
+ *  inheritance is ignored.
  */
 + (nullable NSString *)databaseIdentifier;
 
-@optional
 
 /**
  * If YES, the table binging to this model would automatical create and migrate changes of model to database.
@@ -55,7 +55,7 @@
  */
 + (nullable NSArray<NSString */*propertyName*/> *)columnPropertyWhitelist;
 // @{propertyName: columnName}
-+ (nullable NSDictionary<NSString *, NSString *>  *)modelCustomColumnNameMapper;
++ (nullable NSDictionary<NSString * /* propertyName */, NSString * /* columnName */>  *)modelCustomColumnNameMapper;
 
 /**
  *  The comparator to sort the table columns
@@ -84,7 +84,7 @@
  *  Custom transform property value from resultSet
  *  @see "+modelsWithCondition:"
  */
-//- (void)customSet{PropertyName}WithColumnValue:(id)value;
+//- (void)customSet{PropertyName}ColumnValue:(id)value;
 
 /**
  * key: the property name

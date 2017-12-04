@@ -129,11 +129,13 @@
             asiRequest.postBody = [postBody mutableCopy];
         } else {
             [request.params bk_each:^(NSString *key, id value) {
-                [(ASIFormDataRequest *) asiRequest setPostValue:URLParamStringify(value) forKey:URLParamStringify(key)];
+                [(ASIFormDataRequest *) asiRequest setPostValue:ALURLParamStringify(value) forKey:ALURLParamStringify(key)];
             }];
         }
     } else {
-        NSURL *url = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        NSURL *url = [[request.url al_URL] al_URLByAppendingQueryItemsWithDictionary:request.params
+                                                                      percentEncoded:NO
+                                                                         deduplicate:YES];
         asiRequest = [ASIHTTPRequest requestWithURL:url];
     }
 
@@ -159,7 +161,9 @@
 - (void)buildUploadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSParameterAssert(asiRequest != NULL);
     
-    NSURL *url  = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+    NSURL *url  = [[request.url al_URL] al_URLByAppendingQueryItemsWithDictionary:request.params
+                                                                   percentEncoded:NO
+                                                                      deduplicate:YES];
     if (request.method == ALHTTPMethodPut) {
         *asiRequest = [ASIHTTPRequest requestWithURL:url];
         (*asiRequest).shouldStreamPostDataFromDisk = YES;
@@ -193,7 +197,9 @@
 - (void)buildDownloadRequest:(ASIHTTPRequest **)asiRequest with:(__kindof ALHTTPRequest *)request {
     NSParameterAssert(asiRequest != NULL);
     
-    NSURL *url  = [[NSURL URLWithString:al_stringOrEmpty(request.url) ] URLBySettingQueryParamsOfDictionary:request.params];
+    NSURL *url  = [[request.url al_URL] al_URLByAppendingQueryItemsWithDictionary:request.params
+                                                                   percentEncoded:NO
+                                                                      deduplicate:YES];
     *asiRequest = [ASIHTTPRequest requestWithURL:url];
     (*asiRequest).allowCompressedResponse     = NO;
     (*asiRequest).allowResumeForFileDownloads = YES;

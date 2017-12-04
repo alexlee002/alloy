@@ -10,8 +10,11 @@
 #import "ALMacros.h"
 #import "ALDBColumnBinding_Private.h"
 #import "ALLogger.h"
-#import "NSObject+AL_Database.h"
+#import "ALActiveRecord.h"
+#import "NSObject+ALDBBindings.h"
+#import "ALDBTableBinding.h"
 #import <objc/message.h>
+#import "ALDBExpr.h"
 
 id _Nullable _ALColumnValueForModelProperty(id _Nonnull model, ALDBColumnBinding *_Nonnull binding) {
     NSString *propertyName = [binding propertyName];
@@ -121,20 +124,30 @@ id _Nullable _ALColumnValueForModelProperty(id _Nonnull model, ALDBColumnBinding
     return nil;
 }
 
-//id _Nullable _ALColumnValueForModelProperty(id _Nonnull model, ALDBColumnBinding *_Nonnull binding) {
-//    id value = nil;
-//    if (![model al_autoIncrement] || !_ALISAutoIncrementColumn(binding)) {
-//        value = __AL_ColumnValueForModelProperty(model, binding);
-//    }
-//    return value;
-//}
-
-BOOL _ALISAutoIncrementColumn(ALDBColumnBinding *binding) {
+BOOL _ALIsAutoIncrementColumn(ALDBColumnBinding *binding) {
     ALDBTableBinding *tableBindings = [binding.modelClass al_tableBindings];
     if (tableBindings == nil) {
         return NO;
     }
-    
+
     return [tableBindings.allPrimaryKeys isEqualToArray:@[ [binding propertyName] ]] &&
            (binding.columnType == ALDBColumnTypeInt || binding.columnType == ALDBColumnTypeLong);
+}
+
+std::shared_ptr<const ALDBCondition> _ALDefaultModelUpdateCondition(NSObject *_Nonnull model) {
+    Class modelClass = model.class;
+    ALDBTableBinding *tableBinding = [modelClass al_tableBindings];
+    NSArray<NSString *> *primaryKeys = [tableBinding allPrimaryKeys];
+    if (primaryKeys.count == 0) {
+        ALLogWarn(@"Primary key not found! model: %@", modelClass);
+        return nullptr;
+    }
+    
+    ALDBCondition condition;
+    for (NSString *pn in primaryKeys) {
+        NSString *cn          = [modelClass al_columnNameForProperty:pn];
+        ALDBColumnBinding *cb = [tableBinding bindingForColumn:cn];
+        condition             = condition && (ALDBProperty(cb) == _ALColumnValueForModelProperty(model, cb));
+    }
+    return std::make_shared<const ALDBCondition>(condition);
 }

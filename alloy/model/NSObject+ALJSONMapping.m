@@ -1,12 +1,12 @@
 //
-//  NSObject+AL_JSONMapping.m
+//  NSObject+ALJSONMapping.m
 //  alloy
 //
 //  Created by Alex Lee on 06/10/2017.
 //  Copyright © 2017 Alex Lee. All rights reserved.
 //
 
-#import "NSObject+AL_JSONMapping.h"
+#import "NSObject+ALJSONMapping.h"
 #import "ALMacros.h"
 #import "_ALModelMetaJSONMapping.h"
 #import "YYModel.h"
@@ -241,7 +241,7 @@ static AL_FORCE_INLINE void _ModelSetValueForProperty(__unsafe_unretained id mod
                                     Class cls = genericClass;
                                     if (customClassForDictionarySelector) {
                                         cls = (Class)((id(*)(id, SEL, id))(void *) objc_msgSend)(
-                                                                                                 (id) cls, customClassForDictionarySelector, one);
+                                            (id) cls, customClassForDictionarySelector, one);
                                         // for xcode code coverage
                                         if (!cls || !class_isMetaClass(cls)) {
                                             cls = genericClass;
@@ -287,7 +287,7 @@ static AL_FORCE_INLINE void _ModelSetValueForProperty(__unsafe_unretained id mod
                                     Class cls = genericClass;
                                     if (customClassForDictionarySelector) {
                                         cls = (Class)((id(*)(id, SEL, id))(void *) objc_msgSend)(
-                                                                                                 (id) cls, customClassForDictionarySelector, oneValue);
+                                            (id) cls, customClassForDictionarySelector, oneValue);
                                         // for xcode code coverage
                                         if (!cls || !class_isMetaClass(cls)) {
                                             cls = genericClass;
@@ -611,7 +611,7 @@ static AL_FORCE_INLINE id ModelToJSONObjectRecursive(NSObject *model) {
         return nil;
     }
     
-    NSMutableDictionary *result                  = [[NSMutableDictionary alloc] initWithCapacity:64];
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithCapacity:64];
     __unsafe_unretained NSMutableDictionary *dic = result;  // avoid retain and release in block
     [modelMeta->_mapper enumerateKeysAndObjectsUsingBlock:^(NSString *propertyMappedKey,
                                                             _ALModelPropertyJSONMapping *jsonPropMeta,
@@ -696,7 +696,7 @@ static AL_FORCE_INLINE id ModelToJSONObjectRecursive(NSObject *model) {
 }
 
 
-@implementation NSObject (AL_JSONMapping)
+@implementation NSObject (ALJSONMapping)
 #pragma mark - model json mapping
 + (instancetype)al_modelWithJSON:(id)JSON {
     NSDictionary *dict = [self dictionaryFromJSON:JSON];

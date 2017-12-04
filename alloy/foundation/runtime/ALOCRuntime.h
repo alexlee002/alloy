@@ -17,11 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 #   define al_isClassObject(obj) class_isMetaClass(object_getClass((obj)))
 #endif
 
-//#ifndef al_performSelector
-//    #define al_performSelector(return_type, obj, sel, ...) \
-//        ((return_type (*)(id, SEL))(void *) objc_msgSend)((id)(obj), (sel), ##__VA_ARGS__)
-//#endif
-
 OBJC_EXPORT BOOL al_swizzle_method(Class cls, BOOL isClassMethod, SEL originalSEL, SEL swizzledSEL);
 
 OBJC_EXPORT NSArray<NSString *> *al_backtraceStack(int stackSize);

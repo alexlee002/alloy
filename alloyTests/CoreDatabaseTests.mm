@@ -14,7 +14,7 @@
 #import "ALDBResultColumn.h"
 #import "ALDBStatement.h"
 #import "ALDatabase.h"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import "sql_update.hpp"
 #import "sql_insert.hpp"
 #import "qualified_table_name.hpp"

@@ -11,19 +11,21 @@
 #import "ALDBTypeDefines.h"
 #import "order_clause.hpp"
 #import "ALDBStatement.h"
+#import "ALModelORMBase.h"
 #import <list>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALModelSelect<__covariant ObjectType> : NSObject
+@interface ALModelSelect<__covariant ObjectType> : ALModelORMBase
+
+- (instancetype)initWithDatabase:(ALDBHandle *)handle
+                           table:(NSString *)table
+                      modelClass:(Class)modelClass
+                      properties:(const ALDBResultColumnList &)results;
 
 + (instancetype)selectModel:(Class)modelClass properties:(const ALDBResultColumnList &)results;
 
 - (instancetype)where:(const ALDBCondition &)condition;
-
-- (instancetype)groupBy:(const std::list<const ALDBExpr> &)list;
-
-- (instancetype)having:(const ALDBExpr &)expr;
 
 - (instancetype)orderBy:(const std::list<const aldb::OrderClause> &)list;
 
@@ -31,7 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)offset:(const ALDBExpr &)offset;
 
-- (nullable ALDBStatement *)preparedStatement;
+- (instancetype)groupBy:(const std::list<const ALDBExpr> &)list;
+
+- (instancetype)having:(const ALDBExpr &)expr;
+
+- (nullable ALDBResultSet *)executeQuery;
 
 - (nullable NSEnumerator<ObjectType> *)objectEnumerator;
 
@@ -39,3 +45,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 NS_ASSUME_NONNULL_END
+

@@ -9,7 +9,7 @@
 #import "ALDBTableBinding+Database.h"
 #import "ALDBTableBinding_Private.h"
 #import "_ALModelMeta.h"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import "table_constraint.hpp"
 #import "ALLogger.h"
 #import "ALMacros.h"

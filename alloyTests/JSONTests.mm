@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "NSObject+AL_JSONMapping.h"
+#import "NSObject+ALJSONMapping.h"
 #import "TestFileModel.h"
 #import "ALMacros.h"
 

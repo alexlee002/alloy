@@ -20,101 +20,188 @@ typedef NS_ENUM(NSInteger, ALURLComponent) {
     ALURLComponentPort,
     ALURLComponentPath,
     ALURLComponentParam,
-    ALURLComponentQuery,
+    ALURLComponentQuery,        // the query string
+    ALURLComponentQueryItem,    // the query item (name / value), not an independent url component, jus use in urlencode
     ALURLComponentFragment
 };
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *URLParamStringify (id _Nullable value) AL_DEPRECATED("implements it in your app");
-
-// As the same as NSURLQueryItem, but this class only available after iOS 8 / OSX 10.10
-// using 'ALNSURLQueryItem' to Compatible with the eailier OS
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0 || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_10
-@interface ALNSURLQueryItem : NSObject
-@property(readonly)           NSString *name;
-@property(readonly, nullable) NSString *value;
-
-+ (nullable instancetype)queryItemWithName:(NSString *)name value:(nullable NSString *)value;
-
-/**
- *  initialize query item with given 'name' and 'value'
- *
- *  @param name     item name
- *  @param rawValue if rawValue is not NSString, try to convert it to JSON string, if failed, using [rawValue
- * description];  see 'URLParamStringify(id)' and '-stringify'
- *
- *  @return ALNSURLQueryItem
+/*!
+ * return string transformed from value.
+ * try to get string via "al_stringValue(value)", if OK, return the string;
+ * otherwise, try to convert value to JSON string, if OK, return the JSON string.
+ * otherwise, return nil.
  */
-+ (instancetype)al_queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
+OBJC_EXPORT NSString *_Nullable ALURLParamStringify(id _Nullable value);
+
+@interface ALURLQueryItem : NSURLQueryItem
+@property(readonly)           NSString *percentEncodedName;
+@property(readonly, nullable) NSString *percentEncodedValue;
+
+/*!
+ * initialize an ALURLQueryItem with NSURLQueryItem.
+ *
+ * @param src       source query item
+ * @param encoded   indicates if the parameter "src" has been encoded.
+ */
++ (instancetype)queryItemWithItem:(NSURLQueryItem *)src percentEncoded:(BOOL)encoded;
+
+/*!
+ *  @param name     item name
+ *  @param rawValue item value, convert to NSString via "ALURLParamStringify".  @see ALURLParamStringify
+ */
++ (instancetype)queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
+
+/*!
+ *  @param name     percentEncoded item name
+ *  @param value    percentEncoded item value,
+ */
++ (instancetype)queryItemWithPercentEncodedName:(NSString *)name percentEncodedValue:(nullable NSString *)value;
 
 @end
-#else 
 
-@interface NSURLComponents(ALURLHelper)
-//@see ALNSURLQueryItem
-+ (instancetype)al_queryItemWithName:(NSString *)name rawValue:(nullable id)rawValue;
+/*!
+ * import features to lower version of iOS / OSX
+ */
+@interface NSURLComponents (ALCompatible)
+/*!
+ * @see compatible with "queryItems"
+ */
+@property (nullable, copy, setter=al_setQueryItems:) NSArray<ALURLQueryItem *> *al_queryItems;
+
 @end
 
-@compatibility_alias ALNSURLQueryItem NSURLQueryItem;
 
-#endif
-
-#define al_URLQueryItem(name, value) [ALNSURLQueryItem al_queryItemWithName:(name) rawValue:(value)]
+#define al_URLQueryItem(name, value) [ALURLQueryItem al_queryItemWithName:(name) rawValue:(value)]
 
 @interface NSURL (ALURLHelper)
 
-// add new query key-value params to URL, or if the param with the same name is existed in the original URL, the value
-// of the item will be replaced
-@property(readonly) NSURL * (^SET_QUERY_ITEM)(NSString *name, id value);
+// add new query key-value params to URL, or if the parameter with the same name is existed in the original URL,
+// the existed value will be replaced
+@property(readonly) NSURL * (^AL_SET_QUERY_ITEM)(NSString *name, id _Nullable value);
 
 /**
  *  Append query key-value params to an existing URL
  *
- *  @param queryItems key-values pairs WITHOUT url encoding
- *  @param replace    Whether to replace the value of the existing query item with the same name. if YES, all the value
- * of the items with the same name will be replaced. if NO, just appending the new query items, that is, there would be
- * more than one query item with the same name.
+ *  @param queryItems       query items.
+ *  @param replaceExisted   Whether to replace the value of the existing query item with the same name. If YES, all the
+ * value of the items with the same name will be replaced. If NO, just appending the new query items, that is, there
+ * would be more than one query item with the same name.
  *
  *  @return new instance of URL with URLEncoded query string
  */
-- (NSURL *)URLByAppendingQueryItems:(NSArray<ALNSURLQueryItem *> *)queryItems replace:(BOOL)replace;
-- (NSURL *)URLBySettingQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict;
+- (NSURL *)al_URLByAppendingQueryItems:(NSArray<ALURLQueryItem *> *)queryItems deduplicate:(BOOL)replaceExisted;
 
-+ (NSString *)queryStringWithQueryItems:(NSArray<ALNSURLQueryItem *> *)queryItems;
-+ (NSString *)queryStringWithQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict;
+- (NSURL *)al_URLByAppendingQueryItemsWithDictionary:(NSDictionary<NSString *, id> *)itemDict
+                                      percentEncoded:(BOOL)encoded
+                                         deduplicate:(BOOL)replaceExisted;
+
+- (NSArray<ALURLQueryItem *> *)al_queryItems;
+
+- (NSURLComponents *)al_URLComponentByResolvingAgainstBaseURL:(BOOL)resolve;
 
 @end
 
 @interface NSString (ALURLHelper)
 // @see NSURL (ALURLHelper)
-@property(readonly) NSString * (^SET_QUERY_ITEM)(NSString *name, id value);
+@property(readonly) NSString * (^AL_SET_QUERY_ITEM)(NSString *name, id _Nullable value);
 
 /**
- *  Append query key-value params to an existing URLString
+ *  Append query key-value params to an existing URLString. if the existing URLString is malformed URL, nil will be
+ * return.
  *
- *  @param queryItems key-values pairs WITHOUT url encoding
- *  @param replace    Whether to replace the value of the existing query item with the same name. if YES, all the value
- * of the items with the same name will be replaced. if NO, just appending the new query items, that is, there would be
- * more than one query item with the same name.
+ *  @param queryItems   query items to appending.
+ *  @param replace      Whether to replace the value of the existing query item with the same name. if YES, all the
+ * value of the items with the same name will be replaced. if NO, just appending the new query items, that is, there
+ * would be more than one query item with the same name.
  *
  *  @return new instance of URL string with URLEncoded query string
  */
-- (NSString *)URLStringByAppendingQueryItems:(NSArray<ALNSURLQueryItem *> *)queryItems replace:(BOOL)replace;
-- (NSString *)URLStringBySettingQueryParamsOfDictionary:(NSDictionary<NSString *, id> *)itemDict;
+- (nullable NSString *)al_URLStringByAppendingQueryItems:(NSArray<ALURLQueryItem *> *)queryItems
+                                             deduplicate:(BOOL)replace;
 
-- (NSRange)URLQueryStringRange;
-/**
- *  extract query items from 'self'.
- *  Try to extract query string from 'self', if fail, use 'self' as query string;  and then extract query items from query string.
- *
- *  @return array of query items
+- (nullable NSString *)al_URLStringByAppendingQueryItemsWithDictionary:(NSDictionary<NSString *, id> *)itemDict
+                                                        percentEncoded:(BOOL)encoded
+                                                           deduplicate:(BOOL)replace;
+
+/*!
+ *  appending "queryItems" to the existing query string.
+ *  Note that the whole string "self" will be treated as the query component.
  */
-- (nullable NSArray<ALNSURLQueryItem *> *)URLQueryItems;
-- (nullable NSDictionary<NSString *, NSString *> *)URLQueryItemsDictionary;
+- (NSString *)al_URLQueryStringByAppendingQueryItems:(NSArray<ALURLQueryItem *> *)queryItems
+                                         deduplicate:(BOOL)replace;
 
-- (NSString *)al_stringByURLEncodingAs:(ALURLComponent)component;
-- (NSString *)al_stringByURLDecoding;
+- (NSString *)al_URLQueryStringByAppendingQueryItemsWithDictionary:(NSDictionary<NSString *, id> *)itemDict
+                                                    percentEncoded:(BOOL)encoded
+                                                       deduplicate:(BOOL)replace;
+
+/*!
+ *  try to parse the url string "self" and get the range of query.
+ *  @see RFC 1808: https://www.ietf.org/rfc/rfc1808.txt
+ *  URL Components: <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
+ */
+- (NSRange)al_URLQueryStringRange;
+
+/**
+ *  Extract query items from 'self'.  The string 'self' must be percent-encoded.
+ *  Try to extract query string from 'self', if fail, use 'self' as query string.
+ *
+ *  @return array of query items.
+ */
+- (nullable NSArray<ALURLQueryItem *> *)al_URLQueryItems;
+
+/**
+ *  @return dictionary of un-percent-encoded query items
+ */
+- (nullable NSDictionary<NSString *, NSString *> *)al_URLQueryItemsDictionary;
+
+/*!
+ *  Note: if you need to encode the query item name / value, the value of parameter "component" should be
+ * "ALURLComponentQueryItem", otherwise, the character "&", "=" will not be escaped. The "ALURLComponentQuery" is used
+ * to encode the whole query string.
+ */
+- (nullable NSString *)al_stringByURLEncodingAs:(ALURLComponent)component;
+- (nullable NSString *)al_stringByURLDecoding;
+
+// string to NSURL
+- (nullable NSURL *)al_URL;
+- (nullable NSURL *)al_URLRelativeToURL:(NSURL *)baseURL;
+
+- (nullable NSURLComponents *)al_URLComponents;
+
+/*!
+ * @param   part        which url component part the string will be set.
+ * @param   encoded     YES if the string is already perecnt-encoded.
+ */
+- (NSURLComponents *)al_URLComponentByResolvingAs:(ALURLComponent)part percentEncoded:(BOOL)encoded;
+
+@end
+
+@interface ALURLHelper : NSObject
+
+/*!
+ * @return the percent-encoded query string
+ */
++ (NSString *)queryStringWithItems:(NSArray<ALURLQueryItem *> *)queryItems;
+
+/*!
+ *  constructs a percent encoded url query string by specified query items.
+ *
+ *  @param itemDict     name/value pairs of query items
+ *  @param encoded      indicates whether the parameter "queryItems" has already been percent-encoded.
+ *
+ *  @return the percent-encoded query string
+ */
++ (NSString *)queryStringWithDictionary:(NSDictionary<NSString *, id> *)itemDict percentEncoded:(BOOL)encoded;
+
+@end
+
+@interface NSCharacterSet (ALURLHelper)
+/*!
+ * character set for url query item name and value.
+ */
+@property (class, readonly, copy) NSCharacterSet *al_URLQueryItemAllowedCharacterSet;
 @end
 
 

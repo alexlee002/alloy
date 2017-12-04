@@ -12,21 +12,30 @@
 #import "ALActiveRecord.h"
 #import "ALDBExpr.h"
 #import "ALDatabase.h"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import "ALLogger.h"
 #import "NSObject+SQLValue.h"
+#import "ALModelORMBase+Private.h"
 
 @implementation ALModelDelete {
     aldb::SQLDelete _statement;
-    Class _modelClass;
     NSInteger _changes;
 }
 
+- (instancetype)initWithDatabase:(ALDBHandle *)handle table:(NSString *)table modelClass:(Class)modelClass {
+    self = [self init];
+    if (self) {
+        _database   = handle;
+        _modelClass = modelClass;
+        _statement.delete_from(table.UTF8String);
+    }
+    return self;
+}
+
 + (instancetype)deleteModel:(Class)modelClass {
-    ALModelDelete *instance = [[self alloc] init];
-    instance->_modelClass = modelClass;
-    instance->_statement.delete_from(ALTableNameForModel(modelClass).UTF8String);
-    return instance;
+    return [[self alloc] initWithDatabase:[modelClass al_database]
+                                    table:ALTableNameForModel(modelClass)
+                               modelClass:modelClass];
 }
 
 - (instancetype)where:(const ALDBCondition &)condition {
@@ -72,9 +81,8 @@
 }
 
 - (nullable ALDBStatement *)preparedStatement {
-    ALDatabase *database = [_modelClass al_database];
     NSError *error = nil;
-    ALDBStatement *stmt = [database prepare:_statement error:&error];
+    ALDBStatement *stmt = [_database prepare:_statement error:&error];
     if (!stmt && error) {
         _changes = 0;
         ALLogError(@"%@", error);

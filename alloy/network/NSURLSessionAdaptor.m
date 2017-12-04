@@ -159,9 +159,11 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
     if (request.uploadParams.count > 0) {
         request.method = ALHTTPMethodPost;
     }
-    
+
     if (request.type == ALRequestTypeUpload) {
-        NSURL *url = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        NSURL *url = [[request.url al_URL] al_URLByAppendingQueryItemsWithDictionary:request.params
+                                                                      percentEncoded:NO
+                                                                         deduplicate:YES];
         urlRequest = [NSMutableURLRequest requestWithURL:url];
         [self buildUploadRequest:urlRequest fromALRequest:request];
     } else if (request.method == ALHTTPMethodPost) {
@@ -170,7 +172,9 @@ static const void * const kTaskStateKVOTokenAssociatedKey   = &kTaskStateKVOToke
             [urlRequest setValue:al_stringValue(value) forHTTPHeaderField:key];
         }];
     } else {
-        NSURL *url = [[NSURL URLWithString:al_stringOrEmpty(request.url)] URLBySettingQueryParamsOfDictionary:request.params];
+        NSURL *url = [[request.url al_URL] al_URLByAppendingQueryItemsWithDictionary:request.params
+                                                                      percentEncoded:NO
+                                                                         deduplicate:YES];
         urlRequest = [NSMutableURLRequest requestWithURL:url];
     }
     urlRequest.HTTPMethod = [request methodName];

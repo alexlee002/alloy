@@ -7,11 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ALDBExpr.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @class ALDBColumnBinding;
 OBJC_EXPORT id _Nullable _ALColumnValueForModelProperty(id model, ALDBColumnBinding *binding);
 
-OBJC_EXPORT BOOL _ALISAutoIncrementColumn(ALDBColumnBinding *binding);
+OBJC_EXPORT BOOL _ALIsAutoIncrementColumn(ALDBColumnBinding *binding);
+
+extern std::shared_ptr<const ALDBCondition> _ALDefaultModelUpdateCondition(NSObject *_Nonnull model);
 
 NS_ASSUME_NONNULL_END

@@ -39,8 +39,8 @@ static AL_FORCE_INLINE aldb::ColumnType columnTypeForProperty(_ALModelPropertyMe
         bindings->_customGetter = NSSelectorFromString(selName);
     }
 
-    //- (void)customSet{PropertyName}WithColumnValue:(id)value;
-    selName = [NSString stringWithFormat:@"customSet%@WithColumnValue:", tmpPN];
+    //- (void)customSet{PropertyName}ColumnValue:(id)value;
+    selName = [NSString stringWithFormat:@"customSet%@ColumnValue:", tmpPN];
     if (methods[selName]) {
         bindings->_customSetter = NSSelectorFromString(selName);
     }

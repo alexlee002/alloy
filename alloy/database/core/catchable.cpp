@@ -50,6 +50,8 @@ void Catchable::set_sqlite_error(sqlite3 *h, const char *sql) {
     if (sql) {
         errmsg.append("sql: \"" + std::string(sql) + "\"; ");
     }
+
+    errmsg.append("extended errcode: ").append(std::to_string(sqlite3_extended_errcode((sqlite3 *) h))).append("; ");
     const char *sqlite_err = sqlite3_errmsg(h);
     if (sqlite_err) {
         errmsg.append(sqlite_err);

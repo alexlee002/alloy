@@ -12,8 +12,8 @@
 
 @interface _ALModelResultEnumerator : NSEnumerator
 
-+ (NSEnumerator *)enumeratorWithModel:(Class)cls
-                            resultSet:(ALDBResultSet *)resultSet
-                        resultColumns:(const ALDBResultColumnList &)columns;
++ (nullable NSEnumerator *)enumeratorWithModel:(Class)cls
+                                     resultSet:(ALDBResultSet *)resultSet
+                                 resultColumns:(const ALDBResultColumnList &)columns;
 
 @end

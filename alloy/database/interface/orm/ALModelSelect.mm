@@ -6,24 +6,41 @@
 //  Copyright © 2017 Alex Lee. All rights reserved.
 //
 
-#import "ALModelSelect+Private.h"
+#import "ALModelSelect.h"
 #import "ALActiveRecord.h"
 #import "ALDBExpr.h"
 #import "ALDBResultSet.h"
 #import "ALDatabase.h"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import "ALLogger.h"
 #import "_ALModelResultEnumerator.h"
 #import "ALDBStatement+orm_Private.h"
+#import "ALModelORMBase+Private.h"
 
-@implementation ALModelSelect 
+@implementation ALModelSelect {
+    aldb::SQLSelect _statement;
+    std::shared_ptr<ALDBResultColumnList> _resultColumns;
+}
 
-+ (instancetype)selectModel:(Class)modelClass properties:(const ALDBResultColumnList &)results{
-    ALModelSelect *select = [[self alloc] init];
-    select->_statement.select(results, results.isDistinct()).from(ALTableNameForModel(modelClass).UTF8String);
-    select->_modelClass = modelClass;
-    select->_resultColumns = std::make_shared<ALDBResultColumnList>(results);
-    return select;
+- (instancetype)initWithDatabase:(ALDBHandle *)handle
+                           table:(NSString *)table
+                      modelClass:(Class)modelClass
+                      properties:(const ALDBResultColumnList &)results {
+    self = [self init];
+    if (self) {
+        _database = handle;
+        _statement.select(results, results.isDistinct()).from(table.UTF8String);
+        _modelClass    = modelClass;
+        _resultColumns = std::make_shared<ALDBResultColumnList>(results);
+    }
+    return self;
+}
+
++ (instancetype)selectModel:(Class)modelClass properties:(const ALDBResultColumnList &)results {
+    return [[self alloc] initWithDatabase:[modelClass al_database]
+                                    table:ALTableNameForModel(modelClass)
+                               modelClass:modelClass
+                               properties:results];
 }
 
 - (instancetype)where:(const ALDBCondition &)condition {
@@ -57,9 +74,8 @@
 }
 
 - (nullable ALDBStatement *)preparedStatement {
-    ALDatabase *database = [_modelClass al_database];
     NSError *error = nil;
-    ALDBStatement *stmt = [database prepare:_statement error:&error];
+    ALDBStatement *stmt = [_database prepare:_statement error:&error];
     if (!stmt && error) {
         ALLogError(@"%@", error);
         return nil;
@@ -68,15 +84,14 @@
     return stmt;
 }
 
+- (nullable ALDBResultSet *)executeQuery {
+    return [[self preparedStatement] query];
+}
+
 - (nullable NSEnumerator *)objectEnumerator {
-    ALDatabase *database = [_modelClass al_database];
-    NSError *error = nil;
-    ALDBResultSet *rs = [database query:_statement error:&error];
-    if (!rs && error) {
-        ALLogError(@"%@", error);
-        return nil;
-    }
-    return [_ALModelResultEnumerator enumeratorWithModel:_modelClass resultSet:rs resultColumns:*_resultColumns];
+    return [_ALModelResultEnumerator enumeratorWithModel:_modelClass
+                                               resultSet:[self executeQuery]
+                                           resultColumns:*_resultColumns];
 }
 
 - (nullable NSArray *)allObjects {

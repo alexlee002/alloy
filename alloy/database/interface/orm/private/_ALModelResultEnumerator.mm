@@ -167,7 +167,7 @@ static AL_FORCE_INLINE void _SetModelPropertyValueWithResultSet(__unsafe_unretai
                                                                 __unsafe_unretained ALDBResultSet *resultSet, int index,
                                                                 __unsafe_unretained ALDBColumnBinding *columnBinding) {
     SEL customSetter = [columnBinding customPropertyValueSetter];
-    // SEL: -(void)customSet{PropertyName}WithColumnValue:(id)value
+    // SEL: -(void)customSet{PropertyName}ColumnValue:(id)value;
     if (customSetter != nil) {
         ((void (*)(id, SEL, id))(void *) objc_msgSend)((id) model, customSetter, (id) resultSet[index]);
         return;

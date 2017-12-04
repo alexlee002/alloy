@@ -11,9 +11,16 @@
 #import "order_clause.hpp"
 #import "ALDBStatement.h"
 #import "ALDBProperty.h"
+#import "ALModelORMBase.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@interface ALModelUpdate : NSObject
+@interface ALModelUpdate : ALModelORMBase
+
+- (instancetype)initWithDatabase:(ALDBHandle *)handle
+                           table:(NSString *)table
+                      modelClass:(Class)modelClass
+                      properties:(const ALDBPropertyList &)propertiesToUpdate
+                      onConflict:(ALDBConflictPolicy)onConflict;
 
 + (instancetype)updateModel:(Class)modelClass
                  properties:(const ALDBPropertyList &)propertiesToUpdate
@@ -30,9 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)executeWithObject:(id)model;
 
 - (NSInteger)changes;
-
-- (nullable ALDBStatement *)preparedStatement;
-
 @end
 
 NS_ASSUME_NONNULL_END

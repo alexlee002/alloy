@@ -10,11 +10,16 @@
 #import "ALDBTypeDefines.h"
 #import "order_clause.hpp"
 #import "ALDBStatement.h"
+#import "ALModelORMBase.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@interface ALModelDelete : NSObject
+@interface ALModelDelete : ALModelORMBase
 
 + (instancetype)deleteModel:(Class)modelClass;
+
+- (instancetype)initWithDatabase:(ALDBHandle *)handle
+                           table:(NSString *)table
+                      modelClass:(Class)modelClass;
 
 - (instancetype)where:(const ALDBCondition &)condition;
 
@@ -28,6 +33,5 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSInteger)changes;
 
-- (nullable ALDBStatement *)preparedStatement;
 @end
 NS_ASSUME_NONNULL_END

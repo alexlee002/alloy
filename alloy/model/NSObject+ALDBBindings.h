@@ -1,18 +1,16 @@
 //
-//  NSObject+AL_Database.h
+//  NSObject+ALDBBindings.h
 //  alloy
 //
-//  Created by Alex Lee on 09/10/2017.
+//  Created by Alex Lee on 01/11/2017.
 //  Copyright © 2017 Alex Lee. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "ALMacros.h"
-#import "ALActiveRecord.h"
+#import "ALDatabase.h"
 #import "ALDBTableBinding.h"
 #import "ALDBProperty.h"
-#import "ALModelSelect.h"
-#import "ALDatabase.h"
 
 typedef NSInteger ALDBRowIdType;
 
@@ -56,10 +54,16 @@ typedef NSInteger ALDBRowIdType;
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * @return The name of database table that associates with this model.
+ * Normally, the model name should be a noun of English. so the default value return would be the pluralize of model name.
+ * a) If the model name is not ends with English letter, the subfix "_list" will be added to table name.
+ * b) If the model name is CamelCase style, the table name will be converted to lowercase words and joined with "_".
+ *
+ * eg: "UserModel" => "user_models", "fileMeta" => "file_metas".
+ */
 OBJC_EXPORT NSString *ALTableNameForModel(__unsafe_unretained Class cls);
-
-@class ALDatabase;
-@interface NSObject (AL_Database)
+@interface NSObject (ALDBBindings)
 /**
  * @see http://www.sqlite.org/rowidtable.html
  * @see class method: "+primaryKeys"
@@ -71,40 +75,22 @@ OBJC_EXPORT NSString *ALTableNameForModel(__unsafe_unretained Class cls);
  *             "has_many", etc. you should carefully consider.
  */
 @property(PROP_ATOMIC_DEF, setter=al_setRowid:) ALDBRowIdType al_rowid;
+
+/**
+ * Use in SQL INSERT operation.
+ * If return YES, ignore the value of the model's primary key("rowid" or its alias),
+ *      after the model is inserted, the value of the primary key would be set to the value of "last_insert_rowid".
+ * If return NO, insert the specified value of the model's primary key into the database.
+ */
 @property(PROP_ATOMIC_DEF, setter=al_setAutoIncrement:) BOOL  al_autoIncrement;
 
+/**
+ * get the model's associated database. this is used in activerecord pattern.
+ */
 + (nullable ALDatabase *)al_database;
 + (nullable ALDBTableBinding *)al_tableBindings;
 + (const ALDBPropertyList)al_allColumnProperties;
 + (const ALDBProperty )al_columnPropertyWithProperty:(NSString *)propertyName;
 + (nullable NSString *)al_columnNameForProperty:(NSString *)propertyName;
-
-+ (BOOL)al_inTransaction:(void (^)(BOOL *rollback))transaction;
-- (BOOL)al_inTransaction:(void (^)(BOOL *rollback))transaction;
-
-#pragma mark -
-+ (nullable NSArray/* <id<ALActiveRecord>> */ *)al_modelsInCondition:(const ALDBCondition &)condition;
-+ (nullable NSEnumerator/* <id<ALActiveRecord>> */ *)al_modelEnumeratorInCondition:(const ALDBCondition &)condition;
-+ (nullable id<ALActiveRecord>)al_modelWithRowId:(ALDBRowIdType)rowId;
-+ (NSInteger)al_modelsCountInCondition:(const ALDBCondition &)condition;
-
-+ (nullable ALModelSelect *)al_modelFetcher;
-
-#pragma mark -
-- (BOOL)al_saveOrReplace:(BOOL)replaceOnConflict;
-+ (BOOL)al_saveModels:(NSArray<id<ALActiveRecord>> *)models replace:(BOOL)replaceOnConflict;
-
-#pragma mark -
-- (BOOL)al_updateOrReplace:(BOOL)replaceOnConflict;
-- (BOOL)al_updateProperties:(NSArray<NSString *> *)propertiesNames replace:(BOOL)replaceOnConflict;
-+ (BOOL)al_updateProperties:(NSDictionary<NSString * /* propertyName */, id> *)propertyValues
-              withCondition:(const ALDBCondition &)condition
-                    replace:(BOOL)replaceOnCoflict;
-+ (BOOL)al_updateModels:(NSArray<id<ALActiveRecord>> *)models replace:(BOOL)replaceOnConflict;
-
-#pragma mark - 
-- (BOOL)al_deleteModel;
-+ (BOOL)al_deleteModelsWithCondition:(const ALDBCondition &)condition;
 @end
-
 NS_ASSUME_NONNULL_END

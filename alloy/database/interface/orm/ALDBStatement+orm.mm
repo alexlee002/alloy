@@ -7,7 +7,7 @@
 //
 
 #import "ALDBStatement+orm_Private.h"
-#import "ALModelSelect+Private.h"
+#import "ALModelSelect.h"
 #import <objc/runtime.h>
 
 @implementation ALDBStatement (orm)

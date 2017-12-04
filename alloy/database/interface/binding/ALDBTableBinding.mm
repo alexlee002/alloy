@@ -14,7 +14,7 @@
 #import "column.hpp"
 #import "column_index.hpp"
 #import "ALActiveRecord.h"
-#import "NSObject+AL_Database.h"
+#import "NSObject+ALDBBindings.h"
 #import <objc/message.h>
 #import <BlocksKit/BlocksKit.h>
 
@@ -126,7 +126,7 @@
         [NSMutableDictionary dictionary];
     
     [self loadColumnBindingsInto:columnsDict];
-    [self loadTableConstraintsWithColumns:columnsDict.allValues];
+    [self loadTableConstraintsWithColumnsDict:columnsDict];
     
     if (columnsDict.count > 0) {
         _columnBindingsDict = [columnsDict copy];
@@ -172,17 +172,14 @@
         if (!binding) {
             continue;
         }
-        if (neededRowId) {
-            binding.columnDefine->as_primary(aldb::OrderBy::DEFAULT, aldb::ConflictPolicy::DEFAULT, true);
-        }
         columnsDict[colname] = binding;
     }
 }
 
-- (void)loadTableConstraintsWithColumns:(NSArray<ALDBColumnBinding *> *)columns {
+- (void)loadTableConstraintsWithColumnsDict:(NSMutableDictionary<NSString * /*columnName*/, ALDBColumnBinding *> *)columnsDict {
     NSString *pk = nil;
     NSMutableArray *uk = [NSMutableArray array];
-    for (ALDBColumnBinding *columnBinding in columns) {
+    for (ALDBColumnBinding *columnBinding in columnsDict.allValues) {
         auto columnDef = [columnBinding columnDefine];
         if (columnDef->is_primary()) {
             ALAssert(pk == nil, @"Duplicated primary key!");
@@ -202,6 +199,14 @@
         ALAssert(NO, @"Duplicated primary key defined! Model:%@.", cls);
         _allPrimaryKeys = @[pk];
     }
+    //if no primary key, make "rowid" as default
+    if (_allPrimaryKeys.count == 0) {
+        NSString *rownidColName = @(aldb::Column::ROWID.name().c_str());
+        if (columnsDict[rownidColName]) {
+            _allPrimaryKeys = @[rownidColName];
+        }
+    }
+    ALAssert(_allPrimaryKeys.count > 0, @"No primary key defined! Model: %@", cls);
     
     NSArray<NSArray<NSString *> *> *uniqueKeys = al_safeInvokeSelector(NSArray *, cls, @selector(uniqueKeys));
     if (uk.count > 0) {
@@ -232,6 +237,7 @@
     ] bk_reject:^BOOL(id obj) {
         return obj == NSNull.null;
     }] al_flatten];
+    NSOrderedSet *keyList = [NSOrderedSet orderedSetWithArray:list];
 
     NSString *rowidPN = al_keypathForClass(NSObject, al_rowid);
     return ^NSComparisonResult(ALDBColumnBinding *col1, ALDBColumnBinding *col2) {
@@ -244,15 +250,11 @@
             return NSOrderedDescending;
         }
 
-        NSInteger idx1 = [list indexOfObject:pn1];
-        NSInteger idx2 = [list indexOfObject:pn2];
+        NSInteger idx1 = [keyList indexOfObject:pn1];
+        NSInteger idx2 = [keyList indexOfObject:pn2];
 
-        if (idx1 != NSNotFound && idx2 != NSNotFound) {
+        if (idx1 != NSNotFound || idx2 != NSNotFound) {
             return [@(idx1) compare:@(idx2)];
-        } else if (idx1 != NSNotFound) {
-            return NSOrderedAscending;
-        } else if (idx2 != NSNotFound) {
-            return NSOrderedDescending;
         } else {
             return [pn1 compare:pn2];
         }

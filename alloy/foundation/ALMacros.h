@@ -32,6 +32,11 @@
 #define AL_C_OVERLOADABLE   __attribute__((overloadable))
 
 /////////////////////////////////////////////////////////////
+
+//#define AL_FIX_CATEGORY_BUG \
+
+
+/////////////////////////////////////////////////////////////
 #if DEBUG
     #define ALAssert(condition, desc, ...)  NSAssert((condition),  (@"🔥" desc), ##__VA_ARGS__)
     #define ALCAssert(condition, desc, ...) NSCAssert((condition), (@"🔥" desc), ##__VA_ARGS__)
@@ -48,6 +53,7 @@
 
 #define AL_VOID (void)0
 
+#import <objc/message.h>
 #define al_safeInvokeSelector(returnType, obj, sel)                                         \
     ({                                                                                      \
         returnType result = 0x00;                                                           \
@@ -56,8 +62,6 @@
         }                                                                                   \
         result;                                                                             \
     })
-
-
 
 /**
  * example:
@@ -202,3 +206,4 @@
 
 
 #endif /* ALUtilitiesHeader_h */
+

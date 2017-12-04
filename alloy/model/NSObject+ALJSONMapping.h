@@ -1,5 +1,5 @@
 //
-//  NSObject+AL_JSONMapping.h
+//  NSObject+ALJSONMapping.h
 //  alloy
 //
 //  Created by Alex Lee on 06/10/2017.
@@ -20,7 +20,7 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface NSObject (AL_JSONMapping)
+@interface NSObject (ALJSONMapping)
 
 #pragma mark - model & json mapping (@ref: YYModel)
 + (nullable instancetype)al_modelWithJSON:(id)JSON;

@@ -10,17 +10,26 @@
 #import "ALDBTypeDefines.h"
 #import "ALDBStatement.h"
 #import "ALDBProperty.h"
+#import "ALModelORMBase.h"
 
-@interface ALModelInsert : NSObject
+NS_ASSUME_NONNULL_BEGIN
+
+@interface ALModelInsert : ALModelORMBase
 
 + (instancetype)insertModel:(Class)modelClass
                  properties:(const ALDBPropertyList &)propertiesToSave
                  onConflict:(ALDBConflictPolicy)onConflict;
 
-- (NSInteger)changes;
+- (instancetype)initWithDatabase:(ALDBHandle *)handle
+                           table:(NSString *)table
+                      modelClass:(Class)modelClass
+                      properties:(const ALDBPropertyList &)propertiesToSave
+                      onConflict:(ALDBConflictPolicy)onConflict;
 
-- (nullable ALDBStatement *)preparedStatement;
+- (NSInteger)changes;
 
 - (BOOL)executeWithObjects:(NSArray *)models;
 
 @end
+
+NS_ASSUME_NONNULL_END

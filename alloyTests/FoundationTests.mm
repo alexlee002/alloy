@@ -11,6 +11,9 @@
 #import "NSString+ALHelper.h"
 #import "ALSingletonTemplate.h"
 #import "TimedQueue.hpp"
+#import "ALURLHelper.h"
+#import "ALMacros.h"
+#import "YYClassInfo.h"
 
 
 @interface TestSingleton: NSObject
@@ -39,7 +42,7 @@ AL_AS_SINGLETON;
 AL_SYNTHESIZE_SINGLETON(TestSingletonChild);
 @end
 
-
+#define auto_var(name)  __tmp_ ## name ## (__LINE__)
 
 @interface FoundationTests : XCTestCase
 
@@ -50,6 +53,64 @@ AL_SYNTHESIZE_SINGLETON(TestSingletonChild);
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+
+}
+
+- (void)testURLComponents {
+    {
+        NSString *charsets     = @"~`!@#$%^&*()-=_+[]\\{}|;':\",./<>?";
+        NSURLComponents *comps = [[NSURLComponents alloc] init];
+        comps.queryItems       = @[ [NSURLQueryItem queryItemWithName:@"key" value:charsets] ];
+        NSLog(@"components.percentEncodeQuery: %@", comps.percentEncodedQuery);
+        
+        NSURLComponents *compsAL = [[NSURLComponents alloc] init];
+        ALURLQueryItem *alItem = [ALURLQueryItem queryItemWithName:@"key" value:charsets];
+        compsAL.al_queryItems = @[ alItem ];
+        XCTAssertEqualObjects(comps.percentEncodedQuery, compsAL.percentEncodedQuery);
+        
+        if (@available(iOS 11.0, *)) {
+            NSURLQueryItem *item = comps.percentEncodedQueryItems.firstObject;
+            XCTAssertEqualObjects(item.value, alItem.percentEncodedValue);
+        }
+    }
+
+    {
+        NSString *encodedQuery = @"urlencode=UrlEncode%e7%bc%96%e7%a0%81%2f%e8%a7%a3%e7%a0%81&base64=VXJsRW5jb2Rl57yW56CBL+ino+eggQ==&a%20b%2Fc=dddd%20%2C%23eee";
+        NSURLComponents *comps = [[NSURLComponents alloc] init];
+        comps.percentEncodedQuery = encodedQuery;
+        
+        NSLog(@"query: %@", comps.query);
+        NSLog(@"NSQueryItems: %@", comps.queryItems);
+        NSLog(@"ALQueryItems: %@", comps.al_queryItems);
+        
+        NSString *query = [ALURLHelper queryStringWithItems:comps.al_queryItems];
+        comps.queryItems = comps.queryItems;
+        XCTAssertEqualObjects(query, comps.percentEncodedQuery);
+    }
+}
+
+- (void)testRuntimeInvokeMacros {
+    NSNumber *obj = @123.456;
+    YYClassMethodInfo *m = [YYClassInfo classInfoWithClass:NSNumber.class].methodInfos[@"floatValue"];
+    if (m) {
+        CGFloat f = ((CGFloat(*)(id, SEL))m.imp)(obj, m.sel);
+    }
+    
+//    Class cls = [obj class];                                     \
+//    SEL sel = @selector(floatValue);
+//    if (NO) {                                               \
+//        cls = objc_getMetaClass(class_getName(cls));                     \
+//    }                                                                    \
+//    if (cls != Nil && class_respondsToSelector(cls, sel)) {              \
+//        IMP imp = class_getMethodImplementation(cls, sel);               \
+//        if (imp) {                                                       \
+//            CGFloat f = (CGFloat)(imp(obj, sel));           \
+//        }                                                                \
+//    }
+//
+//
+//    CGFloat f = al_safeInvokeMethod(CGFloat, number, @selector(floatValue));
+//    XCTAssertEqual(123.456, f);
 }
 
 - (void)testTimeQueue {

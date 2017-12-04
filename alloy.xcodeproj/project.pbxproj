@@ -15,18 +15,28 @@
 		431A00641F8E00FE005220A0 /* ALDBStatement+orm.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A00621F8E00FE005220A0 /* ALDBStatement+orm.h */; };
 		431A00651F8E00FE005220A0 /* ALDBStatement+orm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431A00631F8E00FE005220A0 /* ALDBStatement+orm.mm */; };
 		431A006C1F8E0657005220A0 /* ALDBStatement+orm_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A006A1F8E0657005220A0 /* ALDBStatement+orm_Private.h */; };
-		431A006F1F8E0B2E005220A0 /* ALModelSelect+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A006E1F8E0B2E005220A0 /* ALModelSelect+Private.h */; };
 		431A00781F8E44A0005220A0 /* _ALModelHelper+cxx.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A00761F8E44A0005220A0 /* _ALModelHelper+cxx.h */; };
 		431A00791F8E44A0005220A0 /* _ALModelHelper+cxx.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431A00771F8E44A0005220A0 /* _ALModelHelper+cxx.mm */; };
 		431A007C1F8E46A3005220A0 /* ALModelDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A007A1F8E46A3005220A0 /* ALModelDelete.h */; };
 		431A007D1F8E46A3005220A0 /* ALModelDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431A007B1F8E46A3005220A0 /* ALModelDelete.mm */; };
 		431A00801F8E4887005220A0 /* ALModelInsert.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A007E1F8E4887005220A0 /* ALModelInsert.h */; };
 		431A00811F8E4887005220A0 /* ALModelInsert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431A007F1F8E4887005220A0 /* ALModelInsert.mm */; };
-		431A00841F8E4F9F005220A0 /* ALDatabase+Core.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A00821F8E4F9F005220A0 /* ALDatabase+Core.h */; };
-		431A00851F8E4F9F005220A0 /* ALDatabase+Core.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431A00831F8E4F9F005220A0 /* ALDatabase+Core.mm */; };
 		431A008B1F8E767B005220A0 /* ALActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A008A1F8E767B005220A0 /* ALActiveRecord.h */; };
+		43235FA91FAA157300D7F864 /* ALDBHandle+orm.h in Headers */ = {isa = PBXBuildFile; fileRef = 43235FA71FAA157300D7F864 /* ALDBHandle+orm.h */; };
+		43235FAA1FAA157300D7F864 /* ALDBHandle+orm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43235FA81FAA157300D7F864 /* ALDBHandle+orm.mm */; };
+		43235FAD1FAA1B3700D7F864 /* NSObject+ALDBBindings.h in Headers */ = {isa = PBXBuildFile; fileRef = 43235FAB1FAA1B3700D7F864 /* NSObject+ALDBBindings.h */; };
+		43235FAE1FAA1B3700D7F864 /* NSObject+ALDBBindings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43235FAC1FAA1B3700D7F864 /* NSObject+ALDBBindings.mm */; };
+		43235FB11FAA266700D7F864 /* ALModelORMBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 43235FAF1FAA266700D7F864 /* ALModelORMBase.h */; };
+		43235FB21FAA266700D7F864 /* ALModelORMBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43235FB01FAA266700D7F864 /* ALModelORMBase.mm */; };
+		43235FB41FAA270100D7F864 /* ALModelORMBase+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 43235FB31FAA270100D7F864 /* ALModelORMBase+Private.h */; };
 		43295D391F95E22B000AB9DA /* ALDBIndexBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 43295D371F95E22B000AB9DA /* ALDBIndexBinding.h */; };
 		43295D3A1F95E22B000AB9DA /* ALDBIndexBinding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43295D381F95E22B000AB9DA /* ALDBIndexBinding.mm */; };
+		433EFBAB1FBDE99900797F68 /* ALDBModelCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 433EFBA91FBDE99900797F68 /* ALDBModelCursor.h */; };
+		433EFBAC1FBDE99900797F68 /* ALDBModelCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = 433EFBAA1FBDE99900797F68 /* ALDBModelCursor.m */; };
+		433EFBE31FC2CB2200797F68 /* ALDBResultSet+orm.h in Headers */ = {isa = PBXBuildFile; fileRef = 433EFBE11FC2CB2200797F68 /* ALDBResultSet+orm.h */; };
+		433EFBE41FC2CB2200797F68 /* ALDBResultSet+orm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 433EFBE21FC2CB2200797F68 /* ALDBResultSet+orm.mm */; };
+		433EFBE81FC2CD4700797F68 /* _ALModelResultEnumerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 433EFBE61FC2CD4700797F68 /* _ALModelResultEnumerator.mm */; };
+		433EFBE91FC2CD4700797F68 /* _ALModelResultEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 433EFBE71FC2CD4700797F68 /* _ALModelResultEnumerator.h */; };
 		435B00711F90AD15005433E1 /* TestFileModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 435B00701F90AD15005433E1 /* TestFileModel.mm */; };
 		43892F881F93D17C0002F2F8 /* ALDBTableBinding+Database.h in Headers */ = {isa = PBXBuildFile; fileRef = 43892F861F93D17C0002F2F8 /* ALDBTableBinding+Database.h */; };
 		43892F891F93D17C0002F2F8 /* ALDBTableBinding+Database.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43892F871F93D17C0002F2F8 /* ALDBTableBinding+Database.mm */; };
@@ -216,8 +226,8 @@
 		43D6E30C1F8777760008CD13 /* _ALModelMetaJSONMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E30A1F8777760008CD13 /* _ALModelMetaJSONMapping.m */; };
 		43D6E30F1F8786A80008CD13 /* _ALModelHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E30D1F8786A80008CD13 /* _ALModelHelper.h */; };
 		43D6E3101F8786A80008CD13 /* _ALModelHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E30E1F8786A80008CD13 /* _ALModelHelper.m */; };
-		43D6E3131F878C2F0008CD13 /* NSObject+AL_JSONMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E3111F878C2F0008CD13 /* NSObject+AL_JSONMapping.h */; };
-		43D6E3141F878C2F0008CD13 /* NSObject+AL_JSONMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E3121F878C2F0008CD13 /* NSObject+AL_JSONMapping.m */; };
+		43D6E3131F878C2F0008CD13 /* NSObject+ALJSONMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E3111F878C2F0008CD13 /* NSObject+ALJSONMapping.h */; };
+		43D6E3141F878C2F0008CD13 /* NSObject+ALJSONMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E3121F878C2F0008CD13 /* NSObject+ALJSONMapping.m */; };
 		43D6E3171F87EEB80008CD13 /* NSObject+ALModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E3151F87EEB80008CD13 /* NSObject+ALModel.h */; };
 		43D6E3181F87EEB80008CD13 /* NSObject+ALModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E3161F87EEB80008CD13 /* NSObject+ALModel.m */; };
 		43D6E31C1F87F2C20008CD13 /* ALModelSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E31A1F87F2C20008CD13 /* ALModelSelect.h */; };
@@ -237,11 +247,9 @@
 		43D6E3551F895DDC0008CD13 /* ALDBTableBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E3531F895DDC0008CD13 /* ALDBTableBinding.h */; };
 		43D6E3561F895DDC0008CD13 /* ALDBTableBinding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E3541F895DDC0008CD13 /* ALDBTableBinding.mm */; };
 		43D6E3581F8A5DD80008CD13 /* ALDBTableBinding_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E3571F8A5DD80008CD13 /* ALDBTableBinding_Private.h */; };
-		43D6E36C1F8B707F0008CD13 /* NSObject+AL_Database.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E36A1F8B707F0008CD13 /* NSObject+AL_Database.h */; };
-		43D6E36D1F8B707F0008CD13 /* NSObject+AL_Database.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E36B1F8B707F0008CD13 /* NSObject+AL_Database.mm */; };
+		43D6E36C1F8B707F0008CD13 /* NSObject+ALActiveRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E36A1F8B707F0008CD13 /* NSObject+ALActiveRecord.h */; };
+		43D6E36D1F8B707F0008CD13 /* NSObject+ALActiveRecord.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E36B1F8B707F0008CD13 /* NSObject+ALActiveRecord.mm */; };
 		43D6E36F1F8B80EE0008CD13 /* ActiveRecordTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E36E1F8B80EE0008CD13 /* ActiveRecordTests.mm */; };
-		43D6E3721F8BBDE80008CD13 /* _ALModelResultEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D6E3701F8BBDE80008CD13 /* _ALModelResultEnumerator.h */; };
-		43D6E3731F8BBDE80008CD13 /* _ALModelResultEnumerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43D6E3711F8BBDE80008CD13 /* _ALModelResultEnumerator.mm */; };
 		43D8A98D1F9E051B00972E1B /* FoundationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43D8A98C1F9E051B00972E1B /* FoundationTests.mm */; };
 		43D8A9931FA0CEA100972E1B /* ALActieRecord_cxx.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D8A9921FA0CEA100972E1B /* ALActieRecord_cxx.h */; };
 		43D8AA271FA724CA00972E1B /* BlocksKit+ALExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D8AA251FA724CA00972E1B /* BlocksKit+ALExtension.h */; };
@@ -272,18 +280,28 @@
 		431A00621F8E00FE005220A0 /* ALDBStatement+orm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALDBStatement+orm.h"; sourceTree = "<group>"; };
 		431A00631F8E00FE005220A0 /* ALDBStatement+orm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDBStatement+orm.mm"; sourceTree = "<group>"; };
 		431A006A1F8E0657005220A0 /* ALDBStatement+orm_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALDBStatement+orm_Private.h"; sourceTree = "<group>"; };
-		431A006E1F8E0B2E005220A0 /* ALModelSelect+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALModelSelect+Private.h"; sourceTree = "<group>"; };
 		431A00761F8E44A0005220A0 /* _ALModelHelper+cxx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "_ALModelHelper+cxx.h"; sourceTree = "<group>"; };
 		431A00771F8E44A0005220A0 /* _ALModelHelper+cxx.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "_ALModelHelper+cxx.mm"; sourceTree = "<group>"; };
 		431A007A1F8E46A3005220A0 /* ALModelDelete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALModelDelete.h; sourceTree = "<group>"; };
 		431A007B1F8E46A3005220A0 /* ALModelDelete.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ALModelDelete.mm; sourceTree = "<group>"; };
 		431A007E1F8E4887005220A0 /* ALModelInsert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALModelInsert.h; sourceTree = "<group>"; };
 		431A007F1F8E4887005220A0 /* ALModelInsert.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ALModelInsert.mm; sourceTree = "<group>"; };
-		431A00821F8E4F9F005220A0 /* ALDatabase+Core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALDatabase+Core.h"; sourceTree = "<group>"; };
-		431A00831F8E4F9F005220A0 /* ALDatabase+Core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDatabase+Core.mm"; sourceTree = "<group>"; };
 		431A008A1F8E767B005220A0 /* ALActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALActiveRecord.h; sourceTree = "<group>"; };
+		43235FA71FAA157300D7F864 /* ALDBHandle+orm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALDBHandle+orm.h"; sourceTree = "<group>"; };
+		43235FA81FAA157300D7F864 /* ALDBHandle+orm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDBHandle+orm.mm"; sourceTree = "<group>"; };
+		43235FAB1FAA1B3700D7F864 /* NSObject+ALDBBindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+ALDBBindings.h"; sourceTree = "<group>"; };
+		43235FAC1FAA1B3700D7F864 /* NSObject+ALDBBindings.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSObject+ALDBBindings.mm"; sourceTree = "<group>"; };
+		43235FAF1FAA266700D7F864 /* ALModelORMBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALModelORMBase.h; sourceTree = "<group>"; };
+		43235FB01FAA266700D7F864 /* ALModelORMBase.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ALModelORMBase.mm; sourceTree = "<group>"; };
+		43235FB31FAA270100D7F864 /* ALModelORMBase+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALModelORMBase+Private.h"; sourceTree = "<group>"; };
 		43295D371F95E22B000AB9DA /* ALDBIndexBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALDBIndexBinding.h; sourceTree = "<group>"; };
 		43295D381F95E22B000AB9DA /* ALDBIndexBinding.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBIndexBinding.mm; sourceTree = "<group>"; };
+		433EFBA91FBDE99900797F68 /* ALDBModelCursor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALDBModelCursor.h; sourceTree = "<group>"; };
+		433EFBAA1FBDE99900797F68 /* ALDBModelCursor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALDBModelCursor.m; sourceTree = "<group>"; };
+		433EFBE11FC2CB2200797F68 /* ALDBResultSet+orm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALDBResultSet+orm.h"; sourceTree = "<group>"; };
+		433EFBE21FC2CB2200797F68 /* ALDBResultSet+orm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ALDBResultSet+orm.mm"; sourceTree = "<group>"; };
+		433EFBE61FC2CD4700797F68 /* _ALModelResultEnumerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _ALModelResultEnumerator.mm; sourceTree = "<group>"; };
+		433EFBE71FC2CD4700797F68 /* _ALModelResultEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ALModelResultEnumerator.h; sourceTree = "<group>"; };
 		435B006F1F90AD15005433E1 /* TestFileModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFileModel.h; sourceTree = "<group>"; };
 		435B00701F90AD15005433E1 /* TestFileModel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFileModel.mm; sourceTree = "<group>"; };
 		43892F861F93D17C0002F2F8 /* ALDBTableBinding+Database.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALDBTableBinding+Database.h"; sourceTree = "<group>"; };
@@ -477,8 +495,8 @@
 		43D6E30A1F8777760008CD13 /* _ALModelMetaJSONMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = _ALModelMetaJSONMapping.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43D6E30D1F8786A80008CD13 /* _ALModelHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ALModelHelper.h; sourceTree = "<group>"; };
 		43D6E30E1F8786A80008CD13 /* _ALModelHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ALModelHelper.m; sourceTree = "<group>"; };
-		43D6E3111F878C2F0008CD13 /* NSObject+AL_JSONMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AL_JSONMapping.h"; sourceTree = "<group>"; };
-		43D6E3121F878C2F0008CD13 /* NSObject+AL_JSONMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSObject+AL_JSONMapping.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		43D6E3111F878C2F0008CD13 /* NSObject+ALJSONMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ALJSONMapping.h"; sourceTree = "<group>"; };
+		43D6E3121F878C2F0008CD13 /* NSObject+ALJSONMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSObject+ALJSONMapping.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		43D6E3151F87EEB80008CD13 /* NSObject+ALModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ALModel.h"; sourceTree = "<group>"; };
 		43D6E3161F87EEB80008CD13 /* NSObject+ALModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ALModel.m"; sourceTree = "<group>"; };
 		43D6E31A1F87F2C20008CD13 /* ALModelSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALModelSelect.h; sourceTree = "<group>"; };
@@ -498,11 +516,9 @@
 		43D6E3531F895DDC0008CD13 /* ALDBTableBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBTableBinding.h; sourceTree = "<group>"; };
 		43D6E3541F895DDC0008CD13 /* ALDBTableBinding.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ALDBTableBinding.mm; sourceTree = "<group>"; };
 		43D6E3571F8A5DD80008CD13 /* ALDBTableBinding_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDBTableBinding_Private.h; sourceTree = "<group>"; };
-		43D6E36A1F8B707F0008CD13 /* NSObject+AL_Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AL_Database.h"; sourceTree = "<group>"; };
-		43D6E36B1F8B707F0008CD13 /* NSObject+AL_Database.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSObject+AL_Database.mm"; sourceTree = "<group>"; };
+		43D6E36A1F8B707F0008CD13 /* NSObject+ALActiveRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ALActiveRecord.h"; sourceTree = "<group>"; };
+		43D6E36B1F8B707F0008CD13 /* NSObject+ALActiveRecord.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSObject+ALActiveRecord.mm"; sourceTree = "<group>"; };
 		43D6E36E1F8B80EE0008CD13 /* ActiveRecordTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActiveRecordTests.mm; sourceTree = "<group>"; };
-		43D6E3701F8BBDE80008CD13 /* _ALModelResultEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ALModelResultEnumerator.h; sourceTree = "<group>"; };
-		43D6E3711F8BBDE80008CD13 /* _ALModelResultEnumerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _ALModelResultEnumerator.mm; sourceTree = "<group>"; };
 		43D8A98C1F9E051B00972E1B /* FoundationTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FoundationTests.mm; sourceTree = "<group>"; };
 		43D8A9921FA0CEA100972E1B /* ALActieRecord_cxx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALActieRecord_cxx.h; sourceTree = "<group>"; };
 		43D8AA251FA724CA00972E1B /* BlocksKit+ALExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BlocksKit+ALExtension.h"; sourceTree = "<group>"; };
@@ -545,6 +561,15 @@
 				E512C561DA009A41965212AB /* libPods-alloyTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		433EFBE51FC2CD4700797F68 /* private */ = {
+			isa = PBXGroup;
+			children = (
+				433EFBE71FC2CD4700797F68 /* _ALModelResultEnumerator.h */,
+				433EFBE61FC2CD4700797F68 /* _ALModelResultEnumerator.mm */,
+			);
+			path = private;
 			sourceTree = "<group>";
 		};
 		43D6E0F91F7BBB840008CD13 = {
@@ -846,8 +871,6 @@
 				43D6E2EC1F8499BE0008CD13 /* ALDatabase.mm */,
 				43D6E2EF1F85259B0008CD13 /* ALDatabase+Config.h */,
 				43D6E2F01F85259B0008CD13 /* ALDatabase+Config.mm */,
-				431A00821F8E4F9F005220A0 /* ALDatabase+Core.h */,
-				431A00831F8E4F9F005220A0 /* ALDatabase+Core.mm */,
 				43D6E2D71F8286360008CD13 /* ALDBStatement.h */,
 				43D6E2DB1F82870B0008CD13 /* ALDBStatement_Private.h */,
 				43D6E2D81F8286360008CD13 /* ALDBStatement.mm */,
@@ -873,10 +896,12 @@
 				43D6E3031F86A07A0008CD13 /* YYModel.h */,
 				43D6E3151F87EEB80008CD13 /* NSObject+ALModel.h */,
 				43D6E3161F87EEB80008CD13 /* NSObject+ALModel.m */,
-				43D6E3111F878C2F0008CD13 /* NSObject+AL_JSONMapping.h */,
-				43D6E3121F878C2F0008CD13 /* NSObject+AL_JSONMapping.m */,
-				43D6E36A1F8B707F0008CD13 /* NSObject+AL_Database.h */,
-				43D6E36B1F8B707F0008CD13 /* NSObject+AL_Database.mm */,
+				43D6E3111F878C2F0008CD13 /* NSObject+ALJSONMapping.h */,
+				43D6E3121F878C2F0008CD13 /* NSObject+ALJSONMapping.m */,
+				43D6E36A1F8B707F0008CD13 /* NSObject+ALActiveRecord.h */,
+				43D6E36B1F8B707F0008CD13 /* NSObject+ALActiveRecord.mm */,
+				43235FAB1FAA1B3700D7F864 /* NSObject+ALDBBindings.h */,
+				43235FAC1FAA1B3700D7F864 /* NSObject+ALDBBindings.mm */,
 				43D6E3021F86A07A0008CD13 /* private */,
 			);
 			path = model;
@@ -893,8 +918,6 @@
 				43D6E30E1F8786A80008CD13 /* _ALModelHelper.m */,
 				431A00761F8E44A0005220A0 /* _ALModelHelper+cxx.h */,
 				431A00771F8E44A0005220A0 /* _ALModelHelper+cxx.mm */,
-				43D6E3701F8BBDE80008CD13 /* _ALModelResultEnumerator.h */,
-				43D6E3711F8BBDE80008CD13 /* _ALModelResultEnumerator.mm */,
 			);
 			path = private;
 			sourceTree = "<group>";
@@ -902,11 +925,14 @@
 		43D6E3191F87F2980008CD13 /* orm */ = {
 			isa = PBXGroup;
 			children = (
+				433EFBE51FC2CD4700797F68 /* private */,
 				431A00621F8E00FE005220A0 /* ALDBStatement+orm.h */,
 				431A006A1F8E0657005220A0 /* ALDBStatement+orm_Private.h */,
 				431A00631F8E00FE005220A0 /* ALDBStatement+orm.mm */,
+				43235FAF1FAA266700D7F864 /* ALModelORMBase.h */,
+				43235FB31FAA270100D7F864 /* ALModelORMBase+Private.h */,
+				43235FB01FAA266700D7F864 /* ALModelORMBase.mm */,
 				43D6E31A1F87F2C20008CD13 /* ALModelSelect.h */,
-				431A006E1F8E0B2E005220A0 /* ALModelSelect+Private.h */,
 				43D6E31B1F87F2C20008CD13 /* ALModelSelect.mm */,
 				43051C851F8D23A200AF289A /* ALModelUpdate.h */,
 				43051C861F8D23A200AF289A /* ALModelUpdate.mm */,
@@ -914,6 +940,12 @@
 				431A007B1F8E46A3005220A0 /* ALModelDelete.mm */,
 				431A007E1F8E4887005220A0 /* ALModelInsert.h */,
 				431A007F1F8E4887005220A0 /* ALModelInsert.mm */,
+				43235FA71FAA157300D7F864 /* ALDBHandle+orm.h */,
+				43235FA81FAA157300D7F864 /* ALDBHandle+orm.mm */,
+				433EFBA91FBDE99900797F68 /* ALDBModelCursor.h */,
+				433EFBAA1FBDE99900797F68 /* ALDBModelCursor.m */,
+				433EFBE11FC2CB2200797F68 /* ALDBResultSet+orm.h */,
+				433EFBE21FC2CB2200797F68 /* ALDBResultSet+orm.mm */,
 			);
 			path = orm;
 			sourceTree = "<group>";
@@ -972,6 +1004,7 @@
 				43D6E31C1F87F2C20008CD13 /* ALModelSelect.h in Headers */,
 				431A007C1F8E46A3005220A0 /* ALModelDelete.h in Headers */,
 				431A00781F8E44A0005220A0 /* _ALModelHelper+cxx.h in Headers */,
+				433EFBAB1FBDE99900797F68 /* ALDBModelCursor.h in Headers */,
 				43D6E2731F7FBF2B0008CD13 /* sql_statement.hpp in Headers */,
 				43D6E1C81F7BC0350008CD13 /* thread_local.hpp in Headers */,
 				43D6E3071F86A35F0008CD13 /* _ALModelMeta.h in Headers */,
@@ -990,11 +1023,9 @@
 				43D6E1C21F7BC0350008CD13 /* in_case_lock_guard.hpp in Headers */,
 				43D6E27B1F7FD5CC0008CD13 /* order_clause.hpp in Headers */,
 				43D6E2FD1F853D110008CD13 /* ALDBMigrationHelper.h in Headers */,
-				431A006F1F8E0B2E005220A0 /* ALModelSelect+Private.h in Headers */,
 				43D6E2A71F8141C40008CD13 /* pragma.hpp in Headers */,
 				43D6E25E1F7F78200008CD13 /* column.hpp in Headers */,
 				43D6E1DC1F7BC0350008CD13 /* ALCRC.h in Headers */,
-				431A00841F8E4F9F005220A0 /* ALDatabase+Core.h in Headers */,
 				43892F881F93D17C0002F2F8 /* ALDBTableBinding+Database.h in Headers */,
 				43D6E2AF1F81E4E10008CD13 /* sql_savepoint.hpp in Headers */,
 				43D6E1A71F7BC0350008CD13 /* config.hpp in Headers */,
@@ -1003,14 +1034,17 @@
 				43D6E2041F7BC0350008CD13 /* ALURLRequestQueueAdaptorProtocol.h in Headers */,
 				431A00801F8E4887005220A0 /* ALModelInsert.h in Headers */,
 				43D8A9931FA0CEA100972E1B /* ALActieRecord_cxx.h in Headers */,
+				43235FB11FAA266700D7F864 /* ALModelORMBase.h in Headers */,
 				43D6E1C31F7BC0350008CD13 /* recyclable.hpp in Headers */,
 				43D6E30F1F8786A80008CD13 /* _ALModelHelper.h in Headers */,
 				43D6E2AB1F81DD6D0008CD13 /* sql_transaction.hpp in Headers */,
+				43235FAD1FAA1B3700D7F864 /* NSObject+ALDBBindings.h in Headers */,
 				43D6E2231F7E1FE10008CD13 /* macros.h in Headers */,
 				43D6E3491F888F660008CD13 /* ALDBProperty.h in Headers */,
 				43D6E3311F87FF730008CD13 /* ALDBCodingMacros_Private.h in Headers */,
 				43D6E2831F7FF3080008CD13 /* sql_update.hpp in Headers */,
 				43D6E1AD1F7BC0350008CD13 /* defines.hpp in Headers */,
+				43235FB41FAA270100D7F864 /* ALModelORMBase+Private.h in Headers */,
 				43D6E1CB1F7BC0350008CD13 /* ALAssociatedWeakObject.h in Headers */,
 				43D6E2E91F834B970008CD13 /* NSError+ALDBError.h in Headers */,
 				431A008B1F8E767B005220A0 /* ALActiveRecord.h in Headers */,
@@ -1020,9 +1054,9 @@
 				43D6E2E61F82A29D0008CD13 /* ALDBTypeDefines.h in Headers */,
 				43D6E1E41F7BC0350008CD13 /* ALSHA1.h in Headers */,
 				43D6E2221F7D0B540008CD13 /* console_logger.hpp in Headers */,
-				43D6E36C1F8B707F0008CD13 /* NSObject+AL_Database.h in Headers */,
+				43D6E36C1F8B707F0008CD13 /* NSObject+ALActiveRecord.h in Headers */,
 				43D6E1D11F7BC0350008CD13 /* ALJSON.h in Headers */,
-				43D6E3131F878C2F0008CD13 /* NSObject+AL_JSONMapping.h in Headers */,
+				43D6E3131F878C2F0008CD13 /* NSObject+ALJSONMapping.h in Headers */,
 				43D6E1CA1F7BC0350008CD13 /* utils.hpp in Headers */,
 				43D6E1EA1F7BC0350008CD13 /* NSArray+ALExtensions.h in Headers */,
 				43D6E2071F7BC0350008CD13 /* NSURLSessionAdaptor.h in Headers */,
@@ -1052,6 +1086,7 @@
 				43D6E1CF1F7BC0350008CD13 /* ALDevice.h in Headers */,
 				43D6E1FC1F7BC0350008CD13 /* ALSingletonTemplate.h in Headers */,
 				43D6E3521F8954170008CD13 /* ALDBColumnBinding_Private.h in Headers */,
+				433EFBE31FC2CB2200797F68 /* ALDBResultSet+orm.h in Headers */,
 				43D6E28B1F8007B40008CD13 /* sql_delete.hpp in Headers */,
 				43D6E1FF1F7BC0350008CD13 /* ALHTTPRequest.h in Headers */,
 				43D6E1EC1F7BC0350008CD13 /* NSBundle+ALBundleInfo.h in Headers */,
@@ -1063,7 +1098,6 @@
 				43D6E1E01F7BC0350008CD13 /* ALMD5.h in Headers */,
 				43D6E1D51F7BC0350008CD13 /* ALLogger.h in Headers */,
 				43D6E3581F8A5DD80008CD13 /* ALDBTableBinding_Private.h in Headers */,
-				43D6E3721F8BBDE80008CD13 /* _ALModelResultEnumerator.h in Headers */,
 				43D6E2051F7BC0350008CD13 /* ASIHTTPRequestQueueAdaptor.h in Headers */,
 				43D6E1BF1F7BC0350008CD13 /* error.hpp in Headers */,
 				43D6E26A1F7F9CDA0008CD13 /* column_index.hpp in Headers */,
@@ -1087,7 +1121,9 @@
 				43D6E2C31F81F3690008CD13 /* sql_vacuum.hpp in Headers */,
 				43D6E26E1F7FACDE0008CD13 /* table_constraint.hpp in Headers */,
 				43D6E1BC1F7BC0350008CD13 /* transaction.hpp in Headers */,
+				433EFBE91FC2CD4700797F68 /* _ALModelResultEnumerator.h in Headers */,
 				43D6E1B31F7BC0350008CD13 /* handle_recyclable.hpp in Headers */,
+				43235FA91FAA157300D7F864 /* ALDBHandle+orm.h in Headers */,
 				43D6E2661F7F97A70008CD13 /* column_result.hpp in Headers */,
 				43D6E2D91F8286360008CD13 /* ALDBStatement.h in Headers */,
 				43051C871F8D23A200AF289A /* ALModelUpdate.h in Headers */,
@@ -1299,11 +1335,13 @@
 				43D6E2BE1F81F3690008CD13 /* sql_attach.cpp in Sources */,
 				43D6E1FB1F7BC0350008CD13 /* SafeBlocksChain.m in Sources */,
 				43D6E2DA1F8286360008CD13 /* ALDBStatement.mm in Sources */,
+				43235FB21FAA266700D7F864 /* ALModelORMBase.mm in Sources */,
 				43D6E1E51F7BC0350008CD13 /* ALSHA1.m in Sources */,
 				43D6E1C91F7BC0350008CD13 /* utils.cpp in Sources */,
 				431A00651F8E00FE005220A0 /* ALDBStatement+orm.mm in Sources */,
 				43D6E2821F7FF3080008CD13 /* sql_update.cpp in Sources */,
 				43D6E1AC1F7BC0350008CD13 /* defines.cpp in Sources */,
+				433EFBAC1FBDE99900797F68 /* ALDBModelCursor.m in Sources */,
 				43D6E2591F7F77CE0008CD13 /* expr.cpp in Sources */,
 				43D6E1A41F7BC0350008CD13 /* catchable.cpp in Sources */,
 				43D6E29A1F80916A0008CD13 /* sql_drop.cpp in Sources */,
@@ -1326,8 +1364,7 @@
 				43D6E2081F7BC0350008CD13 /* NSURLSessionAdaptor.m in Sources */,
 				43D6E2651F7F97A70008CD13 /* column_result.cpp in Sources */,
 				43D6E1B71F7BC0350008CD13 /* statement_handle.cpp in Sources */,
-				43D6E3141F878C2F0008CD13 /* NSObject+AL_JSONMapping.m in Sources */,
-				431A00851F8E4F9F005220A0 /* ALDatabase+Core.mm in Sources */,
+				43D6E3141F878C2F0008CD13 /* NSObject+ALJSONMapping.m in Sources */,
 				43D6E1C41F7BC0350008CD13 /* rwlock.cpp in Sources */,
 				431A007D1F8E46A3005220A0 /* ALModelDelete.mm in Sources */,
 				43D6E2021F7BC0350008CD13 /* ALHTTPResponse.m in Sources */,
@@ -1335,6 +1372,7 @@
 				43D6E3081F86A35F0008CD13 /* _ALModelMeta.m in Sources */,
 				43D6E1A81F7BC0350008CD13 /* core_base.cpp in Sources */,
 				43D6E1E71F7BC0350008CD13 /* ALURLHelper.m in Sources */,
+				433EFBE41FC2CB2200797F68 /* ALDBResultSet+orm.mm in Sources */,
 				43D6E1D91F7BC0350008CD13 /* ALOrderedMap.m in Sources */,
 				43D6E2691F7F9CDA0008CD13 /* column_index.cpp in Sources */,
 				43D6E3101F8786A80008CD13 /* _ALModelHelper.m in Sources */,
@@ -1349,8 +1387,8 @@
 				43D6E1AA1F7BC0350008CD13 /* database.cpp in Sources */,
 				43D6E32D1F87FEF90008CD13 /* ALDBExpr.mm in Sources */,
 				43D6E2C21F81F3690008CD13 /* sql_vacuum.cpp in Sources */,
+				43235FAA1FAA157300D7F864 /* ALDBHandle+orm.mm in Sources */,
 				43D6E1EF1F7BC0350008CD13 /* NSCache+ALExtensions.m in Sources */,
-				43D6E3731F8BBDE80008CD13 /* _ALModelResultEnumerator.mm in Sources */,
 				43D6E2AE1F81E4E10008CD13 /* sql_savepoint.cpp in Sources */,
 				43D6E1CE1F7BC0350008CD13 /* ALBase64.m in Sources */,
 				43D6E3561F895DDC0008CD13 /* ALDBTableBinding.mm in Sources */,
@@ -1382,11 +1420,13 @@
 				43D6E26D1F7FACDE0008CD13 /* table_constraint.cpp in Sources */,
 				43D6E1D41F7BC0350008CD13 /* ALLock.m in Sources */,
 				43D6E1E11F7BC0350008CD13 /* ALMD5.m in Sources */,
-				43D6E36D1F8B707F0008CD13 /* NSObject+AL_Database.mm in Sources */,
+				43235FAE1FAA1B3700D7F864 /* NSObject+ALDBBindings.mm in Sources */,
+				43D6E36D1F8B707F0008CD13 /* NSObject+ALActiveRecord.mm in Sources */,
 				43D6E2211F7D0B540008CD13 /* console_logger.cpp in Sources */,
 				43D6E2261F7E2BCE0008CD13 /* sql_clause.cpp in Sources */,
 				43D6E1B21F7BC0350008CD13 /* handle_recyclable.cpp in Sources */,
 				43D6E1CC1F7BC0350008CD13 /* ALAssociatedWeakObject.m in Sources */,
+				433EFBE81FC2CD4700797F68 /* _ALModelResultEnumerator.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1524,6 +1564,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = alloy/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = me.alexlee002.alloy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1543,6 +1584,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = alloy/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = me.alexlee002.alloy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
